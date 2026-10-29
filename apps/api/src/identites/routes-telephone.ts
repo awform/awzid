@@ -22,7 +22,12 @@ import {
 } from '@awform/school/telephone';
 import { verifierJeton } from '../antibot.js';
 import { hashSecret } from '../auth/crypto.js';
-import { checkPassword, estPersonnel, MAX_LENGTH } from '../auth/passwords.js';
+import {
+  checkPassword,
+  estPersonnel,
+  identifiantsDuCompte,
+  MAX_LENGTH,
+} from '../auth/passwords.js';
 import {
   audit,
   clearFailures,
@@ -309,7 +314,10 @@ export function registerTelephone(
     password: string,
     action: string,
   ) => {
-    const pb = checkPassword(password, a.email ?? '', { personnel: await estPersonnel(db, a.id) });
+    const pb = checkPassword(password, a.email ?? '', {
+      personnel: await estPersonnel(db, a.id),
+      identifiants: await identifiantsDuCompte(db, a.id),
+    });
     if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
     await db
       .update(t.account)

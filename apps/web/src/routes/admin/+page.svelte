@@ -11,6 +11,7 @@
   import AvisAdmin from '$lib/admin/AvisAdmin.svelte';
   import ProblemesAdmin from '$lib/admin/ProblemesAdmin.svelte';
   import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
+  import EntonnoirAdmin from '$lib/admin/EntonnoirAdmin.svelte';
   import AccesAdmin from '$lib/admin/AccesAdmin.svelte';
   import BlocageAdmin from '$lib/admin/BlocageAdmin.svelte';
   import SuppressionAdmin from '$lib/admin/SuppressionAdmin.svelte';
@@ -123,6 +124,8 @@
   <!-- bêta-support : problèmes signalés (nouveau / en cours / réglé) -->
   <ProblemesAdmin />
   <UsageAdmin />
+  <!-- V2-0 : entonnoir de l'inscription et de la connexion (compteurs anonymes, 7 et 30 jours) -->
+  <EntonnoirAdmin />
 
   <section class="card">
     <h2 id="t-editions">{t('admin.editions')}</h2>

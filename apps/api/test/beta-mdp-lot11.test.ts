@@ -189,12 +189,10 @@ describe.skipIf(!URL)(
       ).toBe(201);
     });
 
-    it('inscription : 8 caractères et 3 types acceptés ; 11 caractères et 2 types refusés ; 7 refusés', async () => {
+    it('inscription (V2-1) : 8 caractères sans aucune complexité acceptés ; 7 refusés', async () => {
       await reglage({ mode: 'ouvert' });
       expect((await signup(addr(), { password: 'Tamari7x' })).statusCode).toBe(201);
-      const simple = await signup(addr(), { password: 'tamarinier7' });
-      expect(simple.statusCode).toBe(400);
-      expect(simple.json().error.code).toBe('mot_de_passe_trop_simple');
+      expect((await signup(addr(), { password: 'tamarinier' })).statusCode).toBe(201);
       expect((await signup(addr(), { password: 'Tamar7x' })).json().error.code).toBe(
         'mot_de_passe_trop_court',
       );

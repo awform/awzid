@@ -5,7 +5,7 @@
  *  - expiration glissante (famille 30 j) ou courte (enseignant, administrateur 12 h) ;
  *  - verrouillage progressif après 5 échecs (par compte et par adresse IP), partagé en base.
  */
-import { and, eq, gt, isNull, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, lt, sql } from 'drizzle-orm';
 import { accountRoles, schema as t, type Db } from '@awform/db';
 import { randomToken, sha256 } from './crypto.js';
 import { sessionTtlMs } from './policy.js';
@@ -198,7 +198,12 @@ export async function recordFailure(db: Db, key: string, max = MAX_FAILURES): Pr
  * lecture et l'écriture). Renvoie false si la clé est verrouillée ou si le seuil est déjà atteint : l'essai
  * n'est alors pas vérifié. Après un échec : `failAttempt` ; après un succès : `clearFailures`.
  */
-export async function reserveAttempt(db: Db, key: string, max = MAX_FAILURES): Promise<boolean> {
+export async function reserveAttempt(
+  db: Db,
+  key: string,
+  max = MAX_FAILURES,
+  pauseMin?: number,
+): Promise<boolean> {
   const r = await db.execute<{ failures: number; locked: boolean }>(sql`
     INSERT INTO auth_throttle (key, failures, locked_until, updated_at)
     VALUES (${key}, 1, NULL, now())
@@ -212,21 +217,63 @@ export async function reserveAttempt(db: Db, key: string, max = MAX_FAILURES): P
   const row = r.rows[0]!;
   if (row.locked) return false;
   if (row.failures > max) {
-    await lockKey(db, key, row.failures, max);
+    await lockKey(db, key, row.failures, max, pauseMin);
     return false;
   }
   return true;
 }
 
-/** Échec d'un essai réservé : verrouillage à partir du seuil (1, 2, 4… minutes, 60 au plus). */
-export async function failAttempt(db: Db, key: string, max = MAX_FAILURES): Promise<void> {
+/**
+ * Échec d'un essai réservé : verrouillage à partir du seuil (1, 2, 4… minutes, 60 au plus ; ou, si `pauseMin` est
+ * donné, une pause FIXE de cette durée).
+ */
+export async function failAttempt(
+  db: Db,
+  key: string,
+  max = MAX_FAILURES,
+  pauseMin?: number,
+): Promise<void> {
   const [r] = await db.select().from(t.authThrottle).where(eq(t.authThrottle.key, key));
-  if (r && r.failures >= max) await lockKey(db, key, r.failures, max);
+  if (r && r.failures >= max) await lockKey(db, key, r.failures, max, pauseMin);
 }
 
-async function lockKey(db: Db, key: string, failures: number, max: number) {
-  const until = new Date(Date.now() + Math.min(60, 2 ** Math.max(0, failures - max)) * 60_000);
+async function lockKey(db: Db, key: string, failures: number, max: number, pauseMin?: number) {
+  const minutes = pauseMin ?? Math.min(60, 2 ** Math.max(0, failures - max));
+  const until = new Date(Date.now() + minutes * 60_000);
   await db.update(t.authThrottle).set({ lockedUntil: until }).where(eq(t.authThrottle.key, key));
+}
+
+/**
+ * V2-1 (décision du client, 29/10/2026) : à la connexion, 8 essais puis une pause FIXE de 10 minutes pour tous les
+ * comptes SAUF le personnel (admin, enseignant, rôles de plateforme), qui garde 5 essais et la pause progressive
+ * (1, 2, 4… minutes). Un seul réglage pour tous les non-membres du personnel (pas de différence enfant / adulte :
+ * le type de compte n'est connu qu'après la vérification du mot de passe, et le nombre d'essais ne doit pas dire si
+ * l'identifiant existe).
+ */
+export const ESSAIS_CONNEXION = 8;
+export const PAUSE_CONNEXION_MIN = 10;
+
+/** V2-1 : essais restants avant la pause (0 si la pause est atteinte). */
+export async function essaisRestants(db: Db, key: string, max = MAX_FAILURES): Promise<number> {
+  const [r] = await db.select().from(t.authThrottle).where(eq(t.authThrottle.key, key));
+  return Math.max(0, max - (r?.failures ?? 0));
+}
+
+/**
+ * V2-1 : la pause est LEVÉE quand le mot de passe a été changé (ou réinitialisé) après le dernier essai de la clé :
+ * « Mot de passe oublié ? » débloque tout de suite. Renvoie vrai si une pause ou un compteur a été effacé.
+ */
+export async function leverPauseSiMotDePasseChange(
+  db: Db,
+  key: string,
+  motDePasseChangeLe: Date | null | undefined,
+): Promise<boolean> {
+  if (!motDePasseChangeLe) return false;
+  const r = await db
+    .delete(t.authThrottle)
+    .where(and(eq(t.authThrottle.key, key), lt(t.authThrottle.updatedAt, motDePasseChangeLe)))
+    .returning({ k: t.authThrottle.key });
+  return r.length > 0;
 }
 
 export async function clearFailures(db: Db, key: string): Promise<void> {

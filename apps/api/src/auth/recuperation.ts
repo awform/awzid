@@ -14,7 +14,7 @@ import type { FastifyInstance, FastifyReply } from 'fastify';
 import { and, eq, gt, isNull, ne } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import { hashSecret, randomToken, sha256 } from './crypto.js';
-import { checkPassword, estPersonnel, MAX_LENGTH } from './passwords.js';
+import { checkPassword, estPersonnel, identifiantsDuCompte, MAX_LENGTH } from './passwords.js';
 import { audit, clearFailures, reserveAttempt, revokeAll } from './service.js';
 import { EMAIL, emailKey, err, type AuthKit } from './common.js';
 import type { Mailer } from '../mail/envoi.js';
@@ -197,6 +197,7 @@ export function registerRecovery(app: FastifyInstance, kit: AuthKit, opts: Recov
         : [];
       const pb = checkPassword(req.body.password, peek?.email ?? '', {
         personnel: await estPersonnel(db, peek?.accountId),
+        identifiants: await identifiantsDuCompte(db, peek?.accountId),
       });
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       const row = await consume(db, req.body.token, ['reinitialisation']);

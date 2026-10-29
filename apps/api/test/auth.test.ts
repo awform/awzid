@@ -36,9 +36,13 @@ describe('politique des mots de passe (sans base)', () => {
     expect(checkPassword('court')).toBe('trop_court');
     expect(checkPassword('motdepasse123')).toBe('trop_courant');
     expect(checkPassword('aaaaaaaaaaaaaaa')).toBe('trop_courant');
-    expect(checkPassword('fatima.diallo-2026!', 'fatima.diallo@exemple.org')).toBe(
-      'contient_email',
+    // V2-1 : famille = seulement un mot de passe ÉGAL à l'adresse refusé ; personnel : « contient » (inchangé)
+    expect(checkPassword('fatima.diallo@exemple.org', 'fatima.diallo@exemple.org')).toBe(
+      'egal_identifiant',
     );
+    expect(
+      checkPassword('fatima.diallo-2026!', 'fatima.diallo@exemple.org', { personnel: true }),
+    ).toBe('contient_email');
     expect(checkPassword('une phrase de passe كَلِمَة')).toBeNull();
   });
 });
@@ -207,7 +211,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
     ).toBe('adulte_compte_personnel');
   });
 
-  it('connexion : message identique si le compte n’existe pas, verrouillage après 5 échecs', async () => {
+  it('connexion : message identique si le compte n’existe pas, verrouillage après 8 échecs (V2-1)', async () => {
     const a = await post('/api/v1/auth/login', {
       email: 'p1@exemple.org',
       password: 'faux faux faux',
@@ -219,7 +223,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
     expect(a.statusCode).toBe(401);
     expect(a.json()).toEqual(b.json());
     await signup('cible@exemple.org');
-    for (let i = 0; i < 5; i++)
+    for (let i = 0; i < 8; i++)
       await post('/api/v1/auth/login', { email: 'cible@exemple.org', password: 'faux faux faux' });
     const locked = await post('/api/v1/auth/login', { email: 'cible@exemple.org', password: PW });
     expect(locked.statusCode).toBe(429);

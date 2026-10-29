@@ -177,12 +177,13 @@ describe.skipIf(!URL_)('R6 — échecs de connexion par compte + adresse', () =>
         return email;
       }),
     );
+    // V2-1 : 8 essais, le 8e déclenche la pause (429) ; les 7 premiers répondent 401
     for (const e of eleves.slice(0, 8))
-      for (let k = 0; k < 5; k++)
-        expect((await login(e, 'mauvais mot de passe', ip)).statusCode).toBe(401);
+      for (let k = 0; k < 8; k++)
+        expect((await login(e, 'mauvais mot de passe', ip)).statusCode).toBe(k < 7 ? 401 : 429);
     // le 9e élève, sans erreur, se connecte depuis la même adresse
     expect((await login(eleves[8]!, PW, ip)).statusCode).toBe(200);
-    // un élève qui s'est trompé 5 fois est verrouillé POUR LUI, sur cette adresse seulement
+    // un élève qui s'est trompé 8 fois est verrouillé POUR LUI, sur cette adresse seulement
     const v = await login(eleves[0]!, PW, ip);
     expect(v.statusCode).toBe(429);
     expect(v.json().error.code).toBe('verrouille');

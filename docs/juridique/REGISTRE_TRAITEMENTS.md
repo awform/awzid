@@ -44,6 +44,7 @@ le travailleur (`apps/worker/src/tasks.ts`).
 | 11 | Sécurité et journal d'audit | tracer les actions sensibles, prévenir les abus | intérêt légitime ; obligation de sécurité (art. 32) | auteur, action, cible (identifiants), date ; à l'effacement d'un compte, cibles **pseudonymisées** | **12 mois** (D9) | Awzid ; autorités sur réquisition | — |
 | 12 | Relais d'école (hors Internet) | faire travailler une école sans Internet | exécution du contrat avec l'école | file des envois des élèves **chiffrée** (AES-256-GCM, clé propre au relais), copie des contenus publics | envois : **effacés dès réception par le central** ; refusés : purgés | le serveur central seulement | — (dans l'école) |
 | 13 | Sauvegardes | reprendre le service après un incident | intérêt légitime ; obligation de sécurité | copie chiffrée de la base (clé publique sur le serveur, clé privée hors du serveur) | **14 dernières** (≈ 14 jours glissants) | [stockage hors site à choisir, D10] | selon le stockage choisi |
+| 14 | Mesure anonyme de l'inscription et de la connexion (V2-0) | savoir à quelle étape les personnes abandonnent l'inscription ou la connexion, pour simplifier le parcours | intérêt légitime (art. 6.1.f), sur des données **anonymes** : aucune donnée personnelle [exemption de consentement et information à confirmer par le juriste] | aucune personne identifiée : compteurs par (heure arrondie, étape atteinte, plateforme téléphone ou ordinateur, langue de l'interface) ; **ni adresse IP, ni identifiant, ni e-mail, ni cookie** (l'appel est envoyé sans cookie et le serveur n'en lit aucun) | **90 jours**, effacement automatique chaque nuit (`purgeFunnel`, travailleur) | administrateur et support (tableau « Entonnoir », 7 et 30 jours) | — |
 
 ## Mesures de sécurité (article 32) — résumé
 
@@ -71,3 +72,15 @@ formalités CDP (`docs/juridique/CDP_SENEGAL.md`).
 - **Analyse automatique de la voix par une IA** : aucun traitement aujourd'hui ; accord facultatif et séparé prévu.
 - **Fuseau horaire, province (Canada), région des données** (« eu ») : réglages du compte et de l'école.
 
+## V2-0 et V2-1 (29/10/2026) — compléments à valider
+
+- **Mesure anonyme** (traitement 14) : table `funnel_event` (`hour`, `step`, `platform`, `locale`, `n`) ; étapes d'une liste fermée
+  (inscription : page ouverte, début de saisie, identifiants saisis, mot de passe validé, compte créé ; connexion : page
+  ouverte, identifiants envoyés, réussie, échec du mot de passe, blocage) ; aucune colonne personnelle ; 90 jours.
+- **Mots de passe** (traitement 1) : familles, adultes, ados, enfants : 8 caractères au moins, sans exigence de
+  composition ; refus des mots de passe courants (liste **locale** du dépôt, aucun service externe) et de ceux égaux
+  à l'identifiant, à l'adresse ou au prénom ; personnel : 12 caractères et second facteur, inchangé. Les mots de
+  passe existants restent valables. Toujours hachés (argon2id), jamais relisibles.
+- **Verrou de connexion** (traitement 1) : 8 essais puis pause de 10 minutes (personnel : 5 essais, pause
+  progressive) ; levée quand le mot de passe est changé ; compteur par empreinte de l'identifiant et adresse IP,
+  effacé 24 h après le dernier essai (durée D9 inchangée).

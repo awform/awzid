@@ -6,7 +6,8 @@
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
   import { chargerStatut, type AccesStatut } from '$lib/acces';
-  import { t } from '$lib/i18n';
+  import { locale, t } from '$lib/i18n';
+  import { mesure } from '$lib/mesure';
   import { call, fetchMe, type Me } from '$lib/session';
 
   /*
@@ -29,6 +30,7 @@
   let reverif = $state(false);
   let defi = $state<{ id: string; jeton: string } | null>(null);
   onMount(async () => {
+    mesure('connexion_ouverte');
     const c = await call<{ demo?: boolean }>('GET', '/config');
     demo = !!(c.ok && c.data?.demo);
     acces = await chargerStatut();
@@ -60,6 +62,7 @@
     e?.preventDefault();
     busy = true;
     error = '';
+    mesure('connexion_identifiants');
     const r = await call<Me & { profilDemo?: string | null }>('POST', '/auth/login', {
       email,
       password,
@@ -67,7 +70,10 @@
       ...(defi ? { defi } : {}),
     });
     busy = false;
+    if (r.ok) mesure('connexion_reussie');
     if (!r.ok) {
+      if (r.code === 'identifiants_incorrects') mesure('connexion_echec_mdp');
+      if (r.code === 'verrouille') mesure('connexion_blocage');
       if (r.code === 'totp_requis') needTotp = true;
       if (r.code === 'reverification_requise') {
         reverif = true;
@@ -75,10 +81,25 @@
         return;
       }
       defi = null;
+      // V2-1 : essais restants (à partir du 3e échec) ; pause avec son heure de fin et ce qu'il faut faire
+      const restants = r.error?.essais_restants;
+      const jusqua = r.error?.jusqua;
+      // les messages du serveur ne sont jamais cités littéralement (catalogue chargé à la réponse en erreur)
+      const msg = (code: string, vals?: Record<string, unknown>) => t(`erreur.${code}`, vals);
       error =
         r.code === 'verification_invalide'
           ? t('id.erreur.verification_invalide')
-          : t(`erreur.${r.code ?? 'reseau'}`);
+          : r.code === 'verrouille' && typeof jusqua === 'string'
+            ? msg('verrouille_heure', {
+                heure: new Date(jusqua).toLocaleTimeString(locale(), {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+              })
+            : msg(r.code ?? 'reseau') +
+              (typeof restants === 'number' && restants < 6
+                ? ' ' + msg('essais_restants', { n: restants })
+                : '');
       return;
     }
     await apres(r.data?.profilDemo);
@@ -163,7 +184,9 @@
         bind:value={totp}
       />
     {/if}
-    {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
+    {#if error}<p class="error" role="alert" data-testid="connexion-erreur">
+        <Bidi text={error} />
+      </p>{/if}
     <button type="submit" class="primary go" disabled={busy}>{t('connexion.bouton')}</button>
   </form>
 {/if}

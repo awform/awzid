@@ -34,7 +34,7 @@
   "erreur.reseau": "Pas de réseau pour l'instant. Réessaie plus tard.",
   "erreur.trop_de_demandes": "Trop de demandes depuis cet appareil. Réessaie dans une heure.",
   "erreur.totp_requis": "Entre le code à 6 chiffres de ton application d'authentification.",
-  "erreur.mot_de_passe_trop_courant": "Ce mot de passe est trop courant. Choisis une phrase personnelle.",
+  "erreur.mot_de_passe_trop_courant": "Ce mot de passe est trop courant : choisis-en un autre.",
   "erreur.mot_de_passe_contient_email": "Le mot de passe ne doit pas contenir ton adresse.",
   "erreur.email_indisponible": "Cette adresse ne peut pas être utilisée. Connecte-toi si tu as déjà un compte.",
   "erreur.consentement_requis": "Coche les accords obligatoires pour continuer.",

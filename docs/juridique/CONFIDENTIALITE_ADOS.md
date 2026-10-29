@@ -21,6 +21,7 @@
 | Quoi | Pourquoi | Combien de temps |
 |---|---|---|
 | ton e-mail, ton pays, ta langue | te connecter | tant que ton compte existe ; **effacé sous 30 jours** si tu le supprimes |
+| des **compteurs anonymes** (étape de l'inscription ou de la connexion atteinte, heure arrondie, téléphone ou ordinateur, langue) : jamais ton e-mail, ton identifiant ni ton adresse IP | rendre l'inscription plus simple | 90 jours, puis effacés tout seuls |
 | tes réponses, ta progression, ton hifẓ, tes jours de travail | t'aider à progresser | tant que ton compte existe |
 | ta **voix** quand tu t'enregistres | t'écouter | **7 jours**, sur ton appareil seulement |
 | une récitation envoyée à ton enseignant (avec un parent) | qu'il l'écoute et la note | 14 jours en général (1 à 30), ou dès qu'elle est supprimée |

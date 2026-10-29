@@ -55,6 +55,7 @@ import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
 import { registerKhatma } from './khatma.js';
 import { registerF5 } from './f5.js';
+import { registerMesure } from './mesure.js';
 import { registerSupport } from './support.js';
 import { registerVerification } from './verification.js';
 import { registerBetaAcces } from './beta-acces.js';
@@ -384,6 +385,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerKhatma(app, db);
   // F5 : interrupteurs de fonctions, canal bêta, avis, usage sans traceur
   registerF5(app, db, opts.version ?? '0.2.0');
+  // V2-0 : mesure anonyme de l'inscription et de la connexion (compteurs par heure, sans donnée personnelle)
+  registerMesure(app, db);
   // bêta-support : « Signaler un problème » (file de l'administrateur avec statut)
   registerSupport(app, db, opts.version ?? '0.2.0');
   return app;

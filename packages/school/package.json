@@ -13,6 +13,10 @@
       "types": "./dist/mot-de-passe.d.ts",
       "default": "./dist/mot-de-passe.js"
     },
+    "./liste-communs": {
+      "types": "./dist/liste-communs.d.ts",
+      "default": "./dist/liste-communs.js"
+    },
     "./telephone": {
       "types": "./dist/telephone.d.ts",
       "default": "./dist/telephone.js"

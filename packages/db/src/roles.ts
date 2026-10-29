@@ -147,6 +147,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   problem_report: ALL,
   usage_day: ALL,
   usage_seen: ALL,
+  // V2-0 : compteurs de la mesure anonyme (aucune donnée personnelle)
+  funnel_event: ALL,
   usage_salt: ALL,
   // lot F3 : liens à usage unique envoyés par e-mail (vérification, réinitialisation, changement d'adresse)
   account_link: ALL,
@@ -198,6 +200,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   assignment_mark: ['SELECT'],
   // F5 : conservation — empreintes d'usage (2 jours), captures des avis (90 jours), avis (12 mois)
   usage_seen: ['DELETE'],
+  // V2-0 : compteurs de la mesure anonyme, effacés après 90 jours
+  funnel_event: ['DELETE'],
   usage_salt: ['DELETE'],
   feedback: ['DELETE'],
   // bêta-support : signalements réglés effacés après 12 mois
@@ -227,6 +231,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   // lot F2 : détacher le titulaire d'une classe avant l'effacement définitif de son compte
   class_group: ['id', 'teacher_account_id'],
   usage_seen: ['day'],
+  funnel_event: ['hour'],
   usage_salt: ['day'],
   feedback: ['created_at', 'capture_type'],
   problem_report: ['created_at', 'capture_type', 'status'],

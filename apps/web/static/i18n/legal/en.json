@@ -170,7 +170,8 @@
             "Payment (after the beta): plan, status and reference at the provider; never a card number.",
             "Account security: links sent by e-mail (verification, forgotten password, address change) — only a fingerprint of the link is kept, with its use and date; IP address and a fingerprint of the e-mail address for 24 hours to limit abusive attempts.",
             "Reports and feedback: category, description written by you (500 characters at most), the page you were on (path only), application version, role and age band (child, teen, adult); a screen image only if you attach it, taken on your device, private areas and input fields hidden. A child only sends the category. No name and no e-mail address in the report.",
-            "Tracker-free usage: daily totals of spaces or features used, without page address, time or device identifier."
+            "Tracker-free usage: daily totals of spaces or features used, without page address, time or device identifier.",
+            "Anonymous measurement of sign-up and sign-in: we only count the steps reached (page opened, started filling in, identifiers entered, password accepted, account created, wrong password, block). Each counter holds only the step, the hour rounded down, the platform (phone or computer) and the language: no IP address, no identifier, no email address, no cookie, no link to a person. Counters are deleted automatically after 90 days."
           ]
         },
         {

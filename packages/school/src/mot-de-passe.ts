@@ -1,21 +1,28 @@
 /**
  * Règle des mots de passe — UNE seule source, partagée par l'API (contrôle) et l'application (indicateur) :
- * l'indicateur rouge / orange / vert reflète exactement ce que le serveur accepte.
+ * l'indicateur reflète ce que le serveur accepte (sauf la liste des mots de passe courants, trop lourde pour
+ * l'appareil de l'élève : seul le serveur la connaît).
  *
- * Comptes FAMILLE et ADULTE (décision du client du 16/10/2026) — accepté si :
- *  - 12 caractères ou plus, sans autre contrainte (une petite phrase : « mon thé à la menthe ») ; OU
- *  - 8 caractères ou plus ET au moins 3 types sur 4 : minuscule, majuscule, chiffre, symbole.
- * Comptes du PERSONNEL (admin, enseignant, rôles de plateforme, `cli/staff`) : 12 caractères au moins (et second
- * facteur, exigé ailleurs), comme avant.
- * Dans tous les cas : 128 caractères au plus, refus des mots de passe courants et de ceux qui contiennent l'adresse
- * e-mail. Tous les caractères sont admis (espaces, lettres accentuées, arabe) ; pas de normalisation Unicode (règle
- * du projet). Une lettre SANS casse (arabe…) compte comme « minuscule » ; une marque diacritique ne compte pour rien.
+ * Comptes FAMILLE et ADULTE, ados, enfants (V2-1, décision du client du 29/10/2026 : « plus c'est simple, mieux
+ * c'est ») : 8 caractères au moins, AUCUNE exigence de composition (ni majuscule, ni chiffre, ni symbole). On refuse
+ * seulement :
+ *  - un mot de passe courant ou fuité (liste LOCALE du dépôt, `liste-communs.ts` : aucun appel externe) ;
+ *  - un mot de passe égal à l'identifiant, à l'adresse e-mail (ou à sa partie avant « @ ») ou au prénom.
+ * Les mots de passe déjà créés restent valables : la règle ne joue qu'à la création et au changement.
+ *
+ * Comptes du PERSONNEL (admin, enseignant, rôles de plateforme, `cli/staff`) : RIEN NE CHANGE — 12 caractères au
+ * moins (et second facteur, exigé ailleurs), refus des mots de passe courants et de ceux qui contiennent l'adresse.
+ *
+ * Dans tous les cas : 128 caractères au plus. Tous les caractères sont admis (espaces, lettres accentuées, arabe) ;
+ * pas de normalisation Unicode (règle du projet).
  */
 export const MDP_MIN_PHRASE = 12;
 export const MDP_MIN_COURT = 8;
+/** conservé pour compatibilité (ancienne voie « 8 caractères et 3 types », supprimée pour les familles) */
 export const MDP_MIN_TYPES = 3;
 export const MDP_MAX = 128;
 
+/** Courts mots de passe courants connus de l'application elle-même (personnel) ; la grande liste est côté serveur. */
 const COMMUNS = new Set(
   `123456789012 1234567890123 azertyuiop12 azertyuiopqs qwertyuiop12 motdepasse12 motdepasse123
   password1234 password12345 passwordpassword 000000000000 111111111111 123123123123 abcdefghijkl
@@ -34,11 +41,20 @@ const COMMUNS = new Set(
 );
 
 export type ProblemeMotDePasse =
-  'trop_court' | 'trop_simple' | 'trop_long' | 'trop_courant' | 'contient_email';
+  | 'trop_court'
+  | 'trop_simple'
+  | 'trop_long'
+  | 'trop_courant'
+  | 'contient_email'
+  | 'egal_identifiant';
 
 export interface OptionsMotDePasse {
-  /** compte du personnel : 12 caractères au moins, sans la voie « 8 caractères et 3 types » */
+  /** compte du personnel : 12 caractères au moins, règle inchangée */
   personnel?: boolean;
+  /** identifiant(s), prénom(s), numéro… que le mot de passe ne doit pas égaler (comparaison sans casse) */
+  identifiants?: ReadonlyArray<string | null | undefined>;
+  /** liste des mots de passe courants (donnée par le serveur ; absente côté application : trop lourde) */
+  estCommun?: (minuscule: string) => boolean;
 }
 
 /** Nombre de types de caractères présents (0 à 4) : minuscule, majuscule, chiffre, symbole. */
@@ -58,20 +74,33 @@ export function checkPassword(
   opts: OptionsMotDePasse = {},
 ): ProblemeMotDePasse | null {
   const chars = [...pw].length;
-  if (chars < (opts.personnel ? MDP_MIN_PHRASE : MDP_MIN_COURT)) return 'trop_court';
-  if (chars > MDP_MAX) return 'trop_long';
-  if (chars < MDP_MIN_PHRASE && typesDeCaracteres(pw) < MDP_MIN_TYPES) return 'trop_simple';
   const low = pw.toLowerCase();
-  if (COMMUNS.has(low) || /^(.)\1+$/.test(pw) || /^(0123456789|123456789)+/.test(pw))
-    return 'trop_courant';
   const local = email.toLowerCase().split('@')[0] ?? '';
-  if (local.length >= 4 && low.includes(local)) return 'contient_email';
+  if (opts.personnel) {
+    // PERSONNEL : règle inchangée
+    if (chars < MDP_MIN_PHRASE) return 'trop_court';
+    if (chars > MDP_MAX) return 'trop_long';
+    if (COMMUNS.has(low) || /^(.)\1+$/.test(pw) || /^(0123456789|123456789)+/.test(pw))
+      return 'trop_courant';
+    if (opts.estCommun?.(low)) return 'trop_courant';
+    if (local.length >= 4 && low.includes(local)) return 'contient_email';
+    return null;
+  }
+  if (chars < MDP_MIN_COURT) return 'trop_court';
+  if (chars > MDP_MAX) return 'trop_long';
+  if (COMMUNS.has(low) || /^(.)\1+$/.test(pw) || opts.estCommun?.(low)) return 'trop_courant';
+  // égal à l'identifiant, à l'adresse (entière ou avant « @ ») ou au prénom — sans casse ni espaces autour
+  const nu = low.trim();
+  const interdits = [email, local, ...(opts.identifiants ?? [])]
+    .map((s) => (s ?? '').toLowerCase().trim())
+    .filter(Boolean);
+  if (interdits.includes(nu)) return 'egal_identifiant';
   return null;
 }
 
 /**
  * Indicateur de l'application : `vide` (rien saisi), `refuse` (rouge : le serveur refuserait), `correct` (orange :
- * accepté par la voie « 8 caractères et 3 types »), `fort` (vert : 12 caractères ou plus, accepté).
+ * 8 à 11 caractères, accepté), `fort` (vert : 12 caractères ou plus, accepté).
  */
 export type ForceMotDePasse = 'vide' | 'refuse' | 'correct' | 'fort';
 export function forceMotDePasse(

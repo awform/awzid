@@ -9,6 +9,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 29/10/2026 — Inscription V2, lots V2-0 (mesure anonyme) et V2-1 (mots de passe simples) ; NON déployé
+
+- **V2-1 — mots de passe** : familles, adultes, ados, enfants = **8 caractères au moins, aucune exigence de composition** (`packages/school/src/mot-de-passe.ts`, règle partagée API / application). Refus seulement : mots de passe courants (liste **locale** de plus de 10 000 entrées, `packages/school/src/mdp-communs.ts`, générée par `scripts/generer-mdp-communs.mjs`, lue par l'API seulement — jamais envoyée à l'appareil — et sans appel externe ; elle peut être remplacée par une liste de mots de passe réellement fuités au même format) et mot de passe égal à l'identifiant, à l'adresse ou au prénom. Personnel (admin, enseignant, rôles de plateforme) : inchangé (12 caractères, second facteur). Les mots de passe existants restent valables (règle appliquée à la création, au changement et à la réinitialisation). Aucun interrupteur : la règle s'applique directement.
+- **Verrou de connexion** (décision du client) : **8 essais puis pause de 10 minutes** pour tous les comptes sauf le personnel (5 essais et pause progressive, inchangés) — une seule règle pour tous les non-membres du personnel, car le type de compte (enfant, ado, adulte) n'est connu qu'après la vérification du mot de passe et le nombre d'essais ne doit pas révéler si un identifiant existe. Réponse : `essais_restants`, `jusqua` (heure de fin), `pause_minutes`. Pause levée quand le mot de passe est changé ou réinitialisé (`leverPauseSiMotDePasseChange`). Textes en fr, en, es, de, ar ; l'écran affiche les essais restants à partir du 3e échec, l'heure de fin et « Mot de passe oublié ? ».
+- **V2-0 — mesure anonyme** : table `funnel_event` (migration 0057), `POST /api/v1/mesure` (sans cookie, rien lu de la requête), entonnoir 7 et 30 jours dans l'admin (`GET /api/v1/admin/entonnoir`, `EntonnoirAdmin.svelte`), purge à 90 jours dans `purgeRetention`. Registre, politiques de confidentialité (documents et pages) mis à jour. Sur l'ancienne inscription en trois écrans, « début de saisie » remplace « choix fait » (le vrai choix « Qui va apprendre ? » viendra avec V2-2).
+- **Tests** : unitaires école (règle, liste), API (`v2-mesure-mdp.test.ts`, auth, lot9, lot11), e2e `v2-motdepasse-mesure.spec.ts` et `mot-de-passe.spec.ts`.
+- **Connus rouges sur main, sans lien** : `priere.test.ts` (plan.json), `tokens.test.ts` (SuppressionAdmin : `color: #fff`).
+
+---
+
 ## 28/10/2026 — Tri de la passe 2 de Codex reporté dans l'application (branche `sync-tri-passe2-wip`) ; NON déployé
 
 - **Livres** : copie `~/awform-content.tri28` (`infra/sync-content.ps1 -Dest awform-content.tri28 -Repo awform-demo`, 1 182 fichiers, 12 différents : re1 l05, re2 ×7, ra1 à ra4 `export-app.json`) ; 31 livres, **3 825 versets, 0 erreur** ; `HADITH_GARDE`, `VIDEO_GARDE`, `VIVANTE_GARDE`, table d'Ayyūb (4 389 textes) régénérées, scénarios « Je parle » : 0 écart ; test « zéro muet » : 0 muet, `zero-muet-global` vert. À faire à la mise en ligne : échanger `~/awform-content` et `~/awform-content.tri28`, puis importer l'édition.

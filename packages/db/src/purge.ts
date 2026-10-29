@@ -7,6 +7,7 @@ import { and, eq, inArray, isNotNull, isNull, lt, ne, or } from 'drizzle-orm';
 import type { Db } from './client.js';
 import { releaseTeacher } from './ecole.js';
 import { leaveClass } from './hifz.js';
+import { purgeFunnel } from './funnel.js';
 import { handOverProfiles } from './responsables.js';
 import * as t from './schema.js';
 
@@ -119,7 +120,8 @@ const DAY = 86400_000;
  * - questions et alertes du tuteur : 12 mois une fois traitées, 24 mois au plus sinon ;
  * - journal d'audit : 12 mois (durée provisoire, décision D9) ;
  * - sessions expirées ou révoquées depuis plus de 30 jours ;
- * - paiements abandonnés (non payés) de plus de 30 jours ; les paiements réussis restent (comptabilité).
+ * - paiements abandonnés (non payés) de plus de 30 jours ; les paiements réussis restent (comptabilité) ;
+ * - compteurs de la mesure anonyme (`funnel_event`, V2-0) : 90 jours.
  */
 export async function purgeRetention(
   db: Db,
@@ -132,6 +134,7 @@ export async function purgeRetention(
   paiements: number;
   messages: number;
   archives: number;
+  mesure: number;
 }> {
   const ago = (days: number) => new Date(now.getTime() - days * DAY);
   const count = (r: { rowCount: number | null }) => r.rowCount ?? 0;
@@ -176,7 +179,18 @@ export async function purgeRetention(
   const cutoff = new Date(Date.UTC(now.getTime() >= Date.UTC(y, 7, 1) ? y - 1 : y - 2, 7, 1));
   const messages = count(await db.delete(t.message).where(lt(t.message.createdAt, cutoff)));
   const archives = await anonymizeSchoolArchives(db, now);
-  return { questionsTuteur, alertesTuteur, journal, sessions, paiements, messages, archives };
+  // V2-0 : compteurs de la mesure anonyme, 90 jours
+  const mesure = await purgeFunnel(db, now);
+  return {
+    questionsTuteur,
+    alertesTuteur,
+    journal,
+    sessions,
+    paiements,
+    messages,
+    archives,
+    mesure,
+  };
 }
 
 /** A27 (décision D-F2 1) : durée de conservation du registre d'un élève parti — PROVISOIRE (juriste). */

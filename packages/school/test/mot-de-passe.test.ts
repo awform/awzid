@@ -1,77 +1,108 @@
 /**
- * Lot 11 — règle des mots de passe (décision du client du 16/10/2026), partagée par l'API et l'indicateur :
- * familles et adultes : (≥ 8 caractères ET 3 types sur 4) OU ≥ 12 caractères ; personnel : ≥ 12 caractères.
+ * V2-1 (29/10/2026) — règle des mots de passe, partagée par l'API et l'indicateur :
+ * familles, adultes, ados, enfants : 8 caractères au moins, AUCUNE exigence de composition ; refus des mots de passe
+ * courants (liste locale) et de ceux égaux à l'identifiant, à l'e-mail ou au prénom. Personnel : 12 caractères,
+ * règle inchangée.
  */
 import { describe, expect, it } from 'vitest';
 import { checkPassword, forceMotDePasse, MDP_MAX, typesDeCaracteres } from '../src/mot-de-passe.js';
+import { MDP_COMMUNS, estMotDePasseCommun } from '../src/liste-communs.js';
 
-describe('types de caractères', () => {
+describe('types de caractères (conservé)', () => {
   it('minuscule, majuscule, chiffre, symbole ; lettre sans casse = minuscule ; diacritique = rien', () => {
     expect(typesDeCaracteres('')).toBe(0);
-    expect(typesDeCaracteres('abc')).toBe(1);
-    expect(typesDeCaracteres('aBc')).toBe(2);
-    expect(typesDeCaracteres('aB3')).toBe(3);
     expect(typesDeCaracteres('aB3!')).toBe(4);
-    expect(typesDeCaracteres('a b')).toBe(2); // l'espace est un symbole
-    expect(typesDeCaracteres('كلمة')).toBe(1);
-    expect(typesDeCaracteres('كَلِمَة')).toBe(1); // les ḥarakāt ne comptent pas comme symbole
-    expect(typesDeCaracteres('١٢٣')).toBe(1); // chiffres arabo-indiens
-    expect(typesDeCaracteres('Éé')).toBe(2);
+    expect(typesDeCaracteres('كَلِمَة')).toBe(1);
   });
 });
 
-describe('règle des familles et adultes', () => {
-  it('7 caractères : toujours trop court, même avec 4 types', () => {
+describe('règle des familles, adultes, ados et enfants (V2-1)', () => {
+  it('7 caractères : trop court ; 8 caractères : accepté, sans majuscule ni chiffre ni symbole', () => {
+    expect(checkPassword('tamarin')).toBe('trop_court');
     expect(checkPassword('Tm7!kpq')).toBe('trop_court');
-    expect(checkPassword('Tamar7x')).toBe('trop_court');
-  });
-  it('8 caractères : accepté avec 3 types, refusé avec 2', () => {
-    expect(checkPassword('Tamari7x')).toBeNull(); // minuscule, majuscule, chiffre
-    expect(checkPassword('tamari7!')).toBeNull(); // minuscule, chiffre, symbole
-    expect(checkPassword('Tamarixz')).toBe('trop_simple'); // 2 types
-    expect(checkPassword('tamari7x')).toBe('trop_simple'); // 2 types
-  });
-  it('11 caractères : encore 3 types exigés', () => {
-    expect(checkPassword('tamarinier7')).toBe('trop_simple');
-    expect(checkPassword('Tamarinier7')).toBeNull();
-    expect(checkPassword('tamarinierz')).toBe('trop_simple');
-  });
-  it('12 caractères : une phrase suffit, sans autre contrainte', () => {
-    expect(checkPassword('tamariniersz')).toBeNull();
+    expect(checkPassword('tamarini')).toBeNull(); // 8 minuscules
+    expect(checkPassword('tamarinier')).toBeNull();
+    expect(checkPassword('TAMARINI')).toBeNull();
+    expect(checkPassword('73958204')).toBeNull(); // 8 chiffres peu courants
     expect(checkPassword('mon thé à la menthe')).toBeNull();
     expect(checkPassword('une phrase de passe كَلِمَة')).toBeNull();
   });
-  it('contrôles gardés : courant, répétition, suite, adresse, longueur maximale', () => {
-    expect(checkPassword('Azerty123')).toBe('trop_courant');
-    expect(checkPassword('Password1')).toBe('trop_courant');
-    expect(checkPassword('motdepasse123')).toBe('trop_courant');
-    expect(checkPassword('aaaaaaaaaaaaaaa')).toBe('trop_courant');
-    expect(checkPassword('123456789012345')).toBe('trop_courant');
-    expect(checkPassword('Fatima.D2026', 'fatima.d@exemple.org')).toBe('contient_email');
+  it('la longueur compte les caractères, pas les octets', () => {
+    expect(checkPassword('كلمةمرور')).toBeNull(); // 8 caractères arabes
+    expect(checkPassword('كلمةمر')).toBe('trop_court');
+  });
+  it('128 caractères au plus', () => {
     expect(checkPassword('x'.repeat(MDP_MAX) + 'y')).toBe('trop_long');
     expect(checkPassword('Ab1-' + 'x'.repeat(MDP_MAX - 4))).toBeNull();
   });
-  it('la longueur compte les caractères, pas les octets', () => {
-    expect(checkPassword('كلمةمرور٧Aب')).toBeNull(); // 11 caractères, 3 types
-    expect(checkPassword('كلمةمرورسهل')).toBe('trop_simple'); // 11 caractères, 1 type
+  it('refuse les mots de passe courants connus de l’application', () => {
+    expect(checkPassword('Azerty123')).toBe('trop_courant');
+    expect(checkPassword('Password1')).toBe('trop_courant');
+    expect(checkPassword('motdepasse123')).toBe('trop_courant');
+    expect(checkPassword('aaaaaaaa')).toBe('trop_courant');
+  });
+  it('refuse un mot de passe égal à l’identifiant, à l’e-mail, à sa partie locale ou au prénom (sans casse)', () => {
+    expect(checkPassword('fatima.diallo@exemple.org', 'fatima.diallo@exemple.org')).toBe(
+      'egal_identifiant',
+    );
+    expect(checkPassword('Fatima.Diallo', 'fatima.diallo@exemple.org')).toBe('egal_identifiant');
+    expect(checkPassword('mouhamed-482', '', { identifiants: ['mouhamed-482'] })).toBe(
+      'egal_identifiant',
+    );
+    expect(checkPassword('Abdoulaye', '', { identifiants: ['abdoulaye', null] })).toBe(
+      'egal_identifiant',
+    );
+    // seulement ÉGAL : un mot de passe qui contient le prénom reste accepté
+    expect(checkPassword('Abdoulaye2026!', '', { identifiants: ['Abdoulaye'] })).toBeNull();
+    expect(checkPassword('fatima.diallo-2026!', 'fatima.diallo@exemple.org')).toBeNull();
+  });
+  it('liste fournie par le serveur : refus « trop_courant »', () => {
+    const estCommun = (m: string) => m === 'tamarini';
+    expect(checkPassword('Tamarini', '', { estCommun })).toBe('trop_courant');
+    expect(checkPassword('tamarinz', '', { estCommun })).toBeNull();
   });
 });
 
-describe('règle du personnel', () => {
-  it('12 caractères au moins, la voie « 8 et 3 types » ne vaut pas', () => {
+describe('liste locale des mots de passe courants', () => {
+  it('au moins 10 000 entrées, 8 caractères ou plus, en minuscules, sans doublon', () => {
+    expect(MDP_COMMUNS.size).toBeGreaterThanOrEqual(10_000);
+    for (const m of MDP_COMMUNS) {
+      expect([...m].length, m).toBeGreaterThanOrEqual(8);
+      expect(m, m).toBe(m.toLowerCase());
+    }
+  });
+  it('contient les classiques, sans casse', () => {
+    for (const m of ['password', 'motdepasse', 'azertyuiop', 'bismillah', '12345678'])
+      expect(estMotDePasseCommun(m), m).toBe(true);
+    expect(estMotDePasseCommun('PassWord1')).toBe(true);
+    expect(estMotDePasseCommun('Bismillah123')).toBe(true);
+    expect(estMotDePasseCommun('tamarinier7')).toBe(false);
+  });
+  it('aucune ressource externe : la liste est un module du paquet (aucun import réseau)', () => {
+    expect(typeof MDP_COMMUNS.has).toBe('function');
+  });
+});
+
+describe('règle du personnel (inchangée)', () => {
+  it('12 caractères au moins ; 8 caractères et 3 types ne valent pas', () => {
     expect(checkPassword('Tamarinier7', '', { personnel: true })).toBe('trop_court');
     expect(checkPassword('Tamari7x', '', { personnel: true })).toBe('trop_court');
     expect(checkPassword('tamariniersz', '', { personnel: true })).toBeNull();
   });
+  it('refuse toujours les mots de passe courants et ceux qui contiennent l’adresse', () => {
+    expect(checkPassword('motdepasse123', '', { personnel: true })).toBe('trop_courant');
+    expect(checkPassword('Fatima.D2026-xyz', 'fatima.d@exemple.org', { personnel: true })).toBe(
+      'contient_email',
+    );
+  });
 });
 
 describe('indicateur rouge / orange / vert = règle du serveur', () => {
-  it('vide, refusé, correct (8 à 11 et 3 types), fort (12 et plus)', () => {
+  it('vide, refusé, correct (8 à 11), fort (12 et plus)', () => {
     expect(forceMotDePasse('')).toBe('vide');
     expect(forceMotDePasse('Tamar7x')).toBe('refuse');
-    expect(forceMotDePasse('Tamarixz')).toBe('refuse');
+    expect(forceMotDePasse('tamarini')).toBe('correct');
     expect(forceMotDePasse('Azerty123')).toBe('refuse');
-    expect(forceMotDePasse('Tamari7x')).toBe('correct');
     expect(forceMotDePasse('Tamarinier7')).toBe('correct');
     expect(forceMotDePasse('mon thé à la menthe')).toBe('fort');
     expect(forceMotDePasse('Tamari7x', '', { personnel: true })).toBe('refuse');
@@ -82,8 +113,7 @@ describe('indicateur rouge / orange / vert = règle du serveur', () => {
       'a',
       'Ab1!',
       'Tamar7x',
-      'Tamari7x',
-      'tamari7x',
+      'tamarini',
       'Tamarinier7',
       'tamariniersz',
       'Azerty123',

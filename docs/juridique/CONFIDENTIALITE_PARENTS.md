@@ -22,6 +22,7 @@ certificats) ; nous gardons ces données pour elle.
 | Ce que nous gardons | Pourquoi | Combien de temps |
 |---|---|---|
 | Votre e-mail, votre mot de passe (protégé, illisible même pour nous), votre pays, votre langue | vous connecter | tant que le compte existe ; **effacé sous 30 jours** après sa suppression |
+| Des **compteurs anonymes** de l'inscription et de la connexion (étape atteinte, heure arrondie, téléphone ou ordinateur, langue) : jamais d'adresse IP, d'identifiant ni d'e-mail, aucun cookie | repérer où l'inscription est difficile, pour la simplifier | **90 jours**, puis effacés automatiquement |
 | Le profil de votre enfant (surnom, année de naissance, niveau, image choisie) | lui proposer les bonnes leçons | idem |
 | Vos **accords** (date, texte accepté, pays) | prouver que vous avez donné votre accord | [à fixer par le juriste] |
 | Ses réponses, sa progression, son carnet de hifẓ, son carnet de pratique | suivre ses progrès | tant que le compte existe |

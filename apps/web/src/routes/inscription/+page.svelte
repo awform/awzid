@@ -13,6 +13,7 @@
   import { chargerStatut, type AccesStatut } from '$lib/acces';
   import ListeAttente from './ListeAttente.svelte';
   import { retenirSource } from '$lib/provenance';
+  import { mesure } from '$lib/mesure';
 
   /**
    * Inscription d'un PARENT (il créera ensuite les profils de ses enfants, sans e-mail) ou d'un ADULTE
@@ -166,6 +167,7 @@
   /** provenance (?src= des affiches, retenue pour la session de l'onglet) envoyée avec l'inscription */
   let source: string | null = null;
   onMount(async () => {
+    mesure('inscription_ouverte');
     source = retenirSource(new URLSearchParams(location.search));
     acces = await chargerStatut();
     if (acces?.google) await retourGoogle(new URLSearchParams(location.search));
@@ -275,6 +277,11 @@
     const trouvees = valider(etape);
     erreurs = trouvees;
     error = '';
+    // V2-0 : étapes atteintes (compteurs anonymes) — identifiants corrects, puis mot de passe accepté
+    if (etape === 1 && !trouvees.email && !trouvees.telephone) {
+      mesure('inscription_identifiants');
+      if (!trouvees.password && !trouvees['password-confirmer']) mesure('inscription_mdp_valide');
+    }
     if (Object.keys(trouvees).length) {
       await tick();
       const id = CHAMPS[etape].find((c) => trouvees[c]);
@@ -311,6 +318,7 @@
     'mot_de_passe_trop_simple',
     'mot_de_passe_trop_courant',
     'mot_de_passe_contient_email',
+    'mot_de_passe_egal_identifiant',
     'reseau',
     'trop_de_demandes',
     // 18/10/2026 : numéro WhatsApp et Google
@@ -379,6 +387,7 @@
       document.getElementById('codes-titre')?.focus();
       return;
     }
+    mesure('inscription_compte_cree');
     await entrer();
   }
   async function entrer() {
@@ -521,6 +530,7 @@
         class="form"
         novalidate
         onsubmit={avancer}
+        onfocusin={() => mesure('inscription_choix')}
         data-testid="inscription-form"
         data-etape={etape}
       >
@@ -647,6 +657,7 @@
                   bind:identiques={mdpIdentiques}
                   bind:niveau={niveauMdp}
                   email={mode === 'email' && !assistee?.numero ? email : ''}
+                  identifiants={[pseudonym]}
                   erreur={erreurs.password ?? ''}
                   erreurConfirmation={erreurs['password-confirmer'] ?? ''}
                 />

@@ -38,7 +38,7 @@ import {
 import type { EtatFonction } from '@awform/school';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { verifierJeton } from '../antibot.js';
-import { checkPassword, estPersonnel, MAX_LENGTH } from './passwords.js';
+import { checkPassword, estPersonnel, identifiantsDuCompte, MAX_LENGTH } from './passwords.js';
 import {
   ageFromYear,
   closedForAge,
@@ -60,6 +60,11 @@ import {
   failAttempt,
   reserveAttempt,
   createSession,
+  ESSAIS_CONNEXION,
+  essaisRestants,
+  leverPauseSiMotDePasseChange,
+  MAX_FAILURES,
+  PAUSE_CONNEXION_MIN,
   lockedUntil,
   lookupSession,
   readCookie,
@@ -440,7 +445,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // mot de passe : toujours, sauf avec Google (facultatif) ; règle du lot 11
       if (!b.password && !g) return err(reply, 400, 'mot_de_passe_requis');
       if (b.password) {
-        const pb = checkPassword(b.password, email ?? '');
+        // V2-1 : ni l'adresse, ni le prénom (pseudonyme) ne peuvent servir de mot de passe
+        const pb = checkPassword(b.password, email ?? '', { identifiants: [b.pseudonym] });
         if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       }
       // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
@@ -651,9 +657,39 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // assez haut pour qu'une classe derrière une même adresse ne soit jamais bloquée par les erreurs de ses élèves
       // (30 élèves × 5 erreurs = 150 < 300 par heure) ; réglable : AWFORM_ECHECS_CONNEXION_ADRESSE
       const ipKey = `login-ip:${req.ip}`;
+      const chercher = () =>
+        db
+          .select()
+          .from(t.account)
+          .where(
+            and(
+              e164
+                ? eq(t.account.phoneHash, phoneHashOf(opts.secretKey!, e164))
+                : eq(t.account.email, email),
+              isNull(t.account.deletedAt),
+            ),
+          );
+      // V2-1 : la pause est levée si le mot de passe a été changé ou réinitialisé depuis le dernier essai
+      // (« Mot de passe oublié ? » débloque tout de suite) ; réponse identique que le compte existe ou non
+      const [a] = await chercher();
+      // V2-1 (décision du client) : 8 essais puis 10 minutes de pause ; le PERSONNEL garde 5 essais et la pause
+      // progressive (1, 2, 4… minutes)
+      const personnel = a ? await estPersonnel(db, a.id) : false;
+      const max = personnel ? MAX_FAILURES : ESSAIS_CONNEXION;
+      const pause = personnel ? undefined : PAUSE_CONNEXION_MIN;
+      const infoPause = pause ? { pause_minutes: pause } : {};
+      if (await lockedUntil(db, accKey))
+        await leverPauseSiMotDePasseChange(db, accKey, a?.passwordChangedAt);
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
-      if (locked) return err(reply, 429, 'verrouille', { jusqua: locked.toISOString() });
-      if (!(await reserveAttempt(db, accKey))) return err(reply, 429, 'verrouille');
+      if (locked)
+        return err(reply, 429, 'verrouille', { jusqua: locked.toISOString(), ...infoPause });
+      if (!(await reserveAttempt(db, accKey, max, pause))) {
+        const jusqua = await lockedUntil(db, accKey);
+        return err(reply, 429, 'verrouille', {
+          ...(jusqua ? { jusqua: jusqua.toISOString() } : {}),
+          ...infoPause,
+        });
+      }
       // démonstration seulement : `parent`, `enfant`… + mot de passe court, sans second facteur ; jamais en
       // production (option absente : l'identifiant court ne correspond à aucune adresse et échoue plus bas)
       const demo = opts.demoLogin ? await demoLogin(db, email, req.body.password) : null;
@@ -666,25 +702,24 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await setSession(reply, demo.accountId, demo.kind, true);
         return { ...(await me(demo.accountId, true)), profilDemo: demo.profileId };
       }
-      const [a] = await db
-        .select()
-        .from(t.account)
-        .where(
-          and(
-            e164
-              ? eq(t.account.phoneHash, phoneHashOf(opts.secretKey!, e164))
-              : eq(t.account.email, email),
-            isNull(t.account.deletedAt),
-          ),
-        );
       const ok = await verifySecret(req.body.password, a?.passwordHash);
       if (!a || !ok) {
-        await failAttempt(db, accKey);
+        await failAttempt(db, accKey, max, pause);
         await recordFailure(db, ipKey, ECHECS_CONNEXION_ADRESSE);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
           email: a ? undefined : 'inconnu',
         });
-        return err(reply, 401, 'identifiants_incorrects');
+        // V2-1 : essais restants (0 = la pause commence, avec son heure de fin) ; la clé étant
+        // « identifiant + adresse », la réponse est la même que l'identifiant existe ou non
+        const restants = await essaisRestants(db, accKey, max);
+        if (restants === 0) {
+          const jusqua = await lockedUntil(db, accKey);
+          return err(reply, 429, 'verrouille', {
+            ...(jusqua ? { jusqua: jusqua.toISOString() } : {}),
+            ...infoPause,
+          });
+        }
+        return err(reply, 401, 'identifiants_incorrects', { essais_restants: restants });
       }
       // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
       // ne le connaît pas) ; aucune session n'est ouverte
@@ -712,7 +747,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');
         const counter = verifyTotp(decrypt(a.totpSecretEnc ?? '', opts.secretKey), req.body.totp);
         if (counter === null || (a.totpLastCounter !== null && counter <= a.totpLastCounter)) {
-          await failAttempt(db, accKey);
+          await failAttempt(db, accKey, max, pause);
           return err(reply, 401, 'totp_incorrect');
         }
         // audit SEC-5 : consommation ATOMIQUE du pas de temps (connexions parallèles : une seule gagne)
@@ -727,7 +762,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           )
           .returning({ id: t.account.id });
         if (!won.length) {
-          await failAttempt(db, accKey);
+          await failAttempt(db, accKey, max, pause);
           return err(reply, 401, 'totp_incorrect');
         }
         mfa = true;
@@ -804,6 +839,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // lot 11 : règle des familles (8 caractères et 3 types, ou phrase de 12) ; personnel : 12 caractères au moins
       const pb = checkPassword(req.body.next, a.email ?? '', {
         personnel: await estPersonnel(db, a.id),
+        identifiants: await identifiantsDuCompte(db, a.id),
       });
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       await db

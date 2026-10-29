@@ -9,6 +9,8 @@
    *  - champ « Confirmer le mot de passe » : `identiques` (lié) dit au formulaire si les deux sont égaux ;
    *  - consigne courte et indicateur rouge / orange / vert qui applique EXACTEMENT la règle du serveur
    *    (`@awform/school`, mot-de-passe.ts : la même fonction contrôle l'API).
+   * V2-1 (29/10/2026) : familles, adultes, ados, enfants = 8 caractères au moins, aucune exigence de complexité ;
+   * l'indicateur refuse aussi un mot de passe égal à l'e-mail ou au prénom (la liste des mots courants est côté serveur).
    * Pas de refonte visuelle (elle viendra avec les maquettes validées) : les champs restent ceux du formulaire.
    * Inscription en étapes (16/10/2026) : `niveau` (lié, lecture seule) donne le verdict de la règle à la page, qui
    * valide l'étape sans importer la règle une seconde fois ; `erreur` et `erreurConfirmation` (facultatifs) affichent
@@ -21,6 +23,7 @@
     id = 'password',
     label = '',
     email = '',
+    identifiants = [],
     personnel = false,
     erreur = '',
     erreurConfirmation = '',
@@ -31,6 +34,8 @@
     id?: string;
     label?: string;
     email?: string;
+    /** V2-1 : prénom / pseudonyme / identifiant que le mot de passe ne doit pas égaler */
+    identifiants?: string[];
     personnel?: boolean;
     erreur?: string;
     erreurConfirmation?: string;
@@ -38,7 +43,7 @@
 
   let confirmation = $state('');
   let visible = $state(false);
-  const force = $derived(forceMotDePasse(value, email, { personnel }));
+  const force = $derived(forceMotDePasse(value, email, { personnel, identifiants }));
   const ecart = $derived(confirmation.length > 0 && confirmation !== value);
   $effect(() => {
     const egaux = value === confirmation;

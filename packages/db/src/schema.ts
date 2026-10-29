@@ -3321,3 +3321,42 @@ export const hifzClasseErreur = pgTable(
     ),
   ],
 );
+
+/**
+ * V2-0 (29/10/2026) — MESURE ANONYME de l'inscription et de la connexion : on COMPTE seulement les étapes atteintes.
+ * Aucune donnée personnelle : ni adresse IP, ni identifiant, ni e-mail, ni cookie, ni visite. Une ligne = un compteur
+ * pour (heure arrondie, étape, plateforme, langue) ; l'heure est arrondie à l'heure. Conservation de 90 jours,
+ * effacement automatique par le travailleur de nuit (`purgeFunnel`).
+ */
+export const FUNNEL_ETAPES = [
+  'inscription_ouverte',
+  'inscription_choix',
+  'inscription_identifiants',
+  'inscription_mdp_valide',
+  'inscription_compte_cree',
+  'connexion_ouverte',
+  'connexion_identifiants',
+  'connexion_reussie',
+  'connexion_echec_mdp',
+  'connexion_blocage',
+] as const;
+export const FUNNEL_PLATEFORMES = ['mobile', 'bureau'] as const;
+export const FUNNEL_LANGUES = ['fr', 'en', 'es', 'de', 'ar', 'autre'] as const;
+const enListe = (l: readonly string[]) => l.map((x) => `'${x}'`).join(', ');
+export const funnelEvent = pgTable(
+  'funnel_event',
+  {
+    hour: timestamp('hour', { withTimezone: true }).notNull(),
+    step: text('step').notNull(),
+    platform: text('platform').notNull(),
+    locale: text('locale').notNull(),
+    n: integer('n').notNull().default(0),
+  },
+  (t) => [
+    primaryKey({ columns: [t.hour, t.step, t.platform, t.locale] }),
+    check('funnel_event_step', sql.raw(`"step" IN (${enListe(FUNNEL_ETAPES)})`)),
+    check('funnel_event_platform', sql.raw(`"platform" IN (${enListe(FUNNEL_PLATEFORMES)})`)),
+    check('funnel_event_locale', sql.raw(`"locale" IN (${enListe(FUNNEL_LANGUES)})`)),
+    check('funnel_event_n', sql`${t.n} >= 0`),
+  ],
+);

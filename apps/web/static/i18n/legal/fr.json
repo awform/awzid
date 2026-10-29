@@ -170,7 +170,8 @@
             "Paiement (après la bêta) : formule, statut et référence chez le prestataire ; jamais de numéro de carte.",
             "Sécurité du compte : liens envoyés par e-mail (vérification, mot de passe oublié, changement d'adresse) — seule une empreinte du lien est gardée, avec son usage et sa date ; adresse IP et empreinte de l'adresse e-mail pendant 24 heures pour limiter les essais abusifs.",
             "Signalements et avis : catégorie, description écrite par vous (500 caractères au plus), page où vous étiez (chemin seul), version de l'application, rôle et tranche d'âge (enfant, ado, adulte) ; image de l'écran seulement si vous la joignez, faite sur votre appareil, zones privées et champs de saisie masqués. Un enfant n'envoie que la catégorie. Aucun nom, aucune adresse e-mail dans le signalement.",
-            "Usage sans traceur : des totaux par jour d'espaces ou de fonctions utilisés, sans adresse de page, sans heure, sans identifiant d'appareil."
+            "Usage sans traceur : des totaux par jour d'espaces ou de fonctions utilisés, sans adresse de page, sans heure, sans identifiant d'appareil.",
+            "Mesure anonyme de l'inscription et de la connexion : nous comptons seulement les étapes atteintes (page ouverte, début de saisie, identifiants saisis, mot de passe validé, compte créé, échec du mot de passe, blocage). Chaque compteur ne porte que l'étape, l'heure arrondie à l'heure, la plateforme (téléphone ou ordinateur) et la langue : ni adresse IP, ni identifiant, ni adresse e-mail, ni cookie, aucun lien avec une personne. Les compteurs sont effacés automatiquement après 90 jours."
           ]
         },
         {
