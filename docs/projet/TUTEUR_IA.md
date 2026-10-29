@@ -767,3 +767,15 @@ la nuit (médiane 3,5 s, 95ᵉ centile 15,4 s, 2 délais dépassés → replis I
 sécurité de Google (SAFETY) sur une phrase anodine ; N6 « آخَر » encore hors liste malgré l'invite ; PR3 (خ) non
 entendu. Coût : 0,0038 € par échange oral, 0,0048 € par échange écrit. Rapport :
 `tuteur-batteries-2026-10-28/batterie-20261029-0134.md`.
+
+### Batterie réelle du 29/10/2026, 11 h 07 (même schéma à l'écrit qu'à l'oral, `ec6218c621ce`) — ÉCHEC, non fusionné
+
+Flash-Lite répond à l'oral et à l'écrit ; gemini-3.8-flash, en parallèle et coupé à 6 s, fait la prononciation (oral)
+et la correction de grammaire (écrit) ; relance unique de sécurité et de niveau. Résultat : § 9 43/49, garde-fous
+31/32, 0 fausse remarque, oral médiane 2 728 ms et 95ᵉ centile 16 482 ms. Cause principale : **gemini-3.8-flash a
+dépassé 6 s presque à chaque appel** (prononciation perdue 15/17, correction perdue 23/24) — d'où C3 non corrigé,
+aucune faute de prononciation repérée, et l'oral ralenti par l'attente de la transcription de secours (jusqu'à 6 s).
+Autres : Flash-Lite colle parfois des lettres latines après la traduction (« ?kappa », « ?karimatouchka ») que le
+filtre de traduction ne repère pas encore ; « آخَر » toujours hors liste après relance (N6) ; réponse hors schéma
+(C4), délai dépassé (C6) et réponse coupée (CO4 : un garde-fou en repli). Rapport :
+`tuteur-batteries-2026-10-28/batterie-20261029-1107.md`.
