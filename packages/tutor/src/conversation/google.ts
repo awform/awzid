@@ -18,6 +18,7 @@ import {
   PRONON_SCHEMA,
   REGLAGES_GENERATION,
   REGLAGES_PRONONCIATION,
+  RAPPEL_COURT,
   RELANCE_SECURITE,
 } from './prompt.js';
 import type {
@@ -395,8 +396,9 @@ export class VertexConversation implements ConvFournisseur {
         `nouvel_essai apres ${seuils ? `securite (${Object.keys(seuils).join(',')})` : 'max_tokens'}`,
       );
       try {
+        // réponse coupée : la relance demande une réponse PLUS COURTE (29/10/2026)
         r = await this.envoyer(
-          systeme,
+          seuils ? systeme : `${systeme}\n\n${RAPPEL_COURT}`,
           e,
           reflexion,
           this.o.delaiNouvelEssaiMs ?? DELAI_NOUVEL_ESSAI_MS,

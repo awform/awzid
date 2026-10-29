@@ -28,12 +28,7 @@ import {
   type EntreeCategorie,
   type IssueTour,
 } from './garde.js';
-import {
-  completerTranscription,
-  differenceSon,
-  issuePrononciation,
-  type IssuePrononciation,
-} from './prononciation.js';
+import { differenceSon, issuePrononciation, type IssuePrononciation } from './prononciation.js';
 import { PROMPT_VERSION, prononInvite, systemPrompt } from './prompt.js';
 import type {
   ConvFournisseur,
@@ -898,11 +893,8 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       ...(audio ? { audio } : { texte: s.entree }),
     });
     const brut = auNiveau.out;
-    // transcription vide à l'oral : phrase voulue de l'appel de prononciation (garde-fou), comme l'API
-    const { out, complete } = await completerTranscription(
-      brut,
-      enCours ? enCours.then((x) => x.r) : null,
-    );
+    // 29/10/2026 : transcription vide à l'oral → réponse neutre immédiate (garde.ts), comme l'API
+    const out = brut;
     const latenceMs = Date.now() - t0;
     appels++;
     let c =
@@ -915,12 +907,6 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       mots: ctx.mots,
       dialogue: ctx.dialogue,
     });
-    if (complete)
-      issue.filtre.push({
-        step: 'transcription',
-        action: 'ok',
-        detail: 'phrase_voulue_prononciation',
-      });
     if (auNiveau.relance !== 'aucune')
       issue.filtre.push({ step: 'niveau_relance', action: 'ok', detail: auNiveau.relance });
     // oral : voix de la réponse (jamais de Coran, jamais un renvoi), comptée dans la latence vécue

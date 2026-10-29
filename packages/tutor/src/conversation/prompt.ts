@@ -254,6 +254,10 @@ export const RELANCE_SECURITE = {
   reponse_fr: 'Peux-tu le redire autrement ?',
 } as const;
 
+/** 29/10/2026 : relance après une réponse COUPÉE (max_tokens) : plus courte, sans commentaire. */
+export const RAPPEL_COURT =
+  'RAPPEL : ta réponse précédente était trop longue et a été coupée. Réponds BEAUCOUP plus court : une seule phrase arabe courte, sa traduction exacte, aucun commentaire.';
+
 /**
  * 29/10/2026 : contrôle de NIVEAU par script après la réponse. Si au moins 10 % des mots sont hors de la liste (seuil de
  * la batterie), UNE relance avec ce rappel ; si le mot reste, la réponse passe, marquée au journal (« niveau »).
@@ -279,6 +283,7 @@ export const PROMPT_VERSION = createHash('sha256')
       JSON.stringify(CORR_SCHEMA) +
       JSON.stringify(RELANCE_SECURITE) +
       RAPPEL_NIVEAU(['x']) +
+      RAPPEL_COURT +
       // 28/10/2026 : l'appel de prononciation (invite, schéma, réglages) est validé par la même batterie
       PRONON_REGLES +
       JSON.stringify(PRONON_SCHEMA) +
