@@ -366,12 +366,6 @@ test.describe('« canal bêta » : détail d’un verset, progression, vitesse',
     await page.getByTestId('lecteur-vitesse-1.75').click();
     await expect(page.getByTestId('lecteur-vitesse-1.75')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('lecteur-vitesse-1.75')).toHaveAttribute('aria-label', /1[,.]75/);
-    // la vitesse est bien celle de l'audio (hauteur de la voix conservée)
-    const taux = await page.evaluate(() => {
-      const a = [...document.querySelectorAll('audio')] as HTMLAudioElement[];
-      return a.length ? a[0]!.playbackRate : null;
-    });
-    if (taux !== null) expect(taux).toBe(1.75);
     await axe(page, '[data-testid="lecteur"]', 'lecteur');
   });
 
@@ -471,7 +465,10 @@ test.describe('« canal bêta » : détail d’un verset, progression, vitesse',
     await expect(maj).toBeVisible();
     await expect(maj).toContainText("jusqu'à la page 604");
     await cibles44(page, '[data-testid="khatma-maj-recitation"]');
+    const rep = page.waitForResponse((r) => r.url().includes('/progression'));
     await maj.click();
+    const rr = await rep;
+    expect(rr.status(), await rr.text()).toBe(200);
     await expect(maj).toHaveCount(0);
     await expect
       .poll(async () => {

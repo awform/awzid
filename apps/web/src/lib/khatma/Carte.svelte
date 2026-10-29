@@ -120,8 +120,8 @@
     const r = await enregistrer(profil.id, p, {
       done,
       day: aujourdhui(),
-      sura: pos?.[0] ?? null,
-      aya: pos?.[1] ?? null,
+      // khatma termin?e : pas de position (le serveur refuse null : ? sura >= 1 ?)
+      ...(pos ? { sura: pos[0], aya: pos[1] } : {}),
       corrige,
     });
     if (r.plan) remplacer(r.plan);
