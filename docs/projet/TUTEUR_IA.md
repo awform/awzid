@@ -758,3 +758,12 @@ JSON recopié, boucle jusqu'au plafond : 8-11 s) ; MINIMAL / 0,2 → 4/21 ; **LO
    conversation libre en bêta : c'est pourquoi la branche n'est pas fusionnée.
 4. Pistes : abaisser l'exigence sur C3 (subtilité de grammaire) ou garder 3.8-flash pour l'écrit seulement ; ajouter
    des phrases de correction à la batterie ; relancer la batterie à une heure creuse pour la latence.
+### Batterie réelle de nuit du 29/10/2026 (01 h 34, version hybride `e8226aa4996b`) — ÉCHEC, branche non fusionnée
+
+Oral Flash-Lite, écrit gemini-3.8-flash, prononciation coupée à 6 s, nouvel essai unique après une réponse coupée.
+Oral : médiane 1 551 ms, 95ᵉ centile 2 222 ms (**tenu**) ; 0 fausse remarque ; remarques perdues 1/17 ; fautes repérées
+6/8. **Non tenu** : § 9 44/49 (objectif 47) et garde-fous 31/32. Causes : gemini-3.8-flash à l'écrit lent et instable
+la nuit (médiane 3,5 s, 95ᵉ centile 15,4 s, 2 délais dépassés → replis IN5 et FP1, L2 à 7,6 s) ; C4 bloqué par la
+sécurité de Google (SAFETY) sur une phrase anodine ; N6 « آخَر » encore hors liste malgré l'invite ; PR3 (خ) non
+entendu. Coût : 0,0038 € par échange oral, 0,0048 € par échange écrit. Rapport :
+`tuteur-batteries-2026-10-28/batterie-20261029-0134.md`.
