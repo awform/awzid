@@ -520,9 +520,12 @@ async function interpreterReponse(
 
 /**
  * Délai de l'appel de prononciation (mesuré le 21/10 : 1,5 à 7,6 s ; batterie du 28/10 : 4 appels sur 17 au-delà de
- * 9 s) ; aucun nouvel essai (remarque facultative, elle arrive après la réponse).
+ * 9 s ; 29/10 midi : médiane 6,6 s, soir : 3,4 s, 95ᵉ centile 7,8 s → délai porté à 9 s, la remarque étant différée et
+ * sans effet sur la latence de la réponse) ; aucun nouvel essai (remarque facultative, elle arrive après la réponse).
  */
-export const DELAI_PRONONCIATION_MS = 6_000;
+export const DELAI_PRONONCIATION_MS = 9_000;
+/** Correction de l'écrit (Flash-Lite, invite courte, ≈ 1 s) : coupée à 6 s (29/10/2026). */
+export const DELAI_CORRECTION_MS = 6_000;
 
 /** Corps de l'appel de PRONONCIATION : audio seul, invite courte (dialogue de la leçon), aucun historique. */
 export function corpsPrononciation(
@@ -712,7 +715,7 @@ export class VertexCorrection implements CorrFournisseur {
           safetySettings: SECURITE,
           labels: { app: 'awzid', fonction: 'tuteur-correction' },
         }),
-        signal: AbortSignal.timeout(this.o.delaiMs ?? DELAI_PRONONCIATION_MS),
+        signal: AbortSignal.timeout(this.o.delaiMs ?? DELAI_CORRECTION_MS),
       });
       return await interpreterReponse(r, reflexion, message, REGLAGES_CORRECTION.maxOutputTokens);
     } catch (err) {

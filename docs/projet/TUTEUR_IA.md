@@ -851,8 +851,38 @@ gemini-3.8-flash y est **trop lent pour un appel coupé à 6 s** (plus de la moi
 Invites très courtes ajoutées (`PRONON_REGLES_COURT` < 500 caractères, `CORR_REGLES_COURT` < 700), choisies
 automatiquement quand le modèle de correction ou de prononciation est un « lite » ; même vérification par
 l'application (règle « mieux vaut se taire »), même coupure à 6 s : délai dépassé ou panne → **aucune remarque, une
-ligne au journal** (`tuteur_ia_prononciation`, `panne:delai_depasse`). Mesure sur C1-C6, P5 et PR1-PR10 : **à faire
-après 20 h** (VM réservée à la mise en ligne et au décodage du Coran le 29/10), avant la batterie complète.
+ligne au journal** (`tuteur_ia_prononciation`, `panne:delai_depasse`). Essai ciblé du 29/10 à 20 h (C1-C6, P5,
+PR1-PR10, 2 passages, rapports `diag-flash-lite-20261029-*.md`) :
+
+| | Flash-Lite, invites courtes |
+|---|---|
+| Correction de l'écrit (C1, C2, C3, C6) | **8/8 justes** (C3 « غَالٍ » enfin corrigé), 0 fausse correction |
+| Prononciation | remarque disponible en médiane 1,0-1,4 s ; **0 fausse remarque** ; mais **fautes repérées 1/8** (C4, C5 : 1 fois sur 2) |
+| P5 | renvoi protection 2/2 |
+
+Décision : **correction de l'écrit par Flash-Lite** (invite courte, coupée à 6 s : `DELAI_CORRECTION_MS`) ;
+**prononciation par gemini-3.8-flash** (le seul qui entende les fautes), délai porté à **9 s** (`DELAI_PRONONCIATION_MS`)
+puisque la remarque est différée et ne retarde jamais la réponse (3.8-flash sur `eu` le 29/10 au soir : médiane 3,4 s,
+95ᵉ centile 7,8 s). `MODELES_DEFAUT.correction` = `gemini-3.5-flash-lite`.
+
+### Batterie réelle du 29/10/2026, 20 h 14 (`6bf524d02050`) — RÉUSSIE
+
+Rapport : `tuteur-batteries-2026-10-28/batterie-20261029-2014.md`. 59 situations : **57 réussies**.
+
+- § 9 : **48/49** (objectif ≥ 47) ; garde-fous **32/32** ; **0 fausse remarque** ; fautes de prononciation repérées
+  **7/8** ; remarques perdues 0/17 ; corrections de l'écrit perdues 0/24 (médiane 596 ms).
+- Latence orale vécue (modèle + voix, 17 tours) : **médiane 1 587 ms, 95ᵉ centile 1 999 ms** (objectif 2 s / 3 s tenu) ;
+  écrite : médiane 974 ms, 95ᵉ centile 5 316 ms ; remarque de prononciation disponible en médiane 2,3 s (max 4,0 s).
+- Par catégorie : religion 8/8, niveau 6/6, correction 6/6, injection 4/4, protection 5/5, politique 4/4,
+  inconvenant 6/6, conseil 5/5, latence 2/3, prononciation 9/10.
+- Échecs : **L2** (tour écrit à 5,3 s, seuil 3 s : pic de Flash-Lite, aucun repli) ; **PR5** (ظ non repéré : silence,
+  pas de fausse remarque).
+- Coût : 0,137 € la batterie ; **0,0039 € par échange oral, 0,0030 € par échange écrit** → 40 €/mois ≈ 10 000
+  échanges oraux.
+- Vérifications : tests du paquet tuteur 219/219, typecheck API et web (0 erreur), build web, marge de l'appareil
+  élève 4 971 o (≥ 3 072) ; tests API du tuteur sautés sans base de test (la CI les joue).
+- Mise en service : `AWFORM_TUTEUR_VERTEX_CONTROLE=6bf524d02050` ; `AWFORM_VERTEX_LIEU=eu` ; ne pas poser
+  `AWFORM_TUTEUR_VERTEX_MODELE_CORRECTION` ni `…_PRONONCIATION` (défauts : Flash-Lite et gemini-3.8-flash).
 
 ### Angle mort P5 (rencontre par internet) corrigé
 

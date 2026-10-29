@@ -221,7 +221,7 @@ export const REGLAGES_GENERATION = {
  */
 export const MODELES_DEFAUT = {
   conversation: 'gemini-3.5-flash-lite',
-  correction: 'gemini-3.8-flash',
+  correction: 'gemini-3.5-flash-lite',
   prononciation: 'gemini-3.8-flash',
 } as const;
 

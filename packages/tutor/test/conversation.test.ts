@@ -775,7 +775,7 @@ describe('mise en service', () => {
     expect(v.fournisseur?.modele).toBe('gemini-3.5-flash-lite');
     expect(v.prononciation?.modele).toBe('gemini-3.8-flash');
     // 29/10/2026 : correction de l'écrit par gemini-3.8-flash, en parallèle (coupable par AWFORM_TUTEUR_CORRECTION)
-    expect(v.correction?.modele).toBe('gemini-3.8-flash');
+    expect(v.correction?.modele).toBe('gemini-3.5-flash-lite');
     expect(setupConversation({ ...base, AWFORM_TUTEUR_CORRECTION: 'off' }).correction).toBeNull();
     expect(s.correction?.real).toBe(false);
     expect(v.tarifPrononciation?.sortie).toBeGreaterThan(0);
