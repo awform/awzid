@@ -13,53 +13,62 @@
  * Aucun secret : le jeton vient du serveur de métadonnées de la VM (compte emprunté : AWFORM_VERTEX_COMPTE).
  */
 import { tarifDe, type Tarif } from './budget.js';
+import { CorrectionSimulee } from './correction.js';
 import {
   GoogleTts,
   jetonGoogle,
   LIEUX_UE,
   VertexConversation,
+  VertexCorrection,
   VertexPrononciation,
   type Fetch,
 } from './google.js';
-import { MODELES_DEFAUT, PROMPT_VERSION, REGLAGES_ECRIT } from './prompt.js';
+import { MODELES_DEFAUT, PROMPT_VERSION } from './prompt.js';
 import { PrononciationSimulee } from './prononciation.js';
 import { ConversationSimulee, SyntheseSimulee } from './simule.js';
-import type { ConvFournisseur, PrononFournisseur, Synthese } from './types.js';
+import type { ConvFournisseur, CorrFournisseur, PrononFournisseur, Synthese } from './types.js';
 
 export type ModeConversation = 'off' | 'local' | 'simule' | 'vertex';
 
 export interface ConvSetup {
   mode: ModeConversation;
-  /** null : pas d'étage 2. 28/10/2026 : fournisseur de l'ORAL (Flash-Lite) ; l'écrit a le sien (fournisseurEcrit) */
+  /** null : pas d'étage 2. Conversation (oral et écrit) : Flash-Lite */
   fournisseur: ConvFournisseur | null;
-  /** écrit : gemini-3.8-flash (qualité) ; absent : `fournisseur` */
-  fournisseurEcrit?: ConvFournisseur | null;
-  tarifEcrit?: Tarif | null;
   synthese: Synthese | null;
   modele: string;
   tarif: Tarif | null;
   /** appel de prononciation, en parallèle (oral seulement) ; null : coupé (AWFORM_TUTEUR_PRONONCIATION=off) */
   prononciation: PrononFournisseur | null;
   tarifPrononciation: Tarif | null;
+  /** 29/10/2026 : correction de grammaire, en parallèle (écrit seulement) ; absent ou null : coupée */
+  correction?: CorrFournisseur | null;
+  tarifCorrection?: Tarif | null;
   bloque?: string;
 }
 
 /**
- * 28/10/2026 : conversation avec gemini-3.5-flash-lite (rapide), prononciation avec gemini-3.8-flash (seul à entendre
- * les fautes), deux appels en parallèle (TUTEUR_IA.md § 14).
+ * 29/10/2026 : Flash-Lite répond (oral et écrit) ; gemini-3.8-flash, en parallèle, fait la prononciation (oral) ou la
+ * correction de grammaire (écrit), coupé à 6 s (TUTEUR_IA.md § 15).
+ * Variables : AWFORM_TUTEUR_VERTEX_MODELE_CONVERSATION, …_CORRECTION, …_PRONONCIATION. L'ancienne
+ * AWFORM_TUTEUR_VERTEX_MODELE (gemini-3.8-flash dans prod.env) n'est plus lue.
  */
-export const MODELE_DEFAUT = MODELES_DEFAUT.oral;
-export const MODELE_ECRIT_DEFAUT = MODELES_DEFAUT.ecrit;
+export const MODELE_DEFAUT = MODELES_DEFAUT.conversation;
+export const MODELE_CORRECTION_DEFAUT = MODELES_DEFAUT.correction;
 export const MODELE_PRONONCIATION_DEFAUT = MODELES_DEFAUT.prononciation;
 
 export function setupConversation(env: NodeJS.ProcessEnv = process.env, f?: Fetch): ConvSetup {
   const mode = env.AWFORM_TUTEUR ?? 'off';
-  // oral : AWFORM_TUTEUR_VERTEX_MODELE_ORAL ; écrit : AWFORM_TUTEUR_VERTEX_MODELE (sens d'avant le 28/10, 3.8-flash)
-  const modele = env.AWFORM_TUTEUR_VERTEX_MODELE_ORAL || MODELE_DEFAUT;
-  const modeleE = env.AWFORM_TUTEUR_VERTEX_MODELE || MODELE_ECRIT_DEFAUT;
+  const modele = env.AWFORM_TUTEUR_VERTEX_MODELE_CONVERSATION || MODELE_DEFAUT;
+  const modeleC = env.AWFORM_TUTEUR_VERTEX_MODELE_CORRECTION || MODELE_CORRECTION_DEFAUT;
   const modeleP = env.AWFORM_TUTEUR_VERTEX_MODELE_PRONONCIATION || MODELE_PRONONCIATION_DEFAUT;
   const prononOff = env.AWFORM_TUTEUR_PRONONCIATION === 'off';
-  const sans = { prononciation: null, tarifPrononciation: null };
+  const corrOff = env.AWFORM_TUTEUR_CORRECTION === 'off';
+  const sans = {
+    prononciation: null,
+    tarifPrononciation: null,
+    correction: null,
+    tarifCorrection: null,
+  };
   const local = (bloque?: string): ConvSetup => ({
     mode: 'local',
     fournisseur: null,
@@ -73,17 +82,19 @@ export function setupConversation(env: NodeJS.ProcessEnv = process.env, f?: Fetc
     return {
       mode,
       fournisseur: new ConversationSimulee(modele),
-      fournisseurEcrit: new ConversationSimulee(modeleE),
-      tarifEcrit: tarifDe(modeleE),
       synthese: new SyntheseSimulee(),
       modele,
       tarif: tarifDe(modele),
+      ...sans,
       ...(prononOff
-        ? sans
+        ? {}
         : {
             prononciation: new PrononciationSimulee(modeleP),
             tarifPrononciation: tarifDe(modeleP),
           }),
+      ...(corrOff
+        ? {}
+        : { correction: new CorrectionSimulee(modeleC), tarifCorrection: tarifDe(modeleC) }),
     };
   if (mode === 'local' || mode === 'claude') return local();
   if (mode !== 'vertex')
@@ -93,38 +104,32 @@ export function setupConversation(env: NodeJS.ProcessEnv = process.env, f?: Fetc
   if (!/^[a-z][a-z0-9-]{4,62}$/.test(projet)) return local('vertex_bloque_projet_absent');
   if (!(LIEUX_UE as readonly string[]).includes(lieu)) return local('vertex_bloque_lieu_hors_ue');
   const tarif = tarifDe(modele);
-  const tarifE = tarifDe(modeleE);
-  if (!tarif || !tarifE) return local('vertex_bloque_modele_sans_tarif');
   const tarifP = prononOff ? null : tarifDe(modeleP);
-  if (!prononOff && !tarifP) return local('vertex_bloque_modele_sans_tarif');
+  const tarifC = corrOff ? null : tarifDe(modeleC);
+  if (!tarif || (!prononOff && !tarifP) || (!corrOff && !tarifC))
+    return local('vertex_bloque_modele_sans_tarif');
   if (env.AWFORM_TUTEUR_VERTEX_CONTROLE !== PROMPT_VERSION)
     return local('vertex_bloque_controle_absent');
   const jeton = jetonGoogle({
     ...(f ? { fetch: f } : {}),
     ...(env.AWFORM_VERTEX_COMPTE ? { compte: env.AWFORM_VERTEX_COMPTE } : {}),
   });
+  const base = {
+    projet,
+    lieu: lieu as (typeof LIEUX_UE)[number],
+    jeton,
+    ...(f ? { fetch: f } : {}),
+  };
   return {
     mode,
     fournisseur: new VertexConversation({
-      projet,
-      lieu: lieu as (typeof LIEUX_UE)[number],
+      ...base,
       modele,
-      jeton,
-      ...(f ? { fetch: f } : {}),
-      // vide : REGLAGES_GENERATION.reflexion (« LOW », 21/10/2026 ; MINIMAL est refusé par gemini-3.8-flash)
+      // vide : REGLAGES_GENERATION.reflexion (« LOW »)
       ...(env.AWFORM_TUTEUR_VERTEX_REFLEXION
         ? { reflexion: env.AWFORM_TUTEUR_VERTEX_REFLEXION }
         : {}),
     }),
-    fournisseurEcrit: new VertexConversation({
-      projet,
-      lieu: lieu as (typeof LIEUX_UE)[number],
-      modele: modeleE,
-      jeton,
-      reglages: REGLAGES_ECRIT,
-      ...(f ? { fetch: f } : {}),
-    }),
-    tarifEcrit: tarifE,
     synthese:
       env.AWFORM_TUTEUR_VOIX === 'off'
         ? null
@@ -135,17 +140,15 @@ export function setupConversation(env: NodeJS.ProcessEnv = process.env, f?: Fetc
           }),
     modele,
     tarif,
-    ...(prononOff || !tarifP
-      ? sans
-      : {
-          prononciation: new VertexPrononciation({
-            projet,
-            lieu: lieu as (typeof LIEUX_UE)[number],
-            modele: modeleP,
-            jeton,
-            ...(f ? { fetch: f } : {}),
-          }),
+    ...sans,
+    ...(tarifP
+      ? {
+          prononciation: new VertexPrononciation({ ...base, modele: modeleP }),
           tarifPrononciation: tarifP,
-        }),
+        }
+      : {}),
+    ...(tarifC
+      ? { correction: new VertexCorrection({ ...base, modele: modeleC }), tarifCorrection: tarifC }
+      : {}),
   };
 }

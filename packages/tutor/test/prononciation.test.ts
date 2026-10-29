@@ -11,6 +11,11 @@ import {
   estDifficile,
   filtrerSortie,
   issueDuTour,
+  issueCorrection,
+  repondreAuNiveau,
+  seuilsRelance,
+  VertexConversation,
+  type ConvFournisseur,
   traductionPropre,
   issuePrononciation,
   jetonGoogle,
@@ -291,5 +296,150 @@ describe('budget et latence', () => {
       false,
     );
     expect(correctionDeSon(null)).toBe(false);
+  });
+});
+
+describe('29/10 : correction de l’écrit en parallèle, relance de sécurité, niveau', () => {
+  it('correction vérifiée : passage dans la phrase de l’élève, filtres de sortie ; sinon rien', () => {
+    const texte = 'هٰذَا غَالِي! أَمْسِ اشْتَرَيْتُ الْكِيلُو بِيُورُوَيْنِ.';
+    const c = {
+      dit: 'غَالِي',
+      correct: 'غَالٍ',
+      explication_fr: 'On dit « غَالٍ » : la fin se raccourcit.',
+    };
+    expect(issueCorrection(ok({ correction: c }), { texte, index: idx }).correction).toEqual(c);
+    expect(issueCorrection(ok({ correction: null }), { texte, index: idx }).correction).toBeNull();
+    // passage absent de la phrase de l'élève, ou forme identique : rien
+    expect(
+      issueCorrection(ok({ correction: { ...c, dit: 'رَخِيصٌ' } }), { texte, index: idx })
+        .correction,
+    ).toBeNull();
+    expect(
+      issueCorrection(ok({ correction: { ...c, correct: 'غَالِي' } }), { texte, index: idx })
+        .correction,
+    ).toBeNull();
+    // explication avec un avis religieux : bloquée par les filtres de sortie
+    expect(
+      issueCorrection(ok({ correction: { ...c, explication_fr: 'Acheter cher est haram.' } }), {
+        texte,
+        index: idx,
+      }).correction,
+    ).toBeNull();
+    expect(
+      issueCorrection(
+        { status: 'erreur', brouillon: null, detail: 'reseau' },
+        { texte, index: idx },
+      ).filtre[0],
+    ).toMatchObject({ step: 'correction_differee', action: 'ecarte' });
+  });
+
+  it('blocage SAFETY : UNE relance, catégories en cause à BLOCK_ONLY_HIGH, jamais la catégorie sexuelle', async () => {
+    expect(
+      seuilsRelance({
+        status: 'refus',
+        brouillon: null,
+        usage: { texte: 0, audio: 0, sortie: 0 },
+        detail: 'SAFETY',
+        bloquees: ['HARM_CATEGORY_HARASSMENT'],
+      }),
+    ).toEqual({ HARM_CATEGORY_HARASSMENT: 'BLOCK_ONLY_HIGH' });
+    expect(
+      seuilsRelance({
+        status: 'refus',
+        brouillon: null,
+        usage: { texte: 0, audio: 0, sortie: 0 },
+        detail: 'SAFETY',
+        bloquees: ['HARM_CATEGORY_SEXUALLY_EXPLICIT'],
+      }),
+    ).toBeNull();
+    const corps: Array<{ safetySettings: Array<{ category: string; threshold: string }> }> = [];
+    const f = (async (_u: string, init?: RequestInit) => {
+      corps.push(JSON.parse(String(init?.body)));
+      return new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              finishReason: 'SAFETY',
+              safetyRatings: [{ category: 'HARM_CATEGORY_DANGEROUS_CONTENT', blocked: true }],
+            },
+          ],
+        }),
+      );
+    }) as unknown as typeof fetch;
+    const v = new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'gemini-3.5-flash-lite',
+      jeton: { obtenir: async () => 'j' },
+      fetch: f,
+    });
+    const r = await v.repondre('S', {
+      audience: 'adulte',
+      adresse: 'tu',
+      genre: 'x',
+      contexte: CONTEXTE_ADULTE,
+      historique: [],
+      texte: 'هَلْ عِنْدَكَ طَمَاطِمُ؟',
+    });
+    expect(corps).toHaveLength(2);
+    const seuil = (i: number, cat: string) =>
+      corps[i]!.safetySettings.find((s) => s.category === cat)!.threshold;
+    expect(seuil(1, 'HARM_CATEGORY_DANGEROUS_CONTENT')).toBe('BLOCK_ONLY_HIGH');
+    expect(seuil(1, 'HARM_CATEGORY_SEXUALLY_EXPLICIT')).toBe('BLOCK_LOW_AND_ABOVE');
+    expect(seuil(1, 'HARM_CATEGORY_HARASSMENT')).toBe('BLOCK_LOW_AND_ABOVE');
+    // encore bloqué : réponse polie et neutre, pas un repli d'erreur
+    const i = issueDuTour(r, {
+      index: idx,
+      audio: false,
+      audience: 'adulte',
+      mots: ctx.mots,
+      dialogue: ctx.dialogue,
+    });
+    expect(i).toMatchObject({
+      neutre: true,
+      repliTechnique: false,
+      reponse: { ar: '', fr: 'Peux-tu le redire autrement ?' },
+    });
+  });
+
+  it('niveau : UNE relance si ≥ 10 % de mots hors liste ; sinon aucune', async () => {
+    const reponses = ['هَلْ تُرِيدُ شَيْئًا آخَرَ مُخْتَلِفًا جِدًّا؟', 'هَلْ تُرِيدُ بَصَلًا؟'];
+    const systemes: string[] = [];
+    const conv: ConvFournisseur = {
+      name: 'faux',
+      real: false,
+      modele: 'x',
+      async repondre(sys) {
+        systemes.push(sys);
+        return {
+          status: 'ok',
+          brouillon: {
+            transcription_ar: '',
+            sujet: 'langue',
+            correction: null,
+            reponse_ar: reponses[systemes.length - 1] ?? reponses[1]!,
+            reponse_fr: 'Veux-tu des oignons ?',
+          },
+          usage: { texte: 100, audio: 0, sortie: 10 },
+        };
+      },
+    };
+    const e = {
+      audience: 'adulte' as const,
+      adresse: 'tu' as const,
+      genre: 'x' as const,
+      contexte: CONTEXTE_ADULTE,
+      historique: [],
+      texte: 'هَلْ عِنْدَكَ بَصَلٌ؟',
+    };
+    const r = await repondreAuNiveau(conv, 'S', e);
+    expect(systemes).toHaveLength(2);
+    expect(systemes[1]).toContain('RAPPEL');
+    expect(r.relance).toBe('corrigee');
+    expect(r.out.usage.texte).toBe(200);
+    systemes.length = 0;
+    reponses[0] = 'هَلْ تُرِيدُ بَصَلًا؟';
+    expect((await repondreAuNiveau(conv, 'S', e)).relance).toBe('aucune');
+    expect(systemes).toHaveLength(1);
   });
 });

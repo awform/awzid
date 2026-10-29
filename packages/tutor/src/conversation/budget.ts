@@ -125,9 +125,9 @@ export function coutMicros(
 export const coutMaxTour = (tarif: Tarif, usdEur: number, sortieMax: number = BORNES.sortieMax) =>
   coutMicros(
     {
-      texte: 2 * BORNES.texteMax,
-      audio: 2 * BORNES.audioMax,
-      sortie: 2 * sortieMax,
+      texte: APPELS_MAX_TOUR * BORNES.texteMax,
+      audio: APPELS_MAX_TOUR * BORNES.audioMax,
+      sortie: APPELS_MAX_TOUR * sortieMax,
       caracteresVoix: BORNES.voixCaracteresMax,
     },
     tarif,
@@ -146,6 +146,12 @@ export const BORNES_PRONONCIATION = {
   voixCaracteresMax: 60,
 };
 
+/**
+ * Appels de conversation au plus par tour (29/10/2026) : le premier, une relance (réponse coupée OU blocage de sécurité)
+ * et, si la réponse reste hors du niveau, une relance de niveau (qui peut elle-même être relancée une fois).
+ */
+export const APPELS_MAX_TOUR = 4;
+
 /** Coût MAXIMAL de l'appel de prononciation (réservé avec le tour, sous le même verrou). */
 export const coutMaxPrononciation = (tarif: Tarif, usdEur: number) =>
   coutMicros(
@@ -154,6 +160,19 @@ export const coutMaxPrononciation = (tarif: Tarif, usdEur: number) =>
       audio: BORNES_PRONONCIATION.audioMax,
       sortie: BORNES_PRONONCIATION.sortieMax,
       caracteresVoix: BORNES_PRONONCIATION.voixCaracteresMax,
+    },
+    tarif,
+    usdEur,
+  );
+
+/** Coût MAXIMAL de la correction de grammaire de l'écrit (29/10/2026) : invite courte, sortie bornée, sans voix. */
+export const coutMaxCorrection = (tarif: Tarif, usdEur: number) =>
+  coutMicros(
+    {
+      texte: BORNES_PRONONCIATION.texteMax,
+      audio: 0,
+      sortie: BORNES_PRONONCIATION.sortieMax,
+      caracteresVoix: 0,
     },
     tarif,
     usdEur,

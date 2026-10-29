@@ -8,3 +8,5 @@ export * from './google.js';
 export * from './simule.js';
 export * from './setup.js';
 export * from './prononciation.js';
+export * from './correction.js';
+export * from './niveau.js';

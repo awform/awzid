@@ -27,7 +27,7 @@ import {
   VERDICT_WORDS,
 } from '../filter.js';
 import type { Audience, FilterEvent } from '../types.js';
-import { ENCOURAGEMENTS_AR } from './prompt.js';
+import { ENCOURAGEMENTS_AR, RELANCE_SECURITE } from './prompt.js';
 import { sujetSensible, sujetSensibleSortie, type SujetSensible } from './sujets.js';
 import type { ConvBrouillon, ConvSortieFournisseur, MotNiveau, Replique } from './types.js';
 
@@ -244,6 +244,8 @@ export interface IssueTour {
    * l'élève voit la réplique du livre, mais rien n'a été jugé (20/10/2026 : à distinguer dans la batterie)
    */
   repliTechnique: boolean;
+  /** 29/10/2026 : refus de sécurité de Google (après la relance) : réponse polie et neutre, pas un repli d'erreur */
+  neutre: boolean;
   /** mots de la réponse hors des mots déjà vus (contrôle de niveau) */
   horsNiveau: string[];
   /** nombre de mots de la réponse comptés pour le contrôle de niveau */
@@ -274,6 +276,7 @@ export function issueDuTour(
     filtre: [],
     repli: false,
     repliTechnique: false,
+    neutre: false,
     horsNiveau: [],
     motsReponse: 0,
   };
@@ -326,6 +329,10 @@ export function issueDuTour(
     r.repli = true;
     const d = o.dialogue[0];
     r.reponse = d ? { ar: d.ar, fr: d.fr ?? '' } : null;
+    if (out.status === 'refus') {
+      r.neutre = true;
+      r.reponse = { ar: '', fr: RELANCE_SECURITE.reponse_fr };
+    }
   }
   return r;
 }
@@ -368,4 +375,17 @@ export function motsHorsNiveau(texteAr: string, formes: ReadonlySet<string>): st
     if (!racines(w).some((r) => formes.has(r))) hors.push(w);
   }
   return hors;
+}
+
+/**
+ * Contrôle de NIVEAU d'une réponse (29/10/2026) : mots hors de la liste et part qu'ils représentent (même calcul que
+ * le journal et la batterie : mots de 2 lettres et plus, hors mots outils).
+ */
+export function partHorsNiveau(
+  texteAr: string,
+  mots: readonly MotNiveau[],
+): { hors: string[]; total: number; part: number } {
+  const hors = motsHorsNiveau(texteAr, formesNiveau(mots));
+  const total = bareWords(texteAr).filter((w) => w.length >= 2 && !OUTILS.has(w)).length;
+  return { hors, total, part: total ? hors.length / total : 0 };
 }

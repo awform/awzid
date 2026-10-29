@@ -253,6 +253,12 @@
     const r = await lirePrononciation(profileId, pid);
     if (!r.ok || !r.data) return;
     const p = r.data;
+    // 29/10/2026 : écrit — la correction de grammaire arrive juste après (si la réponse n'en avait pas)
+    if (p.correction) {
+      const m = messages[i];
+      if (m && !m.correction) messages[i] = { ...m, correction: p.correction };
+      return;
+    }
     if (p.conseil && !p.remarque) {
       if (conseilsVus.includes(p.conseil.son)) return;
       conseilsVus.push(p.conseil.son);
@@ -474,9 +480,9 @@
             {:else}
               {#if m.repli}<p class="petit doux"><Bidi text={t('tuia.repli')} /></p>{/if}
               {#if /[\u0600-\u06FF]/.test(m.ar)}<Ar text={m.ar} block />{:else}<p class="fr-eleve">
-                  <Bidi text={m.ar} />
+                  <Bidi text={m.ar || m.fr || ''} />
                 </p>{/if}
-              {#if trad && m.fr}<p class="fr"><Bidi text={m.fr} /></p>{/if}
+              {#if trad && m.fr && m.ar}<p class="fr"><Bidi text={m.fr} /></p>{/if}
               {#if m.correction}
                 <div class="correction" data-testid="tuia-correction">
                   <p class="petit"><Bidi text={t('tuia.correction')} /></p>

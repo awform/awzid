@@ -91,6 +91,8 @@ export interface ConvSortieFournisseur {
   detail?: string;
   /** message technique du fournisseur (erreur de l'API, réglage ignoré), borné ; jamais montré à l'élève */
   message?: string;
+  /** refus de sécurité : catégories bloquées (relance du 29/10/2026) */
+  bloquees?: string[];
 }
 
 /** Fournisseur de conversation (Gemini sur Vertex, ou simulé). Ne connaît ni la base ni les plafonds. */
@@ -122,6 +124,14 @@ export interface PrononFournisseur {
     /** mots du livre (utilisés par le simulé seulement ; jamais envoyés au modèle de prononciation) */
     ctx?: { mots: readonly MotNiveau[] },
   ): Promise<ConvSortieFournisseur>;
+}
+
+/** Correction de grammaire de l'ÉCRIT (29/10/2026), lancée en parallèle de la conversation. */
+export interface CorrFournisseur {
+  readonly name: string;
+  readonly real: boolean;
+  readonly modele: string;
+  corriger(systeme: string, texte: string): Promise<ConvSortieFournisseur>;
 }
 
 /** Synthèse vocale (Google Cloud TTS, voix arabe des leçons ; ou simulée). */
