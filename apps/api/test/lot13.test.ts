@@ -255,8 +255,10 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
     expect(fam.devoirs.find((x: { target: string }) => x.target === 'en1.l01').titleFr).toMatch(
       /\S/,
     );
+    // le titre d'un petit livre vient des livrets de l'édition : « Voici ma maison » n'existe que dans les VRAIS livres
+    // (le contenu synthétique des tests n'a pas de livrets : pas de titre, jamais l'identifiant brut inventé)
     expect(fam.devoirs.find((x: { target: string }) => x.target === 'en1-01').titleFr).toBe(
-      'Voici ma maison',
+      REAL_BOOKS ? 'Voici ma maison' : null,
     );
     expect(fam.devoirs.find((x: { target: string }) => x.target === '112:1-4').titleFr).toBeNull();
     expect(JSON.stringify(fam)).not.toContain('Awa');
