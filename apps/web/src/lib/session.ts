@@ -25,6 +25,9 @@ export interface Me {
   ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
   /** V2-3 : session d'un enfant connecté par identifiant (limitée à son profil, apprentissage seulement) */
   enfantSession?: boolean;
+  /** V2-3 : profil d'âge ado, et accord parental « tuteur_ia » donné sur ce profil */
+  enfantAdo?: boolean;
+  enfantTuteurIa?: boolean;
   /** session de tablette de classe (compte de l'école) */
   tablette?: { classId: string; className: string; school: string } | null;
   account: {

@@ -396,5 +396,7 @@
   "profils.acces_mdp_ok": "Nouveau mot de passe enregistré.",
   "profils.acces_debloquer": "Débloquer",
   "profils.acces_debloque": "Accès débloqué : il peut réessayer.",
-  "profils.acces_fermer": "Fermer"
+  "profils.acces_fermer": "Fermer",
+  "signal.m_audio_absent": "Le son manque",
+  "signal.m_audio_faux": "Le son est faux"
 }

@@ -101,12 +101,17 @@
   );
   // V2-3 : enfant connecté par identifiant : seulement l'apprentissage, aucun lien vers une page qui mène à une erreur
   const enfantSession = $derived(me?.enfantSession === true);
-  const nav = $derived(enfantSession ? navPourEnfant(navFor(audience)) : navFor(audience));
+  const nav = $derived(
+    enfantSession ? navPourEnfant(navFor(audience), me?.enfantAdo === true) : navFor(audience),
+  );
   $effect(() => {
     fonctionsEtat.restreint = enfantSession;
+    fonctionsEtat.ado = me?.enfantAdo === true;
+    fonctionsEtat.tuteurIa = me?.enfantTuteurIa === true;
   });
   $effect(() => {
-    if (enfantSession && !pageOuverteAEnfant(page.url.pathname)) void goto(resolve('/aujourdhui'));
+    if (enfantSession && !pageOuverteAEnfant(page.url.pathname, me?.enfantAdo === true))
+      void goto(resolve('/aujourdhui'));
   });
   async function sortirEnfant() {
     await logout();

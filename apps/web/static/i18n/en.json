@@ -4459,5 +4459,7 @@
   "profils.acces_debloque": "Access unlocked: they can try again.",
   "profils.acces_fermer": "Close",
   "erreur.identifiant_existant": "This child already has a username.",
-  "erreur.profil_adulte": "An adult profile has no child access."
+  "erreur.profil_adulte": "An adult profile has no child access.",
+  "signal.m_audio_absent": "The audio is missing",
+  "signal.m_audio_faux": "The audio is wrong"
 }

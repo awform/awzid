@@ -4459,5 +4459,7 @@
   "profils.acces_debloque": "Zugang entsperrt: Es kann es erneut versuchen.",
   "profils.acces_fermer": "Schließen",
   "erreur.identifiant_existant": "Dieses Kind hat schon einen Benutzernamen.",
-  "erreur.profil_adulte": "Ein Erwachsenenprofil hat keinen Kinderzugang."
+  "erreur.profil_adulte": "Ein Erwachsenenprofil hat keinen Kinderzugang.",
+  "signal.m_audio_absent": "Der Ton fehlt",
+  "signal.m_audio_faux": "Der Ton ist falsch"
 }

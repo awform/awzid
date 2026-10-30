@@ -4459,5 +4459,7 @@
   "profils.acces_debloque": "تم إلغاء القفل: يمكنه المحاولة من جديد.",
   "profils.acces_fermer": "إغلاق",
   "erreur.identifiant_existant": "لهذا الطفل اسم مستخدم بالفعل.",
-  "erreur.profil_adulte": "ملف البالغ ليس له وصول طفل."
+  "erreur.profil_adulte": "ملف البالغ ليس له وصول طفل.",
+  "signal.m_audio_absent": "الصوت غير موجود",
+  "signal.m_audio_faux": "الصوت خاطئ"
 }

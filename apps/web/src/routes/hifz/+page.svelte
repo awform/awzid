@@ -345,9 +345,11 @@
   {#if isChild && !parentMode}
     <section class="card">
       <p>{t('hifz.plan_par_parent')}</p>
-      <button type="button" onclick={enterParent} data-testid="espace-parent"
-        >{t('hifz.espace_parent')}</button
-      >
+      {#if !me?.enfantSession}<button
+          type="button"
+          onclick={enterParent}
+          data-testid="espace-parent">{t('hifz.espace_parent')}</button
+        >{/if}
     </section>
   {:else}
     <form class="card setup" onsubmit={startPlan} data-testid="choix-plan">
@@ -521,9 +523,12 @@
       <span>{t('hifz.masquer')}</span></label
     >
     {#if isChild && !parentMode}
-      <button type="button" class="small" onclick={enterParent} data-testid="espace-parent"
-        >{t('hifz.espace_parent')}</button
-      >
+      {#if !me?.enfantSession}<button
+          type="button"
+          class="small"
+          onclick={enterParent}
+          data-testid="espace-parent">{t('hifz.espace_parent')}</button
+        >{/if}
     {:else if isChild}
       <p class="small parent">
         {t('hifz.mode_parent_actif')}

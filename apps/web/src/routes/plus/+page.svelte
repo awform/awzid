@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fonctionsEtat } from '$lib/fonctions.svelte';
+  import { pageOuverteAEnfant } from '$lib/enfant-session';
   import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
@@ -77,6 +79,16 @@
       liens: [{ href: '/compte', icon: 'personne', titre: 'entete.compte' }],
     },
   ];
+
+  // V2-3 : ado en session limitée : seulement les pages que sa session ouvre (jamais compte, suivi, ma classe…)
+  const familles = $derived(
+    FAMILLES.map((f) => ({
+      ...f,
+      liens: fonctionsEtat.restreint
+        ? f.liens.filter((x) => pageOuverteAEnfant(x.href, true))
+        : f.liens,
+    })).filter((f) => f.liens.length > 0),
+  );
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('plus.titre')}</title></svelte:head>
@@ -86,7 +98,7 @@
 {:else}
   <h1>{t('plus.titre')}</h1>
   <div data-testid="plus">
-    {#each FAMILLES as f (f.id)}
+    {#each familles as f (f.id)}
       <h2 class="famille-titre" data-famille={f.id}><Bidi text={t(f.titre)} /></h2>
       <ul class="nav-liste">
         {#each f.liens as x, i (x.href)}
