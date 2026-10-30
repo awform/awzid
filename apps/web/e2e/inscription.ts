@@ -57,7 +57,9 @@ export async function etapeIdentifiants(
 
 export async function etapeProfil(page: Page, p: ProfilInscription = {}): Promise<void> {
   const kind = p.kind ?? 'parent';
-  await page.getByTestId(`type-${kind}`).check();
+  // V2-2 : le choix « Qui va apprendre ? » fixe le type ; le sélecteur n'est affiché que sans intention
+  const radio = page.getByTestId(`type-${kind}`);
+  if (await radio.isVisible()) await radio.check();
   if (p.pays) await page.locator('#country').selectOption(p.pays);
   if (p.region) await page.getByTestId('region').selectOption(p.region);
   await page.locator('#birthYear').fill(String(p.annee ?? (kind === 'parent' ? 1985 : 1990)));
@@ -90,6 +92,6 @@ export async function remplirInscription(page: Page, o: OptionsInscription): Pro
 
 /** ouvre /inscription puis remplit les trois étapes */
 export async function inscrire(page: Page, o: OptionsInscription): Promise<void> {
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, o.kind === 'adulte' ? 'moi' : 'enfants');
   await remplirInscription(page, o);
 }

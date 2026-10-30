@@ -74,10 +74,9 @@ async function parentWith(req: APIRequestContext, pseudonym: string, age: number
 }
 
 async function signupSerein(page: Page): Promise<string> {
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi'); // V2-2 : « Pour moi » fixe le type adulte (sélecteur masqué)
   await etapeIdentifiants(page, `${uniq('a39-serein')}@e2e.test`);
   // étape « Votre profil » : l'adulte choisit sa façon d'avancer
-  await page.getByTestId('type-adulte').check();
   const choix = page.getByTestId('mode-inscription');
   await expect(choix).toContainText('Mode serein');
   // D-A39 : « Mode serein » présélectionné, « Avec vérification » au choix sur le même écran

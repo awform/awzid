@@ -91,13 +91,13 @@ test('changement d’étape annoncé, focus sur le titre, « Retour » ne perd r
   page,
 }) => {
   const email = adresse('retour');
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   await etapeIdentifiants(page, email);
   await expect(page.getByTestId('annonce-etape')).toHaveText('Étape 2 sur 3 : Votre profil');
   await expect(page.locator('#etape-2-t')).toBeFocused();
   await expect(page.getByTestId('etape-n')).toHaveText('Étape 2 sur 3');
-  // étape 2 : année obligatoire
-  await page.getByTestId('type-adulte').check();
+  // étape 2 : « Pour moi » fixe le type (adulte), le sélecteur de type est masqué ; année obligatoire
+  await expect(page.getByTestId('type-adulte')).toBeChecked();
   await page.getByTestId('etape-suivante').click();
   await expect(page.getByTestId('erreur-birthYear')).toContainText('4 chiffres');
   await expect(page.locator('#birthYear')).toBeFocused();
@@ -147,7 +147,7 @@ test('envoi : mêmes données qu’avant ; refus du serveur ramené à l’étap
     return route.fulfill({ status: 409, json: { error: { code: 'email_indisponible' } } });
   });
   const email = adresse('envoi');
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   await etapeIdentifiants(page, email);
   await etapeProfil(page, { kind: 'adulte', annee: 1991, pseudonyme: 'Awa' });
   await page.getByTestId('consent-cgu').check();
@@ -217,10 +217,9 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
 
 test('375 px : aucune étape ne déborde', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   expect((await mesures(page)).deborde).toBe(false);
   await etapeIdentifiants(page, adresse('375'));
-  await page.getByTestId('type-adulte').check();
   expect((await mesures(page)).deborde).toBe(false);
   await etapeProfil(page, { kind: 'adulte' });
   await page.getByTestId('options-facultatives').locator('summary').click();
@@ -322,7 +321,7 @@ test('enseignant sans classe : après le second facteur, « Créer ma classe » 
   };
   const ok = await page.request.post('/api/v1/auth/totp/confirm', {
     headers: H,
-    data: { code: totp(setup.secret) },
+    data: { code: totp(setup.secret, Math.floor(Date.now() / 30_000)) },
   });
   expect(ok.status()).toBe(200);
   await page.goto('/enseignant');

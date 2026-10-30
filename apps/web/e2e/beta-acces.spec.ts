@@ -215,6 +215,9 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
     await page.getByTestId('code-invitation').fill(code.toLowerCase());
     await page.getByRole('button', { name: /Vérifier le code/ }).click();
     await expect(page.getByTestId('invitation-reconnue')).toContainText(/personnelle/);
+    // V2-2 : l'écran « Qui va apprendre ? » précède le formulaire, qui s'ouvre après le choix d'une carte
+    await expect(page.getByTestId('inscription-form')).toBeHidden();
+    await page.getByTestId('qui-enfants').click();
     await expect(page.getByTestId('inscription-form')).toBeVisible();
     // une autre adresse n'entre pas avec ce code, la bonne oui
     expect((await signup(page, unique('autre'), code)).status()).toBe(403);
