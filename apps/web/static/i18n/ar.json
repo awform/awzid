@@ -4408,5 +4408,15 @@
   "md.err_reference": "تلاوة أيوب لهذه الآية غير متاحة.",
   "fn.tajwid_madd": "إشارة المدود (للبالغين، تجربة مغلقة)",
   "tuia.prononciation": "النُّطْقُ",
-  "tuia.ecoute_difference": "اسْتَمِعْ إِلَى الْفَرْقِ"
+  "tuia.ecoute_difference": "اسْتَمِعْ إِلَى الْفَرْقِ",
+  "ins.qui_titre": "من سيتعلّم؟",
+  "ins.qui_aide": "هذا يهيّئ فضاءك. ثم تتابع في ثلاث خطوات.",
+  "ins.qui_moi": "أنا",
+  "ins.qui_moi_aide": "لأتعلّم بنفسي (حساب بالغ).",
+  "ins.qui_enfants": "أبنائي",
+  "ins.qui_enfants_aide": "لمتابعة تعلّم أبنائي (حساب ولي أمر).",
+  "ins.qui_famille": "أنا وأبنائي",
+  "ins.qui_famille_aide": "لأتعلّم وأتابع أبنائي (حساب ولي أمر).",
+  "ins.qui_eleves": "طلابي",
+  "ins.qui_eleves_aide": "لمتابعة فصل (حساب معلّم، مع عامل ثانٍ)."
 }

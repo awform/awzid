@@ -4408,5 +4408,15 @@
   "md.err_reference": "La recitación de Ayyūb de este versículo no está disponible.",
   "fn.tajwid_madd": "Indicación de los madd (adultos, beta cerrada)",
   "tuia.prononciation": "Pronunciación",
-  "tuia.ecoute_difference": "Escucha la diferencia"
+  "tuia.ecoute_difference": "Escucha la diferencia",
+  "ins.qui_titre": "¿Quién va a aprender?",
+  "ins.qui_aide": "Así preparamos su espacio. Después sigue en tres pasos.",
+  "ins.qui_moi": "Yo",
+  "ins.qui_moi_aide": "para aprender yo mismo (cuenta de adulto).",
+  "ins.qui_enfants": "Mis hijos",
+  "ins.qui_enfants_aide": "para seguir el aprendizaje de mis hijos (cuenta de padre o madre).",
+  "ins.qui_famille": "Yo y mis hijos",
+  "ins.qui_famille_aide": "para aprender y seguir a mis hijos (cuenta de padre o madre).",
+  "ins.qui_eleves": "Mis alumnos",
+  "ins.qui_eleves_aide": "para seguir una clase (cuenta de docente, con segundo factor)."
 }

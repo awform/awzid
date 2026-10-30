@@ -4408,5 +4408,15 @@
   "md.err_reference": "Ayyūbs Rezitation dieses Verses ist nicht verfügbar.",
   "fn.tajwid_madd": "Madd-Hinweis (Erwachsene, geschlossene Beta)",
   "tuia.prononciation": "Aussprache",
-  "tuia.ecoute_difference": "Hör den Unterschied"
+  "tuia.ecoute_difference": "Hör den Unterschied",
+  "ins.qui_titre": "Wer wird lernen?",
+  "ins.qui_aide": "So bereiten wir Ihren Bereich vor. Danach folgen drei Schritte.",
+  "ins.qui_moi": "Ich",
+  "ins.qui_moi_aide": "um selbst zu lernen (Erwachsenenkonto).",
+  "ins.qui_enfants": "Meine Kinder",
+  "ins.qui_enfants_aide": "um das Lernen meiner Kinder zu begleiten (Elternkonto).",
+  "ins.qui_famille": "Ich und meine Kinder",
+  "ins.qui_famille_aide": "um selbst zu lernen und meine Kinder zu begleiten (Elternkonto).",
+  "ins.qui_eleves": "Meine Schüler",
+  "ins.qui_eleves_aide": "um eine Klasse zu begleiten (Lehrerkonto, mit zweitem Faktor)."
 }

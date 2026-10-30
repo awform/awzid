@@ -12,6 +12,7 @@
   import { onMount, tick } from 'svelte';
   import { chargerStatut, type AccesStatut } from '$lib/acces';
   import ListeAttente from './ListeAttente.svelte';
+  import QuiVaApprendre, { type Intention } from './QuiVaApprendre.svelte';
   import { retenirSource } from '$lib/provenance';
   import { mesure } from '$lib/mesure';
 
@@ -56,6 +57,16 @@
   const nbErreurs = $derived(Object.keys(erreurs).length);
 
   let kind: 'parent' | 'adulte' = $state('parent');
+  /** V2-2 : « Qui va apprendre ? » — null tant que la personne n'a pas choisi (écran affiché en tête) */
+  let intention = $state<Intention | null>(null);
+  const ecranQui = $derived(
+    intention === null && !assistee && !googleIdent && !(mode === 'telephone' && verifTel),
+  );
+  async function choisirQui(i: Intention) {
+    intention = i;
+    kind = i === 'moi' ? 'adulte' : 'parent';
+    await aller(1);
+  }
   let email = $state('');
   let password = $state('');
   /** lot 11 : mot de passe et confirmation identiques */
@@ -342,6 +353,7 @@
     ].filter(Boolean) as string[];
     const r = await call<Me & { codesSecours?: string[] }>('POST', '/auth/signup', {
       kind,
+      ...(intention ? { intention } : {}),
       ...(mode === 'google' && googleIdent
         ? { google: true }
         : mode === 'telephone' && verifTel
@@ -396,7 +408,10 @@
     // adresse e-mail à vérifier avant d'utiliser le compte (un compte par numéro ou Google est déjà vérifié)
     if (acces?.verification === 'requise' && me?.account.emailVerified === false)
       await goto(resolve('/acces/verification'));
-    else await goto(resolve(kind === 'parent' ? '/profils' : '/'));
+    else
+      await goto(
+        resolve(intention === 'eleves' ? '/enseignant' : kind === 'parent' ? '/profils' : '/'),
+      );
   }
 </script>
 
@@ -508,8 +523,12 @@
         </div>
       {/if}
 
+      {#if ecranQui}
+        <QuiVaApprendre onchoisir={choisirQui} />
+      {/if}
+
       <!-- avancement : « Étape n sur 3 » écrit, trois segments, l'étape en cours marquée (aria-current) -->
-      <div class="avancement">
+      <div class="avancement" hidden={ecranQui}>
         <p class="etape-n" data-testid="etape-n"><Bidi text={t('ins.etape', { n: etape })} /></p>
         <ol aria-label={t('ins.avancement')}>
           {#each [1, 2, 3] as n (n)}
@@ -528,6 +547,7 @@
 
       <form
         class="form"
+        hidden={ecranQui}
         novalidate
         onsubmit={avancer}
         onfocusin={() => mesure('inscription_choix')}
@@ -658,6 +678,7 @@
                   bind:niveau={niveauMdp}
                   email={mode === 'email' && !assistee?.numero ? email : ''}
                   identifiants={[pseudonym]}
+                  personnel={intention === 'eleves'}
                   erreur={erreurs.password ?? ''}
                   erreurConfirmation={erreurs['password-confirmer'] ?? ''}
                 />
@@ -674,7 +695,7 @@
           aria-labelledby="etape-2-t"
         >
           <h2 id="etape-2-t" tabindex="-1">{t('ins.e2')}</h2>
-          <fieldset class="choix">
+          <fieldset class="choix" hidden={intention !== null}>
             <legend>{t('inscription.qui')}</legend>
             <label class="option"
               ><input
@@ -903,6 +924,15 @@
         </section>
 
         <div class="actions">
+          {#if etape === 1 && intention && !assistee}
+            <button
+              type="button"
+              class="retour"
+              data-testid="qui-changer"
+              disabled={busy}
+              onclick={() => (intention = null)}>{t('ins.retour')}</button
+            >
+          {/if}
           {#if etape > 1}
             <button
               type="button"
@@ -1008,6 +1038,11 @@
     outline: 3px solid var(--focus);
     outline-offset: 4px;
     border-radius: 6px;
+  }
+  .avancement[hidden],
+  .form[hidden],
+  .choix[hidden] {
+    display: none;
   }
   /* avancement */
   .avancement {

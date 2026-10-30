@@ -677,5 +677,15 @@
   "hz.pause": "Pause",
   "hz.a_toi": "À toi de répéter",
   "hz.enfant_position": "Verset {aya} · écoute {n} sur {total}",
-  "hz.enfant_pret": "{n, plural, one {# écoute prévue} other {# écoutes prévues}}"
+  "hz.enfant_pret": "{n, plural, one {# écoute prévue} other {# écoutes prévues}}",
+  "ins.qui_titre": "Qui va apprendre ?",
+  "ins.qui_aide": "Cela prépare votre espace. Vous continuez ensuite en trois étapes.",
+  "ins.qui_moi": "Moi",
+  "ins.qui_moi_aide": "pour apprendre moi-même (compte adulte).",
+  "ins.qui_enfants": "Mes enfants",
+  "ins.qui_enfants_aide": "pour suivre l'apprentissage de mes enfants (compte parent).",
+  "ins.qui_famille": "Moi et mes enfants",
+  "ins.qui_famille_aide": "pour apprendre et suivre mes enfants (compte parent).",
+  "ins.qui_eleves": "Mes élèves",
+  "ins.qui_eleves_aide": "pour suivre une classe (compte enseignant, avec second facteur)."
 }

@@ -4408,5 +4408,15 @@
   "md.err_reference": "Ayyūb’s recitation of this verse is not available.",
   "fn.tajwid_madd": "Madd indication (adults, closed beta)",
   "tuia.prononciation": "Pronunciation",
-  "tuia.ecoute_difference": "Hear the difference"
+  "tuia.ecoute_difference": "Hear the difference",
+  "ins.qui_titre": "Who will be learning?",
+  "ins.qui_aide": "This prepares your space. You then continue in three steps.",
+  "ins.qui_moi": "Me",
+  "ins.qui_moi_aide": "to learn myself (adult account).",
+  "ins.qui_enfants": "My children",
+  "ins.qui_enfants_aide": "to follow my children's learning (parent account).",
+  "ins.qui_famille": "Me and my children",
+  "ins.qui_famille_aide": "to learn and follow my children (parent account).",
+  "ins.qui_eleves": "My students",
+  "ins.qui_eleves_aide": "to follow a class (teacher account, with a second factor)."
 }
