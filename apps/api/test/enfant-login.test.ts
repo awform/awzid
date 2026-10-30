@@ -171,6 +171,60 @@ describe('session limitée : liste fermée (sans base)', () => {
     ] as const)
       expect(ok(m, u), `${m} ${u}`).toBe(false);
   });
+  it('audit /lectures, /revisions, /sciences : tous les appels de ces pages sont permis, sur son profil seulement', () => {
+    const q = { profile: me, level: 'en1' };
+    const lus: Array<[string, string]> = [
+      ['GET', '/api/v1/levels'],
+      ['GET', '/api/v1/levels/en1/units'],
+      ['GET', '/api/v1/booklets'],
+      ['GET', '/api/v1/booklets/en1'],
+      ['GET', '/api/v1/packs'],
+      ['GET', '/api/v1/packs/en1'],
+      ['GET', '/api/v1/units/en1.l01'],
+      ['GET', '/api/v1/quran/verses?s=1&from=1&to=1'],
+      ['GET', '/api/v1/lecons-audio/niveaux/en1'],
+      ['GET', '/api/v1/progress?profile=x&level=en1'],
+      ['GET', '/api/v1/progress/unit?profile=x&unit=en1.l01'],
+      ['POST', '/api/v1/usage'],
+      ['GET', `/api/v1/profiles/${me}/espace/arabe`],
+      ['GET', `/api/v1/profiles/${me}/espace/sciences`],
+      ['GET', `/api/v1/profiles/${me}/accueil`],
+      ['GET', `/api/v1/profiles/${me}/ecriture`],
+      ['GET', `/api/v1/profiles/${me}/mots-coran`],
+      ['POST', `/api/v1/profiles/${me}/mots-coran`],
+      ['GET', `/api/v1/profiles/${me}/recapitulatif/sciences`],
+      ['POST', `/api/v1/profiles/${me}/commencer/sciences`],
+      ['GET', `/api/v1/profiles/${me}/positionnement/arabe`],
+      ['GET', `/api/v1/profiles/${me}/epreuve/arabe`],
+    ];
+    for (const [m, u] of lus)
+      expect(
+        autoriseEnfant(m, u, me, undefined, u.includes('progress') ? q : undefined),
+        `${m} ${u}`,
+      ).toBe(true);
+    expect(ok('POST', '/api/v1/attempts', { events: [{ profileId: me }, { profileId: me }] })).toBe(
+      true,
+    );
+    // jamais le profil d'un frère : file d'envoi, progression, espace
+    expect(
+      ok('POST', '/api/v1/attempts', { events: [{ profileId: me }, { profileId: autre }] }),
+    ).toBe(false);
+    expect(
+      autoriseEnfant('GET', '/api/v1/progress', me, undefined, { profile: autre, level: 'en1' }),
+    ).toBe(false);
+    expect(ok('GET', `/api/v1/profiles/${autre}/espace/arabe`)).toBe(false);
+  });
+  it('décisions de niveau du parent (choisir le niveau, niveau suivant) : refusées en session limitée', () => {
+    for (const [m, u] of [
+      ['POST', `/api/v1/profiles/${me}/choisir-niveau/arabe`],
+      ['POST', `/api/v1/profiles/${me}/niveau-suivant/arabe`],
+      ['POST', `/api/v1/profiles/${me}/niveau-suivant/sciences`],
+    ] as const)
+      expect(ok(m, u, { niveau: 'en2' }), `${m} ${u}`).toBe(false);
+    // le reste du parcours (récapitulatif, test de positionnement, épreuve, commencer) reste permis
+    expect(ok('GET', `/api/v1/profiles/${me}/recapitulatif/arabe`)).toBe(true);
+    expect(ok('POST', `/api/v1/profiles/${me}/commencer/sciences`)).toBe(true);
+  });
   it('chaque route sensible : refusée', () => {
     const refus: Array<[string, string]> = [
       ['GET', '/api/v1/profiles'],

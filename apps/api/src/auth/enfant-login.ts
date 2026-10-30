@@ -131,9 +131,12 @@ const CORRECTION = /^\/api\/v1\/units\/[a-z]{2,3}\d{1,2}\.l\d{2}\/corriger$/;
 /** lectures dont l'identifiant du profil est dans l'adresse : seulement le SIEN */
 const LECTURE_PAR_PROFIL =
   /^\/api\/v1\/(today|dashboard)\/([^/]+)$|^\/api\/v1\/hifz\/profiles\/([^/]+)(\/marques)?$/;
-/** apprentissage sous /profiles/<son identifiant>/…, toutes méthodes */
+/**
+ * apprentissage sous /profiles/<son identifiant>/…, toutes méthodes. Les DÉCISIONS de niveau du parent
+ * (`choisir-niveau`, `niveau-suivant`) n'y sont pas : sans code parent, la garde du serveur les laisserait passer.
+ */
 const SOUS_PROFIL =
-  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|niveau-suivant|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer|quran\/reciter)(\/|$)/;
+  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer|quran\/reciter)(\/|$)/;
 /** sous /profiles/<son identifiant>/…, LECTURE seulement (contenus et réglages que l'enfant ne modifie pas) */
 const SOUS_PROFIL_LECTURE =
   /^(madjaliss|vivre|devoirs|certificats|hifz-classe|mode-evaluation|protections|quran\/allowed-reciters|quran\/reciters|quran\/suras\/[^/]+\/tracks)(\/|$)/;

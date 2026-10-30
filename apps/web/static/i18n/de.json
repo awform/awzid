@@ -4465,5 +4465,6 @@
   "profils.moi_ajouter": "Meinen Bereich hinzufügen",
   "profils.moi_aide": "Ihr eigenes Erwachsenenprofil neben denen Ihrer Kinder. Es lernt wie ein Erwachsenenkonto.",
   "profils.moi_creer": "Meinen Bereich anlegen",
-  "erreur.profil_moi_existe": "Sie haben Ihren Bereich schon."
+  "erreur.profil_moi_existe": "Sie haben Ihren Bereich schon.",
+  "parc.avec_parent": "Der Wechsel zur nächsten Stufe wird mit deinen Eltern entschieden."
 }

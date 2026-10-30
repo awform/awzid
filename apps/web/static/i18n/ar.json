@@ -4465,5 +4465,6 @@
   "profils.moi_ajouter": "إضافة مساحتي",
   "profils.moi_aide": "ملفك الخاص كبالغ إلى جانب ملفات أبنائك. يتعلّم مثل حساب بالغ.",
   "profils.moi_creer": "إنشاء مساحتي",
-  "erreur.profil_moi_existe": "لديك مساحتك بالفعل."
+  "erreur.profil_moi_existe": "لديك مساحتك بالفعل.",
+  "parc.avec_parent": "الانتقال إلى المستوى التالي يُقرَّر مع والديك."
 }

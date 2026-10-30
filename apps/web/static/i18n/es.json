@@ -4465,5 +4465,6 @@
   "profils.moi_ajouter": "Añadir mi espacio",
   "profils.moi_aide": "Su propio perfil de adulto, junto a los de sus hijos. Aprende como una cuenta de adulto.",
   "profils.moi_creer": "Crear mi espacio",
-  "erreur.profil_moi_existe": "Ya tiene su espacio."
+  "erreur.profil_moi_existe": "Ya tiene su espacio.",
+  "parc.avec_parent": "Pasar al nivel siguiente se decide con tu padre o madre."
 }
