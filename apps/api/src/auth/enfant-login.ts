@@ -21,9 +21,15 @@ export const estIdentifiantEnfant = (saisie: string) =>
 /** « prénom » → base sûre (sans accents ni signes), au plus 20 caractères */
 export function baseIdentifiant(prenom: string): string {
   const b = (prenom ?? '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/ç/g, 'c')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/ñ/g, 'n')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ýÿ]/g, 'y')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 20)
