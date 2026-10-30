@@ -3,6 +3,7 @@
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import ModelesPlus from './ModelesPlus.svelte';
+  import { assezVisible, PALIERS } from './demarrage';
   import { fmtNumber, t } from '$lib/i18n';
   import { audioIdFor, playLessonAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import type { VivBeat, VivMotion } from '@awform/content/vivante';
@@ -153,11 +154,20 @@
     // départ sans son quand l'animation arrive à l'écran (pas en version calme, jamais le condensé) ;
     // A21b : zone visible = écran MOINS la barre de navigation du bas (téléphone), jamais sous la barre
     const bar = matchMedia('(max-width: 899px)').matches ? 96 : 0;
+    // 30/10/2026 : « 60 % de l'animation » était inatteignable pour une animation haute sur un écran d'ordinateur peu
+    // haut (elle restait figée) : voir demarrage.ts
     const io = new IntersectionObserver(
       (es) => {
-        if (es.some((e) => e.isIntersecting) && i < 0 && !condense && !reduced && !skipped) start();
+        if (
+          es.some((e) => assezVisible(e.boundingClientRect, innerHeight, bar)) &&
+          i < 0 &&
+          !condense &&
+          !reduced &&
+          !skipped
+        )
+          start();
       },
-      { threshold: 0.6, rootMargin: `0px 0px -${bar}px 0px` },
+      { threshold: PALIERS },
     );
     if (root) io.observe(root);
     // A21b : la scène ne rétrécit jamais d'un temps à l'autre (moins de sauts de la page)
