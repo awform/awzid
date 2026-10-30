@@ -6,6 +6,7 @@
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { unitLabel } from '$lib/api';
+  import { lienOuvert } from '$lib/enfant-session';
   import type { HifzToday } from '$lib/hifz';
   import { fmtDate, t } from '$lib/i18n';
   import { levelLabel } from '$lib/levels';
@@ -203,7 +204,11 @@
   <!-- OÙ J'EN SUIS : la semaine (jamais pour un enfant : aucun compteur) -->
   {#if semaine}
     <EnTeteSection titre={t('auj.semaine')} />
-    <a class="v4-carte sem" href={resolve('/suivi')} data-testid="ma-semaine">
+    <a
+      class="v4-carte sem"
+      href={lienOuvert('/suivi') ? resolve('/suivi') : undefined}
+      data-testid="ma-semaine"
+    >
       <AnneauOr
         n={semaine.joursActifs}
         sur={semaine.objectif}
@@ -228,7 +233,10 @@
     </a>
   {:else if data.serein}
     <EnTeteSection titre={t('auj.semaine')} />
-    <a class="v4-carte v4-ligne" href={resolve('/suivi')} data-testid="ma-semaine"
+    <a
+      class="v4-carte v4-ligne"
+      href={lienOuvert('/suivi') ? resolve('/suivi') : undefined}
+      data-testid="ma-semaine"
       ><span class="v4-picto"><Picto name="suivi" /></span><span class="txt"
         ><Bidi text={t('ser.semaine', { n: data.leconsSemaine ?? 0 })} /></span
       ><span class="v4-chev"><Picto name="chevron" /></span></a

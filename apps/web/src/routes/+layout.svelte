@@ -20,6 +20,7 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, logout, type Me } from '$lib/session';
+  import { restreindreEnvoiAuProfil } from '$lib/sync-core';
   import { navPourEnfant, pageOuverteAEnfant } from '$lib/enfant-session';
 
   // bêta : logique d'accès chargée À LA DEMANDE (en ligne seulement) : l'appareil de l'élève n'en porte pas le poids
@@ -106,6 +107,7 @@
   );
   $effect(() => {
     fonctionsEtat.restreint = enfantSession;
+    restreindreEnvoiAuProfil(enfantSession ? (me?.profiles[0]?.id ?? null) : null);
     fonctionsEtat.ado = me?.enfantAdo === true;
     fonctionsEtat.tuteurIa = me?.enfantTuteurIa === true;
   });

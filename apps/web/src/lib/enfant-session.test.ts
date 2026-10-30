@@ -1,4 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import 'fake-indexeddb/auto';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { _resetDbForTests } from './idb';
+import { flushQueue, pendingCount, queueEvent, restreindreEnvoiAuProfil } from './sync-core';
+import { fonctionsEtat } from '$lib/fonctions.svelte';
+import { lienOuvert } from './enfant-session';
 import { navFor } from '$lib/ui/audience';
 import { navPourEnfant, pageOuverteAEnfant } from './enfant-session';
 
@@ -106,5 +111,80 @@ describe('fonctions en session limitée', () => {
       fonctionsEtat.ado = false;
       fonctionsEtat.tuteurIa = false;
     }
+  });
+});
+
+describe('v4, liens et file d’envoi en session limitée', () => {
+  beforeEach(() => {
+    globalThis.indexedDB = new IDBFactory();
+    _resetDbForTests();
+  });
+  it('lienOuvert : tout hors session limitée ; enfant épuré ; ado avec Plus réduit (ni suivi, ni compte, ni ma classe)', () => {
+    fonctionsEtat.restreint = false;
+    for (const h of ['/suivi', '/compte', '/ma-classe', '/plus'])
+      expect(lienOuvert(h), h).toBe(true);
+    fonctionsEtat.restreint = true;
+    try {
+      fonctionsEtat.ado = false;
+      for (const h of ['/suivi', '/compte', '/ma-classe', '/plus'])
+        expect(lienOuvert(h), `enfant ${h}`).toBe(false);
+      for (const h of [
+        '/lectures',
+        '/sciences',
+        '/ecriture',
+        '/revisions',
+        '/hors-ligne',
+        '/madjaliss',
+      ])
+        expect(lienOuvert(h), `enfant ${h}`).toBe(true);
+      fonctionsEtat.ado = true;
+      expect(lienOuvert('/plus')).toBe(true);
+      for (const h of ['/suivi', '/suivi/rapport', '/compte', '/ma-classe'])
+        expect(lienOuvert(h), `ado ${h}`).toBe(false);
+      for (const h of [
+        '/lectures',
+        '/sciences',
+        '/ecriture',
+        '/revisions',
+        '/hors-ligne',
+        '/madjaliss',
+      ])
+        expect(lienOuvert(h), `ado ${h}`).toBe(true);
+    } finally {
+      fonctionsEtat.restreint = false;
+      fonctionsEtat.ado = false;
+    }
+  });
+  it('file d’envoi : un enfant connecté n’envoie que SES réponses (le serveur refuserait un lot citant un frère)', async () => {
+    const base = {
+      unitId: 'en1.l01',
+      eventType: 'reponse' as const,
+      exerciseId: 'e',
+      exerciseHash: 'h',
+      itemIndex: 0,
+      response: { value: true },
+      edition: 'x',
+    };
+    await queueEvent({ ...base, profileId: 'moi' });
+    await queueEvent({ ...base, profileId: 'frere' });
+    const vus: string[] = [];
+    const serveur = (async (_u: RequestInfo | URL, init?: RequestInit) => {
+      const evs = (
+        JSON.parse(String(init?.body)) as { events: Array<{ id: string; profileId: string }> }
+      ).events;
+      for (const e of evs) vus.push(e.profileId);
+      return new Response(
+        JSON.stringify({ accepted: evs.map((e) => ({ id: e.id })), duplicates: [], rejected: [] }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as typeof fetch;
+    restreindreEnvoiAuProfil('moi');
+    try {
+      await flushQueue(serveur);
+    } finally {
+      restreindreEnvoiAuProfil(null);
+    }
+    expect(vus).toEqual(['moi']);
+    expect(await pendingCount()).toBe(1); // celle du frère reste, pour sa propre session
   });
 });

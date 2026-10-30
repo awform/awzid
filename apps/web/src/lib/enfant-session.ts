@@ -4,6 +4,7 @@
  * compte, paiements, accords, famille, école, messages, tuteur). L'ado garde « Plus » (écriture, révisions,
  * lectures…) ; l'enfant garde la version épurée.
  */
+import { fonctionsEtat } from '$lib/fonctions.svelte';
 import type { NavItem } from '$lib/ui/audience';
 
 /** pages fermées à l'enfant ET à l'ado (elles appellent des routes que la session limitée refuse) */
@@ -18,3 +19,7 @@ export const pageOuverteAEnfant = (chemin: string, ado = false): boolean =>
 /** entrées de navigation gardées : celles dont la page est ouverte à ce public */
 export const navPourEnfant = (nav: NavItem[], ado = false): NavItem[] =>
   nav.filter((x) => pageOuverteAEnfant(x.href, ado));
+
+/** Ce lien peut-il s'afficher ? Toujours hors session limitée ; sinon seulement vers une page ouverte à ce public. */
+export const lienOuvert = (href: string): boolean =>
+  !fonctionsEtat.restreint || pageOuverteAEnfant(href, fonctionsEtat.ado);

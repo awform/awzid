@@ -245,6 +245,15 @@ export async function reportSetAside(fetchFn: typeof fetch = fetch, base = ''): 
 
 let running: Promise<FlushResult> | null = null;
 
+/**
+ * Session limitée d'un enfant (V2-3) : seule la réponse de SON profil part vers le serveur, qui refuserait tout
+ * lot citant un autre profil de l'appareil. Les réponses des autres restent gardées pour leur propre session.
+ */
+let profilRestreint: string | null = null;
+export const restreindreEnvoiAuProfil = (id: string | null): void => {
+  profilRestreint = id;
+};
+
 /** Envoie la file (lots de BATCH, ordre chronologique). Un seul envoi à la fois par contexte. */
 export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<FlushResult> {
   if (running) return running;
@@ -264,7 +273,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
     try {
       for (;;) {
         const all = (await getAll<AttemptEvent>('events'))
-          .filter((e) => !skip.has(e.id))
+          .filter((e) => !skip.has(e.id) && (!profilRestreint || e.profileId === profilRestreint))
           .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
         if (all.length === 0) break;
         const batch = all.slice(0, size);

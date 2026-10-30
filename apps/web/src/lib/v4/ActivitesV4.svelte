@@ -7,6 +7,7 @@
   import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { dueWords, loadBoxes, loadDeck } from '$lib/cards';
+  import { lienOuvert } from '$lib/enfant-session';
   import { localIso } from '$lib/hifz';
   import { t } from '$lib/i18n';
   import { ACTIFS, texteDuCursus } from '$lib/madjaliss/cycles';
@@ -95,7 +96,7 @@
           >{:else}<span class="petit"><Bidi text={t('v4.d_madjaliss')} /></span>{/if}</span
       ><span class="chev-or"><Picto name="chevron" /></span></a
     >
-    {#each CARTES as c (c.href)}
+    {#each CARTES.filter((c) => lienOuvert(c.href)) as c (c.href)}
       <a class="v4-carte carte" href={resolve(c.href as '/')} data-plus={c.href}
         ><span class="etoile" aria-hidden="true"><Picto name="etoile8" size={84} trait={1} /></span>
         {#if c.href === '/revisions' && due > 0}<span class="v4-badge" data-testid="v4-a-revoir"
@@ -131,16 +132,18 @@
     {/each}
   </ul>
 
-  <EnTeteSection titre={t('v4.compte')} discret />
-  <ul class="v4-carte reglages">
-    <li>
-      <a href={resolve('/compte')} data-plus="/compte"
-        ><Picto name="compte" /><span><Bidi text={t('entete.compte')} /></span><span class="v4-chev"
-          ><Picto name="chevron" /></span
-        ></a
-      >
-    </li>
-  </ul>
+  {#if lienOuvert('/compte')}
+    <EnTeteSection titre={t('v4.compte')} discret />
+    <ul class="v4-carte reglages">
+      <li>
+        <a href={resolve('/compte')} data-plus="/compte"
+          ><Picto name="compte" /><span><Bidi text={t('entete.compte')} /></span><span
+            class="v4-chev"><Picto name="chevron" /></span
+          ></a
+        >
+      </li>
+    </ul>
+  {/if}
 </div>
 
 <style>
