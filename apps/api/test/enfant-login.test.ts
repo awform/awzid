@@ -3,12 +3,14 @@
  */
 import { randomBytes, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
 import { loadEdition } from '@awform/content';
 import {
   connect,
   importEdition,
   resetTestDatabase,
   runMigrations,
+  schema as t,
   type DbHandle,
 } from '@awform/db';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
@@ -111,6 +113,46 @@ describe('session limitée : liste fermée (sans base)', () => {
     expect(ok('GET', `/api/v1/profiles/${autre}/madjaliss`)).toBe(false);
     expect(ok('PUT', '/api/v1/units/en1.l01/corriger')).toBe(false);
   });
+  it('signalement par l’enfant ou l’ado : motifs prédéfinis, jamais de texte libre', () => {
+    const base = { targetKind: 'lecon', unitId: 'en1.l01', path: 'x' };
+    for (const reason of ['texte_arabe', 'orthographe', 'audio_absent', 'audio_faux', 'autre'])
+      expect(ok('POST', '/api/v1/contenu/signalements', { ...base, reason }), reason).toBe(true);
+    for (const reason of ['sens', 'reference', 'regle', 'corrige', 'inconnu'])
+      expect(ok('POST', '/api/v1/contenu/signalements', { ...base, reason }), reason).toBe(false);
+    expect(
+      ok('POST', '/api/v1/contenu/signalements', { ...base, reason: 'autre', comment: 'bonjour' }),
+    ).toBe(false);
+    expect(
+      ok('POST', '/api/v1/contenu/signalements', { ...base, reason: 'autre', excerpt: 'texte' }),
+    ).toBe(false);
+    expect(ok('POST', '/api/v1/contenu/signalements')).toBe(false);
+    expect(ok('GET', '/api/v1/contenu/signalements')).toBe(false);
+  });
+  it('récitateur : seulement sur SON profil', () => {
+    expect(ok('PUT', `/api/v1/profiles/${me}/quran/reciter`, { reciterId: null })).toBe(true);
+    expect(ok('PUT', `/api/v1/profiles/${autre}/quran/reciter`, { reciterId: null })).toBe(false);
+  });
+  it('tuteur IA : l’ado avec l’accord parental seulement ; l’enfant jamais', () => {
+    const rts: Array<[string, string]> = [
+      ['POST', `/api/v1/tuteur-ia/${me}/libre`],
+      ['POST', `/api/v1/tuteur-ia/${me}/guidee`],
+      ['GET', `/api/v1/tuteur-ia/${me}/etat?unit=en1.l01`],
+      ['POST', `/api/v1/tutor/${me}/ask`],
+      ['GET', '/api/v1/tutor/status'],
+    ];
+    const av = (c: { ado: boolean; tuteurIa: boolean }) => (m: string, u: string) =>
+      autoriseEnfant(m, u, me, undefined, undefined, c);
+    for (const [m, u] of rts) {
+      expect(av({ ado: true, tuteurIa: true })(m, u), `ado+accord ${u}`).toBe(true);
+      expect(av({ ado: true, tuteurIa: false })(m, u), `ado sans accord ${u}`).toBe(false);
+      expect(av({ ado: false, tuteurIa: true })(m, u), `enfant ${u}`).toBe(false);
+      expect(av({ ado: false, tuteurIa: false })(m, u), `enfant sans accord ${u}`).toBe(false);
+    }
+    const okAdo = av({ ado: true, tuteurIa: true });
+    expect(okAdo('POST', `/api/v1/tuteur-ia/${autre}/libre`)).toBe(false); // jamais le profil d'un autre
+    expect(okAdo('POST', `/api/v1/tutor/${autre}/ask`)).toBe(false);
+    expect(okAdo('POST', `/api/v1/tutor/${me}/journal/x/signaler`)).toBe(false);
+  });
   it('écoute, récitation, tuteur, khatma, classes, messages, rapport : toujours refusés', () => {
     for (const [m, u] of [
       ['GET', `/api/v1/profiles/${me}/ecoute`],
@@ -125,7 +167,6 @@ describe('session limitée : liste fermée (sans base)', () => {
       ['GET', `/api/v1/rapport-hebdo/${me}`],
       ['POST', '/api/v1/fils/x/messages'],
       ['POST', '/api/v1/notifications/abonnement'],
-      ['POST', '/api/v1/contenu/signalements'],
       ['POST', '/api/v1/profiles/rattacher'],
     ] as const)
       expect(ok(m, u), `${m} ${u}`).toBe(false);
@@ -432,6 +473,71 @@ describe.skipIf(!URL)('comptes d’enfants avec identifiant (awform_test)', () =
       'session_limitee',
     );
     expect((await appel('GET', `/api/v1/today/${sid}`, c)).statusCode).not.toBe(403);
+  });
+
+  it('ado en session limitée : tuteur IA seulement avec l’accord parental ; enfant jamais ; signalement sans texte libre ; récitateur sur son profil', async () => {
+    const mk = async (nom: string, age: number, id: string) => {
+      const r = await appel('POST', '/api/v1/profiles', cookieParent, {
+        pseudonym: nom,
+        birthYear: YEAR - age,
+        identifiant: id,
+        motDePasseEnfant: PW_ENFANT,
+        declaration: true,
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
+      });
+      expect(r.statusCode).toBe(201);
+      return r.json().id as string;
+    };
+    const idAdo = await mk('Nour', 15, 'nour-381');
+    const idPetit = await mk('Omar', 8, 'omar-562');
+    const cAdo = cookieOf(await connexion('nour-381'));
+    const cPetit = cookieOf(await connexion('omar-562'));
+    expect((await appel('GET', '/api/v1/auth/me', cAdo)).json()).toMatchObject({
+      enfantAdo: true,
+      enfantTuteurIa: false,
+    });
+    expect((await appel('GET', '/api/v1/auth/me', cPetit)).json()).toMatchObject({
+      enfantAdo: false,
+    });
+    const libre = (c: string, id: string) =>
+      appel('POST', `/api/v1/tuteur-ia/${id}/libre`, c, { unitId: 'en1.l01', texte: 'bonjour' });
+    expect((await libre(cAdo, idAdo)).json().error.code).toBe('session_limitee'); // sans accord
+    const [compte] = await h.db
+      .select({ a: t.profile.ownerAccountId })
+      .from(t.profile)
+      .where(eq(t.profile.id, idAdo));
+    await h.db
+      .insert(t.consent)
+      .values({ accountId: compte!.a, profileId: idAdo, type: 'tuteur_ia', textVersion: 'test' });
+    await h.db
+      .insert(t.consent)
+      .values({ accountId: compte!.a, profileId: idPetit, type: 'tuteur_ia', textVersion: 'test' });
+    expect((await appel('GET', '/api/v1/auth/me', cAdo)).json()).toMatchObject({
+      enfantTuteurIa: true,
+    });
+    expect((await libre(cAdo, idAdo)).json().error?.code).not.toBe('session_limitee'); // avec accord : la route elle-même décide
+    expect((await libre(cPetit, idPetit)).json().error.code).toBe('session_limitee'); // enfant : jamais, même avec l'accord
+    expect((await libre(cAdo, idPetit)).json().error.code).toBe('session_limitee'); // jamais le profil d'un autre
+    // signalement : motif prédéfini seulement
+    const sig = (c: string, extra: object) =>
+      appel('POST', '/api/v1/contenu/signalements', c, {
+        targetKind: 'lecon',
+        unitId: 'en1.l01',
+        path: 'x',
+        reason: 'audio_faux',
+        ...extra,
+      });
+    expect((await sig(cAdo, { comment: 'bla' })).json().error.code).toBe('session_limitee');
+    expect((await sig(cPetit, { excerpt: 'bla' })).json().error.code).toBe('session_limitee');
+    expect((await sig(cPetit, { reason: 'sens' })).json().error.code).toBe('session_limitee');
+    const bon = await sig(cPetit, {});
+    expect(bon.json().error?.code).not.toBe('session_limitee');
+    expect([200, 201, 404]).toContain(bon.statusCode);
+    // récitateur : le sien oui, celui d'un autre non
+    const rec = (c: string, id: string) =>
+      appel('PUT', `/api/v1/profiles/${id}/quran/reciter`, c, { reciterId: null });
+    expect((await rec(cPetit, idPetit)).statusCode).toBe(200);
+    expect((await rec(cPetit, idAdo)).json().error.code).toBe('session_limitee');
   });
 
   it('nouveau mot de passe donné par le parent : l’ancien et les anciennes sessions ne marchent plus', async () => {

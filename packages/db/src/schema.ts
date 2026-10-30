@@ -2183,7 +2183,7 @@ export const contentReport = pgTable(
     ),
     check(
       'content_report_reason',
-      sql`${t.reason} IN ('texte_arabe', 'sens', 'reference', 'regle', 'corrige', 'orthographe', 'autre')`,
+      sql`${t.reason} IN ('texte_arabe', 'sens', 'reference', 'regle', 'corrige', 'orthographe', 'audio_absent', 'audio_faux', 'autre')`,
     ),
     check('content_report_status', sql`${t.status} IN ('recu', 'en_examen', 'corrige', 'rejete')`),
     check(

@@ -101,6 +101,7 @@ import { registerProfiles } from './profils.js';
 import {
   enregistrerSessionLimitee,
   chercherEnfant,
+  ctxEnfant,
   estIdentifiantEnfant,
   meEnfant,
   registerEnfantLogin,
@@ -182,7 +183,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   });
 
   // V2-3 : session d'un enfant = liste fermée de routes d'apprentissage, sur son seul profil
-  enregistrerSessionLimitee(app);
+  enregistrerSessionLimitee(app, db);
 
   const needAuth = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
@@ -767,7 +768,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           ttlMs: 7 * 24 * 3600_000,
         });
         reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(req)));
-        return meEnfant(await me(o.id, false), enf.profileId);
+        return meEnfant(await me(o.id, false), enf.profileId, await ctxEnfant(db, enf.profileId));
       }
       if (!a) return err(reply, 401, 'identifiants_incorrects');
       // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
@@ -863,7 +864,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     if (!req.auth && req.query.doux === '1') return { anonyme: true };
     if (!req.auth) return err(reply, 401, 'non_connecte');
     const m = await me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
-    return req.auth.profileId ? meEnfant(m, req.auth.profileId) : m;
+    return req.auth.profileId
+      ? meEnfant(m, req.auth.profileId, await ctxEnfant(db, req.auth.profileId))
+      : m;
   });
 
   app.post<{ Body: { current: string; next: string } }>(

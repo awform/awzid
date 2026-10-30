@@ -6,7 +6,7 @@
  *  - le parent donne un nouveau mot de passe ou débloque son enfant (POST /profiles/:id/acces).
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { canActForProfile, schema as t, type Db } from '@awform/db';
 import { hashSecret } from './crypto.js';
 import { checkPassword } from './passwords.js';
@@ -45,6 +45,30 @@ export function propositions(prenom: string, tirage: () => number = Math.random)
   return [...out];
 }
 
+/** profil d'enfant ou d'ado (âge), accord parental « tuteur_ia » : lus à chaque requête de la session limitée */
+export interface CtxEnfant {
+  ado: boolean;
+  tuteurIa: boolean;
+}
+export async function ctxEnfant(db: Db, profileId: string): Promise<CtxEnfant> {
+  const [p] = await db
+    .select({ kind: t.profile.kind })
+    .from(t.profile)
+    .where(eq(t.profile.id, profileId));
+  const [c] = await db
+    .select({ id: t.consent.id })
+    .from(t.consent)
+    .where(
+      and(
+        eq(t.consent.profileId, profileId),
+        eq(t.consent.type, 'tuteur_ia'),
+        isNull(t.consent.withdrawnAt),
+      ),
+    )
+    .limit(1);
+  return { ado: p?.kind === 'ado', tuteurIa: !!c };
+}
+
 export async function loginPris(db: Db, login: string): Promise<boolean> {
   const [x] = await db
     .select({ p: t.profileLogin.profileId })
@@ -71,7 +95,7 @@ export async function chercherEnfant(db: Db, login: string) {
  * Réponse de /auth/me pour la session d'un enfant : SON profil seulement, rien du compte du parent (adresse, numéro,
  * écoles, accords, rôles).
  */
-export function meEnfant(m: unknown, profileId: string): unknown {
+export function meEnfant(m: unknown, profileId: string, ctx?: CtxEnfant): unknown {
   const r = (m ?? {}) as { profiles?: Array<{ id: string }>; account?: Record<string, unknown> };
   const a = r.account ?? {};
   return {
@@ -91,6 +115,7 @@ export function meEnfant(m: unknown, profileId: string): unknown {
     roles: [],
     ecoles: [],
     enfantSession: true,
+    ...(ctx ? { enfantAdo: ctx.ado, enfantTuteurIa: ctx.tuteurIa } : {}),
   };
 }
 
@@ -108,10 +133,21 @@ const LECTURE_PAR_PROFIL =
   /^\/api\/v1\/(today|dashboard)\/([^/]+)$|^\/api\/v1\/hifz\/profiles\/([^/]+)(\/marques)?$/;
 /** apprentissage sous /profiles/<son identifiant>/…, toutes méthodes */
 const SOUS_PROFIL =
-  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|niveau-suivant|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer)(\/|$)/;
+  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|niveau-suivant|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer|quran\/reciter)(\/|$)/;
 /** sous /profiles/<son identifiant>/…, LECTURE seulement (contenus et réglages que l'enfant ne modifie pas) */
 const SOUS_PROFIL_LECTURE =
   /^(madjaliss|vivre|devoirs|certificats|hifz-classe|mode-evaluation|protections|quran\/allowed-reciters|quran\/reciters|quran\/suras\/[^/]+\/tracks)(\/|$)/;
+/** motifs de signalement offerts à l'enfant et à l'ado : prédéfinis, jamais de texte libre */
+export const MOTIFS_ENFANT = ['texte_arabe', 'orthographe', 'audio_absent', 'audio_faux', 'autre'];
+export function signalementEnfantOk(corps: unknown): boolean {
+  const b = (corps ?? {}) as { reason?: unknown; comment?: unknown; excerpt?: unknown };
+  return (
+    typeof b.reason === 'string' && MOTIFS_ENFANT.includes(b.reason) && !b.comment && !b.excerpt
+  );
+}
+const TUTEUR = /^\/api\/v1\/(tuteur-ia|tutor)(\/|$)/;
+const TUTEUR_OK =
+  /^\/api\/v1\/tuteur-ia\/[^/]+\/(etat|guidee|libre|prononciation\/[^/]+|scenario\/[^/]+)$|^\/api\/v1\/tutor\/[^/]+\/(ask|questions)$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** clés qui désignent un profil, à n'importe quelle profondeur d'un corps ou d'une requête */
@@ -139,6 +175,7 @@ export function autoriseEnfant(
   profileId: string,
   corps?: unknown,
   requete?: unknown,
+  ctx: CtxEnfant = { ado: false, tuteurIa: false },
 ): boolean {
   const chemin = url.split('?')[0] ?? '';
   const m = method.toUpperCase();
@@ -148,6 +185,15 @@ export function autoriseEnfant(
   if ((m === 'GET' || m === 'HEAD') && PUBLIC_READ.test(chemin)) return true;
   if (APPRENTISSAGE.test(chemin)) return true;
   if (CORRECTION.test(chemin)) return m === 'POST';
+  if (chemin === '/api/v1/contenu/signalements') return m === 'POST' && signalementEnfantOk(corps);
+  // tuteur IA : l'ado seulement, et seulement avec l'accord parental « tuteur_ia » sur SON profil
+  if (TUTEUR.test(chemin)) {
+    if (!ctx.ado || !ctx.tuteurIa) return false;
+    const x = /^\/api\/v1\/(?:tuteur-ia|tutor)\/([^/]+)\//.exec(chemin);
+    return chemin === '/api/v1/tutor/status'
+      ? m === 'GET'
+      : x?.[1] === profileId && TUTEUR_OK.test(chemin);
+  }
   const lp = LECTURE_PAR_PROFIL.exec(chemin);
   if (lp) return (m === 'GET' || m === 'HEAD') && (lp[2] ?? lp[3]) === profileId;
   const sous = /^\/api\/v1\/profiles\/([^/]+)\/(.*)$/.exec(chemin);
@@ -159,11 +205,14 @@ export function autoriseEnfant(
   return false;
 }
 
-export function enregistrerSessionLimitee(app: FastifyInstance): void {
+export function enregistrerSessionLimitee(app: FastifyInstance, db: Db): void {
   app.addHook('preHandler', async (req: FastifyRequest, reply: FastifyReply) => {
     const p = req.auth?.profileId;
     if (!p) return;
-    if (!autoriseEnfant(req.method, req.url, p, req.body, req.query))
+    const ctx = TUTEUR.test(req.url.split('?')[0] ?? '')
+      ? await ctxEnfant(db, p)
+      : { ado: false, tuteurIa: false };
+    if (!autoriseEnfant(req.method, req.url, p, req.body, req.query, ctx))
       return err(reply, 403, 'session_limitee');
   });
 }
