@@ -558,9 +558,18 @@ export const profile = pgTable(
      */
     evalModeWish: text('eval_mode_wish'),
     evalModeWishAt: timestamp('eval_mode_wish_at', { withTimezone: true }),
+    /**
+     * V2-3 : profil « Moi » du parent (choix « Moi et mes enfants », ou « Mon espace » ajouté plus tard) : un SEUL
+     * par compte (index unique partiel), toujours un profil d'adulte qui apprend comme un adulte.
+     */
+    isOwner: boolean('is_owner').notNull().default(false),
   },
   (t) => [
     index('profile_owner').on(t.ownerAccountId),
+    uniqueIndex('profile_one_owner')
+      .on(t.ownerAccountId)
+      .where(sql`${t.isOwner}`),
+    check('profile_owner_adulte', sql`NOT ${t.isOwner} OR ${t.kind} = 'adulte'`),
     check(
       'profile_birth_year',
       sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`,

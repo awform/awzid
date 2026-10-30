@@ -80,14 +80,21 @@ describe.skipIf(!URL)('inscription : intention « Qui va apprendre ? » (awform_
     expect(profils[0]?.kind).toBe('adulte');
   });
 
-  it.each(['enfants', 'famille'] as const)('%s → compte parent, aucun profil créé', async (i) => {
-    const r = await signup(`${i}@exemple.org`, { intention: i, kind: 'adulte' });
-    expect(r.statusCode).toBe(201);
-    const { a, profils } = await compte(`${i}@exemple.org`);
-    expect(a?.kind).toBe('parent');
-    expect(a?.signupIntent).toBe(i);
-    expect(profils).toHaveLength(0);
-  });
+  it.each(['enfants', 'famille'] as const)(
+    '%s → compte parent (profil « Moi » seulement pour famille)',
+    async (i) => {
+      const r = await signup(`${i}@exemple.org`, { intention: i, kind: 'adulte' });
+      expect(r.statusCode).toBe(201);
+      const { a, profils } = await compte(`${i}@exemple.org`);
+      expect(a?.kind).toBe('parent');
+      expect(a?.signupIntent).toBe(i);
+      // V2-3 : « Moi et mes enfants » crée le profil « Moi » du parent (adulte) ; « Mes enfants », aucun profil
+      if (i === 'famille') {
+        expect(profils).toHaveLength(1);
+        expect(profils[0]).toMatchObject({ kind: 'adulte', isOwner: true });
+      } else expect(profils).toHaveLength(0);
+    },
+  );
 
   it('eleves → enseignant : 12 caractères exigés, second facteur à configurer', async () => {
     const court = await signup('ens@exemple.org', {

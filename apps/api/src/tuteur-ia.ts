@@ -236,13 +236,22 @@ export function registerTuteurIa(
     profileId: string,
   ): Promise<{ audience: Audience; accordTuteur: boolean; pays: string | null }> {
     const [p] = await db
-      .select({ kind: t.profile.kind, accountKind: t.account.kind, pays: t.account.country })
+      .select({
+        kind: t.profile.kind,
+        isOwner: t.profile.isOwner,
+        accountKind: t.account.kind,
+        pays: t.account.country,
+      })
       .from(t.profile)
       .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
       .where(eq(t.profile.id, profileId));
     if (!p) return { audience: 'enfant', accordTuteur: false, pays: null };
     const audience: Audience =
-      p.kind === 'adulte' ? (p.accountKind === 'adulte' ? 'adulte' : 'ado') : (p.kind as Audience);
+      p.kind === 'adulte'
+        ? p.accountKind === 'adulte' || p.isOwner
+          ? 'adulte'
+          : 'ado'
+        : (p.kind as Audience);
     if (audience === 'adulte') return { audience, accordTuteur: true, pays: p.pays };
     const [c] = await db
       .select({ id: t.consent.id })

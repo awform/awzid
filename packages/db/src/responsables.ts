@@ -86,6 +86,8 @@ export interface FamilyProfile {
   birthYear: number | null;
   avatar: string | null;
   levelCode: string | null;
+  /** V2-3 : profil « Moi » du parent */
+  isOwner: boolean;
   /** titulaire : le compte connecté porte le profil ; parent : second parent ; classe : tablette */
   lien: 'titulaire' | 'parent' | 'classe';
 }
@@ -104,6 +106,7 @@ export async function visibleProfiles(
     avatar: t.profile.avatar,
     levelCode: t.profile.levelCode,
     owner: t.profile.ownerAccountId,
+    isOwner: t.profile.isOwner,
     createdAt: t.profile.createdAt,
   };
   let rows: Array<{
@@ -114,6 +117,7 @@ export async function visibleProfiles(
     avatar: string | null;
     levelCode: string | null;
     owner: string;
+    isOwner: boolean;
     createdAt: Date;
   }>;
   if (tablet) {
@@ -153,6 +157,7 @@ export async function visibleProfiles(
     birthYear: r.birthYear,
     avatar: r.avatar,
     levelCode: r.levelCode,
+    isOwner: r.isOwner,
     lien: tablet ? 'classe' : r.owner === accountId ? 'titulaire' : 'parent',
   }));
 }

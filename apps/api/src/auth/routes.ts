@@ -98,6 +98,7 @@ import { readFlags } from '@awform/db';
 import { missingConsents, registerConsents } from './accords.js';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
+import { creerProfilMoi, registerProfilMoi } from './profil-moi.js';
 import {
   enregistrerSessionLimitee,
   chercherEnfant,
@@ -580,6 +581,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
         ...(kind !== 'adulte' ? { majoriteDeclaree: true } : {}),
       });
+      // V2-3 : « Moi et mes enfants » → le parent a aussi son profil « Moi » (adulte) ; « Mes enfants » : aucun
+      if (kind === 'parent' && b.intention === 'famille')
+        await creerProfilMoi(db, a.id, {
+          birthYear: b.birthYear!,
+          ...(b.pseudonym ? { pseudonym: b.pseudonym } : {}),
+        });
       if (kind === 'adulte') {
         const [own] = await db
           .insert(t.profile)
@@ -989,6 +996,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     cle: opts.secretKey,
   };
   registerProfiles(app, kit);
+  registerProfilMoi(app, kit);
   registerEnfantLogin(app, kit);
   registerPrivacy(app, kit);
   // lot F3 : récupération du compte (e-mails), accords et réglages du compte

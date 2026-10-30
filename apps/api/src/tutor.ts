@@ -102,6 +102,7 @@ export function registerTutor(
     const [p] = await db
       .select({
         kind: t.profile.kind,
+        isOwner: t.profile.isOwner,
         birthYear: t.profile.birthYear,
         owner: t.profile.ownerAccountId,
         country: t.account.country,
@@ -114,7 +115,7 @@ export function registerTutor(
     // audit MIN-2 : UNE seule source pour l'âge, le genre du profil (fixé à la création : moins de 13 ans
     // « enfant », moins de 18 ans « ado ») ; un profil adulte hors d'un compte adulte est traité en ado
     const audience: Audience =
-      p.kind === 'adulte' ? (p.accountKind === 'adulte' ? 'adulte' : 'ado') : p.kind;
+      p.kind === 'adulte' ? (p.accountKind === 'adulte' || p.isOwner ? 'adulte' : 'ado') : p.kind;
     if (audience === 'adulte') return { audience, consent: true, country: p.country };
     const [c] = await db
       .select({ id: t.consent.id })
