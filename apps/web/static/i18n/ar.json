@@ -4445,5 +4445,19 @@
   "erreur.declaration_requise": "ضع علامة للتأكيد أنك والده أو وليّ أمره.",
   "erreur.session_limitee": "هذا الفضاء مخصّص للتعلّم فقط.",
   "id.email_numero_identifiant": "الرقم أو البريد أو اسم المستخدم",
-  "enfant.deconnexion": "تسجيل الخروج"
+  "enfant.deconnexion": "تسجيل الخروج",
+  "profils.acces_titre": "وصول {nom}",
+  "profils.acces_liste": "وصول الأطفال",
+  "profils.acces_ouvrir": "وصول {nom} (اسم المستخدم وكلمة المرور)",
+  "profils.acces_aucun": "ليس لهذا الطفل اسم مستخدم بعد: أنشئ له اسم مستخدم وكلمة مرور.",
+  "profils.acces_creer": "إنشاء الوصول",
+  "profils.acces_cree": "تم إنشاء الوصول. أعطه اسم المستخدم وكلمة المرور.",
+  "profils.acces_nouveau_mdp": "كلمة مرور جديدة",
+  "profils.acces_enregistrer": "حفظ",
+  "profils.acces_mdp_ok": "تم حفظ كلمة المرور الجديدة.",
+  "profils.acces_debloquer": "إلغاء القفل",
+  "profils.acces_debloque": "تم إلغاء القفل: يمكنه المحاولة من جديد.",
+  "profils.acces_fermer": "إغلاق",
+  "erreur.identifiant_existant": "لهذا الطفل اسم مستخدم بالفعل.",
+  "erreur.profil_adulte": "ملف البالغ ليس له وصول طفل."
 }

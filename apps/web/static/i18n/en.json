@@ -4445,5 +4445,19 @@
   "erreur.declaration_requise": "Tick the box to confirm you are their parent or guardian.",
   "erreur.session_limitee": "This area is for learning only.",
   "id.email_numero_identifiant": "Number, e-mail or username",
-  "enfant.deconnexion": "Log out"
+  "enfant.deconnexion": "Log out",
+  "profils.acces_titre": "{nom}'s access",
+  "profils.acces_liste": "Children's access",
+  "profils.acces_ouvrir": "{nom}'s access (username, password)",
+  "profils.acces_aucun": "This child has no username yet: create a username and a password.",
+  "profils.acces_creer": "Create access",
+  "profils.acces_cree": "Access created. Give them their username and password.",
+  "profils.acces_nouveau_mdp": "New password",
+  "profils.acces_enregistrer": "Save",
+  "profils.acces_mdp_ok": "New password saved.",
+  "profils.acces_debloquer": "Unlock",
+  "profils.acces_debloque": "Access unlocked: they can try again.",
+  "profils.acces_fermer": "Close",
+  "erreur.identifiant_existant": "This child already has a username.",
+  "erreur.profil_adulte": "An adult profile has no child access."
 }

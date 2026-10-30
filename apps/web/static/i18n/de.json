@@ -4445,5 +4445,19 @@
   "erreur.declaration_requise": "Bestätigen Sie mit dem Kästchen, dass Sie Elternteil oder Vormund sind.",
   "erreur.session_limitee": "Dieser Bereich ist nur zum Lernen.",
   "id.email_numero_identifiant": "Nummer, E-Mail oder Benutzername",
-  "enfant.deconnexion": "Abmelden"
+  "enfant.deconnexion": "Abmelden",
+  "profils.acces_titre": "Zugang von {nom}",
+  "profils.acces_liste": "Zugang der Kinder",
+  "profils.acces_ouvrir": "Zugang von {nom} (Benutzername, Passwort)",
+  "profils.acces_aucun": "Dieses Kind hat noch keinen Benutzernamen: Legen Sie Benutzername und Passwort an.",
+  "profils.acces_creer": "Zugang anlegen",
+  "profils.acces_cree": "Zugang angelegt. Geben Sie Benutzername und Passwort weiter.",
+  "profils.acces_nouveau_mdp": "Neues Passwort",
+  "profils.acces_enregistrer": "Speichern",
+  "profils.acces_mdp_ok": "Neues Passwort gespeichert.",
+  "profils.acces_debloquer": "Entsperren",
+  "profils.acces_debloque": "Zugang entsperrt: Es kann es erneut versuchen.",
+  "profils.acces_fermer": "Schließen",
+  "erreur.identifiant_existant": "Dieses Kind hat schon einen Benutzernamen.",
+  "erreur.profil_adulte": "Ein Erwachsenenprofil hat keinen Kinderzugang."
 }

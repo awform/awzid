@@ -384,5 +384,17 @@
   "profils.mdp_enfant": "Mot de passe de l'enfant",
   "profils.mdp_enfant_aide": "8 caractères au moins. Ce n'est ni son prénom, ni son identifiant.",
   "profils.declaration": "Je suis son parent ou son tuteur et j'accepte ces conditions pour lui.",
-  "enfant.deconnexion": "Se déconnecter"
+  "enfant.deconnexion": "Se déconnecter",
+  "profils.acces_titre": "Accès de {nom}",
+  "profils.acces_liste": "Accès des enfants",
+  "profils.acces_ouvrir": "Accès de {nom} (identifiant, mot de passe)",
+  "profils.acces_aucun": "Cet enfant n'a pas encore d'identifiant : créez-lui un identifiant et un mot de passe.",
+  "profils.acces_creer": "Créer l'accès",
+  "profils.acces_cree": "Accès créé. Donnez-lui son identifiant et son mot de passe.",
+  "profils.acces_nouveau_mdp": "Nouveau mot de passe",
+  "profils.acces_enregistrer": "Enregistrer",
+  "profils.acces_mdp_ok": "Nouveau mot de passe enregistré.",
+  "profils.acces_debloquer": "Débloquer",
+  "profils.acces_debloque": "Accès débloqué : il peut réessayer.",
+  "profils.acces_fermer": "Fermer"
 }

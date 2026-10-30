@@ -4445,5 +4445,19 @@
   "erreur.declaration_requise": "Marque la casilla para confirmar que es su padre, madre o tutor.",
   "erreur.session_limitee": "Este espacio es solo para aprender.",
   "id.email_numero_identifiant": "Número, correo o usuario",
-  "enfant.deconnexion": "Cerrar sesión"
+  "enfant.deconnexion": "Cerrar sesión",
+  "profils.acces_titre": "Acceso de {nom}",
+  "profils.acces_liste": "Acceso de los niños",
+  "profils.acces_ouvrir": "Acceso de {nom} (usuario, contraseña)",
+  "profils.acces_aucun": "Este niño aún no tiene usuario: cree un usuario y una contraseña.",
+  "profils.acces_creer": "Crear acceso",
+  "profils.acces_cree": "Acceso creado. Dele su usuario y su contraseña.",
+  "profils.acces_nouveau_mdp": "Nueva contraseña",
+  "profils.acces_enregistrer": "Guardar",
+  "profils.acces_mdp_ok": "Nueva contraseña guardada.",
+  "profils.acces_debloquer": "Desbloquear",
+  "profils.acces_debloque": "Acceso desbloqueado: puede intentarlo de nuevo.",
+  "profils.acces_fermer": "Cerrar",
+  "erreur.identifiant_existant": "Este niño ya tiene un usuario.",
+  "erreur.profil_adulte": "Un perfil de adulto no tiene acceso de niño."
 }

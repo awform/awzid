@@ -9,6 +9,7 @@
   import { call, fetchMe, type Me } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { SYMBOLS } from '$lib/symbols';
+  import AccesEnfant from './AccesEnfant.svelte';
   import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
@@ -22,6 +23,8 @@
   let pin = $state('');
   let pinError = $state('');
   let adding = $state(false);
+  /** V2-3 : fiche d'accès (identifiant, mot de passe) ouverte pour cet enfant */
+  let accesOuvert = $state<string | null>(null);
   let error = $state('');
   let info = $state('');
   const YEAR = new Date().getFullYear();
@@ -154,6 +157,25 @@
     {/each}
   </div>
   {#if me.profiles.length === 0}<p class="muted">{t('profils.aucun')}</p>{/if}
+  {#if me.account.kind === 'parent'}
+    <ul class="acces-liste" aria-label={t('profils.acces_liste')}>
+      {#each me.profiles.filter((p) => p.kind !== 'adulte') as p (p.id)}
+        <li>
+          <button
+            type="button"
+            class="lien"
+            aria-expanded={accesOuvert === p.id}
+            onclick={() => (accesOuvert = accesOuvert === p.id ? null : p.id)}
+            data-testid="acces-{p.id}"
+            ><Bidi text={t('profils.acces_ouvrir', { nom: p.pseudonym })} /></button
+          >
+        </li>
+      {/each}
+    </ul>
+    {#each me.profiles.filter((p) => p.id === accesOuvert) as p (p.id)}
+      <AccesEnfant profile={p} onferme={() => (accesOuvert = null)} />
+    {/each}
+  {/if}
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
     <p><a href={resolve('/famille')} data-testid="lien-famille">{t('fam.lien')}</a></p>
   {/if}
@@ -387,5 +409,16 @@
   }
   .small {
     font-size: 0.9rem;
+  }
+  .acces-liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+  }
+  .acces-liste button {
+    min-height: 44px;
   }
 </style>
