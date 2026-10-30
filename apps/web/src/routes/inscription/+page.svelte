@@ -12,6 +12,7 @@
   import { onMount, tick } from 'svelte';
   import { chargerStatut, type AccesStatut } from '$lib/acces';
   import ListeAttente from './ListeAttente.svelte';
+  import { deduirePays, lireIdentifiant, paysLePlusStrict } from '$lib/inscription/identifiant';
   import QuiVaApprendre, { type Intention } from './QuiVaApprendre.svelte';
   import { retenirSource } from '$lib/provenance';
   import { mesure } from '$lib/mesure';
@@ -77,6 +78,43 @@
   // morceau commun préchargé sur l'appareil de l'élève)
   const champMdp = import('$lib/compte/ChampMotDePasse.svelte');
   let country = $state('FR');
+  // V2-2 : champ unique « Numéro WhatsApp ou e-mail » ; la forme est reconnue automatiquement
+  const lecture = $derived(lireIdentifiant(email));
+  /** pays déduit de l'appareil (jamais de l'adresse IP) ; `paysManuel` : la personne l'a corrigé, plus rien ne le change */
+  let paysManuel = $state(false);
+  let paysSur = $state(true);
+  let candidatsPays = $state<readonly string[]>([]);
+  let paysOuvert = $state(false);
+  onMount(() => {
+    if (assistee) return;
+    const d = deduirePays(
+      { langue: navigator.language, fuseau: Intl.DateTimeFormat().resolvedOptions().timeZone },
+      COUNTRIES,
+    );
+    country = d.pays;
+    paysSur = d.sur;
+    candidatsPays = d.candidats;
+  });
+  // numéro international saisi : son indicatif donne le pays
+  $effect(() => {
+    if (lecture.type === 'telephone' && lecture.pays && !paysManuel && !assistee) {
+      country = lecture.pays;
+      paysSur = true;
+    }
+  });
+  // doute (langue seule) : la règle de majorité la plus stricte des pays possibles est retenue (règles du serveur)
+  $effect(() => {
+    const cs = candidatsPays;
+    if (paysSur || paysManuel || !cs.length) return;
+    void Promise.all(cs.map((c) => call<{ consentAge: number }>('GET', `/pays/${c}/regles`))).then(
+      (rs) => {
+        const ages: Record<string, number | undefined> = {};
+        cs.forEach((c, i) => (ages[c] = rs[i]?.ok ? rs[i].data?.consentAge : undefined));
+        const p = paysLePlusStrict(cs, (c) => ages[c]);
+        if (p && !paysManuel && !paysSur) country = p;
+      },
+    );
+  });
   let birthYear: number | undefined = $state(undefined);
   let pseudonym = $state('');
   /** A39 : façon d'avancer de l'adulte (modifiable ensuite dans son compte) */
@@ -224,7 +262,6 @@
     2: ['region', 'birthYear'],
     3: ['cgu', 'art9', 'transfert'],
   };
-  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   function valider(n: Etape): Record<string, string> {
     const e: Record<string, string> = {};
     if (n === 1 && (mode === 'google' || mode === 'telephone' || assistee?.numero)) {
@@ -234,9 +271,17 @@
       else if (password && niveauMdp === 'refuse') e.password = t('ins.err_mdp');
       else if (password && !mdpIdentiques) e['password-confirmer'] = t('ins.err_confirmer');
     } else if (n === 1) {
-      const m = email.trim();
-      if (!m) e.email = t('ins.err_email_vide');
-      else if (!EMAIL.test(m)) e.email = t('ins.err_email');
+      const l = lecture;
+      if (l.type === 'vide') e.email = t('ins.err_id_vide');
+      else if (l.type === 'invalide')
+        e.email = t(
+          l.raison === 'email'
+            ? 'ins.err_email'
+            : l.raison.startsWith('numero_')
+              ? `id.erreur.${l.raison}`
+              : `ins.err_id_${l.raison}`,
+        );
+      else if (l.type === 'telephone') e.email = t('ins.err_id_verifier_numero');
       if (!password) e.password = t('ins.err_mdp_vide');
       else if (niveauMdp === 'refuse') e.password = t('ins.err_mdp');
       else if (!mdpIdentiques) e['password-confirmer'] = t('ins.err_confirmer');
@@ -285,6 +330,14 @@
   async function avancer(e: SubmitEvent) {
     e.preventDefault();
     if (busy) return;
+    // numéro international reconnu : le parcours numéro (vérification WhatsApp) prend le relais
+    if (etape === 1 && mode === 'email' && !assistee && lecture.type === 'telephone') {
+      mode = 'telephone';
+      erreurs = {};
+      await tick();
+      document.getElementById('telephone')?.focus();
+      return;
+    }
     const trouvees = valider(etape);
     erreurs = trouvees;
     error = '';
@@ -360,7 +413,7 @@
           ? { defi: { id: verifTel.id, jeton: verifTel.jeton } }
           : assistee?.numero
             ? {}
-            : { email }),
+            : { email: lecture.type === 'email' ? lecture.email : email }),
       ...(password ? { password } : {}),
       country,
       locale: locale(),
@@ -616,6 +669,7 @@
                 <VerifTelephone
                   objet="inscription"
                   pays={country}
+                  numeroInitial={lecture.type === 'telephone' ? lecture.e164 : ''}
                   jetonAntibot={jeton}
                   envoi={acces?.telephoneEnvoi === true}
                   onverifie={(v) => {
@@ -632,31 +686,29 @@
               onclick={() => {
                 mode = 'email';
                 verifTel = null;
+                email = '';
               }}
               data-testid="autre-methode"><Bidi text={t('id.autre_methode')} /></button
             >
           {:else}
-            {#if acces?.google || acces?.telephone}
+            {#if acces?.google}
               {#await import('$lib/identites/ChoixEntree.svelte') then { default: ChoixEntree }}
                 <ChoixEntree
                   google={acces?.google === true}
-                  telephone={acces?.telephone === true}
+                  telephone={false}
                   intent="inscription"
-                  onTelephone={() => {
-                    mode = 'telephone';
-                    erreurs = {};
-                  }}
+                  onTelephone={() => {}}
                   onGoogle={avantGoogle}
                 />
               {/await}
             {/if}
             <div class="champ">
-              <label for="email">{t('champ.email')}</label>
+              <label for="email">{t('ins.id_label')}</label>
               <input
                 id="email"
-                type="email"
+                type="text"
                 inputmode="email"
-                autocomplete="email"
+                autocomplete="username"
                 autocapitalize="none"
                 spellcheck="false"
                 required
@@ -666,7 +718,34 @@
                 aria-describedby={decrit('email', 'email-aide')}
               />
               {@render erreurDe('email')}
-              <p class="aide" id="email-aide"><Bidi text={t('ins.email_aide')} /></p>
+              <p class="aide" id="email-aide"><Bidi text={t('ins.id_aide')} /></p>
+              <p class="aide pays-deduit" data-testid="pays-deduit" aria-live="polite">
+                <Bidi text={t('ins.pays_deduit', { pays: countryName(country) })} />
+                <button
+                  type="button"
+                  class="lien"
+                  data-testid="pays-modifier"
+                  aria-expanded={paysOuvert}
+                  onclick={() => (paysOuvert = !paysOuvert)}>{t('ins.pays_modifier')}</button
+                >
+              </p>
+              {#if !paysSur && !paysManuel}<p class="aide" data-testid="pays-doute">
+                  <Bidi text={t('ins.pays_doute')} />
+                </p>{/if}
+              {#if paysOuvert}
+                <select
+                  id="pays-id"
+                  aria-label={t('champ.pays')}
+                  data-testid="pays-id"
+                  bind:value={country}
+                  onchange={() => {
+                    paysManuel = true;
+                    paysSur = true;
+                  }}
+                >
+                  {#each COUNTRIES as c (c)}<option value={c}>{countryName(c)}</option>{/each}
+                </select>
+              {/if}
             </div>
           {/if}
           {#if mode !== 'telephone' || verifTel}

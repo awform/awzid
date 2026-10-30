@@ -4418,5 +4418,14 @@
   "ins.qui_famille": "Me and my children",
   "ins.qui_famille_aide": "to learn and follow my children (parent account).",
   "ins.qui_eleves": "My students",
-  "ins.qui_eleves_aide": "to follow a class (teacher account, with a second factor)."
+  "ins.qui_eleves_aide": "to follow a class (teacher account, with a second factor).",
+  "ins.id_label": "WhatsApp number or e-mail",
+  "ins.id_aide": "A number with its country code (+221 77 123 45 67) or an e-mail address. We recognise which one it is.",
+  "ins.err_id_vide": "Enter your WhatsApp number or your e-mail address.",
+  "ins.err_id_sans_indicatif": "Write the number with its country code, for example +221 77 123 45 67.",
+  "ins.err_id_ni_l_un_ni_l_autre": "This is neither a number nor an e-mail address. Examples: +221 77 123 45 67 or name@example.org.",
+  "ins.err_id_verifier_numero": "Please verify your WhatsApp number first.",
+  "ins.pays_deduit": "Country: {pays} —",
+  "ins.pays_modifier": "change",
+  "ins.pays_doute": "We are not sure: change it if needed. When in doubt, the strictest age rule applies."
 }

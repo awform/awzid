@@ -63,6 +63,13 @@ async function envoyerMessage(page: Page, national: string) {
   expect((await r.json()).resultat).toBe('validee');
 }
 
+/** V2-2 : champ unique de l'inscription — un numéro international y est reconnu et ouvre la vérification WhatsApp */
+async function saisirNumeroInscription(page: Page, national: string) {
+  await page.locator('#email').fill(`+221 ${national}`);
+  await page.getByTestId('etape-suivante').click();
+  await page.getByTestId('tel-numero').waitFor();
+}
+
 async function verifierNumero(page: Page, national: string) {
   await page.getByTestId('tel-pays').selectOption('SN');
   await page
@@ -80,7 +87,8 @@ async function verifierNumero(page: Page, national: string) {
 test('les trois façons d’entrer, dans l’ordre : Google, WhatsApp, e-mail (boutons de 44 px au moins)', async ({
   page,
 }) => {
-  for (const url of ['/inscription', '/connexion']) {
+  // V2-2 : à l'inscription, le numéro WhatsApp se tape dans le champ unique (plus de bouton dédié)
+  for (const url of ['/connexion']) {
     await page.goto(url);
     const choix = page.getByTestId('choix-entree');
     await expect(choix).toBeVisible();
@@ -115,7 +123,7 @@ test('inscription par numéro WhatsApp (mode simulé) : vérification inversée,
   const national = numero();
   await page.goto('/inscription');
   await choisirQui(page);
-  await page.getByTestId('entree-whatsapp').click();
+  await saisirNumeroInscription(page, national);
   await verifierNumero(page, national);
   await page.locator('#password').fill(password());
   await page.locator('#password-confirmer').fill(password());
@@ -164,7 +172,7 @@ test('limite : un renvoi trop tôt est refusé avec un message clair', async ({ 
   const national = numero();
   await page.goto('/inscription');
   await choisirQui(page);
-  await page.getByTestId('entree-whatsapp').click();
+  await saisirNumeroInscription(page, national);
   await page.getByTestId('tel-pays').selectOption('SN');
   await page.getByTestId('tel-numero').fill(national);
   await page.getByTestId('tel-verifier').click();
@@ -209,7 +217,7 @@ test('validation manuelle par l’administrateur (bêta, sans Meta)', async ({ p
   const national = numero();
   await page.goto('/inscription');
   await choisirQui(page);
-  await page.getByTestId('entree-whatsapp').click();
+  await saisirNumeroInscription(page, national);
   await page.getByTestId('tel-pays').selectOption('SN');
   await page.getByTestId('tel-numero').fill(national);
   await page.getByTestId('tel-verifier').click();
@@ -303,8 +311,7 @@ test('maquettes des écrans d’entrée (ordinateur, téléphone ; clair, sombre
       await page.reload();
       await page.getByTestId('choix-entree').waitFor();
       await shot('inscription-choix');
-      await page.getByTestId('entree-whatsapp').click();
-      await page.getByTestId('tel-numero').fill(numero());
+      await saisirNumeroInscription(page, numero());
       await shot('inscription-numero');
       await page.getByTestId('tel-verifier').click();
       await page.getByTestId('tel-message').waitFor();
@@ -342,4 +349,25 @@ test('maquettes de la liste de validation de l’administrateur', async ({ brows
         ),
       });
     }
+});
+
+test('inscription : champ unique — e-mail reconnu, pays déduit et modifiable, saisie invalide refusée avec un message clair', async ({
+  page,
+}) => {
+  await page.goto('/inscription');
+  await choisirQui(page);
+  await expect(page.getByTestId('pays-deduit')).toContainText('Pays :');
+  await page.getByTestId('pays-modifier').click();
+  await page.getByTestId('pays-id').selectOption('SN');
+  await expect(page.getByTestId('pays-deduit')).toContainText('Sénégal');
+  await page.locator('#email').fill('bonjour');
+  await page.getByTestId('etape-suivante').click();
+  await expect(page.getByTestId('erreurs-etape')).toBeVisible();
+  await expect(page.locator('#email-erreur')).toContainText(/ni un numéro, ni une adresse e-mail/);
+  await page.locator('#email').fill('77 123 45 67');
+  await page.getByTestId('etape-suivante').click();
+  await expect(page.locator('#email-erreur')).toContainText(/indicatif/);
+  await page.locator('#email').fill('+33 6 12 34 56 78');
+  await page.getByTestId('etape-suivante').click();
+  await page.getByTestId('tel-numero').waitFor();
 });

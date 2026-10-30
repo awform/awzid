@@ -687,5 +687,14 @@
   "ins.qui_famille": "Moi et mes enfants",
   "ins.qui_famille_aide": "pour apprendre et suivre mes enfants (compte parent).",
   "ins.qui_eleves": "Mes élèves",
-  "ins.qui_eleves_aide": "pour suivre une classe (compte enseignant, avec second facteur)."
+  "ins.qui_eleves_aide": "pour suivre une classe (compte enseignant, avec second facteur).",
+  "ins.id_label": "Numéro WhatsApp ou e-mail",
+  "ins.id_aide": "Un numéro avec son indicatif (+221 77 123 45 67) ou une adresse e-mail. Nous reconnaissons la forme tout seuls.",
+  "ins.err_id_vide": "Écrivez votre numéro WhatsApp ou votre adresse e-mail.",
+  "ins.err_id_sans_indicatif": "Écrivez le numéro avec son indicatif de pays, par exemple +221 77 123 45 67.",
+  "ins.err_id_ni_l_un_ni_l_autre": "Ce n'est ni un numéro, ni une adresse e-mail. Exemples : +221 77 123 45 67 ou prenom@exemple.org.",
+  "ins.err_id_verifier_numero": "Vérifiez d'abord votre numéro WhatsApp.",
+  "ins.pays_deduit": "Pays : {pays} —",
+  "ins.pays_modifier": "modifier",
+  "ins.pays_doute": "Nous n'en sommes pas certains : modifiez-le si besoin. En cas de doute, la règle d'âge la plus stricte s'applique."
 }

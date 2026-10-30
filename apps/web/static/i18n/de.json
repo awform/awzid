@@ -4418,5 +4418,14 @@
   "ins.qui_famille": "Ich und meine Kinder",
   "ins.qui_famille_aide": "um selbst zu lernen und meine Kinder zu begleiten (Elternkonto).",
   "ins.qui_eleves": "Meine Schüler",
-  "ins.qui_eleves_aide": "um eine Klasse zu begleiten (Lehrerkonto, mit zweitem Faktor)."
+  "ins.qui_eleves_aide": "um eine Klasse zu begleiten (Lehrerkonto, mit zweitem Faktor).",
+  "ins.id_label": "WhatsApp-Nummer oder E-Mail",
+  "ins.id_aide": "Eine Nummer mit Ländervorwahl (+221 77 123 45 67) oder eine E-Mail-Adresse. Wir erkennen die Form selbst.",
+  "ins.err_id_vide": "Geben Sie Ihre WhatsApp-Nummer oder Ihre E-Mail-Adresse ein.",
+  "ins.err_id_sans_indicatif": "Schreiben Sie die Nummer mit Ländervorwahl, zum Beispiel +221 77 123 45 67.",
+  "ins.err_id_ni_l_un_ni_l_autre": "Das ist weder eine Nummer noch eine E-Mail-Adresse. Beispiele: +221 77 123 45 67 oder name@beispiel.org.",
+  "ins.err_id_verifier_numero": "Bitte bestätigen Sie zuerst Ihre WhatsApp-Nummer.",
+  "ins.pays_deduit": "Land: {pays} —",
+  "ins.pays_modifier": "ändern",
+  "ins.pays_doute": "Wir sind nicht sicher: ändern Sie es bei Bedarf. Im Zweifel gilt die strengste Altersregel."
 }
