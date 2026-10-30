@@ -98,12 +98,20 @@ export function meEnfant(m: unknown, profileId: string): unknown {
 
 const PUBLIC_READ =
   /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public|contenu\/errata|contenu\/suspensions|acces\/statut)(\/|$)/;
-/** apprentissage : routes sans profil dans l'adresse (le profil est contrôlé dans le corps ou la requête) */
+/** apprentissage : routes SANS identifiant de profil dans l'adresse (le profil, s'il est cité, l'est dans le corps ou la requête : contrôlé) */
 const APPRENTISSAGE =
-  /^\/api\/v1\/(attempts|progress|sync|today|activites|adhkar|coran-mots|lecons-audio|fonctions|mesure)(\/|$)/;
-/** apprentissage sous /profiles/<son identifiant>/… (pas de réglages, responsables, accords, écoute, émancipation…) */
+  /^\/api\/v1\/(attempts|progress|sync|activites|adhkar|coran-mots|lecons-audio|fonctions|mesure)(\/|$)/;
+/** correction d'un bilan par le serveur (aucun profil en jeu) */
+const CORRECTION = /^\/api\/v1\/units\/[a-z]{2,3}\d{1,2}\.l\d{2}\/corriger$/;
+/** lectures dont l'identifiant du profil est dans l'adresse : seulement le SIEN */
+const LECTURE_PAR_PROFIL =
+  /^\/api\/v1\/(today|dashboard)\/([^/]+)$|^\/api\/v1\/hifz\/profiles\/([^/]+)(\/marques)?$/;
+/** apprentissage sous /profiles/<son identifiant>/…, toutes méthodes */
 const SOUS_PROFIL =
-  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|niveau-suivant|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves)(\/|$)/;
+  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|niveau-suivant|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer)(\/|$)/;
+/** sous /profiles/<son identifiant>/…, LECTURE seulement (contenus et réglages que l'enfant ne modifie pas) */
+const SOUS_PROFIL_LECTURE =
+  /^(madjaliss|vivre|devoirs|certificats|hifz-classe|mode-evaluation|protections|quran\/allowed-reciters|quran\/reciters|quran\/suras\/[^/]+\/tracks)(\/|$)/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** clés qui désignent un profil, à n'importe quelle profondeur d'un corps ou d'une requête */
@@ -135,8 +143,15 @@ export function autoriseEnfant(
   if (chemin === '/api/v1/auth/logout' && m === 'POST') return true;
   if ((m === 'GET' || m === 'HEAD') && PUBLIC_READ.test(chemin)) return true;
   if (APPRENTISSAGE.test(chemin)) return true;
+  if (CORRECTION.test(chemin)) return m === 'POST';
+  const lp = LECTURE_PAR_PROFIL.exec(chemin);
+  if (lp) return (m === 'GET' || m === 'HEAD') && (lp[2] ?? lp[3]) === profileId;
   const sous = /^\/api\/v1\/profiles\/([^/]+)\/(.*)$/.exec(chemin);
-  if (sous) return UUID.test(sous[1]!) && sous[1] === profileId && SOUS_PROFIL.test(sous[2]!);
+  if (sous) {
+    if (!UUID.test(sous[1]!) || sous[1] !== profileId) return false;
+    if (SOUS_PROFIL.test(sous[2]!)) return true;
+    return (m === 'GET' || m === 'HEAD') && SOUS_PROFIL_LECTURE.test(sous[2]!);
+  }
   return false;
 }
 
@@ -179,7 +194,34 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
     },
   );
 
-  app.post<{ Params: { id: string }; Body: { motDePasse?: string; debloquer?: boolean } }>(
+  /** l'identifiant d'un enfant (ou null) : pour la fiche du parent */
+  app.get<{ Params: { id: string } }>(
+    '/api/v1/profiles/:id/acces',
+    {
+      preHandler: needParent,
+      schema: {
+        params: {
+          type: 'object',
+          properties: { id: { type: 'string', format: 'uuid' } },
+          required: ['id'],
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!(await canActForProfile(db, req.auth!.accountId, req.params.id)))
+        return err(reply, 404, 'introuvable');
+      const [lg] = await db
+        .select({ login: t.profileLogin.login })
+        .from(t.profileLogin)
+        .where(eq(t.profileLogin.profileId, req.params.id));
+      return { identifiant: lg?.login ?? null };
+    },
+  );
+
+  app.post<{
+    Params: { id: string };
+    Body: { motDePasse?: string; debloquer?: boolean; identifiant?: string; declaration?: boolean };
+  }>(
     '/api/v1/profiles/:id/acces',
     {
       preHandler: needParent,
@@ -195,6 +237,9 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
           properties: {
             motDePasse: { type: 'string', maxLength: 512 },
             debloquer: { type: 'boolean' },
+            // profil existant sans identifiant : le parent lui en crée un (mêmes règles qu'à la création du profil)
+            identifiant: { type: 'string', maxLength: 40 },
+            declaration: { type: 'boolean' },
           },
         },
       },
@@ -208,17 +253,42 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
         .select()
         .from(t.profileLogin)
         .where(eq(t.profileLogin.profileId, req.params.id));
-      if (!lg) return err(reply, 404, 'introuvable');
       const [p] = await db
-        .select({ pseudonym: t.profile.pseudonym })
+        .select({ pseudonym: t.profile.pseudonym, kind: t.profile.kind })
         .from(t.profile)
         .where(eq(t.profile.id, req.params.id));
+      if (!p) return err(reply, 404, 'introuvable');
+      if (!lg) {
+        // création de l'identifiant d'un profil d'enfant EXISTANT (jamais d'un profil d'adulte)
+        const login = req.body.identifiant?.trim().toLowerCase();
+        if (!login) return err(reply, 404, 'introuvable');
+        if (p.kind === 'adulte') return err(reply, 400, 'profil_adulte');
+        if (!req.body.declaration) return err(reply, 400, 'declaration_requise');
+        if (!LOGIN_ENFANT.test(login)) return err(reply, 400, 'identifiant_invalide');
+        if (!req.body.motDePasse) return err(reply, 400, 'mot_de_passe_requis');
+        const pb = checkPassword(req.body.motDePasse, '', { identifiants: [login, p.pseudonym] });
+        if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
+        if (await loginPris(db, login)) return err(reply, 409, 'identifiant_indisponible');
+        try {
+          await db.insert(t.profileLogin).values({
+            profileId: req.params.id,
+            login,
+            passwordHash: await hashSecret(req.body.motDePasse),
+            createdByAccountId: parent,
+          });
+        } catch {
+          return err(reply, 409, 'identifiant_indisponible');
+        }
+        await audit(db, parent, 'profil.acces_cree', req.params.id);
+        return reply.code(201).send({ ok: true, identifiant: login });
+      }
+      if (req.body.identifiant) return err(reply, 400, 'identifiant_existant');
       const valeurs: { passwordHash?: string; passwordChangedAt: Date } = {
         passwordChangedAt: new Date(),
       };
       if (req.body.motDePasse) {
         const pb = checkPassword(req.body.motDePasse, '', {
-          identifiants: [lg.login, p?.pseudonym ?? ''],
+          identifiants: [lg.login, p.pseudonym],
         });
         if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
         valeurs.passwordHash = await hashSecret(req.body.motDePasse);

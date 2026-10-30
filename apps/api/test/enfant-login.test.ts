@@ -68,6 +68,65 @@ describe('session limitée : liste fermée (sans base)', () => {
     expect(ok('GET', `/api/v1/profiles/${me}/accueil`)).toBe(true);
     expect(ok('GET', `/api/v1/profiles/${me}/parcours?x=1`)).toBe(true);
   });
+  it('ajouts d’apprentissage de SON profil : permis, avec la bonne méthode', () => {
+    expect(ok('GET', `/api/v1/today/${me}?today=2026-10-30`)).toBe(true);
+    expect(ok('GET', `/api/v1/dashboard/${me}`)).toBe(true);
+    expect(ok('GET', `/api/v1/hifz/profiles/${me}`)).toBe(true);
+    expect(ok('GET', `/api/v1/hifz/profiles/${me}/marques`)).toBe(true);
+    expect(ok('POST', '/api/v1/units/en1.l01/corriger', { answers: {} })).toBe(true);
+    expect(ok('POST', `/api/v1/profiles/${me}/commencer/arabe`)).toBe(true);
+    for (const sous of [
+      'madjaliss',
+      'vivre',
+      'devoirs',
+      'certificats',
+      'hifz-classe',
+      'mode-evaluation',
+      'protections',
+      'quran/allowed-reciters',
+      'quran/reciters',
+    ])
+      expect(ok('GET', `/api/v1/profiles/${me}/${sous}`), sous).toBe(true);
+    expect(ok('GET', `/api/v1/profiles/${me}/quran/suras/2/tracks`)).toBe(true);
+  });
+  it('les lectures ne deviennent pas des écritures, et rien ne passe sur un autre profil', () => {
+    for (const sous of [
+      'madjaliss',
+      'devoirs',
+      'certificats',
+      'mode-evaluation',
+      'protections',
+      'quran/reciters',
+    ])
+      for (const m of ['POST', 'PUT', 'PATCH', 'DELETE'])
+        expect(ok(m, `/api/v1/profiles/${me}/${sous}`), `${m} ${sous}`).toBe(false);
+    expect(ok('POST', `/api/v1/today/${me}`)).toBe(false);
+    expect(ok('PUT', `/api/v1/hifz/profiles/${me}/plan`)).toBe(false);
+    expect(ok('GET', `/api/v1/today/${autre}`)).toBe(false);
+    expect(ok('GET', `/api/v1/dashboard/${autre}`)).toBe(false);
+    expect(ok('GET', `/api/v1/hifz/profiles/${autre}/marques`)).toBe(false);
+    expect(ok('GET', `/api/v1/profiles/${autre}/madjaliss`)).toBe(false);
+    expect(ok('PUT', '/api/v1/units/en1.l01/corriger')).toBe(false);
+  });
+  it('écoute, récitation, tuteur, khatma, classes, messages, rapport : toujours refusés', () => {
+    for (const [m, u] of [
+      ['GET', `/api/v1/profiles/${me}/ecoute`],
+      ['POST', `/api/v1/profiles/${me}/ecoute/accord`],
+      ['POST', `/api/v1/profiles/${me}/recitations/accord`],
+      ['GET', `/api/v1/profiles/${me}/recitations`],
+      ['GET', `/api/v1/profiles/${me}/khatma`],
+      ['POST', `/api/v1/profiles/${me}/choisir-niveau/arabe`],
+      ['POST', '/api/v1/tutor/en1.l01/ask'],
+      ['GET', '/api/v1/tutor/status'],
+      ['GET', '/api/v1/tuteur-ia/etat'],
+      ['GET', `/api/v1/rapport-hebdo/${me}`],
+      ['POST', '/api/v1/fils/x/messages'],
+      ['POST', '/api/v1/notifications/abonnement'],
+      ['POST', '/api/v1/contenu/signalements'],
+      ['POST', '/api/v1/profiles/rattacher'],
+    ] as const)
+      expect(ok(m, u), `${m} ${u}`).toBe(false);
+  });
   it('chaque route sensible : refusée', () => {
     const refus: Array<[string, string]> = [
       ['GET', '/api/v1/profiles'],
@@ -77,7 +136,6 @@ describe('session limitée : liste fermée (sans base)', () => {
       ['POST', `/api/v1/profiles/${me}/acces`],
       ['GET', `/api/v1/profiles/${me}/responsables`],
       ['POST', `/api/v1/profiles/${me}/emancipation`],
-      ['GET', `/api/v1/profiles/${me}/protections`],
       ['PUT', `/api/v1/profiles/${me}/mode-evaluation`],
       ['POST', `/api/v1/profiles/${me}/ecoute/accord`],
       ['GET', `/api/v1/profiles/${me}/classes`],
@@ -294,6 +352,83 @@ describe.skipIf(!URL)('comptes d’enfants avec identifiant (awform_test)', () =
         .statusCode,
     ).toBe(200);
     expect((await connexion('lina-482')).statusCode).toBe(200);
+  });
+
+  it('profil d’enfant EXISTANT sans identifiant : le parent lui en crée un (mêmes règles) ; un autre parent n’a aucune prise', async () => {
+    const ancien = await appel('POST', '/api/v1/profiles', cookieParent, {
+      pseudonym: 'Samir',
+      birthYear: YEAR - 11,
+      password: PW,
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
+    });
+    expect(ancien.statusCode).toBe(201);
+    const sid = ancien.json().id as string;
+    expect((await appel('GET', `/api/v1/profiles/${sid}/acces`, cookieParent)).json()).toEqual({
+      identifiant: null,
+    });
+    const autre = await parent('quatrieme.parent@exemple.org');
+    const demande = { identifiant: 'samir-217', motDePasse: PW_ENFANT, declaration: true };
+    expect((await appel('POST', `/api/v1/profiles/${sid}/acces`, autre, demande)).statusCode).toBe(
+      404,
+    );
+    expect((await appel('GET', `/api/v1/profiles/${sid}/acces`, autre)).statusCode).toBe(404);
+    expect(
+      (
+        await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, {
+          ...demande,
+          declaration: false,
+        })
+      ).json().error.code,
+    ).toBe('declaration_requise');
+    expect(
+      (
+        await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, {
+          ...demande,
+          identifiant: 'Samir é',
+        })
+      ).json().error.code,
+    ).toBe('identifiant_invalide');
+    expect(
+      (
+        await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, {
+          ...demande,
+          motDePasse: 'court',
+        })
+      ).json().error.code,
+    ).toMatch(/^mot_de_passe_/);
+    expect(
+      (
+        await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, {
+          ...demande,
+          identifiant: 'lina-482',
+        })
+      ).statusCode,
+    ).toBe(409);
+    const ok = await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, demande);
+    expect(ok.statusCode).toBe(201);
+    expect((await appel('GET', `/api/v1/profiles/${sid}/acces`, cookieParent)).json()).toEqual({
+      identifiant: 'samir-217',
+    });
+    // l'identifiant ne se change pas par ce chemin
+    expect(
+      (await appel('POST', `/api/v1/profiles/${sid}/acces`, cookieParent, demande)).json().error
+        .code,
+    ).toBe('identifiant_existant');
+    const c = cookieOf(await connexion('samir-217'));
+    expect(
+      (await appel('GET', '/api/v1/auth/me', c)).json().profiles.map((p: { id: string }) => p.id),
+    ).toEqual([sid]);
+    // frère ou sœur : jamais (même parent, autre profil)
+    expect((await appel('GET', `/api/v1/today/${idEnfant}`, c)).json().error.code).toBe(
+      'session_limitee',
+    );
+    expect((await appel('GET', `/api/v1/dashboard/${idEnfant}`, c)).json().error.code).toBe(
+      'session_limitee',
+    );
+    expect((await appel('GET', `/api/v1/profiles/${idEnfant}/accueil`, c)).json().error.code).toBe(
+      'session_limitee',
+    );
+    expect((await appel('GET', `/api/v1/today/${sid}`, c)).statusCode).not.toBe(403);
   });
 
   it('nouveau mot de passe donné par le parent : l’ancien et les anciennes sessions ne marchent plus', async () => {
