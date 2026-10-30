@@ -374,5 +374,14 @@
   "erreur.mots_de_passe_differents": "Les deux mots de passe ne sont pas identiques : vérifie-les.",
   "erreur.plafond_atteint": "Les inscriptions libres sont complètes pour le moment. Demandez une invitation : nous vous écrirons dès qu’une place se libère.",
   "tj.fermer": "Fermer",
-  "tuia.ouvrir": "Parler avec le tuteur"
+  "tuia.ouvrir": "Parler avec le tuteur",
+  "profils.id_label": "Identifiant de l'enfant",
+  "profils.id_aide": "3 à 24 caractères : lettres sans accent, chiffres et tirets. Pas de nom de famille.",
+  "profils.id_dispo": "Cet identifiant est libre.",
+  "profils.id_pris": "Cet identifiant est déjà pris.",
+  "profils.id_forme": "Utilisez 3 à 24 lettres sans accent, chiffres ou tirets (au moins une lettre).",
+  "profils.id_propositions": "Propositions :",
+  "profils.mdp_enfant": "Mot de passe de l'enfant",
+  "profils.mdp_enfant_aide": "8 caractères au moins. Ce n'est ni son prénom, ni son identifiant.",
+  "profils.declaration": "Je suis son parent ou son tuteur et j'accepte ces conditions pour lui."
 }

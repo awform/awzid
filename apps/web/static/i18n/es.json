@@ -4430,5 +4430,19 @@
   "ins.pays_doute": "No estamos seguros: cámbielo si hace falta. En caso de duda se aplica la regla de edad más estricta.",
   "ens.cree_titre": "Crear mi clase",
   "ens.cree_aide": "Dé un nombre a su clase. Recibirá un código para invitar a las familias.",
-  "ens.cree_vide": "Escriba el nombre de la clase."
+  "ens.cree_vide": "Escriba el nombre de la clase.",
+  "profils.id_label": "Nombre de usuario del niño",
+  "profils.id_aide": "De 3 a 24 caracteres: letras sin tildes, cifras y guiones. Sin apellido.",
+  "profils.id_dispo": "Este nombre de usuario está libre.",
+  "profils.id_pris": "Este nombre de usuario ya está en uso.",
+  "profils.id_forme": "Use de 3 a 24 letras sin tildes, cifras o guiones (al menos una letra).",
+  "profils.id_propositions": "Sugerencias:",
+  "profils.mdp_enfant": "Contraseña del niño",
+  "profils.mdp_enfant_aide": "Al menos 8 caracteres. Ni su nombre ni su usuario.",
+  "profils.declaration": "Soy su padre, madre o tutor y acepto estas condiciones en su nombre.",
+  "erreur.identifiant_indisponible": "Este nombre de usuario ya está en uso. Elija otro.",
+  "erreur.identifiant_invalide": "Este nombre de usuario no tiene la forma correcta.",
+  "erreur.declaration_requise": "Marque la casilla para confirmar que es su padre, madre o tutor.",
+  "erreur.session_limitee": "Este espacio es solo para aprender.",
+  "id.email_numero_identifiant": "Número, correo o usuario"
 }

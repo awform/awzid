@@ -30,10 +30,34 @@
     birthYear: YEAR - 7,
     avatar: 'etoile',
     levelCode: 'en1',
-    password: '',
-    suivi: false,
-    art9: false,
+    identifiant: '',
+    motDePasseEnfant: '',
+    declaration: false,
   });
+  /** V2-3 : identifiant de l'enfant « prénom-NNN », disponibilité vérifiée, trois propositions */
+  let idEtat = $state<{ forme: boolean; disponible: boolean; propositions: string[] } | null>(null);
+  let idMinuteur: ReturnType<typeof setTimeout> | null = null;
+  async function verifierIdentifiant() {
+    const r = await call<{ forme: boolean; disponible: boolean; propositions: string[] }>(
+      'GET',
+      `/profiles/login-disponible?login=${encodeURIComponent(form.identifiant)}&prenom=${encodeURIComponent(form.pseudonym)}`,
+    );
+    idEtat = r.ok ? (r.data ?? null) : null;
+  }
+  function identifiantChange() {
+    idEtat = null;
+    if (idMinuteur) clearTimeout(idMinuteur);
+    if (form.identifiant) idMinuteur = setTimeout(verifierIdentifiant, 350);
+  }
+  /** proposition au prénom saisi (modifiable) : demandée quand le champ est vide */
+  async function proposer() {
+    if (form.identifiant || !form.pseudonym.trim()) return;
+    await verifierIdentifiant();
+    if (idEtat?.propositions[0]) {
+      form.identifiant = idEtat.propositions[0];
+      await verifierIdentifiant();
+    }
+  }
   const age = $derived(YEAR - 1 - Number(form.birthYear));
   // lot F3 (revue G3) : États-Unis, moins de 13 ans : fermé au lancement (dit avant l'envoi)
   const closed = $derived(me?.account.country === 'US' && age < 13);
@@ -71,15 +95,16 @@
   async function addChild(e: SubmitEvent) {
     e.preventDefault();
     error = '';
-    const consents = [form.suivi && 'compte_suivi', form.art9 && 'donnee_religieuse_art9'].filter(
-      Boolean,
-    );
+    // une seule case : « Je suis son parent ou son tuteur et j'accepte ces conditions pour lui »
+    const consents = ['compte_suivi', 'donnee_religieuse_art9'];
     const r = await call<{ id: string }>('POST', '/profiles', {
       pseudonym: form.pseudonym,
       birthYear: Number(form.birthYear),
       avatar: form.avatar,
       levelCode: form.levelCode,
-      password: form.password,
+      identifiant: form.identifiant.trim().toLowerCase(),
+      motDePasseEnfant: form.motDePasseEnfant,
+      declaration: form.declaration,
       consents,
     });
     if (!r.ok) {
@@ -87,7 +112,8 @@
       return;
     }
     info = t('profils.ajoute', { nom: form.pseudonym });
-    form = { ...form, pseudonym: '', password: '', suivi: false, art9: false };
+    form = { ...form, pseudonym: '', identifiant: '', motDePasseEnfant: '', declaration: false };
+    idEtat = null;
     adding = false;
     me = await fetchMe();
   }
@@ -160,7 +186,13 @@
         <h2>{t('profils.ajouter')}</h2>
         <p class="muted small">{t('profils.minimisation')}</p>
         <label for="pseudonym">{t('champ.pseudonyme')}</label>
-        <input id="pseudonym" required maxlength="40" bind:value={form.pseudonym} />
+        <input
+          id="pseudonym"
+          required
+          maxlength="40"
+          bind:value={form.pseudonym}
+          onblur={proposer}
+        />
         <label for="birthYear">{t('champ.annee_naissance')}</label>
         <input
           id="birthYear"
@@ -189,41 +221,76 @@
             {/each}
           </div>
         </fieldset>
-        <fieldset>
-          <legend>{t('profils.consentement')}</legend>
-          <label class="check"
-            ><input
-              id="suivi"
-              type="checkbox"
-              required
-              bind:checked={form.suivi}
-              data-testid="consent-suivi"
-            />
-            <span>{t('consent.compte_suivi')}</span></label
-          >
-          <!-- lot F3 (revue E10) : accord explicite « article 9 » pour l'enfant, jamais coché d'avance -->
-          <label class="check"
-            ><input
-              id="art9"
-              type="checkbox"
-              required
-              bind:checked={form.art9}
-              data-testid="consent-art9"
-            />
-            <span><Bidi text={t('consent.art9_enfant')} /></span></label
-          >
-          {#if closed}<p class="warnbox" role="note" data-testid="ferme-moins-13">
-              <Bidi text={t('inscription.ferme_moins_13')} />
-            </p>{/if}
-        </fieldset>
-        <label for="password">{t('profils.mot_de_passe_parent')}</label>
+        <label for="identifiant">{t('profils.id_label')}</label>
         <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
+          id="identifiant"
           required
-          bind:value={form.password}
+          minlength="3"
+          maxlength="24"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          bind:value={form.identifiant}
+          oninput={identifiantChange}
+          aria-describedby="identifiant-aide"
+          data-testid="identifiant-enfant"
         />
+        <p class="muted small" id="identifiant-aide"><Bidi text={t('profils.id_aide')} /></p>
+        {#if idEtat}
+          <p
+            class={idEtat.disponible ? 'ok' : 'error'}
+            role="status"
+            data-testid="identifiant-etat"
+          >
+            <Bidi
+              text={idEtat.disponible
+                ? t('profils.id_dispo')
+                : idEtat.forme
+                  ? t('profils.id_pris')
+                  : t('profils.id_forme')}
+            />
+          </p>
+          {#if !idEtat.disponible && idEtat.propositions.length}
+            <p class="small">
+              {t('profils.id_propositions')}
+              {#each idEtat.propositions as p (p)}
+                <button
+                  type="button"
+                  class="lien"
+                  onclick={() => {
+                    form.identifiant = p;
+                    identifiantChange();
+                  }}><Bidi text={p} /></button
+                >
+              {/each}
+            </p>
+          {/if}
+        {/if}
+        <label for="mdp-enfant">{t('profils.mdp_enfant')}</label>
+        <input
+          id="mdp-enfant"
+          type="password"
+          minlength="8"
+          required
+          autocomplete="new-password"
+          bind:value={form.motDePasseEnfant}
+          aria-describedby="mdp-enfant-aide"
+          data-testid="mdp-enfant"
+        />
+        <p class="muted small" id="mdp-enfant-aide"><Bidi text={t('profils.mdp_enfant_aide')} /></p>
+        <label class="check"
+          ><input
+            id="declaration"
+            type="checkbox"
+            required
+            bind:checked={form.declaration}
+            data-testid="declaration-parent"
+          />
+          <span><Bidi text={t('profils.declaration')} /></span></label
+        >
+        {#if closed}<p class="warnbox" role="note" data-testid="ferme-moins-13">
+            <Bidi text={t('inscription.ferme_moins_13')} />
+          </p>{/if}
         {#if error}<p class="error" role="alert" data-testid="erreur"><Bidi text={error} /></p>{/if}
         <div class="row">
           <button type="submit" class="primary" data-testid="creer-profil"

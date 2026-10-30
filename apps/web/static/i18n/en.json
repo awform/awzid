@@ -4430,5 +4430,19 @@
   "ins.pays_doute": "We are not sure: change it if needed. When in doubt, the strictest age rule applies.",
   "ens.cree_titre": "Create my class",
   "ens.cree_aide": "Give your class a name. You will get a code to invite families.",
-  "ens.cree_vide": "Enter the class name."
+  "ens.cree_vide": "Enter the class name.",
+  "profils.id_label": "Child's username",
+  "profils.id_aide": "3 to 24 characters: letters without accents, digits and hyphens. No family name.",
+  "profils.id_dispo": "This username is available.",
+  "profils.id_pris": "This username is already taken.",
+  "profils.id_forme": "Use 3 to 24 letters without accents, digits or hyphens (at least one letter).",
+  "profils.id_propositions": "Suggestions:",
+  "profils.mdp_enfant": "Child's password",
+  "profils.mdp_enfant_aide": "At least 8 characters. Not their first name or username.",
+  "profils.declaration": "I am their parent or guardian and I accept these terms on their behalf.",
+  "erreur.identifiant_indisponible": "This username is already taken. Please choose another.",
+  "erreur.identifiant_invalide": "This username is not in the right form.",
+  "erreur.declaration_requise": "Tick the box to confirm you are their parent or guardian.",
+  "erreur.session_limitee": "This area is for learning only.",
+  "id.email_numero_identifiant": "Number, e-mail or username"
 }

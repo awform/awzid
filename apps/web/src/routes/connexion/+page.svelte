@@ -22,8 +22,6 @@
   let needTotp = $state(false);
   let error = $state('');
   let busy = $state(false);
-  // démonstration (réseau local) : identifiants courts (« parent », « enfant »…) au lieu d'une adresse
-  let demo = $state(false);
   let acces = $state<AccesStatut | null>(null);
   let parTelephone = $state(false);
   /** revérification du numéro demandée par le serveur (longue absence) */
@@ -31,8 +29,6 @@
   let defi = $state<{ id: string; jeton: string } | null>(null);
   onMount(async () => {
     mesure('connexion_ouverte');
-    const c = await call<{ demo?: boolean }>('GET', '/config');
-    demo = !!(c.ok && c.data?.demo);
     acces = await chargerStatut();
     const g = new URLSearchParams(location.search).get('google');
     if (g) {
@@ -146,17 +142,11 @@
   </div>
   <form class="card form" onsubmit={submit}>
     <label for="email"
-      ><Bidi
-        text={parTelephone
-          ? t('id.numero_wa')
-          : acces?.telephone
-            ? t('id.email_ou_numero')
-            : t('champ.email')}
-      /></label
+      ><Bidi text={parTelephone ? t('id.numero_wa') : t('id.email_numero_identifiant')} /></label
     >
     <input
       id="email"
-      type={demo || parTelephone || acces?.telephone ? 'text' : 'email'}
+      type="text"
       inputmode={parTelephone ? 'tel' : undefined}
       autocomplete="username"
       autocapitalize="none"

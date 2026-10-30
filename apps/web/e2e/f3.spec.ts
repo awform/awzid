@@ -170,9 +170,9 @@ test('États-Unis : un enfant de moins de 13 ans est refusé avec un message cla
   await page.locator('#pseudonym').fill('Kid');
   await page.locator('#birthYear').fill(String(YEAR - 9));
   await expect(page.getByTestId('ferme-moins-13')).toContainText('moins de 13 ans');
-  await page.getByTestId('consent-suivi').check();
-  await page.getByTestId('consent-art9').check();
-  await page.locator('#password').fill(password());
+  await page.getByTestId('identifiant-enfant').fill(`enfant-${Date.now() % 100000}`);
+  await page.getByTestId('mdp-enfant').fill('soleil-vert-42');
+  await page.getByTestId('declaration-parent').check();
   await page.getByTestId('creer-profil').click();
   await expect(page.getByRole('alert')).toContainText(
     "Awzid n'est pas encore ouvert aux enfants de moins de 13 ans",

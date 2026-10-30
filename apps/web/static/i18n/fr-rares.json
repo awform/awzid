@@ -696,5 +696,6 @@
   "ins.err_id_verifier_numero": "Vérifiez d'abord votre numéro WhatsApp.",
   "ins.pays_deduit": "Pays : {pays} —",
   "ins.pays_modifier": "modifier",
-  "ins.pays_doute": "Nous n'en sommes pas certains : modifiez-le si besoin. En cas de doute, la règle d'âge la plus stricte s'applique."
+  "ins.pays_doute": "Nous n'en sommes pas certains : modifiez-le si besoin. En cas de doute, la règle d'âge la plus stricte s'applique.",
+  "id.email_numero_identifiant": "Numéro, e-mail ou identifiant"
 }
