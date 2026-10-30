@@ -75,6 +75,9 @@ describe('session limitée : liste fermée (sans base)', () => {
     expect(ok('GET', `/api/v1/hifz/profiles/${me}/marques`)).toBe(true);
     expect(ok('POST', '/api/v1/units/en1.l01/corriger', { answers: {} })).toBe(true);
     expect(ok('POST', `/api/v1/profiles/${me}/commencer/arabe`)).toBe(true);
+    // comptage d'usage sans traceur : permis pour SON profil seulement
+    expect(ok('POST', '/api/v1/usage', { profil: me, cles: ['accueil'] })).toBe(true);
+    expect(ok('POST', '/api/v1/usage', { profil: autre, cles: ['accueil'] })).toBe(false);
     for (const sous of [
       'madjaliss',
       'vivre',

@@ -19,12 +19,13 @@
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
-  import { cachedMe, fetchMe, type Me } from '$lib/session';
+  import { cachedMe, fetchMe, logout, type Me } from '$lib/session';
+  import { navPourEnfant, pageOuverteAEnfant } from '$lib/enfant-session';
 
   // bêta : logique d'accès chargée À LA DEMANDE (en ligne seulement) : l'appareil de l'élève n'en porte pas le poids
   import type * as ModAcces from '$lib/acces';
   import type { AccesStatut } from '$lib/acces';
-  import { chargerFonctions } from '$lib/fonctions.svelte';
+  import { chargerFonctions, fonctionsEtat } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
   import { marquerAppareilNeuf, migrerThemesSupprimes } from '$lib/theme/migration';
@@ -98,7 +99,19 @@
       path: page.url.pathname,
     }),
   );
-  const nav = $derived(navFor(audience));
+  // V2-3 : enfant connecté par identifiant : seulement l'apprentissage, aucun lien vers une page qui mène à une erreur
+  const enfantSession = $derived(me?.enfantSession === true);
+  const nav = $derived(enfantSession ? navPourEnfant(navFor(audience)) : navFor(audience));
+  $effect(() => {
+    fonctionsEtat.restreint = enfantSession;
+  });
+  $effect(() => {
+    if (enfantSession && !pageOuverteAEnfant(page.url.pathname)) void goto(resolve('/aujourdhui'));
+  });
+  async function sortirEnfant() {
+    await logout();
+    await goto(resolve('/connexion'));
+  }
   const current = $derived(activeNav(nav, page.url.pathname));
   const NO_TABS = ['/ecole', '/connexion', '/inscription', '/acces'];
   /**
@@ -322,7 +335,17 @@
       data-testid="lien-telecharger"
       ><Icon name="telecharger" /><span class="ic-nom">{t('entete.nom_telecharger')}</span></a
     >
-    {#if me}
+    {#if enfantSession}
+      <button
+        type="button"
+        class="icon-btn"
+        onclick={sortirEnfant}
+        data-testid="se-deconnecter"
+        aria-label={t('enfant.deconnexion')}
+        title={t('enfant.deconnexion')}
+        ><Icon name="cle" /><span class="ic-nom">{t('enfant.deconnexion')}</span></button
+      >
+    {:else if me}
       <a
         class="icon-btn"
         href={resolve('/compte')}

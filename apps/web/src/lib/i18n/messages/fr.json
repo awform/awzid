@@ -383,5 +383,6 @@
   "profils.id_propositions": "Propositions :",
   "profils.mdp_enfant": "Mot de passe de l'enfant",
   "profils.mdp_enfant_aide": "8 caractères au moins. Ce n'est ni son prénom, ni son identifiant.",
-  "profils.declaration": "Je suis son parent ou son tuteur et j'accepte ces conditions pour lui."
+  "profils.declaration": "Je suis son parent ou son tuteur et j'accepte ces conditions pour lui.",
+  "enfant.deconnexion": "Se déconnecter"
 }

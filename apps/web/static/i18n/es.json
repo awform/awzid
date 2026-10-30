@@ -4444,5 +4444,6 @@
   "erreur.identifiant_invalide": "Este nombre de usuario no tiene la forma correcta.",
   "erreur.declaration_requise": "Marque la casilla para confirmar que es su padre, madre o tutor.",
   "erreur.session_limitee": "Este espacio es solo para aprender.",
-  "id.email_numero_identifiant": "Número, correo o usuario"
+  "id.email_numero_identifiant": "Número, correo o usuario",
+  "enfant.deconnexion": "Cerrar sesión"
 }

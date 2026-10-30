@@ -23,6 +23,8 @@ export interface Me {
   /** lot 6 : membre du groupe « bêta fermée » avec le droit de voir le contenu différé de Madjaliss (calculé par l'API) */
   betaDiffere?: boolean;
   ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
+  /** V2-3 : session d'un enfant connecté par identifiant (limitée à son profil, apprentissage seulement) */
+  enfantSession?: boolean;
   /** session de tablette de classe (compte de l'école) */
   tablette?: { classId: string; className: string; school: string } | null;
   account: {

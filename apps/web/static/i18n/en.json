@@ -4444,5 +4444,6 @@
   "erreur.identifiant_invalide": "This username is not in the right form.",
   "erreur.declaration_requise": "Tick the box to confirm you are their parent or guardian.",
   "erreur.session_limitee": "This area is for learning only.",
-  "id.email_numero_identifiant": "Number, e-mail or username"
+  "id.email_numero_identifiant": "Number, e-mail or username",
+  "enfant.deconnexion": "Log out"
 }

@@ -100,7 +100,7 @@ const PUBLIC_READ =
   /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public|contenu\/errata|contenu\/suspensions|acces\/statut)(\/|$)/;
 /** apprentissage : routes SANS identifiant de profil dans l'adresse (le profil, s'il est cité, l'est dans le corps ou la requête : contrôlé) */
 const APPRENTISSAGE =
-  /^\/api\/v1\/(attempts|progress|sync|activites|adhkar|coran-mots|lecons-audio|fonctions|mesure)(\/|$)/;
+  /^\/api\/v1\/(attempts|progress|sync|activites|adhkar|coran-mots|lecons-audio|fonctions|mesure|usage)(\/|$)/;
 /** correction d'un bilan par le serveur (aucun profil en jeu) */
 const CORRECTION = /^\/api\/v1\/units\/[a-z]{2,3}\d{1,2}\.l\d{2}\/corriger$/;
 /** lectures dont l'identifiant du profil est dans l'adresse : seulement le SIEN */
@@ -118,7 +118,11 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function autreProfil(valeur: unknown, propre: string, profondeur = 0): boolean {
   if (profondeur > 8 || valeur === null || typeof valeur !== 'object') return false;
   for (const [k, v] of Object.entries(valeur as Record<string, unknown>)) {
-    if (/^(profile_?id|profil_?id|pid|profile)$/i.test(k) && typeof v === 'string' && v !== propre)
+    if (
+      /^(profile_?id|profil_?id|pid|profil|profile)$/i.test(k) &&
+      typeof v === 'string' &&
+      v !== propre
+    )
       return true;
     if (autreProfil(v, propre, profondeur + 1)) return true;
   }

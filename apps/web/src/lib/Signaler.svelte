@@ -6,6 +6,7 @@
 
 <script lang="ts">
   import { getContext } from 'svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { blockFingerprint } from '@awform/content/suspension';
   import { t } from '$lib/i18n';
@@ -66,7 +67,7 @@
   }
 </script>
 
-{#if ctx}
+{#if ctx && fn('signaler')}
   <span class="sig">
     <button type="button" class="link" aria-expanded={open} onclick={() => (open = !open)}
       >{t('signal.bouton')}</button

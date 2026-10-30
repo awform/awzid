@@ -4444,5 +4444,6 @@
   "erreur.identifiant_invalide": "Dieser Benutzername hat nicht die richtige Form.",
   "erreur.declaration_requise": "Bestätigen Sie mit dem Kästchen, dass Sie Elternteil oder Vormund sind.",
   "erreur.session_limitee": "Dieser Bereich ist nur zum Lernen.",
-  "id.email_numero_identifiant": "Nummer, E-Mail oder Benutzername"
+  "id.email_numero_identifiant": "Nummer, E-Mail oder Benutzername",
+  "enfant.deconnexion": "Abmelden"
 }

@@ -4444,5 +4444,6 @@
   "erreur.identifiant_invalide": "اسم المستخدم لا يطابق الصيغة المطلوبة.",
   "erreur.declaration_requise": "ضع علامة للتأكيد أنك والده أو وليّ أمره.",
   "erreur.session_limitee": "هذا الفضاء مخصّص للتعلّم فقط.",
-  "id.email_numero_identifiant": "الرقم أو البريد أو اسم المستخدم"
+  "id.email_numero_identifiant": "الرقم أو البريد أو اسم المستخدم",
+  "enfant.deconnexion": "تسجيل الخروج"
 }
