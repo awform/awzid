@@ -15,6 +15,8 @@ export interface ProfileInfo {
   levelCode: string | null;
   /** lot F2 : titulaire du profil, parent responsable (second parent), élève de la classe (tablette) */
   lien?: 'titulaire' | 'parent' | 'classe';
+  /** V2-3 : profil « Moi » du parent (adulte) */
+  isOwner?: boolean;
 }
 
 export interface Me {

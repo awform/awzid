@@ -10,6 +10,7 @@
   import Sym from '$lib/Sym.svelte';
   import { SYMBOLS } from '$lib/symbols';
   import AccesEnfant from './AccesEnfant.svelte';
+  import MonEspace from './MonEspace.svelte';
   import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
@@ -157,6 +158,9 @@
     {/each}
   </div>
   {#if me.profiles.length === 0}<p class="muted">{t('profils.aucun')}</p>{/if}
+  {#if me.account.kind === 'parent' && !me.profiles.some((p) => p.isOwner)}
+    <MonEspace oncree={async () => (me = await fetchMe())} />
+  {/if}
   {#if me.account.kind === 'parent'}
     <ul class="acces-liste" aria-label={t('profils.acces_liste')}>
       {#each me.profiles.filter((p) => p.kind !== 'adulte') as p (p.id)}

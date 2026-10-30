@@ -398,5 +398,8 @@
   "profils.acces_debloque": "Accès débloqué : il peut réessayer.",
   "profils.acces_fermer": "Fermer",
   "signal.m_audio_absent": "Le son manque",
-  "signal.m_audio_faux": "Le son est faux"
+  "signal.m_audio_faux": "Le son est faux",
+  "profils.moi_ajouter": "Ajouter mon espace",
+  "profils.moi_aide": "Votre propre profil d'adulte, à côté de ceux de vos enfants. Il apprend comme un compte adulte.",
+  "profils.moi_creer": "Créer mon espace"
 }

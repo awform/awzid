@@ -4461,5 +4461,9 @@
   "erreur.identifiant_existant": "Dieses Kind hat schon einen Benutzernamen.",
   "erreur.profil_adulte": "Ein Erwachsenenprofil hat keinen Kinderzugang.",
   "signal.m_audio_absent": "Der Ton fehlt",
-  "signal.m_audio_faux": "Der Ton ist falsch"
+  "signal.m_audio_faux": "Der Ton ist falsch",
+  "profils.moi_ajouter": "Meinen Bereich hinzufügen",
+  "profils.moi_aide": "Ihr eigenes Erwachsenenprofil neben denen Ihrer Kinder. Es lernt wie ein Erwachsenenkonto.",
+  "profils.moi_creer": "Meinen Bereich anlegen",
+  "erreur.profil_moi_existe": "Sie haben Ihren Bereich schon."
 }

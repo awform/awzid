@@ -4461,5 +4461,9 @@
   "erreur.identifiant_existant": "Este niño ya tiene un usuario.",
   "erreur.profil_adulte": "Un perfil de adulto no tiene acceso de niño.",
   "signal.m_audio_absent": "Falta el audio",
-  "signal.m_audio_faux": "El audio es incorrecto"
+  "signal.m_audio_faux": "El audio es incorrecto",
+  "profils.moi_ajouter": "Añadir mi espacio",
+  "profils.moi_aide": "Su propio perfil de adulto, junto a los de sus hijos. Aprende como una cuenta de adulto.",
+  "profils.moi_creer": "Crear mi espacio",
+  "erreur.profil_moi_existe": "Ya tiene su espacio."
 }

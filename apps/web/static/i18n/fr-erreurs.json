@@ -156,5 +156,6 @@
   "erreur.declaration_requise": "Cochez la case pour confirmer que vous êtes son parent ou son tuteur.",
   "erreur.session_limitee": "Cet espace est réservé à l'apprentissage.",
   "erreur.identifiant_existant": "Cet enfant a déjà un identifiant.",
-  "erreur.profil_adulte": "Un profil d'adulte n'a pas d'accès d'enfant."
+  "erreur.profil_adulte": "Un profil d'adulte n'a pas d'accès d'enfant.",
+  "erreur.profil_moi_existe": "Vous avez déjà votre espace."
 }

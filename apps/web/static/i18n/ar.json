@@ -4461,5 +4461,9 @@
   "erreur.identifiant_existant": "لهذا الطفل اسم مستخدم بالفعل.",
   "erreur.profil_adulte": "ملف البالغ ليس له وصول طفل.",
   "signal.m_audio_absent": "الصوت غير موجود",
-  "signal.m_audio_faux": "الصوت خاطئ"
+  "signal.m_audio_faux": "الصوت خاطئ",
+  "profils.moi_ajouter": "إضافة مساحتي",
+  "profils.moi_aide": "ملفك الخاص كبالغ إلى جانب ملفات أبنائك. يتعلّم مثل حساب بالغ.",
+  "profils.moi_creer": "إنشاء مساحتي",
+  "erreur.profil_moi_existe": "لديك مساحتك بالفعل."
 }
