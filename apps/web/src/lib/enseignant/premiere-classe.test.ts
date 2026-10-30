@@ -13,6 +13,14 @@ describe('enseignant sans classe : « Créer ma classe »', () => {
     expect(doitCreerMaClasse({ ...base, enseignant: false })).toBe(false);
     expect(doitCreerMaClasse({ ...base, charge: false })).toBe(false);
   });
+  it('rattaché à une école : jamais (l’école attribue la classe) ; espace personnel seul : oui', () => {
+    expect(doitCreerMaClasse({ ...base, ecoles: [{ personal: false }] })).toBe(false);
+    expect(doitCreerMaClasse({ ...base, ecoles: [{ personal: true }, { personal: false }] })).toBe(
+      false,
+    );
+    expect(doitCreerMaClasse({ ...base, ecoles: [{ personal: true }] })).toBe(true);
+    expect(doitCreerMaClasse({ ...base, ecoles: [] })).toBe(true);
+  });
   it('un seul champ : le nom de la classe', () => {
     const { body } = render(CreerMaClasse, { props: { oncree: () => {} } });
     expect(body.match(/<input/g)).toHaveLength(1);

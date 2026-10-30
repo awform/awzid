@@ -80,6 +80,7 @@
       enseignant: isTeacher,
       bloque: blocked,
       classes: classes.length,
+      ecoles: me?.ecoles,
     }),
   );
   async function classeCreee(c: ClassRow) {

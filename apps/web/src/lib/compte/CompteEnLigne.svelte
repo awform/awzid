@@ -227,6 +227,8 @@
       totp = null;
       say(t('compte.totp_ok'));
       await relire();
+      // V2-2 : un enseignant revient sur son espace (où l'attend « Créer ma classe » s'il n'a pas d'école)
+      if (me.account.kind === 'enseignant') await goto(resolve('/enseignant'));
     } else fail(r.code);
   }
 </script>
