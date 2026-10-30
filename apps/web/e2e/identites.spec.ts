@@ -3,7 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Browser, Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
-import { etapeAccords, etapeProfil } from './inscription';
+import { etapeAccords, etapeProfil, choisirQui } from './inscription';
 import { totp } from './totp';
 
 /**
@@ -114,6 +114,7 @@ test('inscription par numéro WhatsApp (mode simulé) : vérification inversée,
 }) => {
   const national = numero();
   await page.goto('/inscription');
+  await choisirQui(page);
   await page.getByTestId('entree-whatsapp').click();
   await verifierNumero(page, national);
   await page.locator('#password').fill(password());
@@ -162,6 +163,7 @@ test('inscription par numéro WhatsApp (mode simulé) : vérification inversée,
 test('limite : un renvoi trop tôt est refusé avec un message clair', async ({ page }) => {
   const national = numero();
   await page.goto('/inscription');
+  await choisirQui(page);
   await page.getByTestId('entree-whatsapp').click();
   await page.getByTestId('tel-pays').selectOption('SN');
   await page.getByTestId('tel-numero').fill(national);
@@ -184,6 +186,7 @@ test('« Continuer avec Google » (faux fournisseur local) : inscription aux mê
   };
   await page.request.post(`${process.env.E2E_OIDC_URL}/essai/identite`, { data: ident });
   await page.goto('/inscription');
+  await choisirQui(page);
   await page.getByTestId('entree-google').click();
   await expect(page.getByTestId('google-identite')).toContainText(ident.email);
   // mot de passe facultatif : on continue sans
@@ -205,6 +208,7 @@ test('« Continuer avec Google » (faux fournisseur local) : inscription aux mê
 test('validation manuelle par l’administrateur (bêta, sans Meta)', async ({ page, browser }) => {
   const national = numero();
   await page.goto('/inscription');
+  await choisirQui(page);
   await page.getByTestId('entree-whatsapp').click();
   await page.getByTestId('tel-pays').selectOption('SN');
   await page.getByTestId('tel-numero').fill(national);

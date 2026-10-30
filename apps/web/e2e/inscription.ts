@@ -25,10 +25,22 @@ export interface OptionsInscription extends ProfilInscription {
   envoyer?: boolean;
 }
 
-/** ouvre la page d'inscription (formulaire libre) et attend la première étape */
-export async function ouvrirInscription(page: Page): Promise<void> {
-  await page.goto('/inscription');
+/** V2-2 : choisit une carte de l'écran « Qui va apprendre ? » (en tête de l'inscription) et attend l'étape 1 */
+export async function choisirQui(
+  page: Page,
+  qui: 'moi' | 'enfants' | 'famille' | 'eleves' = 'enfants',
+): Promise<void> {
+  await page.getByTestId(`qui-${qui}`).click();
   await expect(page.getByTestId('etape-1')).toBeVisible();
+}
+
+/** ouvre la page d'inscription, choisit « Qui va apprendre ? » (défaut : mes enfants) et attend la première étape */
+export async function ouvrirInscription(
+  page: Page,
+  qui?: Parameters<typeof choisirQui>[1],
+): Promise<void> {
+  await page.goto('/inscription');
+  await choisirQui(page, qui);
 }
 
 export async function etapeIdentifiants(

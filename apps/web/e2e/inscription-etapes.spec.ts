@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Browser, Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
-import { etapeIdentifiants, etapeProfil, ouvrirInscription } from './inscription';
+import { etapeIdentifiants, etapeProfil, ouvrirInscription, choisirQui } from './inscription';
 
 /**
  * Refonte de l'inscription (16/10/2026) : deux colonnes sur ordinateur, une sur téléphone ; formulaire en trois
@@ -174,6 +174,7 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
     route.fulfill({ json: { valide: true, personnelle: false } }),
   );
   await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+  await choisirQui(page);
   await expect(page.getByTestId('invitation-reconnue')).toContainText('Invitation reconnue');
   await expect(page.getByTestId('etape-1')).toBeVisible();
   const panneau = (await page.getByTestId('inscription-marque').boundingBox())!;
@@ -203,6 +204,7 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
     await expect(page.getByTestId('erreurs-etape')).toBeVisible();
     expect(await graves(page), `erreur ${scheme}`).toEqual([]);
     await page.goto('/inscription');
+    await choisirQui(page);
     await expect(page.getByTestId('etape-1')).toBeVisible();
   }
   await page.emulateMedia({ colorScheme: 'light' });
@@ -253,6 +255,7 @@ async function maquettes(browser: Browser, base: string, dir: string) {
         });
       };
       await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+      await choisirQui(page);
       await expect(page.getByTestId('invitation-reconnue')).toBeVisible();
       await expect(page.locator('#password')).toBeVisible();
       await page.locator('#email').fill('pas-une-adresse');
@@ -262,6 +265,7 @@ async function maquettes(browser: Browser, base: string, dir: string) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await shot('1-erreur');
       await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+      await choisirQui(page);
       await expect(page.locator('#password')).toBeVisible();
       await page.locator('#email').fill('fatou.diallo@exemple.fr');
       await page.locator('#password').fill('mon thé à la menthe');

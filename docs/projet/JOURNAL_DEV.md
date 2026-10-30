@@ -9,6 +9,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 30/10/2026 — Lot V2-2, partie 1 : « Qui va apprendre ? » (branche `inscription-v2-2-wip`) ; NON fusionné, NON déployé
+
+- **Migration `0058_inscription_intention`** (la 0057 était déjà prise par la mesure V2-0) : colonne `account.signup_intent` (texte nullable, CHECK `moi | enfants | famille | eleves`). Retour arrière noté en tête du fichier.
+- **`POST /auth/signup`** : champ facultatif `intention` ; absent = comportement d'avant. `moi` → compte adulte + profil adulte ; `enfants` et `famille` → parent (aucun profil créé) ; `eleves` → enseignant (règle du personnel : 12 caractères, majorité requise, second facteur à configurer ensuite : `mfa_a_configurer`). Une invitation assistée garde le type préparé par l'administrateur. Règles de mineurs (`policy.ts`) inchangées. Valeur inconnue : 400.
+- **Web** : écran `QuiVaApprendre.svelte` en tête de l'inscription (4 cartes-boutons, jetons du design system, clavier, 1 colonne à 375 px) ; choix modifiable (« Retour ») ; l'écran est sauté pour une inscription assistée, Google ou numéro déjà vérifié ; clés i18n `ins.qui_*` en 5 langues.
+- **Non fait (voulu)** : champ unique, pays déduit, case d'accord unique, profil « Moi ».
+- **Tests** : `apps/api/test/inscription-intention.test.ts` (8) ; e2e adaptés (`choisirQui`) mais NON exécutés ici (livres absents du cloud).
+
 ## 29/10/2026 — Égaler Tarteel (branche `tarteel-egal-wip`, interrupteur `shazam_coran`, canal bêta) ; NON déployé
 
 - **Fenêtre de détail par verset** (mots manqués / ajoutés en rouge, Écouter Ayyūb par le petit lecteur commun, réécoute de sa récitation pour l'adulte seulement, audio en mémoire sur l'appareil, rien envoyé ni gardé), **justesse par page et progression par sourate** sur l'appareil, reliées à la khatma (lecture du jour, mise à jour proposée), **vitesse 1,75×**. Détail et garanties : `ECOUTE_IA.md` § 10.4.

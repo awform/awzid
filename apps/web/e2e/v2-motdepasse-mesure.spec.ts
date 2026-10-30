@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import type { Browser, Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
-import { inscrire } from './inscription';
+import { inscrire, choisirQui } from './inscription';
 import { totp } from './totp';
 
 /**
@@ -144,6 +144,7 @@ test('mesure anonyme : seulement l’étape, la plateforme et la langue, sans co
     await route.continue();
   });
   await page.goto('/inscription');
+  await choisirQui(page);
   await page.locator('#email').focus();
   await page.goto('/connexion');
   await page.locator('#email').fill(`mesure-${unique()}@e2e.test`);

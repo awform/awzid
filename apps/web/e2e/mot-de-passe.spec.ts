@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { choisirQui } from './inscription';
 
 /**
  * Lot 11 + V2-1 — champ « nouveau mot de passe » de l'inscription (8 caractères sans complexité depuis le 29/10/2026) : bouton « œil »
@@ -10,6 +11,7 @@ test('inscription : œil, indicateur de la règle, confirmation différente refu
   page,
 }) => {
   await page.goto('/inscription');
+  await choisirQui(page);
   const mdp = page.locator('#password');
   const force = page.getByTestId('mdp-force');
   await expect(mdp).toHaveAttribute('type', 'password');
