@@ -407,6 +407,13 @@
       "when": 1793268968156,
       "tag": "0057_mesure_entonnoir",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1793268969156,
+      "tag": "0058_inscription_intention",
+      "breakpoints": true
     }
   ]
 }

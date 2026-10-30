@@ -426,6 +426,9 @@ export const qrRedirect = pgTable('qr_redirect', {
  * Texte contrôlé (ancien type énuméré `account_kind`, converti par la migration 0034).
  */
 export const ACCOUNT_KINDS = ['parent', 'adulte', 'admin', 'enseignant', 'ecole'] as const;
+/** V2-2 : « Qui va apprendre ? » — intention choisie à l'inscription. */
+export const SIGNUP_INTENTS = ['moi', 'enfants', 'famille', 'eleves'] as const;
+export type SignupIntent = (typeof SIGNUP_INTENTS)[number];
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 
 /** Compte titulaire (parent/tuteur, adulte autonome, école, personnel). */
@@ -473,6 +476,8 @@ export const account = pgTable(
      * dépendent d'une province ou d'un canton (âge du consentement au Québec).
      */
     region: text('region'),
+    /** V2-2 : intention déclarée à l'inscription (moi | enfants | famille | eleves) ; null = non déclarée */
+    signupIntent: text('signup_intent', { enum: SIGNUP_INTENTS }),
     /** Lot F3 (revue M8) : fuseau horaire IANA du compte (affichage des heures) ; null = celui de l'appareil */
     tz: text('tz'),
     /**
@@ -503,6 +508,10 @@ export const account = pgTable(
     check('account_source', sql`${t.source} IS NULL OR ${t.source} ~ '^[a-z0-9-]{1,40}$'`),
     check('account_region', sql`${t.region} IS NULL OR ${t.region} ~ '^[A-Z]{2}-[A-Z0-9]{1,3}$'`),
     check('account_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
+    check(
+      'account_signup_intent',
+      sql`${t.signupIntent} IS NULL OR ${t.signupIntent} IN ('moi', 'enfants', 'famille', 'eleves')`,
+    ),
     check(
       'account_kind_check',
       sql`${t.kind} IN ('parent', 'adulte', 'admin', 'enseignant', 'ecole')`,

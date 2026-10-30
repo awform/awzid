@@ -351,6 +351,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       /** 18/10/2026 : inscription avec l'identité Google vérifiée (cookie chiffré posé par le retour de Google) */
       google?: boolean;
       src?: string;
+      intention?: t.SignupIntent;
     };
   }>(
     '/api/v1/auth/signup',
@@ -383,6 +384,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             google: { type: 'boolean' },
             // provenance (?src= des affiches) : gardée si elle est valide (^[a-z0-9-]{1,40}$), ignorée sinon
             src: { type: 'string', maxLength: 200 },
+            // V2-2 : « Qui va apprendre ? » (facultatif ; absent = comportement d'avant)
+            intention: { enum: [...t.SIGNUP_INTENTS] },
           },
         },
       },
@@ -410,7 +413,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // 18/10/2026 : inscription ASSISTÉE (invitation préparée par un administrateur : type, pays, numéro)
       const assistee = b.invitation ? await invitationAssistee(db, b.invitation) : null;
       const country = assistee?.country ?? b.country;
-      const kind = assistee?.kind ?? b.kind;
+      // V2-2 : l'intention fixe le type de compte (moi → adulte, enfants/famille → parent, élèves → enseignant) ;
+      // une invitation assistée garde le type que l'administrateur a préparé
+      const kind: t.AccountKind =
+        assistee?.kind ?? (b.intention ? KIND_PAR_INTENTION[b.intention] : b.kind);
       // audit MIN-15 : pays existant (ISO 3166-1) seulement
       if (!isCountry(country)) return err(reply, 400, 'pays_inconnu');
       // UN identifiant : e-mail, numéro WhatsApp vérifié (ou préparé par l'administrateur), ou identité Google
@@ -446,13 +452,18 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!b.password && !g) return err(reply, 400, 'mot_de_passe_requis');
       if (b.password) {
         // V2-1 : ni l'adresse, ni le prénom (pseudonyme) ne peuvent servir de mot de passe
-        const pb = checkPassword(b.password, email ?? '', { identifiants: [b.pseudonym] });
+        const pb = checkPassword(b.password, email ?? '', {
+          identifiants: [b.pseudonym],
+          // un enseignant suit la règle du personnel (12 caractères) ; le second facteur est exigé ensuite
+          personnel: kind === 'enseignant',
+        });
         if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       }
       // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
       if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
       const age = ageFromYear(b.birthYear);
-      if (kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
+      if ((kind === 'parent' || kind === 'enseignant') && age < 18)
+        return err(reply, 403, 'majorite_requise');
       // Google : jamais pour un enfant ni un adolescent (titulaire majeur)
       if (g && age < 18) return err(reply, 403, 'google_majeur_requis');
       // lot F3 (revue M9) : subdivision connue pour ce pays (sinon refus : âge du consentement en jeu)
@@ -517,6 +528,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             country,
             locale: b.locale ?? 'fr',
             birthYear: kind === 'adulte' ? (b.birthYear ?? null) : null,
+            signupIntent: b.intention ?? null,
             region,
             tz: normTz(b.tz),
             // Google : adresse vérifiée par Google (email_verified) ; numéro : prouvé (ou préparé par l'administrateur)
@@ -540,7 +552,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await audit(db, a.id, 'groupe_beta.ajout_invitation', invitationId);
       }
       // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
-      await grantAccountRole(db, a.id, kind === 'parent' ? 'parent' : 'eleve_adulte');
+      await grantAccountRole(
+        db,
+        a.id,
+        kind === 'parent' ? 'parent' : kind === 'enseignant' ? 'enseignant' : 'eleve_adulte',
+      );
       const accepted = b.consents.filter(
         (c) =>
           requiredAccountConsents(country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
@@ -551,7 +567,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         loi: rules.law,
         autorite: rules.authority,
         // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
-        ...(kind === 'parent' ? { majoriteDeclaree: true } : {}),
+        ...(kind !== 'adulte' ? { majoriteDeclaree: true } : {}),
       });
       if (kind === 'adulte') {
         const [own] = await db
@@ -982,6 +998,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
  * responsable actif (second parent) ; session de tablette de classe : élèves de cette classe seulement. Le
  * compte technique d'une école n'agit JAMAIS hors d'une session de tablette.
  */
+/** V2-2 : type de compte créé par chaque intention. */
+const KIND_PAR_INTENTION: Record<t.SignupIntent, t.AccountKind> = {
+  moi: 'adulte',
+  enfants: 'parent',
+  famille: 'parent',
+  eleves: 'enseignant',
+};
+
 export async function ownsProfile(
   db: Db,
   who: AuthCtx | string | null | undefined,
