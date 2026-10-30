@@ -414,6 +414,13 @@
       "when": 1793268969156,
       "tag": "0058_inscription_intention",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1793268970156,
+      "tag": "0059_profile_login",
+      "breakpoints": true
     }
   ]
 }

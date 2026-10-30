@@ -127,6 +127,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   school_year: RIU,
   enrolment: RIU,
   profile_custodian: RIU,
+  // V2-3 : identifiant et mot de passe d'un profil d'enfant (supprimés en cascade avec le profil)
+  profile_login: RIU,
   profile_level: RIU,
   subject: R,
   quran_lemma: R,

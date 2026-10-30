@@ -663,6 +663,31 @@ export const consent = pgTable('consent', {
 });
 
 /** Sessions : seul le HACHÉ du jeton est stocké. */
+/** V2-3 : identifiant et mot de passe d'un profil d'enfant (ni e-mail, ni nom de famille). */
+export const profileLogin = pgTable(
+  'profile_login',
+  {
+    profileId: uuid('profile_id')
+      .primaryKey()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    login: text('login').notNull().unique(),
+    passwordHash: text('password_hash').notNull(),
+    passwordChangedAt: timestamp('password_changed_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdByAccountId: uuid('created_by_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check(
+      'profile_login_forme',
+      sql`${t.login} ~ '^[a-z0-9-]{3,24}$' AND ${t.login} ~ '[a-z]' AND ${t.login} !~ '^-|-$'`,
+    ),
+  ],
+);
+
 export const session = pgTable(
   'session',
   {
@@ -680,6 +705,8 @@ export const session = pgTable(
      * Mode TABLETTE DE CLASSE (lot F2, revue E3) : session du compte de l'école, ouverte par un enseignant,
      * limitée aux élèves de CETTE classe (profils de l'école ou inscrits par leur parent).
      */
+    /** V2-3 : session d'un ENFANT (identifiant + mot de passe) : limitée à CE profil, apprentissage seulement */
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
     tabletClassId: uuid('tablet_class_id').references(() => classGroup.id, {
       onDelete: 'cascade',
     }),

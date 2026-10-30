@@ -98,6 +98,13 @@ import { readFlags } from '@awform/db';
 import { missingConsents, registerConsents } from './accords.js';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
+import {
+  enregistrerSessionLimitee,
+  chercherEnfant,
+  estIdentifiantEnfant,
+  meEnfant,
+  registerEnfantLogin,
+} from './enfant-login.js';
 import { registerRecovery } from './recuperation.js';
 import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
@@ -173,6 +180,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     if ((req.method === 'GET' || req.method === 'HEAD') && MFA_FREE_READ.test(path)) return;
     return err(reply, 403, a.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   });
+
+  // V2-3 : session d'un enfant = liste fermée de routes d'apprentissage, sur son seul profil
+  enregistrerSessionLimitee(app);
 
   const needAuth = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
@@ -688,6 +698,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // V2-1 : la pause est levée si le mot de passe a été changé ou réinitialisé depuis le dernier essai
       // (« Mot de passe oublié ? » débloque tout de suite) ; réponse identique que le compte existe ou non
       const [a] = await chercher();
+      // V2-3 : « identifiant » d'un enfant (même écran, même verrou, mêmes messages)
+      const enf = estIdentifiantEnfant(saisi)
+        ? await chercherEnfant(db, saisi.toLowerCase())
+        : null;
       // V2-1 (décision du client) : 8 essais puis 10 minutes de pause ; le PERSONNEL garde 5 essais et la pause
       // progressive (1, 2, 4… minutes)
       const personnel = a ? await estPersonnel(db, a.id) : false;
@@ -695,7 +709,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const pause = personnel ? undefined : PAUSE_CONNEXION_MIN;
       const infoPause = pause ? { pause_minutes: pause } : {};
       if (await lockedUntil(db, accKey))
-        await leverPauseSiMotDePasseChange(db, accKey, a?.passwordChangedAt);
+        await leverPauseSiMotDePasseChange(
+          db,
+          accKey,
+          enf?.passwordChangedAt ?? a?.passwordChangedAt,
+        );
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked)
         return err(reply, 429, 'verrouille', { jusqua: locked.toISOString(), ...infoPause });
@@ -718,8 +736,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await setSession(reply, demo.accountId, demo.kind, true);
         return { ...(await me(demo.accountId, true)), profilDemo: demo.profileId };
       }
-      const ok = await verifySecret(req.body.password, a?.passwordHash);
-      if (!a || !ok) {
+      const ok = await verifySecret(req.body.password, enf?.passwordHash ?? a?.passwordHash);
+      if ((!a && !enf) || !ok) {
         await failAttempt(db, accKey, max, pause);
         await recordFailure(db, ipKey, ECHECS_CONNEXION_ADRESSE);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
@@ -737,6 +755,21 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         }
         return err(reply, 401, 'identifiants_incorrects', { essais_restants: restants });
       }
+      if (enf) {
+        // V2-3 : le titulaire du profil doit être actif (non supprimé, non bloqué) ; session limitée à CE profil
+        const [o] = await db.select().from(t.account).where(eq(t.account.id, enf.ownerAccountId));
+        if (!o || o.deletedAt || o.blockedAt) return err(reply, 401, 'identifiants_incorrects');
+        if ((await readAcces(db)).site === 'ferme') return err(reply, 503, 'acces_ferme');
+        await clearFailures(db, accKey);
+        await audit(db, o.id, 'connexion.enfant', enf.profileId);
+        const s = await createSession(db, o.id, o.kind, false, {
+          profileId: enf.profileId,
+          ttlMs: 7 * 24 * 3600_000,
+        });
+        reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(req)));
+        return meEnfant(await me(o.id, false), enf.profileId);
+      }
+      if (!a) return err(reply, 401, 'identifiants_incorrects');
       // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
       // ne le connaît pas) ; aucune session n'est ouverte
       if (a.blockedAt) {
@@ -829,7 +862,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     // navigateur. Sans ce paramètre, le comportement historique (401) est inchangé.
     if (!req.auth && req.query.doux === '1') return { anonyme: true };
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    return me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
+    const m = await me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
+    return req.auth.profileId ? meEnfant(m, req.auth.profileId) : m;
   });
 
   app.post<{ Body: { current: string; next: string } }>(
@@ -952,6 +986,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     cle: opts.secretKey,
   };
   registerProfiles(app, kit);
+  registerEnfantLogin(app, kit);
   registerPrivacy(app, kit);
   // lot F3 : récupération du compte (e-mails), accords et réglages du compte
   registerRecovery(app, kit, {
