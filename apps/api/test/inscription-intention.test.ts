@@ -15,6 +15,7 @@ import {
 } from '@awform/db';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
+import { totpAt } from '../src/auth/crypto.js';
 import { TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
@@ -105,6 +106,34 @@ describe.skipIf(!URL)('inscription : intention « Qui va apprendre ? » (awform_
     const prot = await app.inject({ method: 'GET', url: '/api/v1/profiles', headers: { cookie } });
     expect(prot.statusCode).toBe(403);
     expect(prot.json().error.code).toBe('mfa_a_configurer');
+  });
+
+  it('enseignant sans classe : second facteur, puis première classe créée et listée (écran « Créer ma classe »)', async () => {
+    const r = await signup('ens2@exemple.org', { intention: 'eleves', password: PW_PERSONNEL });
+    expect(r.statusCode).toBe(201);
+    const cookie = String(r.headers['set-cookie']).split(';')[0] ?? '';
+    const appel = (method: 'GET' | 'POST', url: string, payload?: object) =>
+      app.inject({ method, url, payload, headers: { 'x-awform': '1', cookie } });
+    // avant le second facteur : espace fermé
+    expect((await appel('GET', '/api/v1/teacher/classes')).json().error.code).toBe(
+      'mfa_a_configurer',
+    );
+    const setup = (await appel('POST', '/api/v1/auth/totp/setup', {})).json() as { secret: string };
+    const ok = await appel('POST', '/api/v1/auth/totp/confirm', {
+      code: totpAt(setup.secret, Math.floor(Date.now() / 30_000)),
+    });
+    expect(ok.statusCode).toBe(200);
+    const cookie2 = String(ok.headers['set-cookie'] ?? cookie).split(';')[0] || cookie;
+    const avec = (method: 'GET' | 'POST', url: string, payload?: object) =>
+      app.inject({ method, url, payload, headers: { 'x-awform': '1', cookie: cookie2 } });
+    expect((await avec('GET', '/api/v1/teacher/classes')).json().classes).toEqual([]);
+    const c = await avec('POST', '/api/v1/teacher/classes', { name: 'CE1 — Dieynaba' });
+    expect(c.statusCode).toBe(201);
+    expect(c.json().class.joinCode).toBeTruthy();
+    const liste = (await avec('GET', '/api/v1/teacher/classes')).json().classes as {
+      name: string;
+    }[];
+    expect(liste.map((x) => x.name)).toEqual(['CE1 — Dieynaba']);
   });
 
   it('un enseignant mineur est refusé (majorité requise)', async () => {

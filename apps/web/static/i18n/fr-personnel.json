@@ -683,5 +683,8 @@
   "fn.khatma_wird": "Khatma et lecture du jour (plan de lecture du Coran)",
   "fn.mutashabihat": "Mutashābihāt du hifẓ (versets jumeaux)",
   "fn.hifz_classe": "Hifẓ en classe (mode direct, enregistrements des adultes)",
-  "fn.tajwid_madd": "Indication des madd (adultes, bêta fermée)"
+  "fn.tajwid_madd": "Indication des madd (adultes, bêta fermée)",
+  "ens.cree_titre": "Créer ma classe",
+  "ens.cree_aide": "Donnez un nom à votre classe. Un code vous sera donné pour inviter les familles.",
+  "ens.cree_vide": "Écrivez le nom de la classe."
 }

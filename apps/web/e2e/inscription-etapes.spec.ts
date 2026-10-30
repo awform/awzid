@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Browser, Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
+import { totp } from './totp';
 import { etapeIdentifiants, etapeProfil, ouvrirInscription, choisirQui } from './inscription';
 
 /**
@@ -60,7 +61,9 @@ test('étape 1 : champs vides ou faux refusés à côté du champ, focus sur le 
   await expect(page.getByTestId('etape-retour')).toHaveCount(0);
   await page.getByTestId('etape-suivante').click();
   await expect(page.getByTestId('erreurs-etape')).toBeVisible();
-  await expect(page.getByTestId('erreur-email')).toHaveText('Indiquez votre adresse e-mail.');
+  await expect(page.getByTestId('erreur-email')).toHaveText(
+    'Écrivez votre numéro WhatsApp ou votre adresse e-mail.',
+  );
   await expect(page.getByTestId('mdp-erreur')).toHaveText('Choisissez un mot de passe.');
   await expect(page.locator('#email')).toBeFocused();
   await expect(page.locator('#email')).toHaveAttribute('aria-invalid', 'true');
@@ -70,7 +73,9 @@ test('étape 1 : champs vides ou faux refusés à côté du champ, focus sur le 
   await expect(page.getByTestId('erreur-email')).toHaveCount(0); // corrigé : le message s'efface
   await page.locator('#password').fill('Tamar7x');
   await page.getByTestId('etape-suivante').click();
-  await expect(page.getByTestId('erreur-email')).toContainText('ne semble pas complète');
+  await expect(page.getByTestId('erreur-email')).toContainText(
+    'ni un numéro, ni une adresse e-mail',
+  );
   await expect(page.getByTestId('mdp-erreur')).toContainText('pas encore accepté');
   // confirmation absente
   await page.locator('#email').fill(adresse('e1'));
@@ -291,4 +296,40 @@ test('maquettes (si MAQUETTES_DIR)', async ({ browser }, info) => {
   test.skip(!dir || !info.project.name.startsWith('desktop'), 'captures à la demande seulement');
   mkdirSync(dir!, { recursive: true });
   await maquettes(browser, String(info.project.use.baseURL), dir!);
+});
+
+test('enseignant sans classe : après le second facteur, « Créer ma classe » (un seul champ) puis la classe sur /enseignant', async ({
+  page,
+}) => {
+  const H = { 'x-awform': '1' };
+  const r = await page.request.post('/api/v1/auth/signup', {
+    headers: H,
+    data: {
+      kind: 'parent',
+      intention: 'eleves',
+      email: `ens-${Date.now()}@exemple.org`,
+      password: 'une phrase de passe de douze+ caractères',
+      country: 'FR',
+      birthYear: 1980,
+      consents: ['cgu', 'donnee_religieuse_art9'],
+    },
+  });
+  expect(r.status()).toBe(201);
+  const setup = (await (
+    await page.request.post('/api/v1/auth/totp/setup', { headers: H, data: {} })
+  ).json()) as {
+    secret: string;
+  };
+  const ok = await page.request.post('/api/v1/auth/totp/confirm', {
+    headers: H,
+    data: { code: totp(setup.secret) },
+  });
+  expect(ok.status()).toBe(200);
+  await page.goto('/enseignant');
+  await expect(page.getByTestId('creer-classe')).toBeVisible();
+  await expect(page.locator('input:visible')).toHaveCount(1);
+  await page.getByTestId('nom-classe').fill('CE1 — e2e');
+  await page.getByTestId('creer-classe-envoi').click();
+  await expect(page.getByTestId('classe')).toBeVisible();
+  await expect(page.getByTestId('creer-classe')).toHaveCount(0);
 });

@@ -4427,5 +4427,8 @@
   "ins.err_id_verifier_numero": "Verifique primero su número de WhatsApp.",
   "ins.pays_deduit": "País: {pays} —",
   "ins.pays_modifier": "cambiar",
-  "ins.pays_doute": "No estamos seguros: cámbielo si hace falta. En caso de duda se aplica la regla de edad más estricta."
+  "ins.pays_doute": "No estamos seguros: cámbielo si hace falta. En caso de duda se aplica la regla de edad más estricta.",
+  "ens.cree_titre": "Crear mi clase",
+  "ens.cree_aide": "Dé un nombre a su clase. Recibirá un código para invitar a las familias.",
+  "ens.cree_vide": "Escriba el nombre de la clase."
 }
