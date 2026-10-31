@@ -59,8 +59,16 @@ test.describe('adulte et enseignant', () => {
     const tp = await tctx.newPage();
     await loginTeacher(tp);
     await tp.goto('/enseignant');
-    await tp.locator('#cname').fill(`Tuteur ${tag}`);
-    await tp.getByRole('button', { name: 'Créer la classe' }).click();
+    // V2-2 : un enseignant sans classe voit d'abord « Créer ma classe » (un seul champ), sinon l'espace complet
+    const premiere = tp.getByTestId('creer-classe');
+    await expect(premiere.or(tp.locator('#cname'))).toBeVisible();
+    if (await premiere.isVisible()) {
+      await tp.getByTestId('nom-classe').fill(`Tuteur ${tag}`);
+      await tp.getByTestId('creer-classe-envoi').click();
+    } else {
+      await tp.locator('#cname').fill(`Tuteur ${tag}`);
+      await tp.getByRole('button', { name: 'Créer la classe' }).click();
+    }
     const code = /([A-HJ-NP-Z2-9]{8})/.exec(
       (await tp.getByTestId('ens-message').textContent()) ?? '',
     )![1]!;
