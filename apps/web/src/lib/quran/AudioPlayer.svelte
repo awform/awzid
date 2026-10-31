@@ -7,6 +7,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import { BASMALA } from './lecture';
   import { clampRate, isHafs, silenceMs } from './player';
+  import { Prechargeur, prochainJouable } from './enchainement';
   import { garderEcoute, playableUrl } from './offline-audio';
 
   /** reculer / avancer : 5 secondes, comme le lecteur des phrases (`lib/lecteur`) */
@@ -69,24 +70,41 @@
     gap = false;
   }
 
-  let audio: HTMLAudioElement | undefined = $state();
+  // deux éléments audio en alternance : pendant qu'un verset est lu, le suivant est chargé dans l'autre, puis démarre
+  // aussitôt à la fin du premier (aucun silence de chargement entre deux versets, même très courts)
+  let els: Array<HTMLAudioElement | undefined> = $state([undefined, undefined]);
+  let cur = $state(0);
+  const audio = $derived(els[cur]);
+  const reserve = new Prechargeur();
+  /** adresses posées sur chaque élément (blob hors ligne à libérer) */
+  const urls = ['', ''];
+  const libere = (u: string) => {
+    if (u.startsWith('blob:')) URL.revokeObjectURL(u);
+  };
   let idx = $state(0);
   let playing = $state(false);
   let started = $state(false);
   let error = $state('');
   let sleepUntil: number | null = null;
   let lastUrl = '';
+  const trouver = (a: number) =>
+    a === BASMALA
+      ? basmala
+        ? { aya: BASMALA, url: basmala }
+        : null
+      : pack?.files.find((x) => x.aya === a);
 
   const aya = $derived(queue[idx] ?? null);
   $effect(() => onplaystate?.(playing));
   $effect(() => {
-    if (audio) {
-      audio.playbackRate = clampRate(rate);
-      audio.preservesPitch = true;
+    for (const a of els) {
+      if (!a) continue;
+      a.playbackRate = clampRate(rate);
+      a.preservesPitch = true;
     }
   });
   $effect(() => {
-    if (audio) audio.volume = Math.max(0, Math.min(1, volume));
+    for (const a of els) if (a) a.volume = Math.max(0, Math.min(1, volume));
   });
   // file changée (autre sourate, autre plage, autres réglages) : on repart du début, sans jouer
   $effect(() => {
@@ -120,19 +138,26 @@
     if (!audio || !pack) return;
     if (i >= queue.length) return finish('fin');
     idx = Math.max(0, i);
-    const f =
-      queue[idx] === BASMALA
-        ? basmala
-          ? { aya: BASMALA, url: basmala }
-          : null
-        : pack.files.find((x) => x.aya === queue[idx]);
+    const f = trouver(queue[idx]!);
     if (!f) return playAt(idx + 1);
     clearGap();
     resumeNext = false;
     error = '';
-    if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
-    lastUrl = await playableUrl(f.url);
-    audio.src = lastUrl;
+    const pre = reserve.prendre(idx, f.aya);
+    if (pre && els[1 - cur]) {
+      // verset déjà chargé dans l'autre élément : on bascule, la lecture démarre sans attente
+      const ancien = cur;
+      cur = 1 - cur;
+      els[ancien]?.pause();
+      libere(urls[ancien]!);
+      urls[ancien] = '';
+      lastUrl = pre.url;
+    } else {
+      libere(urls[cur]!);
+      lastUrl = await playableUrl(f.url);
+      urls[cur] = lastUrl;
+      audio.src = lastUrl;
+    }
     audio.playbackRate = clampRate(rate);
     audio.preservesPitch = true;
     try {
@@ -142,11 +167,45 @@
       onaya?.(f.aya);
       onindex?.(idx);
       setMedia(f.aya);
+      void precharger();
     } catch {
       playing = false;
       error = navigator.onLine
         ? t('ca.erreur_lecture')
         : t(reciter.enLigne ? 'ca.dispo_internet' : 'ca.erreur_hors_ligne');
+    }
+  }
+
+  /** charge le verset suivant de la file dans l'élément de réserve, pendant la lecture du verset courant */
+  async function precharger() {
+    const suivant = prochainJouable(queue, idx, trouver);
+    const autre = els[1 - cur];
+    if (!suivant || !autre || reserve.a(suivant.i)) return;
+    const jeton = reserve.debut();
+    const mon = 1 - cur;
+    try {
+      const url = await playableUrl(suivant.f.url);
+      if (mon !== 1 - cur || !reserve.ranger(jeton, { i: suivant.i, aya: suivant.aya, url }))
+        return libere(url);
+      libere(urls[mon]!);
+      urls[mon] = url;
+      autre.preload = 'auto';
+      autre.src = url;
+      autre.playbackRate = clampRate(rate);
+      autre.preservesPitch = true;
+      autre.load();
+    } catch {
+      /* préchargement impossible : le verset suivant sera chargé à la fin du courant, comme avant */
+    }
+  }
+  function viderReserve() {
+    reserve.vider();
+    const autre = els[1 - cur];
+    if (autre && urls[1 - cur]) {
+      autre.removeAttribute('src');
+      autre.load();
+      libere(urls[1 - cur]!);
+      urls[1 - cur] = '';
     }
   }
 
@@ -200,7 +259,9 @@
     sleepUntil ??= sleepMin > 0 ? Date.now() + sleepMin * 60_000 : null;
     await playAt(i);
   }
-  function ended() {
+  function ended(ev?: Event) {
+    // l'élément de réserve ne fait jamais avancer la file
+    if (ev && ev.currentTarget !== audio) return;
     // F5 : verset entendu jusqu'au bout (en ligne) gardé pour être réécouté hors ligne ; jamais un récitateur
     // « en ligne seulement »
     const f = pack?.files.find((x) => x.aya === queue[idx]);
@@ -217,9 +278,10 @@
     onend?.(why);
   }
   export function stop() {
+    viderReserve();
     clearGap();
     resumeNext = false;
-    audio?.pause();
+    els.forEach((a) => a?.pause());
     playing = false;
     started = false;
     idx = 0;
@@ -229,8 +291,9 @@
   }
   onDestroy(() => {
     clearGap();
-    audio?.pause();
-    if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
+    reserve.vider();
+    els.forEach((a) => a?.pause());
+    urls.forEach(libere);
   });
   const pct = $derived(started ? Math.round(((idx + 1) / Math.max(1, queue.length)) * 100) : 0);
   // la basmala lue en tête de sourate n'est PAS un verset (sauf al-Fātiḥa en Ḥafṣ, où elle est le verset 1 et
@@ -240,7 +303,8 @@
 </script>
 
 <div class="player" data-testid="lecteur-audio" data-reciter={reciter.id}>
-  <audio bind:this={audio} onended={ended} preload="none"></audio>
+  <audio bind:this={els[0]} onended={ended} preload="none"></audio>
+  <audio bind:this={els[1]} onended={ended} preload="none"></audio>
   <button
     type="button"
     class="who"
