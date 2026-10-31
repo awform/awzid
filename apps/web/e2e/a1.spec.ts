@@ -16,9 +16,10 @@ test('Muṣḥaf page par page : l’écoute Ḥafṣ continue en surlignant le 
   await expect(page.getByTestId('position')).toContainText('Verset 1');
   // la lecture enchaîne : le verset 2 est atteint (bips de 0,6 s), sans retour à « écoutes prévues »
   await expect(page.getByTestId('position')).toContainText('Verset 2', { timeout: 5000 });
+  // deux éléments audio en alternance (préchargement du verset suivant) : l'un des deux joue
   const playing = await page
     .locator('[data-testid="lecteur-audio"] audio')
-    .evaluate((a: HTMLAudioElement) => !a.paused);
+    .evaluateAll((els) => els.some((a) => !(a as HTMLAudioElement).paused));
   expect(playing).toBe(true);
   await expect(page.locator('[data-page="604"] .on[data-aya="112:2"]').first()).toBeVisible();
   await page.getByTestId('arreter-audio').click();

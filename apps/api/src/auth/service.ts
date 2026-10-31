@@ -141,7 +141,8 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
   }
   const { tabletClassId, ...rest } = r;
   // tablette de classe : aucun rôle (ni personnel ni famille), seulement les élèves de la classe
-  const roles = tabletClassId ? [] : await accountRoles(db, r.accountId, r.kind);
+  // session limitée d'un enfant : AUCUN rôle non plus (revue M2)
+  const roles = tabletClassId || r.profileId ? [] : await accountRoles(db, r.accountId, r.kind);
   return {
     ...rest,
     tokenHash,

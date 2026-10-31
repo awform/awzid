@@ -137,26 +137,22 @@ describe.skipIf(!URL)('profil « Moi » du parent (awform_test)', () => {
   it('unicité en base : un second profil Moi est impossible, un profil Moi d’enfant aussi', async () => {
     const f = await inscrire('base.unique@exemple.org', 'famille');
     await expect(
-      h.db
-        .insert(t.profile)
-        .values({
-          ownerAccountId: f.id,
-          kind: 'adulte',
-          isOwner: true,
-          pseudonym: 'Bis',
-          birthYear: 1985,
-        }),
+      h.db.insert(t.profile).values({
+        ownerAccountId: f.id,
+        kind: 'adulte',
+        isOwner: true,
+        pseudonym: 'Bis',
+        birthYear: 1985,
+      }),
     ).rejects.toThrow();
     await expect(
-      h.db
-        .insert(t.profile)
-        .values({
-          ownerAccountId: f.id,
-          kind: 'enfant',
-          isOwner: true,
-          pseudonym: 'Petit',
-          birthYear: YEAR - 8,
-        }),
+      h.db.insert(t.profile).values({
+        ownerAccountId: f.id,
+        kind: 'enfant',
+        isOwner: true,
+        pseudonym: 'Petit',
+        birthYear: YEAR - 8,
+      }),
     ).rejects.toThrow();
     // les profils d'enfants ordinaires ne sont pas concernés : plusieurs sont permis
     const e1 = await appel('POST', '/api/v1/profiles', f.cookie, {

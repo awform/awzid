@@ -34,6 +34,8 @@ export default ts.config(
       'apps/web/static/',
       // mots du Coran : données GPL générées et leur script (hors du code de l'application)
       'packages/coran-mots-data/',
+      // essais ponctuels du tuteur (21/10) : scripts jetables, hors du code de l'application
+      'docs/projet/tuteur-essais-*/',
     ],
   },
   js.configs.recommended,

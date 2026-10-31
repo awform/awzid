@@ -9,8 +9,6 @@
   import { call, fetchMe, type Me } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { SYMBOLS } from '$lib/symbols';
-  import AccesEnfant from './AccesEnfant.svelte';
-  import MonEspace from './MonEspace.svelte';
   import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
@@ -26,6 +24,17 @@
   let adding = $state(false);
   /** V2-3 : fiche d'accès (identifiant, mot de passe) ouverte pour cet enfant */
   let accesOuvert = $state<string | null>(null);
+  // écrans qui écrivent sur le serveur (en ligne seulement) : chargés à la demande, hors de la coquille de l'élève
+  let AccesEnfant = $state<(typeof import('./AccesEnfant.svelte'))['default'] | null>(null);
+  let MonEspace = $state<(typeof import('./MonEspace.svelte'))['default'] | null>(null);
+  $effect(() => {
+    if (accesOuvert && !AccesEnfant)
+      void import('./AccesEnfant.svelte').then((m) => (AccesEnfant = m.default));
+  });
+  $effect(() => {
+    if (me?.account.kind === 'parent' && !me.profiles.some((p) => p.isOwner) && !MonEspace)
+      void import('./MonEspace.svelte').then((m) => (MonEspace = m.default));
+  });
   let error = $state('');
   let info = $state('');
   const YEAR = new Date().getFullYear();
@@ -36,6 +45,8 @@
     levelCode: 'en1',
     identifiant: '',
     motDePasseEnfant: '',
+    /** mot de passe DU PARENT, ressaisi pour créer l'identifiant de l'enfant */
+    mdpParent: '',
     declaration: false,
   });
   /** V2-3 : identifiant de l'enfant « prénom-NNN », disponibilité vérifiée, trois propositions */
@@ -108,6 +119,7 @@
       levelCode: form.levelCode,
       identifiant: form.identifiant.trim().toLowerCase(),
       motDePasseEnfant: form.motDePasseEnfant,
+      password: form.mdpParent,
       declaration: form.declaration,
       consents,
     });
@@ -116,7 +128,14 @@
       return;
     }
     info = t('profils.ajoute', { nom: form.pseudonym });
-    form = { ...form, pseudonym: '', identifiant: '', motDePasseEnfant: '', declaration: false };
+    form = {
+      ...form,
+      pseudonym: '',
+      identifiant: '',
+      motDePasseEnfant: '',
+      mdpParent: '',
+      declaration: false,
+    };
     idEtat = null;
     adding = false;
     me = await fetchMe();
@@ -159,7 +178,7 @@
   </div>
   {#if me.profiles.length === 0}<p class="muted">{t('profils.aucun')}</p>{/if}
   {#if me.account.kind === 'parent' && !me.profiles.some((p) => p.isOwner)}
-    <MonEspace oncree={async () => (me = await fetchMe())} />
+    {#if MonEspace}<MonEspace oncree={async () => (me = await fetchMe())} />{/if}
   {/if}
   {#if me.account.kind === 'parent'}
     <ul class="acces-liste" aria-label={t('profils.acces_liste')}>
@@ -177,7 +196,7 @@
       {/each}
     </ul>
     {#each me.profiles.filter((p) => p.id === accesOuvert) as p (p.id)}
-      <AccesEnfant profile={p} onferme={() => (accesOuvert = null)} />
+      {#if AccesEnfant}<AccesEnfant profile={p} onferme={() => (accesOuvert = null)} />{/if}
     {/each}
   {/if}
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
@@ -304,6 +323,15 @@
           data-testid="mdp-enfant"
         />
         <p class="muted small" id="mdp-enfant-aide"><Bidi text={t('profils.mdp_enfant_aide')} /></p>
+        <label for="mdp-parent">{t('profils.mot_de_passe_parent')}</label>
+        <input
+          id="mdp-parent"
+          type="password"
+          required
+          autocomplete="current-password"
+          bind:value={form.mdpParent}
+          data-testid="mdp-parent"
+        />
         <label class="check"
           ><input
             id="declaration"

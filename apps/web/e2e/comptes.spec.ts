@@ -36,6 +36,7 @@ test('parent : inscription, profil enfant avec consentement, réponses enregistr
   await page.locator('#birthYear').fill(String(YEAR - 8));
   await page.getByTestId('identifiant-enfant').fill(`enfant-${Date.now() % 100000}`);
   await page.getByTestId('mdp-enfant').fill('soleil-vert-42');
+  await page.getByTestId('mdp-parent').fill(password());
   await page.getByTestId('declaration-parent').check();
   await page.getByTestId('creer-profil').click();
   await expect(

@@ -6,6 +6,8 @@ import { expect, test } from './fixtures';
  */
 const H = { 'x-awform': '1' };
 
+const MDP_PARENT = 'une longue phrase de passe 2026';
+
 test('profil existant : le parent crée l’accès, l’enfant entre, puis le parent débloque et change le mot de passe', async ({
   page,
   browser,
@@ -40,6 +42,7 @@ test('profil existant : le parent crée l’accès, l’enfant entre, puis le pa
   const login = `samir-${Date.now() % 1000}`;
   await page.getByTestId('acces-login').fill(login);
   await page.getByTestId('acces-mdp').fill('soleil-vert-42');
+  await page.getByTestId('acces-mdp-parent').fill(MDP_PARENT);
   await page.getByTestId('acces-declaration').check();
   await page.getByTestId('acces-creer').click();
   await expect(page.getByTestId('acces-identifiant')).toHaveText(login);
@@ -62,8 +65,10 @@ test('profil existant : le parent crée l’accès, l’enfant entre, puis le pa
   // le parent : nouveau mot de passe (deux touchers) et déblocage (un toucher)
   await page.getByTestId('acces-nouveau-mdp').click();
   await page.getByTestId('acces-mdp').fill('nuage-bleu-77');
+  await page.getByTestId('acces-mdp-parent').fill(MDP_PARENT);
   await page.getByTestId('acces-enregistrer').click();
   await expect(page.getByTestId('acces-message')).toBeVisible();
+  await page.getByTestId('acces-mdp-parent').fill(MDP_PARENT);
   await page.getByTestId('acces-debloquer').click();
   await expect(page.getByTestId('acces-message')).toBeVisible();
 });

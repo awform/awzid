@@ -58,7 +58,16 @@ export async function parentGate(
   req: FastifyRequest,
   reply: FastifyReply,
   kind: string,
+  apprentissage = false,
 ): Promise<boolean> {
+  // revue I4 : en session LIMITÉE (enfant), le code parent n'est JAMAIS consulté ni compté — l'enfant ne peut ni
+  // essayer des codes ni bloquer celui du parent. Seules les routes d'apprentissage de SON profil (`apprentissage`)
+  // passent sans code ; toute autre décision du parent est refusée.
+  if (req.auth?.profileId) {
+    if (apprentissage) return true;
+    err(reply, 403, 'session_limitee');
+    return false;
+  }
   if (kind !== 'enfant') return true;
   const [a] = await db
     .select({ h: t.account.parentPinHash })

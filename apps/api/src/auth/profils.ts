@@ -16,7 +16,7 @@ import {
   type ConsentType,
 } from './policy.js';
 import { checkPassword } from './passwords.js';
-import { LOGIN_ENFANT, loginPris } from './enfant-login.js';
+import { LOGIN_ENFANT, loginPris, ressaisieParent } from './enfant-login.js';
 import { audit, clearFailures, failAttempt, reserveAttempt, lockedUntil } from './service.js';
 
 import { AVATARS, err, OPTIONAL_CONSENTS, YEAR, type AuthKit } from './common.js';
@@ -76,6 +76,8 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       // tuteur et j'accepte ces conditions pour lui ») ; sans identifiant, il ressaisit son mot de passe comme avant
       const login = b.identifiant?.trim().toLowerCase();
       if (login) {
+        // revue I3b : le parent RESSAISIT son mot de passe (ou envoie son code parent) avant de créer l'identifiant
+        if (!(await ressaisieParent(kit, req, reply, b.password))) return reply;
         if (!b.declaration) return err(reply, 400, 'declaration_requise');
         if (!LOGIN_ENFANT.test(login)) return err(reply, 400, 'identifiant_invalide');
         if (!b.motDePasseEnfant) return err(reply, 400, 'mot_de_passe_requis');

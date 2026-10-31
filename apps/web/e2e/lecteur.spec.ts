@@ -573,7 +573,7 @@ test('Coran : le lecteur du Coran garde pause, précédent, suivant, vitesse et 
   expect(
     await page
       .locator('[data-testid="lecteur-audio"] audio')
-      .evaluate((a: HTMLAudioElement) => a.paused),
+      .evaluateAll((els) => (els as HTMLAudioElement[]).every((a) => a.paused)),
   ).toBe(true);
   await page.getByTestId('jouer').click();
   // reculer au début du verset ne casse rien ; avancer de 5 s dépasse un verset d'essai (0,6 s) : on passe au suivant

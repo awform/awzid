@@ -28,13 +28,21 @@ const serious = async (page: Page) =>
   ).violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
     .map((v) => `${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
-const audioState = (page: Page) =>
-  page.locator('[data-testid="lecteur-audio"] audio').evaluate((a: HTMLAudioElement) => ({
-    paused: a.paused,
-    rate: a.playbackRate,
-    pitch: a.preservesPitch,
-    src: a.currentSrc,
-  }));
+const audioState = async (page: Page) => {
+  const audios = page.locator('[data-testid="lecteur-audio"] audio');
+  await audios.first().waitFor({ state: 'attached' });
+  // deux éléments audio en alternance (préchargement du verset suivant) : celui qui joue, sinon le dernier utilisé
+  return audios.evaluateAll((els) => {
+    const liste = els as HTMLAudioElement[];
+    const a = liste.find((x) => !x.paused) ?? liste.find((x) => x.currentTime > 0) ?? liste[0]!;
+    return {
+      paused: liste.every((x) => x.paused),
+      rate: a.playbackRate,
+      pitch: a.preservesPitch,
+      src: a.currentSrc,
+    };
+  });
+};
 const mobile = (name: string) => name.startsWith('mobile');
 
 async function shot(page: Page, name: string) {

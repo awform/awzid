@@ -41,7 +41,10 @@ export async function canActForProfile(
   accountId: string,
   profileId: string,
   tablet?: TabletScope | null,
+  /** session limitée d un enfant (revue M2) : seul SON profil */
+  soloProfileId?: string | null,
 ): Promise<boolean> {
+  if (soloProfileId && soloProfileId !== profileId) return false;
   if (tablet) {
     const [r] = await db
       .select({ owner: t.profile.ownerAccountId, member: t.classMember.profileId })

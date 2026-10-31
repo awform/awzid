@@ -10,8 +10,9 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { canActForProfile, schema as t, type Db } from '@awform/db';
 import { hashSecret } from './crypto.js';
 import { checkPassword } from './passwords.js';
-import { audit } from './service.js';
+import { audit, reserveAttempt } from './service.js';
 import { err, type AuthKit } from './common.js';
+import { parentGate } from '../guards.js';
 
 /** 3 à 24 caractères [a-z0-9-], au moins une lettre (jamais confondu avec un numéro), ni tiret au début ni à la fin. */
 export const LOGIN_ENFANT = /^(?!-)(?!.*-$)(?=.*[a-z])[a-z0-9-]{3,24}$/;
@@ -136,34 +137,60 @@ const LECTURE_PAR_PROFIL =
  * (`choisir-niveau`, `niveau-suivant`) n'y sont pas : sans code parent, la garde du serveur les laisserait passer.
  */
 const SOUS_PROFIL =
-  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|niveaux|positionnement|recapitulatif|sourates|regularite|mots-coran|ecriture|tajwid|reponses-libres|epreuve|epreuves|commencer|quran\/reciter)(\/|$)/;
-/** sous /profiles/<son identifiant>/…, LECTURE seulement (contenus et réglages que l'enfant ne modifie pas) */
+  /^(accueil|parcours|carnet|carnet-perso|cas|conversation|espace|recapitulatif|sourates|regularite|mots-coran|ecriture|reponses-libres|epreuve|epreuves|commencer|quran\/reciter)(\/|$)/;
+/**
+ * sous /profiles/<son identifiant>/…, LECTURE seulement (contenus et réglages que l'enfant ne modifie pas).
+ * Revue : `niveaux` (PUT = décision « parent »), `positionnement` (peut relever le niveau) et `tajwid` (le tajwīd
+ * madd est réservé aux adultes) ne sont plus à l'écriture (le positionnement reste lisible : les pages /lectures, /revisions, /sciences le lisent).
+ */
 const SOUS_PROFIL_LECTURE =
-  /^(madjaliss|vivre|devoirs|certificats|hifz-classe|mode-evaluation|protections|quran\/allowed-reciters|quran\/reciters|quran\/suras\/[^/]+\/tracks)(\/|$)/;
+  /^(niveaux|tajwid|positionnement|madjaliss|vivre|devoirs|certificats|hifz-classe|mode-evaluation|protections|quran\/allowed-reciters|quran\/reciters|quran\/suras\/[^/]+\/tracks)(\/|$)/;
 /** motifs de signalement offerts à l'enfant et à l'ado : prédéfinis, jamais de texte libre */
 export const MOTIFS_ENFANT = ['texte_arabe', 'orthographe', 'audio_absent', 'audio_faux', 'autre'];
+/** seuls champs acceptés d'un signalement en session limitée (revue M1 : ni `ref`, ni `comment`, ni `excerpt`, ni autre) */
+const CHAMPS_SIGNALEMENT_ENFANT = ['targetKind', 'unitId', 'path', 'fp', 'reason', 'edition'];
 export function signalementEnfantOk(corps: unknown): boolean {
-  const b = (corps ?? {}) as { reason?: unknown; comment?: unknown; excerpt?: unknown };
-  return (
-    typeof b.reason === 'string' && MOTIFS_ENFANT.includes(b.reason) && !b.comment && !b.excerpt
-  );
+  if (!parcourable(corps) || Array.isArray(corps)) return false;
+  const b = corps as { reason?: unknown };
+  if (Object.keys(corps).some((k) => !CHAMPS_SIGNALEMENT_ENFANT.includes(k))) return false;
+  return typeof b.reason === 'string' && MOTIFS_ENFANT.includes(b.reason);
 }
 const TUTEUR = /^\/api\/v1\/(tuteur-ia|tutor)(\/|$)/;
 const TUTEUR_OK =
   /^\/api\/v1\/tuteur-ia\/[^/]+\/(etat|guidee|libre|prononciation\/[^/]+|scenario\/[^/]+)$|^\/api\/v1\/tutor\/[^/]+\/(ask|questions)$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** clés qui désignent un profil, à n'importe quelle profondeur d'un corps ou d'une requête */
-function autreProfil(valeur: unknown, propre: string, profondeur = 0): boolean {
-  if (profondeur > 8 || valeur === null || typeof valeur !== 'object') return false;
-  for (const [k, v] of Object.entries(valeur as Record<string, unknown>)) {
+/** plafonds du parcours d'un corps (revue B1 : un corps Buffer de plusieurs Mo ne doit pas coûter de temps) */
+const CLES_MAX = 200;
+const PROFONDEUR_MAX = 5;
+/** seuls les objets simples et les tableaux sont parcourus : jamais un Buffer, un Uint8Array, un flux, une Map… */
+function parcourable(v: unknown): v is Record<string, unknown> {
+  if (v === null || typeof v !== 'object') return false;
+  if (Array.isArray(v)) return true;
+  const proto = Object.getPrototypeOf(v);
+  return proto === Object.prototype || proto === null;
+}
+
+/** clés qui désignent un profil, jusqu'à 5 niveaux de profondeur et 200 clés visitées d'un corps ou d'une requête */
+function autreProfil(
+  valeur: unknown,
+  propre: string,
+  profondeur = 0,
+  vues: { n: number } = { n: 0 },
+): boolean {
+  if (profondeur > PROFONDEUR_MAX || !parcourable(valeur)) return false;
+  // `for…in` s'arrête dès le plafond (Object.entries construirait d'abord toute la liste)
+  for (const k in valeur) {
+    if (++vues.n > CLES_MAX) return false;
+    if (!Object.prototype.hasOwnProperty.call(valeur, k)) continue;
+    const v = valeur[k];
     if (
       /^(profile_?id|profil_?id|pid|profil|profile)$/i.test(k) &&
       typeof v === 'string' &&
       v !== propre
     )
       return true;
-    if (autreProfil(v, propre, profondeur + 1)) return true;
+    if (autreProfil(v, propre, profondeur + 1, vues)) return true;
   }
   return false;
 }
@@ -209,7 +236,8 @@ export function autoriseEnfant(
 }
 
 export function enregistrerSessionLimitee(app: FastifyInstance, db: Db): void {
-  app.addHook('preHandler', async (req: FastifyRequest, reply: FastifyReply) => {
+  // avant la validation : le refus de la session limitée passe avant toute erreur de schéma
+  app.addHook('preValidation', async (req: FastifyRequest, reply: FastifyReply) => {
     const p = req.auth?.profileId;
     if (!p) return;
     const ctx = TUTEUR.test(req.url.split('?')[0] ?? '')
@@ -221,6 +249,35 @@ export function enregistrerSessionLimitee(app: FastifyInstance, db: Db): void {
 }
 
 // ------------------------------------------------------------------ routes du parent
+
+/**
+ * Revue I3b : créer un identifiant d'enfant, donner un nouveau mot de passe ou débloquer exige la RESSAISIE DU MOT DE
+ * PASSE DU PARENT (même contrôle, mêmes essais réservés que les autres actions sensibles du compte). Si le parent a
+ * un code parent et l'envoie (`x-parent-pin`), il remplace le mot de passe, comme dans `parentGate`.
+ * Renvoie false si le refus a été envoyé.
+ */
+export async function ressaisieParent(
+  kit: AuthKit,
+  req: FastifyRequest,
+  reply: FastifyReply,
+  motDePasse: string | undefined,
+): Promise<boolean> {
+  const { db, passwordOk } = kit;
+  const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
+  if (!a) {
+    void err(reply, 401, 'mot_de_passe_incorrect');
+    return false;
+  }
+  if (a.parentPinHash && req.headers['x-parent-pin']) return parentGate(db, req, reply, 'enfant');
+  if (!motDePasse) {
+    void err(reply, 400, 'mot_de_passe_requis');
+    return false;
+  }
+  return passwordOk(reply, a, motDePasse);
+}
+
+/** disponibilité d'un identifiant : 20 demandes par heure et par compte (revue I2 : pas d'énumération) */
+export const DISPONIBILITE_PAR_HEURE = 20;
 
 export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
   const { db, needParent } = kit;
@@ -239,7 +296,14 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
         },
       },
     },
-    async (req) => {
+    async (req, reply) => {
+      const parent = req.auth!.accountId;
+      // limite stricte par compte (réservation atomique ; au-delà, pause d'une heure) et trace dans le journal
+      if (!(await reserveAttempt(db, `ld:${parent}`, DISPONIBILITE_PAR_HEURE, 60))) {
+        await audit(db, parent, 'profil.login_disponible_limite');
+        return err(reply, 429, 'trop_de_demandes');
+      }
+      await audit(db, parent, 'profil.login_disponible');
       const login = (req.query.login ?? '').trim().toLowerCase();
       const forme = LOGIN_ENFANT.test(login);
       const libre = forme ? !(await loginPris(db, login)) : false;
@@ -276,7 +340,13 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
 
   app.post<{
     Params: { id: string };
-    Body: { motDePasse?: string; debloquer?: boolean; identifiant?: string; declaration?: boolean };
+    Body: {
+      motDePasse?: string;
+      debloquer?: boolean;
+      identifiant?: string;
+      declaration?: boolean;
+      password?: string;
+    };
   }>(
     '/api/v1/profiles/:id/acces',
     {
@@ -296,6 +366,8 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
             // profil existant sans identifiant : le parent lui en crée un (mêmes règles qu'à la création du profil)
             identifiant: { type: 'string', maxLength: 40 },
             declaration: { type: 'boolean' },
+            // mot de passe DU PARENT (ressaisie, revue I3b)
+            password: { type: 'string', maxLength: 512 },
           },
         },
       },
@@ -305,6 +377,7 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
       // le parent d'un AUTRE enfant n'apprend même pas que ce profil existe
       if (!(await canActForProfile(db, parent, req.params.id)))
         return err(reply, 404, 'introuvable');
+      if (!(await ressaisieParent(kit, req, reply, req.body.password))) return reply;
       const [lg] = await db
         .select()
         .from(t.profileLogin)

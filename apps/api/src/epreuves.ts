@@ -474,7 +474,7 @@ export function registerEpreuves(
     async (req, reply) => {
       const p = await familyProfile(db, req, reply, req.params.id);
       if (!p) return reply;
-      if (!(await parentGate(db, req, reply, p.kind))) return reply;
+      if (!(await parentGate(db, req, reply, p.kind, true))) return reply;
       const s = await openFor(p.id, req.params.sid);
       if (!s) return err(reply, 409, 'epreuve_fermee');
       const u = await unitFull(db, s.editionId, s.unitId);

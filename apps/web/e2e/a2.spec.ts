@@ -87,6 +87,9 @@ test('lecteur : récitateur en ligne — verset LU = verset CHOISI, surlignage, 
   page,
 }) => {
   const asked = watchAudio(page);
+  // le préchargement du verset suivant met les fichiers dans le cache HTTP : sans interception (qui coupe ce cache), un verset
+  // déjà entendu serait relu sans nouvelle requête et ne prouverait plus quel fichier est joué
+  await page.route('**/api/v1/quran/audio/file/**', (route) => route.continue());
   for (const [s, a] of [
     [1, 5],
     [1, 7],

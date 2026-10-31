@@ -509,7 +509,7 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
     async (req, reply) => {
       const p = await learner(req, reply, req.params.id, true);
       if (!p) return reply;
-      if (!(await parentGate(db, req, reply, p.kind))) return reply;
+      if (!(await parentGate(db, req, reply, p.kind, true))) return reply;
       const e = await ed(reply);
       if (!e) return reply;
       const m = req.params.matiere;

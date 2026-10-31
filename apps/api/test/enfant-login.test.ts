@@ -276,7 +276,24 @@ describe.skipIf(!URL)('comptes d’enfants avec identifiant (awform_test)', () =
     url: string,
     cookie = '',
     payload?: object,
-  ) => app.inject({ method, url, payload, headers: { ...H, ...(cookie ? { cookie } : {}) } });
+  ) => {
+    // revue I3b : créer un identifiant (POST /profiles avec identifiant, POST /profiles/:id/acces) exige la ressaisie du
+    // mot de passe du parent ; ce fichier la fournit par défaut (le refus sans elle est testé dans enfant-login-revue)
+    const exige =
+      method === 'POST' &&
+      !!cookie &&
+      !!payload &&
+      !('password' in payload) &&
+      (/\/profiles\/[^/]+\/acces$/.test(url) ||
+        (url === '/api/v1/profiles' && 'identifiant' in payload));
+    const corps = exige ? { ...payload, password: PW } : payload;
+    return app.inject({
+      method,
+      url,
+      payload: corps,
+      headers: { ...H, ...(cookie ? { cookie } : {}) },
+    });
+  };
   const parent = async (email: string) => {
     const r = await appel('POST', '/api/v1/auth/signup', '', {
       kind: 'parent',

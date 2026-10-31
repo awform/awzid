@@ -15,6 +15,8 @@
   let identifiant = $state<string | null | undefined>(undefined);
   let nouveau = $state(false);
   let motDePasse = $state('');
+  /** mot de passe DU PARENT, ressaisi à chaque action (création, nouveau mot de passe, déblocage) */
+  let mdpParent = $state('');
   let login = $state('');
   let declaration = $state(false);
   let dispo = $state<{ forme: boolean; disponible: boolean; propositions: string[] } | null>(null);
@@ -40,8 +42,12 @@
   async function envoyer(corps: object, ok: string) {
     busy = true;
     erreur = message = '';
-    const r = await call<{ identifiant?: string }>('POST', `/profiles/${profile.id}/acces`, corps);
+    const r = await call<{ identifiant?: string }>('POST', `/profiles/${profile.id}/acces`, {
+      ...corps,
+      password: mdpParent,
+    });
     busy = false;
+    mdpParent = '';
     if (!r.ok) {
       erreur = t(`erreur.${r.code ?? 'reseau'}`);
       return false;
@@ -70,6 +76,18 @@
   }
   const debloquer = () => envoyer({ debloquer: true }, t('profils.acces_debloque'));
 </script>
+
+{#snippet champMdpParent(id: string)}
+  <label for={id}>{t('profils.mot_de_passe_parent')}</label>
+  <input
+    {id}
+    type="password"
+    required
+    autocomplete="current-password"
+    bind:value={mdpParent}
+    data-testid="acces-mdp-parent"
+  />
+{/snippet}
 
 <section class="card acces" data-testid="acces-enfant" aria-labelledby="acces-t">
   <h2 id="acces-t"><Bidi text={t('profils.acces_titre', { nom: profile.pseudonym })} /></h2>
@@ -100,6 +118,7 @@
           data-testid="acces-mdp"
         />
         <p class="muted small"><Bidi text={t('profils.mdp_enfant_aide')} /></p>
+        {@render champMdpParent('acces-mdp-parent-nouveau')}
         <div class="row">
           <button type="submit" class="primary" disabled={busy} data-testid="acces-enregistrer"
             >{t('profils.acces_enregistrer')}</button
@@ -108,12 +127,19 @@
         </div>
       </form>
     {:else}
+      <div class="form">
+        <!-- le déblocage et le nouveau mot de passe exigent le mot de passe du parent -->
+        {@render champMdpParent('acces-mdp-parent-debloquer')}
+      </div>
       <div class="row">
         <button type="button" onclick={() => (nouveau = true)} data-testid="acces-nouveau-mdp"
           >{t('profils.acces_nouveau_mdp')}</button
         >
-        <button type="button" disabled={busy} onclick={debloquer} data-testid="acces-debloquer"
-          >{t('profils.acces_debloquer')}</button
+        <button
+          type="button"
+          disabled={busy || !mdpParent}
+          onclick={debloquer}
+          data-testid="acces-debloquer">{t('profils.acces_debloquer')}</button
         >
       </div>
     {/if}
@@ -169,6 +195,7 @@
         bind:value={motDePasse}
         data-testid="acces-mdp"
       />
+      {@render champMdpParent('acces-mdp-parent-creer')}
       <label class="check"
         ><input
           type="checkbox"

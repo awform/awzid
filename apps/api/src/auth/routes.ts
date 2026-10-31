@@ -194,7 +194,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   const needParent = async (req: FastifyRequest, reply: FastifyReply) => {
     await needAuth(req, reply);
     if (reply.sent) return;
-    if (req.auth?.kind !== 'parent') return err(reply, 403, 'reserve_aux_parents');
+    if (req.auth?.kind !== 'parent' || req.auth.profileId)
+      return err(reply, 403, 'reserve_aux_parents');
   };
 
   const setSession = async (reply: FastifyReply, accountId: string, kind: string, mfa: boolean) => {
@@ -1060,7 +1061,8 @@ export async function ownsProfile(
   if (!who) return false;
   if (typeof who !== 'string') {
     if (who.kind === 'ecole' && !who.tablet) return false;
-    return canActForProfile(db, who.accountId, profileId, who.tablet);
+    // revue M2 : une session limitée n'agit que pour SON profil
+    return canActForProfile(db, who.accountId, profileId, who.tablet, who.profileId);
   }
   const [a] = await db
     .select({ kind: t.account.kind })

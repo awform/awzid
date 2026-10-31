@@ -1,6 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, untrack } from 'svelte';
   import { suraName } from '@awform/hifz';
   import type { Reciter, SuraPack } from '$lib/coran-audio';
   import { fmtNumber, t } from '$lib/i18n';
@@ -110,7 +110,8 @@
   $effect(() => {
     void queue;
     void pack;
-    stop();
+    // hors suivi : stop() lit `cur` et `els` ; sans cela, la bascule vers l element de réserve relançait cet effet et arrêtait la lecture
+    untrack(stop);
   });
 
   function setMedia(a: number) {
