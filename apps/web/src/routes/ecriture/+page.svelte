@@ -1,6 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { demoProfileFor, enqueue, type DevProfile } from '$lib/attempts';
   import { localIso } from '$lib/hifz';
@@ -88,6 +89,19 @@
           data-forme={f}><Bidi text={t(`lecon.forme_${f}`)} /></button
         >
       {/each}
+    </div>
+    <!-- 31/10/2026 : tracé animé de la lettre et de la forme choisies, et planche de toutes les lettres (page à la demande) -->
+    <div class="row">
+      <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi de paramètres -->
+      <a
+        class="button primary"
+        href={`${resolve('/ecriture/trace')}?lettre=${encodeURIComponent(letter)}&forme=${form}`}
+        data-testid="voir-trace">{t('trace.voir_trace')}</a
+      >
+      <!-- eslint-enable svelte/no-navigation-without-resolve -->
+      <a class="button" href={resolve('/ecriture/trace')} data-testid="planche-lettres"
+        >{t('trace.planche')}</a
+      >
     </div>
   </section>
 {:else}

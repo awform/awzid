@@ -606,6 +606,8 @@
   "trace.titre": "Trazar las letras",
   "trace.choisir_lettre": "Elijo una letra",
   "trace.forme": "Forma de la letra",
+  "trace.voir_trace": "Ver el trazo",
+  "trace.planche": "Tabla de todas las letras",
   "trace.etape": "Paso",
   "trace.etape_1": "1. Repaso las líneas de puntos",
   "trace.etape_2": "2. Trazo sobre la letra clara",

@@ -606,6 +606,8 @@
   "trace.titre": "Tracing letters",
   "trace.choisir_lettre": "I choose a letter",
   "trace.forme": "Letter form",
+  "trace.voir_trace": "See the stroke order",
+  "trace.planche": "Chart of all the letters",
   "trace.etape": "Step",
   "trace.etape_1": "1. I trace over the dots",
   "trace.etape_2": "2. I trace on the light letter",
