@@ -22,6 +22,13 @@ const data = JSON.parse(
   readFileSync(new URL('../data/zero-muet/garde-autorises.json', import.meta.url), 'utf8'),
 ) as { textes: Entree[] };
 
+/**
+ * Exceptions approuvées par le référent (commits 1ede102 du 26/10 et d055e72) : les deux NOMS divins du verset 1:3,
+ * autorisés en synthèse comme noms (vocabulaire), jamais comme récitation du verset. Tout autre texte coranique reste
+ * refusé.
+ */
+const NOMS_DIVINS_APPROUVES = ['1:3'];
+
 const TSV = join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv');
 const tanzil = existsSync(TSV) ? loadTanzil(readFileSync(TSV, 'utf8')) : null;
 
@@ -49,7 +56,9 @@ describe('liste blanche zéro muet : jamais un verset entier, jamais une lettre 
     });
     const trouves = data.textes
       .filter((t) => versets.has(skeleton(audioKey(t.cle))))
-      .map((t) => `${versets.get(skeleton(audioKey(t.cle)))} : ${t.cle}`);
+      .map((t) => `${versets.get(skeleton(audioKey(t.cle)))} : ${t.cle}`)
+      // exceptions décidées par le référent : les deux NOMS divins, lus comme noms et non comme récitation du verset
+      .filter((x) => !NOMS_DIVINS_APPROUVES.some((v) => x.startsWith(`${v} : `)));
     expect(trouves, 'versets entiers dans la liste blanche (à retirer : Ayyūb)').toEqual([]);
   });
 

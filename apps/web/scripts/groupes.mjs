@@ -93,9 +93,10 @@ export const EN_LIGNE_MODULES = [
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande
   /src\/lib\/hifz-outils\/Enfant\.svelte$/,
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications
+  /src\/lib\/SignalerCorps\.svelte$/,
   /src\/lib\/compte\/CompteEnLigne\.svelte$/,
   // 31/10/2026 (allègement, marge de l'appareil) : accès de l'enfant (identifiant, mot de passe) et « Mon espace » du parent, écrits sur le serveur
-  /src\/routes\/profils\/(AccesEnfant|MonEspace)\.svelte$/,
+  /src\/routes\/profils\/(AccesEnfant|MonEspace|AjoutEnfant)\.svelte$/,
   /src\/lib\/NotificationsReglages\.svelte$/,
   // Douas (phase 1) : écran de l'onglet, chargé à la demande avec ses données (première ouverture en ligne), gardé
   // au premier usage (hors ligne ensuite)
