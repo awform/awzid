@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
+  import { fonctionsEtat } from '$lib/fonctions.svelte';
   import { t } from '$lib/i18n';
   import { call } from '$lib/session';
   import { recapitulatif, type Recap } from './parcours';
@@ -59,13 +60,20 @@
           data-testid="revoir-dabord">{t('ser.revoir')}</a
         >
       {/if}
-      <button
-        type="button"
-        class:primary={!r.fragiles.length}
-        onclick={go}
-        data-testid="continuer-quand-meme"
-        ><Bidi text={t(r.fragiles.length ? 'ser.continuer_qm' : 'ser.continuer')} /></button
-      >
+      <!-- session d'enfant ou d'ado : passer au niveau suivant est une décision du parent -->
+      {#if fonctionsEtat.restreint && r.mode === 'serein'}
+        <span class="muted" data-testid="niveau-avec-parent"
+          ><Bidi text={t('parc.avec_parent')} /></span
+        >
+      {:else}
+        <button
+          type="button"
+          class:primary={!r.fragiles.length}
+          onclick={go}
+          data-testid="continuer-quand-meme"
+          ><Bidi text={t(r.fragiles.length ? 'ser.continuer_qm' : 'ser.continuer')} /></button
+        >
+      {/if}
     </p>
   </div>
 {/if}

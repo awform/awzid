@@ -26,6 +26,8 @@ export interface AuthCtx {
   roles: string[];
   /** lot F2 (revue E3) : session de TABLETTE DE CLASSE (compte de l'école, limitée aux élèves de la classe) */
   tablet: { classId: string } | null;
+  /** V2-3 : session d'un ENFANT (identifiant + mot de passe) : limitée à CE profil, apprentissage seulement */
+  profileId: string | null;
 }
 
 /** Rôles de PERSONNEL : les espaces qu'ils ouvrent exigent le second facteur. */
@@ -76,7 +78,12 @@ export async function createSession(
   accountId: string,
   kind: string,
   mfaVerified: boolean,
-  extra: { tabletClassId?: string; tabletOpenedBy?: string; ttlMs?: number } = {},
+  extra: {
+    tabletClassId?: string;
+    tabletOpenedBy?: string;
+    ttlMs?: number;
+    profileId?: string;
+  } = {},
 ) {
   const token = randomToken(32);
   const ttl = extra.ttlMs ?? sessionTtlMs(kind);
@@ -87,6 +94,7 @@ export async function createSession(
     mfaVerified,
     tabletClassId: extra.tabletClassId ?? null,
     tabletOpenedBy: extra.tabletOpenedBy ?? null,
+    profileId: extra.profileId ?? null,
   });
   return { token, ttl };
 }
@@ -105,6 +113,7 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
       country: t.account.country,
       region: t.account.region,
       tabletClassId: t.session.tabletClassId,
+      profileId: t.session.profileId,
     })
     .from(t.session)
     .innerJoin(t.account, eq(t.account.id, t.session.accountId))
@@ -122,7 +131,7 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
   const r = rows[0];
   if (!r) return null;
   // expiration glissante pour les comptes famille (au plus une écriture par heure)
-  if (r.kind === 'parent' || r.kind === 'adulte') {
+  if ((r.kind === 'parent' || r.kind === 'adulte') && !r.profileId) {
     const ttl = sessionTtlMs(r.kind);
     if (r.expiresAt.getTime() - Date.now() < ttl - 3600_000)
       await db

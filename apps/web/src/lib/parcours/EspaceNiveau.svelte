@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fonctionsEtat } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
@@ -141,7 +142,7 @@
         >
       {/if}
     </div>
-    {#if mode === 'serein' && matiere !== 'coran'}
+    {#if mode === 'serein' && matiere !== 'coran' && !fonctionsEtat.restreint}
       <!-- A39 : le test est facultatif, l'élève peut choisir son niveau lui-même -->
       <div class="row" data-testid="choisir-niveau">
         <select bind:value={choix} aria-label={t('ser.choisir')}>

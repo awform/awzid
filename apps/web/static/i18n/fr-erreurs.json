@@ -150,5 +150,12 @@
   "erreur.invitation_inconnue": "Ce code d’invitation n’existe pas. Vérifiez-le.",
   "erreur.invitation_requise": "Un code d’invitation est nécessaire pour créer un compte.",
   "erreur.invitation_revoquee": "Cette invitation a été annulée.",
-  "erreur.compte_bloque": "Ce compte est suspendu. Contacte le support."
+  "erreur.compte_bloque": "Ce compte est suspendu. Contacte le support.",
+  "erreur.identifiant_indisponible": "Cet identifiant est déjà pris. Choisissez-en un autre.",
+  "erreur.identifiant_invalide": "Cet identifiant n'a pas la bonne forme.",
+  "erreur.declaration_requise": "Cochez la case pour confirmer que vous êtes son parent ou son tuteur.",
+  "erreur.session_limitee": "Cet espace est réservé à l'apprentissage.",
+  "erreur.identifiant_existant": "Cet enfant a déjà un identifiant.",
+  "erreur.profil_adulte": "Un profil d'adulte n'a pas d'accès d'enfant.",
+  "erreur.profil_moi_existe": "Vous avez déjà votre espace."
 }

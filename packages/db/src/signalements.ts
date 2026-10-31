@@ -18,6 +18,8 @@ export const REPORT_REASONS = [
   'regle',
   'corrige',
   'orthographe',
+  'audio_absent',
+  'audio_faux',
   'autre',
 ] as const;
 /** Natures de contenu dont l'erratum doit citer une source (texte religieux). */

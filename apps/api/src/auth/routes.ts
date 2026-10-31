@@ -98,6 +98,15 @@ import { readFlags } from '@awform/db';
 import { missingConsents, registerConsents } from './accords.js';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
+import { creerProfilMoi, registerProfilMoi } from './profil-moi.js';
+import {
+  enregistrerSessionLimitee,
+  chercherEnfant,
+  ctxEnfant,
+  estIdentifiantEnfant,
+  meEnfant,
+  registerEnfantLogin,
+} from './enfant-login.js';
 import { registerRecovery } from './recuperation.js';
 import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
@@ -173,6 +182,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     if ((req.method === 'GET' || req.method === 'HEAD') && MFA_FREE_READ.test(path)) return;
     return err(reply, 403, a.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   });
+
+  // V2-3 : session d'un enfant = liste fermée de routes d'apprentissage, sur son seul profil
+  enregistrerSessionLimitee(app, db);
 
   const needAuth = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
@@ -351,6 +363,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       /** 18/10/2026 : inscription avec l'identité Google vérifiée (cookie chiffré posé par le retour de Google) */
       google?: boolean;
       src?: string;
+      intention?: t.SignupIntent;
     };
   }>(
     '/api/v1/auth/signup',
@@ -383,6 +396,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             google: { type: 'boolean' },
             // provenance (?src= des affiches) : gardée si elle est valide (^[a-z0-9-]{1,40}$), ignorée sinon
             src: { type: 'string', maxLength: 200 },
+            // V2-2 : « Qui va apprendre ? » (facultatif ; absent = comportement d'avant)
+            intention: { enum: [...t.SIGNUP_INTENTS] },
           },
         },
       },
@@ -410,7 +425,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // 18/10/2026 : inscription ASSISTÉE (invitation préparée par un administrateur : type, pays, numéro)
       const assistee = b.invitation ? await invitationAssistee(db, b.invitation) : null;
       const country = assistee?.country ?? b.country;
-      const kind = assistee?.kind ?? b.kind;
+      // V2-2 : l'intention fixe le type de compte (moi → adulte, enfants/famille → parent, élèves → enseignant) ;
+      // une invitation assistée garde le type que l'administrateur a préparé
+      const kind: t.AccountKind =
+        assistee?.kind ?? (b.intention ? KIND_PAR_INTENTION[b.intention] : b.kind);
       // audit MIN-15 : pays existant (ISO 3166-1) seulement
       if (!isCountry(country)) return err(reply, 400, 'pays_inconnu');
       // UN identifiant : e-mail, numéro WhatsApp vérifié (ou préparé par l'administrateur), ou identité Google
@@ -446,13 +464,18 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!b.password && !g) return err(reply, 400, 'mot_de_passe_requis');
       if (b.password) {
         // V2-1 : ni l'adresse, ni le prénom (pseudonyme) ne peuvent servir de mot de passe
-        const pb = checkPassword(b.password, email ?? '', { identifiants: [b.pseudonym] });
+        const pb = checkPassword(b.password, email ?? '', {
+          identifiants: [b.pseudonym],
+          // un enseignant suit la règle du personnel (12 caractères) ; le second facteur est exigé ensuite
+          personnel: kind === 'enseignant',
+        });
         if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       }
       // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
       if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
       const age = ageFromYear(b.birthYear);
-      if (kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
+      if ((kind === 'parent' || kind === 'enseignant') && age < 18)
+        return err(reply, 403, 'majorite_requise');
       // Google : jamais pour un enfant ni un adolescent (titulaire majeur)
       if (g && age < 18) return err(reply, 403, 'google_majeur_requis');
       // lot F3 (revue M9) : subdivision connue pour ce pays (sinon refus : âge du consentement en jeu)
@@ -517,6 +540,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             country,
             locale: b.locale ?? 'fr',
             birthYear: kind === 'adulte' ? (b.birthYear ?? null) : null,
+            signupIntent: b.intention ?? null,
             region,
             tz: normTz(b.tz),
             // Google : adresse vérifiée par Google (email_verified) ; numéro : prouvé (ou préparé par l'administrateur)
@@ -540,7 +564,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await audit(db, a.id, 'groupe_beta.ajout_invitation', invitationId);
       }
       // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
-      await grantAccountRole(db, a.id, kind === 'parent' ? 'parent' : 'eleve_adulte');
+      await grantAccountRole(
+        db,
+        a.id,
+        kind === 'parent' ? 'parent' : kind === 'enseignant' ? 'enseignant' : 'eleve_adulte',
+      );
       const accepted = b.consents.filter(
         (c) =>
           requiredAccountConsents(country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
@@ -551,8 +579,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         loi: rules.law,
         autorite: rules.authority,
         // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
-        ...(kind === 'parent' ? { majoriteDeclaree: true } : {}),
+        ...(kind !== 'adulte' ? { majoriteDeclaree: true } : {}),
       });
+      // V2-3 : « Moi et mes enfants » → le parent a aussi son profil « Moi » (adulte) ; « Mes enfants » : aucun
+      if (kind === 'parent' && b.intention === 'famille')
+        await creerProfilMoi(db, a.id, {
+          birthYear: b.birthYear!,
+          ...(b.pseudonym ? { pseudonym: b.pseudonym } : {}),
+        });
       if (kind === 'adulte') {
         const [own] = await db
           .insert(t.profile)
@@ -672,6 +706,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // V2-1 : la pause est levée si le mot de passe a été changé ou réinitialisé depuis le dernier essai
       // (« Mot de passe oublié ? » débloque tout de suite) ; réponse identique que le compte existe ou non
       const [a] = await chercher();
+      // V2-3 : « identifiant » d'un enfant (même écran, même verrou, mêmes messages)
+      const enf = estIdentifiantEnfant(saisi)
+        ? await chercherEnfant(db, saisi.toLowerCase())
+        : null;
       // V2-1 (décision du client) : 8 essais puis 10 minutes de pause ; le PERSONNEL garde 5 essais et la pause
       // progressive (1, 2, 4… minutes)
       const personnel = a ? await estPersonnel(db, a.id) : false;
@@ -679,7 +717,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const pause = personnel ? undefined : PAUSE_CONNEXION_MIN;
       const infoPause = pause ? { pause_minutes: pause } : {};
       if (await lockedUntil(db, accKey))
-        await leverPauseSiMotDePasseChange(db, accKey, a?.passwordChangedAt);
+        await leverPauseSiMotDePasseChange(
+          db,
+          accKey,
+          enf?.passwordChangedAt ?? a?.passwordChangedAt,
+        );
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked)
         return err(reply, 429, 'verrouille', { jusqua: locked.toISOString(), ...infoPause });
@@ -702,8 +744,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await setSession(reply, demo.accountId, demo.kind, true);
         return { ...(await me(demo.accountId, true)), profilDemo: demo.profileId };
       }
-      const ok = await verifySecret(req.body.password, a?.passwordHash);
-      if (!a || !ok) {
+      const ok = await verifySecret(req.body.password, enf?.passwordHash ?? a?.passwordHash);
+      if ((!a && !enf) || !ok) {
         await failAttempt(db, accKey, max, pause);
         await recordFailure(db, ipKey, ECHECS_CONNEXION_ADRESSE);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
@@ -721,6 +763,21 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         }
         return err(reply, 401, 'identifiants_incorrects', { essais_restants: restants });
       }
+      if (enf) {
+        // V2-3 : le titulaire du profil doit être actif (non supprimé, non bloqué) ; session limitée à CE profil
+        const [o] = await db.select().from(t.account).where(eq(t.account.id, enf.ownerAccountId));
+        if (!o || o.deletedAt || o.blockedAt) return err(reply, 401, 'identifiants_incorrects');
+        if ((await readAcces(db)).site === 'ferme') return err(reply, 503, 'acces_ferme');
+        await clearFailures(db, accKey);
+        await audit(db, o.id, 'connexion.enfant', enf.profileId);
+        const s = await createSession(db, o.id, o.kind, false, {
+          profileId: enf.profileId,
+          ttlMs: 7 * 24 * 3600_000,
+        });
+        reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(req)));
+        return meEnfant(await me(o.id, false), enf.profileId, await ctxEnfant(db, enf.profileId));
+      }
+      if (!a) return err(reply, 401, 'identifiants_incorrects');
       // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
       // ne le connaît pas) ; aucune session n'est ouverte
       if (a.blockedAt) {
@@ -813,7 +870,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     // navigateur. Sans ce paramètre, le comportement historique (401) est inchangé.
     if (!req.auth && req.query.doux === '1') return { anonyme: true };
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    return me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
+    const m = await me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
+    return req.auth.profileId
+      ? meEnfant(m, req.auth.profileId, await ctxEnfant(db, req.auth.profileId))
+      : m;
   });
 
   app.post<{ Body: { current: string; next: string } }>(
@@ -936,6 +996,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     cle: opts.secretKey,
   };
   registerProfiles(app, kit);
+  registerProfilMoi(app, kit);
+  registerEnfantLogin(app, kit);
   registerPrivacy(app, kit);
   // lot F3 : récupération du compte (e-mails), accords et réglages du compte
   registerRecovery(app, kit, {
@@ -982,6 +1044,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
  * responsable actif (second parent) ; session de tablette de classe : élèves de cette classe seulement. Le
  * compte technique d'une école n'agit JAMAIS hors d'une session de tablette.
  */
+/** V2-2 : type de compte créé par chaque intention. */
+const KIND_PAR_INTENTION: Record<t.SignupIntent, t.AccountKind> = {
+  moi: 'adulte',
+  enfants: 'parent',
+  famille: 'parent',
+  eleves: 'enseignant',
+};
+
 export async function ownsProfile(
   db: Db,
   who: AuthCtx | string | null | undefined,

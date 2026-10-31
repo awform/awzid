@@ -426,6 +426,9 @@ export const qrRedirect = pgTable('qr_redirect', {
  * Texte contrôlé (ancien type énuméré `account_kind`, converti par la migration 0034).
  */
 export const ACCOUNT_KINDS = ['parent', 'adulte', 'admin', 'enseignant', 'ecole'] as const;
+/** V2-2 : « Qui va apprendre ? » — intention choisie à l'inscription. */
+export const SIGNUP_INTENTS = ['moi', 'enfants', 'famille', 'eleves'] as const;
+export type SignupIntent = (typeof SIGNUP_INTENTS)[number];
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 
 /** Compte titulaire (parent/tuteur, adulte autonome, école, personnel). */
@@ -473,6 +476,8 @@ export const account = pgTable(
      * dépendent d'une province ou d'un canton (âge du consentement au Québec).
      */
     region: text('region'),
+    /** V2-2 : intention déclarée à l'inscription (moi | enfants | famille | eleves) ; null = non déclarée */
+    signupIntent: text('signup_intent', { enum: SIGNUP_INTENTS }),
     /** Lot F3 (revue M8) : fuseau horaire IANA du compte (affichage des heures) ; null = celui de l'appareil */
     tz: text('tz'),
     /**
@@ -503,6 +508,10 @@ export const account = pgTable(
     check('account_source', sql`${t.source} IS NULL OR ${t.source} ~ '^[a-z0-9-]{1,40}$'`),
     check('account_region', sql`${t.region} IS NULL OR ${t.region} ~ '^[A-Z]{2}-[A-Z0-9]{1,3}$'`),
     check('account_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
+    check(
+      'account_signup_intent',
+      sql`${t.signupIntent} IS NULL OR ${t.signupIntent} IN ('moi', 'enfants', 'famille', 'eleves')`,
+    ),
     check(
       'account_kind_check',
       sql`${t.kind} IN ('parent', 'adulte', 'admin', 'enseignant', 'ecole')`,
@@ -549,9 +558,18 @@ export const profile = pgTable(
      */
     evalModeWish: text('eval_mode_wish'),
     evalModeWishAt: timestamp('eval_mode_wish_at', { withTimezone: true }),
+    /**
+     * V2-3 : profil « Moi » du parent (choix « Moi et mes enfants », ou « Mon espace » ajouté plus tard) : un SEUL
+     * par compte (index unique partiel), toujours un profil d'adulte qui apprend comme un adulte.
+     */
+    isOwner: boolean('is_owner').notNull().default(false),
   },
   (t) => [
     index('profile_owner').on(t.ownerAccountId),
+    uniqueIndex('profile_one_owner')
+      .on(t.ownerAccountId)
+      .where(sql`${t.isOwner}`),
+    check('profile_owner_adulte', sql`NOT ${t.isOwner} OR ${t.kind} = 'adulte'`),
     check(
       'profile_birth_year',
       sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`,
@@ -654,6 +672,31 @@ export const consent = pgTable('consent', {
 });
 
 /** Sessions : seul le HACHÉ du jeton est stocké. */
+/** V2-3 : identifiant et mot de passe d'un profil d'enfant (ni e-mail, ni nom de famille). */
+export const profileLogin = pgTable(
+  'profile_login',
+  {
+    profileId: uuid('profile_id')
+      .primaryKey()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    login: text('login').notNull().unique(),
+    passwordHash: text('password_hash').notNull(),
+    passwordChangedAt: timestamp('password_changed_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdByAccountId: uuid('created_by_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check(
+      'profile_login_forme',
+      sql`${t.login} ~ '^[a-z0-9-]{3,24}$' AND ${t.login} ~ '[a-z]' AND ${t.login} !~ '^-|-$'`,
+    ),
+  ],
+);
+
 export const session = pgTable(
   'session',
   {
@@ -671,6 +714,8 @@ export const session = pgTable(
      * Mode TABLETTE DE CLASSE (lot F2, revue E3) : session du compte de l'école, ouverte par un enseignant,
      * limitée aux élèves de CETTE classe (profils de l'école ou inscrits par leur parent).
      */
+    /** V2-3 : session d'un ENFANT (identifiant + mot de passe) : limitée à CE profil, apprentissage seulement */
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
     tabletClassId: uuid('tablet_class_id').references(() => classGroup.id, {
       onDelete: 'cascade',
     }),
@@ -2147,7 +2192,7 @@ export const contentReport = pgTable(
     ),
     check(
       'content_report_reason',
-      sql`${t.reason} IN ('texte_arabe', 'sens', 'reference', 'regle', 'corrige', 'orthographe', 'autre')`,
+      sql`${t.reason} IN ('texte_arabe', 'sens', 'reference', 'regle', 'corrige', 'orthographe', 'audio_absent', 'audio_faux', 'autre')`,
     ),
     check('content_report_status', sql`${t.status} IN ('recu', 'en_examen', 'corrige', 'rejete')`),
     check(

@@ -3,7 +3,8 @@ import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Browser, Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
-import { etapeIdentifiants, etapeProfil, ouvrirInscription } from './inscription';
+import { totp } from './totp';
+import { etapeIdentifiants, etapeProfil, ouvrirInscription, choisirQui } from './inscription';
 
 /**
  * Refonte de l'inscription (16/10/2026) : deux colonnes sur ordinateur, une sur téléphone ; formulaire en trois
@@ -60,7 +61,9 @@ test('étape 1 : champs vides ou faux refusés à côté du champ, focus sur le 
   await expect(page.getByTestId('etape-retour')).toHaveCount(0);
   await page.getByTestId('etape-suivante').click();
   await expect(page.getByTestId('erreurs-etape')).toBeVisible();
-  await expect(page.getByTestId('erreur-email')).toHaveText('Indiquez votre adresse e-mail.');
+  await expect(page.getByTestId('erreur-email')).toHaveText(
+    'Écrivez votre numéro WhatsApp ou votre adresse e-mail.',
+  );
   await expect(page.getByTestId('mdp-erreur')).toHaveText('Choisissez un mot de passe.');
   await expect(page.locator('#email')).toBeFocused();
   await expect(page.locator('#email')).toHaveAttribute('aria-invalid', 'true');
@@ -70,7 +73,9 @@ test('étape 1 : champs vides ou faux refusés à côté du champ, focus sur le 
   await expect(page.getByTestId('erreur-email')).toHaveCount(0); // corrigé : le message s'efface
   await page.locator('#password').fill('Tamar7x');
   await page.getByTestId('etape-suivante').click();
-  await expect(page.getByTestId('erreur-email')).toContainText('ne semble pas complète');
+  await expect(page.getByTestId('erreur-email')).toContainText(
+    'ni un numéro, ni une adresse e-mail',
+  );
   await expect(page.getByTestId('mdp-erreur')).toContainText('pas encore accepté');
   // confirmation absente
   await page.locator('#email').fill(adresse('e1'));
@@ -86,13 +91,13 @@ test('changement d’étape annoncé, focus sur le titre, « Retour » ne perd r
   page,
 }) => {
   const email = adresse('retour');
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   await etapeIdentifiants(page, email);
   await expect(page.getByTestId('annonce-etape')).toHaveText('Étape 2 sur 3 : Votre profil');
   await expect(page.locator('#etape-2-t')).toBeFocused();
   await expect(page.getByTestId('etape-n')).toHaveText('Étape 2 sur 3');
-  // étape 2 : année obligatoire
-  await page.getByTestId('type-adulte').check();
+  // étape 2 : « Pour moi » fixe le type (adulte), le sélecteur de type est masqué ; année obligatoire
+  await expect(page.getByTestId('type-adulte')).toBeChecked();
   await page.getByTestId('etape-suivante').click();
   await expect(page.getByTestId('erreur-birthYear')).toContainText('4 chiffres');
   await expect(page.locator('#birthYear')).toBeFocused();
@@ -142,7 +147,7 @@ test('envoi : mêmes données qu’avant ; refus du serveur ramené à l’étap
     return route.fulfill({ status: 409, json: { error: { code: 'email_indisponible' } } });
   });
   const email = adresse('envoi');
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   await etapeIdentifiants(page, email);
   await etapeProfil(page, { kind: 'adulte', annee: 1991, pseudonyme: 'Awa' });
   await page.getByTestId('consent-cgu').check();
@@ -174,6 +179,7 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
     route.fulfill({ json: { valide: true, personnelle: false } }),
   );
   await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+  await choisirQui(page);
   await expect(page.getByTestId('invitation-reconnue')).toContainText('Invitation reconnue');
   await expect(page.getByTestId('etape-1')).toBeVisible();
   const panneau = (await page.getByTestId('inscription-marque').boundingBox())!;
@@ -203,6 +209,7 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
     await expect(page.getByTestId('erreurs-etape')).toBeVisible();
     expect(await graves(page), `erreur ${scheme}`).toEqual([]);
     await page.goto('/inscription');
+    await choisirQui(page);
     await expect(page.getByTestId('etape-1')).toBeVisible();
   }
   await page.emulateMedia({ colorScheme: 'light' });
@@ -210,10 +217,9 @@ test('invitation reconnue (lien), mise en page : deux colonnes sur ordinateur, u
 
 test('375 px : aucune étape ne déborde', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, 'moi');
   expect((await mesures(page)).deborde).toBe(false);
   await etapeIdentifiants(page, adresse('375'));
-  await page.getByTestId('type-adulte').check();
   expect((await mesures(page)).deborde).toBe(false);
   await etapeProfil(page, { kind: 'adulte' });
   await page.getByTestId('options-facultatives').locator('summary').click();
@@ -253,6 +259,7 @@ async function maquettes(browser: Browser, base: string, dir: string) {
         });
       };
       await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+      await choisirQui(page);
       await expect(page.getByTestId('invitation-reconnue')).toBeVisible();
       await expect(page.locator('#password')).toBeVisible();
       await page.locator('#email').fill('pas-une-adresse');
@@ -262,6 +269,7 @@ async function maquettes(browser: Browser, base: string, dir: string) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await shot('1-erreur');
       await page.goto('/inscription#code=AWZ-ABCDE-FGHJK');
+      await choisirQui(page);
       await expect(page.locator('#password')).toBeVisible();
       await page.locator('#email').fill('fatou.diallo@exemple.fr');
       await page.locator('#password').fill('mon thé à la menthe');
@@ -287,4 +295,40 @@ test('maquettes (si MAQUETTES_DIR)', async ({ browser }, info) => {
   test.skip(!dir || !info.project.name.startsWith('desktop'), 'captures à la demande seulement');
   mkdirSync(dir!, { recursive: true });
   await maquettes(browser, String(info.project.use.baseURL), dir!);
+});
+
+test('enseignant sans classe : après le second facteur, « Créer ma classe » (un seul champ) puis la classe sur /enseignant', async ({
+  page,
+}) => {
+  const H = { 'x-awform': '1' };
+  const r = await page.request.post('/api/v1/auth/signup', {
+    headers: H,
+    data: {
+      kind: 'parent',
+      intention: 'eleves',
+      email: `ens-${Date.now()}@exemple.org`,
+      password: 'une phrase de passe de douze+ caractères',
+      country: 'FR',
+      birthYear: 1980,
+      consents: ['cgu', 'donnee_religieuse_art9'],
+    },
+  });
+  expect(r.status()).toBe(201);
+  const setup = (await (
+    await page.request.post('/api/v1/auth/totp/setup', { headers: H, data: {} })
+  ).json()) as {
+    secret: string;
+  };
+  const ok = await page.request.post('/api/v1/auth/totp/confirm', {
+    headers: H,
+    data: { code: totp(setup.secret, Math.floor(Date.now() / 30_000)) },
+  });
+  expect(ok.status()).toBe(200);
+  await page.goto('/enseignant');
+  await expect(page.getByTestId('creer-classe')).toBeVisible();
+  await expect(page.locator('input:visible')).toHaveCount(1);
+  await page.getByTestId('nom-classe').fill('CE1 — e2e');
+  await page.getByTestId('creer-classe-envoi').click();
+  await expect(page.getByTestId('classe')).toBeVisible();
+  await expect(page.getByTestId('creer-classe')).toHaveCount(0);
 });

@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Browser, Page, Route } from '@playwright/test';
 import { expect, password, test } from './fixtures';
-import { remplirInscription } from './inscription';
+import { remplirInscription, choisirQui } from './inscription';
 import { totp } from './totp';
 
 /**
@@ -215,6 +215,9 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
     await page.getByTestId('code-invitation').fill(code.toLowerCase());
     await page.getByRole('button', { name: /Vérifier le code/ }).click();
     await expect(page.getByTestId('invitation-reconnue')).toContainText(/personnelle/);
+    // V2-2 : l'écran « Qui va apprendre ? » précède le formulaire, qui s'ouvre après le choix d'une carte
+    await expect(page.getByTestId('inscription-form')).toBeHidden();
+    await page.getByTestId('qui-enfants').click();
     await expect(page.getByTestId('inscription-form')).toBeVisible();
     // une autre adresse n'entre pas avec ce code, la bonne oui
     expect((await signup(page, unique('autre'), code)).status()).toBe(403);
@@ -402,6 +405,7 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
     await page.unroute('**/api/v1/acces/statut');
     await statut(page, { mode: 'ouvert', inscription: 'ouverte' });
     await page.goto('/inscription');
+    await choisirQui(page);
     await expect(page.getByTestId('inscription-form')).toBeVisible();
     await expect(page.getByTestId('porte-invitation')).toHaveCount(0);
   });
@@ -424,6 +428,7 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
       });
     });
     await page.goto('/inscription');
+    await choisirQui(page);
     await expect(page.getByTestId('inscription-form')).toBeVisible();
     await expect.poll(() => jetonDemande).toBeGreaterThan(0);
     // le champ piège ne se voit pas et ne reçoit pas le focus au clavier
@@ -458,6 +463,7 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
       .poll(() => page.evaluate(() => sessionStorage.getItem('awzid_src')))
       .toBe('affiche-e2e');
     await page.goto('/inscription');
+    await choisirQui(page);
     await expect(page.getByTestId('inscription-form')).toBeVisible();
     await remplirInscription(page, {
       email: unique('src'),

@@ -11,6 +11,8 @@
   import { uuidv7 } from '$lib/sync-core';
   import { call, fetchMe, isStaff, type Me } from '$lib/session';
   import Onboarding from '$lib/ui/Onboarding.svelte';
+  import CreerMaClasse from './CreerMaClasse.svelte';
+  import { doitCreerMaClasse } from '$lib/enseignant/premiere-classe';
 
   /**
    * Espace enseignant (lot 5 : suivi du hifẓ) : classes avec un code à donner aux familles (le parent inscrit
@@ -71,6 +73,21 @@
 
   const isTeacher = $derived(isStaff(me));
   const blocked = $derived(!!me && me.mfaRequired && !me.mfaVerified);
+  /** V2-2 : aucune classe → écran « Créer ma classe » (un seul champ) avant l'espace complet */
+  const premiereClasse = $derived(
+    doitCreerMaClasse({
+      charge: loaded,
+      enseignant: isTeacher,
+      bloque: blocked,
+      classes: classes.length,
+      ecoles: me?.ecoles,
+    }),
+  );
+  async function classeCreee(c: ClassRow) {
+    await loadClasses();
+    msg = t('ens.classe_creee', { code: c.joinCode });
+    await openClass(c.id);
+  }
 
   onMount(async () => {
     me = await fetchMe();
@@ -188,6 +205,8 @@
   <p class="card warnbox">
     {t('compte.totp_obligatoire')} <a href={resolve('/compte')}>{t('entete.compte')}</a>
   </p>
+{:else if premiereClasse}
+  <CreerMaClasse oncree={classeCreee} />
 {:else if loaded}
   <section class="card">
     <h2>{t('ens.classes')}</h2>

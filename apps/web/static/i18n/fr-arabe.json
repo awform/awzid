@@ -475,5 +475,6 @@
   "cahier.acces_sous": "Une page par séance, après chaque leçon : je lis 3 fois avec le modèle, puis 3 fois seul.",
   "cahier.page_du_jour": "Cahier de lecture : la page du jour",
   "cahier.ferme": "Le cahier de lecture n'est pas encore ouvert pour ton compte.",
-  "parler.titre": "Cahier « Je parle »"
+  "parler.titre": "Cahier « Je parle »",
+  "parc.avec_parent": "Passer au niveau suivant se décide avec ton parent."
 }

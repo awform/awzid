@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
+  import { lienOuvert } from '$lib/enfant-session';
   import { demoProfileFor } from '$lib/attempts';
   import { dueWords, loadBoxes, loadDeck } from '$lib/cards';
   import { hifzToday, localIso, type HifzToday } from '$lib/hifz';
@@ -269,7 +270,11 @@
   <EpreuvesCarte profileId={profile.id} />
 
   <!-- « Ma semaine » en une ligne : un toucher ouvre « Mon suivi » (semaine, arbre, jalons, rapport) -->
-  {#if !v4}<a class="semaine" href={resolve('/suivi')} data-testid="ma-semaine">
+  {#if !v4}<a
+      class="semaine"
+      href={lienOuvert('/suivi') ? resolve('/suivi') : undefined}
+      data-testid="ma-semaine"
+    >
       <span class="sem-ic"><Icon name="courbe" /></span>
       <span class="sem-txt">
         <strong>{t('auj.semaine')}</strong>

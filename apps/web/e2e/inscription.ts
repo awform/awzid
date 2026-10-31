@@ -25,10 +25,22 @@ export interface OptionsInscription extends ProfilInscription {
   envoyer?: boolean;
 }
 
-/** ouvre la page d'inscription (formulaire libre) et attend la première étape */
-export async function ouvrirInscription(page: Page): Promise<void> {
-  await page.goto('/inscription');
+/** V2-2 : choisit une carte de l'écran « Qui va apprendre ? » (en tête de l'inscription) et attend l'étape 1 */
+export async function choisirQui(
+  page: Page,
+  qui: 'moi' | 'enfants' | 'famille' | 'eleves' = 'enfants',
+): Promise<void> {
+  await page.getByTestId(`qui-${qui}`).click();
   await expect(page.getByTestId('etape-1')).toBeVisible();
+}
+
+/** ouvre la page d'inscription, choisit « Qui va apprendre ? » (défaut : mes enfants) et attend la première étape */
+export async function ouvrirInscription(
+  page: Page,
+  qui?: Parameters<typeof choisirQui>[1],
+): Promise<void> {
+  await page.goto('/inscription');
+  await choisirQui(page, qui);
 }
 
 export async function etapeIdentifiants(
@@ -45,7 +57,9 @@ export async function etapeIdentifiants(
 
 export async function etapeProfil(page: Page, p: ProfilInscription = {}): Promise<void> {
   const kind = p.kind ?? 'parent';
-  await page.getByTestId(`type-${kind}`).check();
+  // V2-2 : le choix « Qui va apprendre ? » fixe le type ; le sélecteur n'est affiché que sans intention
+  const radio = page.getByTestId(`type-${kind}`);
+  if (await radio.isVisible()) await radio.check();
   if (p.pays) await page.locator('#country').selectOption(p.pays);
   if (p.region) await page.getByTestId('region').selectOption(p.region);
   await page.locator('#birthYear').fill(String(p.annee ?? (kind === 'parent' ? 1985 : 1990)));
@@ -78,6 +92,6 @@ export async function remplirInscription(page: Page, o: OptionsInscription): Pro
 
 /** ouvre /inscription puis remplit les trois étapes */
 export async function inscrire(page: Page, o: OptionsInscription): Promise<void> {
-  await ouvrirInscription(page);
+  await ouvrirInscription(page, o.kind === 'adulte' ? 'moi' : 'enfants');
   await remplirInscription(page, o);
 }

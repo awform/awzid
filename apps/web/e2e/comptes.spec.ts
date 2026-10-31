@@ -34,9 +34,9 @@ test('parent : inscription, profil enfant avec consentement, réponses enregistr
   await page.getByTestId('ajouter-enfant').click();
   await page.locator('#pseudonym').fill('Lina');
   await page.locator('#birthYear').fill(String(YEAR - 8));
-  await page.getByTestId('consent-suivi').check();
-  await page.getByTestId('consent-art9').check();
-  await page.locator('#password').fill(password());
+  await page.getByTestId('identifiant-enfant').fill(`enfant-${Date.now() % 100000}`);
+  await page.getByTestId('mdp-enfant').fill('soleil-vert-42');
+  await page.getByTestId('declaration-parent').check();
   await page.getByTestId('creer-profil').click();
   await expect(
     page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),

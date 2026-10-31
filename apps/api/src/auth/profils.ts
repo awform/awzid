@@ -15,6 +15,8 @@ import {
   requiredChildConsents,
   type ConsentType,
 } from './policy.js';
+import { checkPassword } from './passwords.js';
+import { LOGIN_ENFANT, loginPris } from './enfant-login.js';
 import { audit, clearFailures, failAttempt, reserveAttempt, lockedUntil } from './service.js';
 
 import { AVATARS, err, OPTIONAL_CONSENTS, YEAR, type AuthKit } from './common.js';
@@ -34,8 +36,12 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       birthYear: number;
       avatar?: string;
       levelCode?: string;
-      password: string;
+      password?: string;
       consents: string[];
+      /** V2-3 : identifiant et mot de passe de l'enfant, avec la déclaration du parent (une seule case) */
+      identifiant?: string;
+      motDePasseEnfant?: string;
+      declaration?: boolean;
     };
   }>(
     '/api/v1/profiles',
@@ -44,7 +50,7 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       schema: {
         body: {
           type: 'object',
-          required: ['pseudonym', 'birthYear', 'password', 'consents'],
+          required: ['pseudonym', 'birthYear', 'consents'],
           additionalProperties: false,
           properties: {
             pseudonym: { type: 'string', minLength: 1, maxLength: 40 },
@@ -52,6 +58,9 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
             avatar: { enum: AVATARS },
             levelCode: { type: 'string', pattern: '^[a-z]{2,3}[0-9]{1,2}$' },
             password: { type: 'string', maxLength: 512 },
+            identifiant: { type: 'string', maxLength: 40 },
+            motDePasseEnfant: { type: 'string', maxLength: 512 },
+            declaration: { type: 'boolean' },
             consents: { type: 'array', maxItems: 10, items: { type: 'string', maxLength: 40 } },
           },
         },
@@ -63,7 +72,20 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
       // vérification du parent : il ressaisit son mot de passe (preuve jointe au consentement)
       if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
-      if (!(await passwordOk(reply, a, b.password))) return reply;
+      // V2-3 : avec un identifiant, la preuve est la session du parent + sa déclaration (« Je suis son parent ou son
+      // tuteur et j'accepte ces conditions pour lui ») ; sans identifiant, il ressaisit son mot de passe comme avant
+      const login = b.identifiant?.trim().toLowerCase();
+      if (login) {
+        if (!b.declaration) return err(reply, 400, 'declaration_requise');
+        if (!LOGIN_ENFANT.test(login)) return err(reply, 400, 'identifiant_invalide');
+        if (!b.motDePasseEnfant) return err(reply, 400, 'mot_de_passe_requis');
+        const pb = checkPassword(b.motDePasseEnfant, '', { identifiants: [login, b.pseudonym] });
+        if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
+        if (await loginPris(db, login)) return err(reply, 409, 'identifiant_indisponible');
+      } else {
+        if (!b.password) return err(reply, 400, 'mot_de_passe_requis');
+        if (!(await passwordOk(reply, a, b.password))) return reply;
+      }
       const age = ageFromYear(b.birthYear);
       if (age < 3) return err(reply, 400, 'annee_naissance_invalide');
       if (age >= 18) return err(reply, 400, 'adulte_compte_personnel');
@@ -92,17 +114,38 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
         })
         .returning({ id: t.profile.id });
       if (!p) throw new Error('création du profil impossible');
+      if (login) {
+        try {
+          await db.insert(t.profileLogin).values({
+            profileId: p.id,
+            login,
+            passwordHash: await hashSecret(b.motDePasseEnfant!),
+            createdByAccountId: accountId,
+          });
+        } catch {
+          // deux créations simultanées du même identifiant : la contrainte d'unicité tranche
+          await db.delete(t.profile).where(eq(t.profile.id, p.id));
+          return err(reply, 409, 'identifiant_indisponible');
+        }
+      }
       // lot F2 (revue E3, E4) : le parent est responsable « actif » (profile_custodian, lu par les autorisations)
       await addParentCustodian(
         db,
         p.id,
         accountId,
-        { methode: 'reauthentification_mot_de_passe+declaration', date: new Date().toISOString() },
+        {
+          methode: login
+            ? 'session_parent+declaration'
+            : 'reauthentification_mot_de_passe+declaration',
+          date: new Date().toISOString(),
+        },
         accountId,
       );
       if (b.levelCode) await setProfileLevel(db, p.id, b.levelCode, 'inscription', accountId);
       const evidence = {
-        methode: 'reauthentification_mot_de_passe+declaration',
+        methode: login
+          ? 'session_parent+declaration'
+          : 'reauthentification_mot_de_passe+declaration',
         date: new Date().toISOString(),
         age_declare: age,
         // audit MIN-17 : règles du pays appliquées aux profils

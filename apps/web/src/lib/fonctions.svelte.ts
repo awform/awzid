@@ -12,10 +12,38 @@ export const fonctionsEtat = $state<{
   v: Record<FonctionCle, boolean>;
   canal: Canal;
   qui: string;
-}>({ v: fonctionsParDefaut(), canal: 'production', qui: '' });
+  /** V2-3 : session d'un enfant (identifiant) : les fonctions qui appellent des routes refusées sont fermées */
+  restreint: boolean;
+  /** session limitée d'un ado (profil d'âge ado) et accord parental « tuteur_ia » donné sur son profil */
+  ado: boolean;
+  tuteurIa: boolean;
+}>({
+  v: fonctionsParDefaut(),
+  canal: 'production',
+  qui: '',
+  restreint: false,
+  ado: false,
+  tuteurIa: false,
+});
+
+/** fonctions fermées à une session d'enfant (écoute / récitation, tuteur, avis, khatma, hifz de classe) */
+export const FERMEES_ENFANT: readonly FonctionCle[] = [
+  'tuteur',
+  'tuteur_ia',
+  'avis',
+  'cahier_parler',
+  'khatma_wird',
+  'shazam_coran',
+  'hifz_classe',
+];
 
 /** La fonction est-elle ouverte pour la personne (et le profil) de cet appareil ? */
 export function fn(cle: FonctionCle): boolean {
+  if (fonctionsEtat.restreint && FERMEES_ENFANT.includes(cle)) {
+    // tuteur IA : l'ado seulement, avec l'accord parental sur son profil ; le reste reste fermé
+    const tuteur = cle === 'tuteur' || cle === 'tuteur_ia';
+    if (!(tuteur && fonctionsEtat.ado && fonctionsEtat.tuteurIa)) return false;
+  }
   return fonctionsEtat.v[cle] !== false;
 }
 
