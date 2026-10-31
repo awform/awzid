@@ -286,6 +286,33 @@ export async function leverPauseSiMotDePasseChange(
   return r.length > 0;
 }
 
+/**
+ * Revue M4 : plafond GLOBAL par identifiant d'enfant, toutes adresses confondues (le verrou « identifiant + adresse »
+ * ne limite pas une attaque répartie sur beaucoup d'adresses) : 30 échecs par heure, puis 1 h de pause.
+ */
+export const ECHECS_PAR_IDENTIFIANT = 30;
+export const PAUSE_PAR_IDENTIFIANT_MIN = 60;
+export const cleGlobaleIdentifiant = (emailKeyValue: string) => `login-all:${emailKeyValue}`;
+
+/** Enregistre un échec sur la clé globale (incrément atomique ; compteur oublié après 1 h sans échec, hors pause). */
+export async function echecGlobal(db: Db, key: string): Promise<void> {
+  const r = await db.execute<{ failures: number }>(sql`
+    INSERT INTO auth_throttle (key, failures, locked_until, updated_at)
+    VALUES (${key}, 1, NULL, now())
+    ON CONFLICT (key) DO UPDATE SET
+      failures = CASE
+        WHEN (auth_throttle.locked_until IS NULL OR auth_throttle.locked_until <= now())
+          AND auth_throttle.updated_at < now() - interval '1 hour' THEN 1
+        ELSE auth_throttle.failures + 1 END,
+      updated_at = now()
+    RETURNING failures`);
+  if ((r.rows[0]?.failures ?? 0) >= ECHECS_PAR_IDENTIFIANT)
+    await db
+      .update(t.authThrottle)
+      .set({ lockedUntil: new Date(Date.now() + PAUSE_PAR_IDENTIFIANT_MIN * 60_000) })
+      .where(eq(t.authThrottle.key, key));
+}
+
 export async function clearFailures(db: Db, key: string): Promise<void> {
   await db.delete(t.authThrottle).where(eq(t.authThrottle.key, key));
 }

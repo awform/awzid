@@ -75,6 +75,23 @@
     }
   }
   const debloquer = () => envoyer({ debloquer: true }, t('profils.acces_debloque'));
+
+  /** retrait de l'identifiant : confirmation puis DELETE (ressaisie du mot de passe du parent) */
+  let confirmerRetrait = $state(false);
+  async function retirer() {
+    busy = true;
+    erreur = message = '';
+    const r = await call('DELETE', `/profiles/${profile.id}/acces`, { password: mdpParent });
+    busy = false;
+    mdpParent = '';
+    confirmerRetrait = false;
+    if (!r.ok) {
+      erreur = t(`erreur.${r.code ?? 'reseau'}`);
+      return;
+    }
+    identifiant = null;
+    message = t('profils.acces_retire');
+  }
 </script>
 
 {#snippet champMdpParent(id: string)}
@@ -141,7 +158,35 @@
           onclick={debloquer}
           data-testid="acces-debloquer">{t('profils.acces_debloquer')}</button
         >
+        <button
+          type="button"
+          class="danger"
+          disabled={busy || !mdpParent}
+          onclick={() => (confirmerRetrait = true)}
+          data-testid="acces-retirer">{t('profils.acces_retirer')}</button
+        >
       </div>
+      {#if confirmerRetrait}
+        <div class="form confirm" role="alertdialog" aria-labelledby="acces-retirer-q">
+          <p id="acces-retirer-q">
+            <Bidi text={t('profils.acces_retirer_confirm', { nom: profile.pseudonym })} />
+          </p>
+          <div class="row">
+            <button
+              type="button"
+              class="danger"
+              disabled={busy || !mdpParent}
+              onclick={retirer}
+              data-testid="acces-retirer-oui">{t('profils.acces_retirer_oui')}</button
+            >
+            <button
+              type="button"
+              onclick={() => (confirmerRetrait = false)}
+              data-testid="acces-retirer-non">{t('commun.annuler')}</button
+            >
+          </div>
+        </div>
+      {/if}
     {/if}
   {:else}
     <form class="form" onsubmit={creer}>
@@ -249,5 +294,14 @@
   }
   .small {
     font-size: 0.9rem;
+  }
+  .danger {
+    color: var(--bad-ink);
+    border-color: var(--bad-ink);
+  }
+  .confirm {
+    border: 2px solid var(--bad-ink);
+    border-radius: 12px;
+    padding: 10px 12px;
   }
 </style>

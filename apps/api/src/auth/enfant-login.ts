@@ -6,12 +6,12 @@
  *  - le parent donne un nouveau mot de passe ou débloque son enfant (POST /profiles/:id/acces).
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, like } from 'drizzle-orm';
 import { canActForProfile, schema as t, type Db } from '@awform/db';
 import { hashSecret } from './crypto.js';
 import { checkPassword } from './passwords.js';
-import { audit, reserveAttempt } from './service.js';
-import { err, type AuthKit } from './common.js';
+import { audit, cleGlobaleIdentifiant, clearFailures, reserveAttempt } from './service.js';
+import { emailKey, err, type AuthKit } from './common.js';
 import { parentGate } from '../guards.js';
 
 /** 3 à 24 caractères [a-z0-9-], au moins une lettre (jamais confondu avec un numéro), ni tiret au début ni à la fin. */
@@ -426,6 +426,8 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
         .update(t.profileLogin)
         .set(valeurs)
         .where(eq(t.profileLogin.profileId, lg.profileId));
+      // revue M4 : le déblocage par le parent remet aussi à zéro le plafond global de l'identifiant
+      await clearFailures(db, cleGlobaleIdentifiant(emailKey(lg.login)));
       // sessions ouvertes de l'enfant fermées (nouveau mot de passe) ; un simple déblocage les laisse
       if (valeurs.passwordHash)
         await db
@@ -438,6 +440,53 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
         valeurs.passwordHash ? 'profil.acces_mdp' : 'profil.acces_debloque',
         lg.profileId,
       );
+      return { ok: true };
+    },
+  );
+
+  /**
+   * Revue M3 : le parent RETIRE l'identifiant d'un enfant (ligne profile_login supprimée, toutes ses sessions fermées,
+   * compteurs de connexion effacés). Mêmes gardes que les autres actions d'accès : 404 pour un étranger au profil,
+   * ressaisie du mot de passe du parent (ou code parent). Le profil et ses données restent.
+   */
+  app.delete<{ Params: { id: string }; Body: { password?: string } | undefined }>(
+    '/api/v1/profiles/:id/acces',
+    {
+      preHandler: needParent,
+      schema: {
+        params: {
+          type: 'object',
+          properties: { id: { type: 'string', format: 'uuid' } },
+          required: ['id'],
+        },
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          properties: { password: { type: 'string', maxLength: 512 } },
+        },
+      },
+    },
+    async (req, reply) => {
+      const parent = req.auth!.accountId;
+      if (!(await canActForProfile(db, parent, req.params.id)))
+        return err(reply, 404, 'introuvable');
+      if (!(await ressaisieParent(kit, req, reply, req.body?.password))) return reply;
+      const [lg] = await db
+        .select()
+        .from(t.profileLogin)
+        .where(eq(t.profileLogin.profileId, req.params.id));
+      if (!lg) return err(reply, 404, 'introuvable');
+      await db.transaction(async (tx) => {
+        await tx.delete(t.profileLogin).where(eq(t.profileLogin.profileId, lg.profileId));
+        await tx
+          .update(t.session)
+          .set({ revokedAt: new Date() })
+          .where(and(eq(t.session.profileId, lg.profileId), isNull(t.session.revokedAt)));
+      });
+      const ek = emailKey(lg.login);
+      await clearFailures(db, cleGlobaleIdentifiant(ek));
+      await db.delete(t.authThrottle).where(like(t.authThrottle.key, `login:${ek}|%`));
+      await audit(db, parent, 'profil.acces_retire', lg.profileId);
       return { ok: true };
     },
   );

@@ -80,6 +80,22 @@ export async function getAll<T>(store: StoreName): Promise<T[]> {
   return wrap(db.transaction(store).objectStore(store).getAll()) as Promise<T[]>;
 }
 
+/** Lit les valeurs qui passent `garde`, au curseur : les autres ne sont jamais gardées en mémoire. */
+export async function getAllWhere<T>(store: StoreName, garde: (v: T) => boolean): Promise<T[]> {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const out: T[] = [];
+    const req = db.transaction(store).objectStore(store).openCursor();
+    req.onsuccess = () => {
+      const c = req.result;
+      if (!c) return resolve(out);
+      if (garde(c.value as T)) out.push(c.value as T);
+      c.continue();
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+
 export async function getAllByIndex<T>(
   store: StoreName,
   index: string,

@@ -61,6 +61,9 @@ import {
   reserveAttempt,
   createSession,
   ESSAIS_CONNEXION,
+  PAUSE_PAR_IDENTIFIANT_MIN,
+  cleGlobaleIdentifiant,
+  echecGlobal,
   essaisRestants,
   leverPauseSiMotDePasseChange,
   MAX_FAILURES,
@@ -723,6 +726,19 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           accKey,
           enf?.passwordChangedAt ?? a?.passwordChangedAt,
         );
+      // revue M4 : plafond GLOBAL par identifiant d'enfant (toutes adresses), décidé sur la FORME de la saisie seule
+      // (jamais sur l'existence du compte) : la réponse est identique que l'identifiant existe ou non
+      const globKey = estIdentifiantEnfant(saisi) ? cleGlobaleIdentifiant(emailKey(email)) : null;
+      if (globKey) {
+        if (await lockedUntil(db, globKey))
+          await leverPauseSiMotDePasseChange(db, globKey, enf?.passwordChangedAt);
+        const g = await lockedUntil(db, globKey);
+        if (g)
+          return err(reply, 429, 'verrouille', {
+            jusqua: g.toISOString(),
+            pause_minutes: PAUSE_PAR_IDENTIFIANT_MIN,
+          });
+      }
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked)
         return err(reply, 429, 'verrouille', { jusqua: locked.toISOString(), ...infoPause });
@@ -749,6 +765,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if ((!a && !enf) || !ok) {
         await failAttempt(db, accKey, max, pause);
         await recordFailure(db, ipKey, ECHECS_CONNEXION_ADRESSE);
+        if (globKey) await echecGlobal(db, globKey);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
           email: a ? undefined : 'inconnu',
         });
@@ -770,6 +787,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (!o || o.deletedAt || o.blockedAt) return err(reply, 401, 'identifiants_incorrects');
         if ((await readAcces(db)).site === 'ferme') return err(reply, 503, 'acces_ferme');
         await clearFailures(db, accKey);
+        if (globKey) await clearFailures(db, globKey);
         await audit(db, o.id, 'connexion.enfant', enf.profileId);
         const s = await createSession(db, o.id, o.kind, false, {
           profileId: enf.profileId,

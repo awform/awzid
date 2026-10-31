@@ -15,7 +15,7 @@
  *    après 3 cycles en échec. Serveur indisponible (429, 502-504) : on attend, sans rien écarter.
  * Ce module n'utilise que fetch + IndexedDB : il tourne dans la page ET dans le service worker.
  */
-import { count, delMany, getAll, kvGet, kvSet, putMany } from './idb';
+import { delMany, getAllWhere, kvGet, kvSet, putMany } from './idb';
 
 export interface AttemptEvent {
   id: string;
@@ -86,20 +86,39 @@ const UNAVAILABLE = new Set([429, 502, 503, 504]);
 const NOT_THE_EVENTS = new Set([403, 404]);
 const POST = { 'content-type': 'application/json', 'x-awform': '1' };
 
+/**
+ * Session limitée d'un enfant (V2-3) : seules les entrées de SON profil sont lues, comptées ou montrées ; celles des
+ * autres profils de l'appareil restent intactes dans IndexedDB (pour leur propre session) et ne sont jamais
+ * chargées en mémoire par cette session. Les écritures partent des listes COMPLÈTES : aucune perte.
+ */
+let profilRestreint: string | null = null;
+export const restreindreEnvoiAuProfil = (id: string | null): void => {
+  profilRestreint = id;
+};
+const enVue = (p: string): boolean => !profilRestreint || p === profilRestreint;
+
+/** listes complètes (usage interne : lecture-modification-écriture), jamais exposées en session limitée */
+async function quarantaineTous(): Promise<AttemptEvent[]> {
+  return (await kvGet<AttemptEvent[]>(QUARANTINE).catch(() => undefined)) ?? [];
+}
+async function setAsideTous(): Promise<SetAside[]> {
+  return (await kvGet<SetAside[]>(ASIDE).catch(() => undefined)) ?? [];
+}
+
 /** Événements écartés de la file après des échecs répétés (diagnostic, envoi manuel plus tard). */
 export async function quarantined(): Promise<AttemptEvent[]> {
-  return (await kvGet<AttemptEvent[]>(QUARANTINE).catch(() => undefined)) ?? [];
+  return (await quarantaineTous()).filter((e) => enVue(e.profileId));
 }
 
 /** Événements refusés par le serveur et gardés sur l'appareil (lot F1). */
 export async function setAside(): Promise<SetAside[]> {
-  return (await kvGet<SetAside[]>(ASIDE).catch(() => undefined)) ?? [];
+  return (await setAsideTous()).filter((s) => enVue(s.ev.profileId));
 }
 
 async function putAside(list: Array<{ ev: AttemptEvent; reason: string; code?: string }>) {
   if (!list.length) return;
   const now = new Date().toISOString();
-  const cur = await setAside();
+  const cur = await setAsideTous();
   for (const x of list) {
     const old = cur.find((s) => s.ev.id === x.ev.id);
     if (old)
@@ -115,7 +134,7 @@ async function dropAside(ids: readonly string[]) {
   const set = new Set(ids);
   await kvSet(
     ASIDE,
-    (await setAside()).filter((s) => !set.has(s.ev.id)),
+    (await setAsideTous()).filter((s) => !set.has(s.ev.id)),
   );
 }
 
@@ -130,7 +149,7 @@ async function failedAlone(e: AttemptEvent): Promise<boolean> {
   }
   delete fails[e.id];
   await kvSet(FAILS, fails);
-  await kvSet(QUARANTINE, [...(await quarantined()), e].slice(-200));
+  await kvSet(QUARANTINE, [...(await quarantaineTous()), e].slice(-200));
   await delMany('events', [e.id]);
   return true;
 }
@@ -161,8 +180,8 @@ export async function queueEvent(ev: Omit<AttemptEvent, 'id' | 'deviceAt'>): Pro
   return full;
 }
 
-export function pendingCount(): Promise<number> {
-  return count('events');
+export async function pendingCount(): Promise<number> {
+  return (await getAllWhere<AttemptEvent>('events', (e) => enVue(e.profileId))).length;
 }
 
 /**
@@ -216,6 +235,7 @@ export async function retrySetAside(
 export async function reportSetAside(fetchFn: typeof fetch = fetch, base = ''): Promise<boolean> {
   const list = await setAside();
   if (!list.length) return false;
+  const mes = new Set(list.map((s) => s.ev.id));
   const reasons: Record<string, number> = {};
   for (const s of list) {
     const k = s.reason.slice(0, 80);
@@ -238,21 +258,12 @@ export async function reportSetAside(fetchFn: typeof fetch = fetch, base = ''): 
   }
   await kvSet(
     ASIDE,
-    list.map((s) => ({ ...s, reported: true })),
+    (await setAsideTous()).map((s) => (mes.has(s.ev.id) ? { ...s, reported: true } : s)),
   );
   return true;
 }
 
 let running: Promise<FlushResult> | null = null;
-
-/**
- * Session limitée d'un enfant (V2-3) : seule la réponse de SON profil part vers le serveur, qui refuserait tout
- * lot citant un autre profil de l'appareil. Les réponses des autres restent gardées pour leur propre session.
- */
-let profilRestreint: string | null = null;
-export const restreindreEnvoiAuProfil = (id: string | null): void => {
-  profilRestreint = id;
-};
 
 /** Envoie la file (lots de BATCH, ordre chronologique). Un seul envoi à la fois par contexte. */
 export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<FlushResult> {
@@ -272,9 +283,9 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
     let size = BATCH;
     try {
       for (;;) {
-        const all = (await getAll<AttemptEvent>('events'))
-          .filter((e) => !skip.has(e.id) && (!profilRestreint || e.profileId === profilRestreint))
-          .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+        const all = (
+          await getAllWhere<AttemptEvent>('events', (e) => !skip.has(e.id) && enVue(e.profileId))
+        ).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
         if (all.length === 0) break;
         const batch = all.slice(0, size);
         let r: Response;
@@ -371,7 +382,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
       // nouvel essai des événements mis de côté dont le délai est passé (réseau présent)
       if (!res.offline && !res.unauthenticated) await retrySetAside(fetchFn, base);
     } finally {
-      res.remaining = await count('events');
+      res.remaining = await pendingCount();
       res.setAside = (await setAside()).length;
       running = null;
     }
