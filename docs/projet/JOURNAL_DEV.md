@@ -9,6 +9,13 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 31/10/2026 — Tri de la passe 3 (gpt-6.1-sol, 29 au 31/10) reporté dans l'application (branche `livres-passe3-wip`) ; NON fusionné, NON déployé
+
+- **Livres** : copie `~/awform-content.tri31` (`infra/sync-content.ps1 -Dest awform-content.tri31`, 1 182 fichiers ; différences avec `~/awform-content` : 85 fichiers de livres corrigés + `registre/coran.json`) ; 31 livres, **3 825 versets contrôlés octet par octet, 0 erreur**, 0 erreur bloquante ; `controle-corriges -Ordre` (27 livres) : rien ; `gel-ids` : 5 220 exercices, 0 ajouté. À faire à la mise en ligne : échanger `~/awform-content` et `~/awform-content.tri31`, puis importer l'édition. Aucun cahier modifié (aucune des 7 phrases n'y figure).
+- **Données régénérées** : scénarios « Je parle » / conversation (ad7 l01, ad8 l23), table de récitation d'Ayyūb (`apps/web/static/recitation/ayyub.json`, inventaires zéro muet), `VIDEO_GARDE` ; `HADITH_GARDE` et `VIVANTE_GARDE` inchangées. Tests du paquet `content` : 30 fichiers, 1 265 verts (avec `AWFORM_CONTENT_DIR=~/awform-content.tri31`).
+- **Audio** : 7 MP3 Gemini Charon (ad8 l23 ×5, ad7 l01 ×1, ado1 l25 ×1 ; 7 sur 7 au premier essai, 0 Chirp, 0 Wavenet gardé, 0,016 $), étiquettes de niveau ad7, ad8 et ado1 posées (`zm-niveaux`) ; import de contrôle : 0 absent, 0 incohérent, 0 illisible, LF. Archive `maj-audio-tri31.tgz` (7 MP3 + `index.js` + `liste.csv`) dans `~/archives-gemini/` et `/tmp/`, à passer en 2ᵉ argument de `/tmp/mise-en-ligne.sh`.
+
+---
 ## 30/10/2026 — Lot V2-2, partie 1 : « Qui va apprendre ? » (branche `inscription-v2-2-wip`) ; NON fusionné, NON déployé
 
 - **Migration `0058_inscription_intention`** (la 0057 était déjà prise par la mesure V2-0) : colonne `account.signup_intent` (texte nullable, CHECK `moi | enfants | famille | eleves`). Retour arrière noté en tête du fichier.
