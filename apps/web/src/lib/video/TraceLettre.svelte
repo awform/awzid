@@ -168,7 +168,12 @@
     onkeydown={clavier}
   >
     {#if g}
-      <svg viewBox={`0 0 ${g.W} ${g.H}`} aria-hidden="true" focusable="false">
+      <svg
+        viewBox={`0 0 ${g.W} ${g.H}`}
+        style:width={`${((g.W / F) * 20).toFixed(2)}rem`}
+        aria-hidden="true"
+        focusable="false"
+      >
         <defs>
           <mask id={mid} maskUnits="userSpaceOnUse" x="0" y="0" width={g.W} height={g.H}>
             {#each chemins as c, i (i)}
@@ -186,7 +191,7 @@
           </mask>
         </defs>
         <line class="base" x1="0" x2={g.W} y1={g.B} y2={g.B} data-testid="ligne-de-base" />
-        <text class="base-nom" x="4" y={g.B + 12} font-size="9">{tt('base')}</text>
+        <text class="base-nom" x="4" y={g.H - 6} font-size="8">{tt('base')}</text>
         <text
           class="fantome"
           x={g.W / 2}
@@ -283,7 +288,7 @@
     border-radius: var(--radius-md, 12px);
     background: var(--card);
     padding: 8px;
-    min-height: 12rem;
+    min-height: 10rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -294,7 +299,7 @@
     outline-offset: 2px;
   }
   svg {
-    width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
   }
