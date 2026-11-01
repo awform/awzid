@@ -74,6 +74,9 @@
   const lectureCoran = $derived(isQuranReadingLevel(u.levelCode));
   const L = $derived(data.unit.lesson);
   const lettres = $derived(L.lettres ?? []);
+  /** lien vers le tracé au doigt d'un mot (le même pour les mots et pour les lettres avec voyelles) */
+  const lienMot = (m: unknown) =>
+    `${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`;
   const isEval = $derived(u.kind !== 'lecon');
   const livreEx = $derived(
     (L.exercices ?? [])
@@ -772,7 +775,7 @@
       </div>
     </section>
 
-    {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
+    {#if !isEval && (E.voyelles || E.mots || E.lier || E.copie || E.production || cahierEx.length)}
       <section class="blk cahier etape" data-etape="ecrire" hidden={!voir('ecrire')}>
         <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
         <p class="hint fr">
@@ -789,6 +792,18 @@
           </p>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {/if}
+        <!-- 1/11/2026 : méthode du couple — la lettre avec les voyelles déjà vues (ecriture.voyelles) ; chaque ligne
+             ouvre le tracé au doigt (budget de l'appareil élève : un seul lien par ligne, pas de rangée de boutons) -->
+        {#if (E.voyelles as string[] | undefined)?.length}
+          <h3>{t('lecon.voyelles_lettre')}</h3>
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+          <p class="trace" dir="rtl">
+            {#each E.voyelles as string[] as v, i (i)}<a href={lienMot(v)}
+                ><Ar text={v} {lettres} /></a
+              >{/each}
+          </p>
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        {/if}
         {#if Array.isArray(E.mots) && E.mots.length}
           <h3>{t('lecon.ecris_mots')}</h3>
           <p class="trace" dir="rtl">
@@ -796,9 +811,7 @@
           </p>
           <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
           <p class="links">
-            {#each E.mots as m, i (i)}<a
-                class="button"
-                href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`}
+            {#each E.mots as m, i (i)}<a class="button" href={lienMot(m)}
                 ><Bidi text={t('lecon.repasser_mot', { n: i + 1 })} /></a
               >{/each}
           </p>

@@ -17,6 +17,11 @@
       "version": 3,
       "date": "2026-10-19",
       "resume": "3e passe : MAS retiré (copie en ligne probablement non autorisée) ; + manuel officiel saoudien 1428 (SA1428), relecture de PAL (س, ط, ص, ش), BSE réexaminé (لا en deux traits) ; nouveau statut « sur (dérivé) » avec chaîne de déduction ; ـعـ/ـع redescendent à probable ; ajout du bloc droits"
+    },
+    {
+      "version": 3,
+      "date": "2026-11-01",
+      "resume": "décision sur les 11 formes probables et les 3 divergentes (champ decision_2026_11 par forme) : tracés conservés, variantes recommandées maintenues, degré de certitude ajouté ; statuts inchangés faute de 2e source explicite (veille du 1/11 : manuels saoudiens, égyptiens, palestinien ; Médine, Umm al-Qurā, Iqra') ; aucun tracé modifié, static/video/traits.json inchangé"
     }
   ],
   "statut_definitions": {
@@ -843,7 +848,12 @@
         "consensus": "partiel",
         "statut": "probable",
         "sources": ["PAL"],
-        "note": "3e passe : MAS retiré, PAL reste seul pour le sens (1 montée vers le haut-gauche, 2 haut de gauche à droite, 3 descente vers la gauche). AB décrit la forme (pointe à gauche, côté droit arrondi, boucle ouverte) sans le sens. Tracé PAL conservé. Repasse à sur si un exemplaire légal de MAS confirme"
+        "note": "3e passe : MAS retiré, PAL reste seul pour le sens (1 montée vers le haut-gauche, 2 haut de gauche à droite, 3 descente vers la gauche). AB décrit la forme (pointe à gauche, côté droit arrondi, boucle ouverte) sans le sens. Tracé PAL conservé. Repasse à sur si un exemplaire légal de MAS confirme",
+        "decision_2026_11": {
+          "retenu": "tracé PAL conservé : montée vers le haut-gauche, haut de gauche à droite, descente ; vaut pour ـعـ et ـغـ",
+          "certitude": "moyenne à haute",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "fin": {
         "traits": [
@@ -868,7 +878,12 @@
         "consensus": "partiel",
         "statut": "probable",
         "sources": ["PAL"],
-        "note": "3e passe : MAS retiré ; PAL seul (1 montée, 2 haut de gauche à droite, 3 descente dans la cuvette)"
+        "note": "3e passe : MAS retiré ; PAL seul (1 montée, 2 haut de gauche à droite, 3 descente dans la cuvette)",
+        "decision_2026_11": {
+          "retenu": "tracé PAL conservé : montée, haut de gauche à droite, descente dans la cuvette ; vaut pour ـع et ـغ",
+          "certitude": "moyenne à haute",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       }
     },
     "fa": {
@@ -941,7 +956,12 @@
         "consensus": "partiel",
         "statut": "probable",
         "sources": ["AB"],
-        "note": "AB unité 6 : « Start from the connecting segment and loop up to your left and back around to the line and into the connecting segment ». Aucune 2e source ; déduction interdite (la tête n'est sur que stylo posé). Vaut aussi pour ـقـ"
+        "note": "AB unité 6 : « Start from the connecting segment and loop up to your left and back around to the line and into the connecting segment ». Aucune 2e source ; déduction interdite (la tête n'est sur que stylo posé). Vaut aussi pour ـقـ",
+        "decision_2026_11": {
+          "retenu": "tracé AB conservé : de la liaison, boucle vers le haut et la gauche, retour sur la ligne, sortie ; vaut pour ـقـ",
+          "certitude": "moyenne à haute",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "fin": {
         "traits": [
@@ -966,7 +986,12 @@
         "consensus": "partiel",
         "statut": "probable",
         "sources": ["AB"],
-        "note": "AB : la forme finale « combines the shape of the medial position with the tail of the independent »"
+        "note": "AB : la forme finale « combines the shape of the medial position with the tail of the independent »",
+        "decision_2026_11": {
+          "retenu": "tracé AB conservé : tête de la forme médiane, puis la queue plate",
+          "certitude": "moyenne à haute",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       }
     },
     "qaf": {
@@ -1018,7 +1043,12 @@
         ],
         "consensus": "partiel",
         "statut": "probable",
-        "sources": ["AB"]
+        "sources": ["AB"],
+        "decision_2026_11": {
+          "retenu": "tracé AB conservé : tête de la forme médiane, puis la queue ronde sous la ligne",
+          "certitude": "moyenne à haute",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       }
     },
     "kaf": {
@@ -1108,7 +1138,12 @@
         "recommandation": "adultes au stylo : barre après le squelette du mot, comme les points (AB ; usage réel BSE : kāf parmi les traits différés « usually drawn last ») ; l'ordre inverse des cahiers d'enfants (PAL) et du calame (SK) est toléré",
         "consensus": "divergent",
         "statut": "divergent",
-        "sources": ["AB", "BSE", "SK", "PAL"]
+        "sources": ["AB", "BSE", "SK", "PAL"],
+        "decision_2026_11": {
+          "retenu": "variante recommandée maintenue : le corps d'abord, la barre une fois le mot fini (AB, BSE ; même règle que les points) ; la barre d'abord est tolérée",
+          "certitude": "haute pour l'usage au stylo",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "milieu": {
         "variantes": {
@@ -1168,7 +1203,12 @@
         "recommandation": "comme au début",
         "consensus": "divergent",
         "statut": "divergent",
-        "sources": ["AB", "BSE", "SK"]
+        "sources": ["AB", "BSE", "SK"],
+        "decision_2026_11": {
+          "retenu": "variante recommandée maintenue : comme au début",
+          "certitude": "haute pour l'usage au stylo",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "fin": {
         "traits": [
@@ -1358,7 +1398,12 @@
         "recommandation": "même geste que م seule, que les deux manuels officiels consultés tracent en sens horaire (PAL p. 2, SA1428 p. 123), comme AB, HAR et SK ; forme initiale horaire : AB (forme principale) et SK ; PAL seul la trace en sens antihoraire, ce qu'AB admet aussi. Aucun autre manuel officiel consulté ne fléche la forme initiale (Égypte 2025 et لغتي 1444 : sans flèches). Les deux sens sont acceptés ; la recommandation changerait si un 2e manuel officiel traçait مـ en antihoraire",
         "consensus": "divergent",
         "statut": "divergent",
-        "sources": ["AB", "SK", "PAL"]
+        "sources": ["AB", "SK", "PAL"],
+        "decision_2026_11": {
+          "retenu": "variante recommandée maintenue : sens horaire, même geste que م isolée (PAL p. 2, SA1428 p. 123) ; le sens antihoraire est toléré",
+          "certitude": "moyenne",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "milieu": {
         "traits": [
@@ -1480,7 +1525,12 @@
         "consensus": "partiel",
         "statut": "probable",
         "sources": ["PAL"],
-        "note": "forme imprimée à deux boucles du cahier : PAL 1 liaison jusqu'au centre, 2 boucle sous la ligne (côté droit vers le bas, puis vers la gauche, remontée), 3 boucle au-dessus de la ligne (côté gauche vers le haut, puis vers la droite, redescente), 4 sortie à gauche. Aucune 2e source. Points de passage à recaler sur la police"
+        "note": "forme imprimée à deux boucles du cahier : PAL 1 liaison jusqu'au centre, 2 boucle sous la ligne (côté droit vers le bas, puis vers la gauche, remontée), 3 boucle au-dessus de la ligne (côté gauche vers le haut, puis vers la droite, redescente), 4 sortie à gauche. Aucune 2e source. Points de passage à recaler sur la police",
+        "decision_2026_11": {
+          "retenu": "tracé PAL conservé (forme imprimée à deux boucles) ; la forme manuscrite à une boucle reste acceptée à l'écrit",
+          "certitude": "moyenne",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       },
       "fin": {
         "traits": [
@@ -1589,7 +1639,12 @@
         "statut": "probable",
         "sources": ["AB"],
         "lever": true,
-        "note": "AB : « the joining segment leads into the beginning point of the loop ». Aucune 2e source ; déduction interdite (la tête n'est sur que stylo posé). Vaut aussi pour ـؤ"
+        "note": "AB : « the joining segment leads into the beginning point of the loop ». Aucune 2e source ; déduction interdite (la tête n'est sur que stylo posé). Vaut aussi pour ـؤ",
+        "decision_2026_11": {
+          "retenu": "tracé AB conservé : la liaison mène au départ de la boucle, puis la queue ; vaut pour ـؤ (hamza en dernier)",
+          "certitude": "haute : seule géométrie possible quand la liaison arrive à droite de la tête",
+          "motif": "veille du 1/11/2026 : aucun manuel officiel consulté (Arabie saoudite لغتي 1444 et SA1428, Égypte 2025, Palestine PAL) ne fléche les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées : pas de 2e source explicite, statut laissé tel quel"
+        }
       }
     },
     "hamza": {
