@@ -50,7 +50,7 @@ export function lireListeEleves(
 ): { eleves: LigneEleve[]; rejets: RejetLigne[] } {
   const eleves: LigneEleve[] = [];
   const rejets: RejetLigne[] = [];
-  const lignes = (texte ?? '').replace(/^﻿/, '').split(/\r\n|\r|\n/);
+  const lignes = (texte ?? '').replace(/^\uFEFF/, '').split(/\r\n|\r|\n/);
   let premiere = true;
   lignes.forEach((brute, i) => {
     const ligne = brute.trim();
@@ -66,7 +66,7 @@ export function lireListeEleves(
     if (annee < ANNEE_MIN || annee > anneeCourante) return rejet('annee_invalide');
     // prénom : première cellule qui n'est pas un nombre ni une date
     const cellules = ligne.split(/[\t;,]/).map((c) => c.replace(/^["']+|["']+$/g, '').trim());
-    let prenom = '';
+    let prenom: string;
     if (cellules.length > 1) {
       prenom = cellules.find((c) => c && !/^[\d\s/.-]+$/.test(c)) ?? '';
     } else {

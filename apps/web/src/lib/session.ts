@@ -70,6 +70,10 @@ export function isStaff(me: Me | null | undefined): boolean {
   );
 }
 
+/** V2-4 : un parent qui a au moins deux profils (« Moi » et un enfant, ou deux enfants) bascule en un toucher. */
+export const peutBasculer = (me: Me | null | undefined) =>
+  !!me && !me.enfantSession && me.account.kind === 'parent' && me.profiles.length > 1;
+
 export interface ApiResult<T> {
   ok: boolean;
   status: number;

@@ -52,7 +52,7 @@ const CP1252: Record<number, number> = {
 /** chaîne PDF « (…) » en WinAnsi, parenthèses et barre oblique échappées */
 export function texteWinAnsi(s: string): string {
   let out = '';
-  for (const ch of s.normalize('NFC')) {
+  for (const ch of s) {
     const cp = ch.codePointAt(0)!;
     let b: number;
     if (cp >= 0x20 && cp <= 0x7e) b = cp;

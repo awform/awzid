@@ -697,5 +697,12 @@
   "ins.pays_deduit": "Pays : {pays} —",
   "ins.pays_modifier": "modifier",
   "ins.pays_doute": "Nous n'en sommes pas certains : modifiez-le si besoin. En cas de doute, la règle d'âge la plus stricte s'applique.",
-  "id.email_numero_identifiant": "Numéro, e-mail ou identifiant"
+  "id.email_numero_identifiant": "Numéro, e-mail ou identifiant",
+  "bascule.titre": "Qui apprend maintenant ?",
+  "bascule.moi": "Moi",
+  "bascule.fermer": "Fermer",
+  "bascule.ajouter_enfant": "Ajouter un enfant",
+  "bascule.mon_espace": "Mon espace d'apprentissage",
+  "bascule.aide_mon_espace": "Un toucher pour apprendre vous aussi : votre espace est à vous, séparé de celui de vos enfants.",
+  "bascule.code_parent": "Code parent (4 chiffres) pour passer à {nom}"
 }

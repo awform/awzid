@@ -157,5 +157,10 @@
   "erreur.session_limitee": "Cet espace est réservé à l'apprentissage.",
   "erreur.identifiant_existant": "Cet enfant a déjà un identifiant.",
   "erreur.profil_adulte": "Un profil d'adulte n'a pas d'accès d'enfant.",
-  "erreur.profil_moi_existe": "Vous avez déjà votre espace."
+  "erreur.profil_moi_existe": "Vous avez déjà votre espace.",
+  "erreur.accord_ecole_requis": "Cochez la case : les parents de ces élèves doivent avoir donné leur accord à l'école.",
+  "erreur.lignes_invalides": "Certaines lignes sont à corriger.",
+  "erreur.classe_pleine": "Cette classe a atteint le nombre maximal de comptes d'élèves.",
+  "erreur.prenom_invalide": "Ce prénom contient des signes non permis.",
+  "erreur.mot_de_passe_requis": "Saisissez votre mot de passe pour confirmer."
 }
