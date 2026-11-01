@@ -4528,5 +4528,12 @@
   "erreur.classe_pleine": "This class has reached the maximum number of learner accounts.",
   "erreur.prenom_invalide": "This first name contains characters that are not allowed.",
   "erreur.mot_de_passe_requis": "Enter your password to confirm.",
-  "elv.accord_requis": "Tick the box: the parents of these learners must have given their consent to the school."
+  "elv.accord_requis": "Tick the box: the parents of these learners must have given their consent to the school.",
+  "erreur.lot_deja_cree": "These accounts have just been created. Open the learner list to find them; you can create a new password.",
+  "elv.pdf_non_imprimable": "A first name cannot be printed on this sheet (script not supported). The accounts are created; write the usernames down by hand or send them on WhatsApp.",
+  "erreur.fiche_non_imprimable": "A first name cannot be printed on this sheet.",
+  "elv.colonne_prendre": "Use this column",
+  "elv.colonne_titre": "Which column contains the first name?",
+  "erreur.profil_rattache_a_un_parent": "This learner is now linked to a parent’s account: the school can no longer change the password.",
+  "erreur.acces_non_gere_par_l_ecole": "This username was not created by the school: the school cannot change it."
 }

@@ -162,5 +162,9 @@
   "erreur.lignes_invalides": "Certaines lignes sont à corriger.",
   "erreur.classe_pleine": "Cette classe a atteint le nombre maximal de comptes d'élèves.",
   "erreur.prenom_invalide": "Ce prénom contient des signes non permis.",
-  "erreur.mot_de_passe_requis": "Saisissez votre mot de passe pour confirmer."
+  "erreur.mot_de_passe_requis": "Saisissez votre mot de passe pour confirmer.",
+  "erreur.fiche_non_imprimable": "Un prénom ne peut pas être imprimé dans cette fiche.",
+  "erreur.acces_non_gere_par_l_ecole": "Cet identifiant n'a pas été créé par l'école : elle ne peut pas le modifier.",
+  "erreur.profil_rattache_a_un_parent": "Cet élève est maintenant rattaché au compte d'un parent : l'école ne peut plus changer son mot de passe.",
+  "erreur.lot_deja_cree": "Ces comptes viennent déjà d'être créés. Ouvrez la liste des élèves pour les retrouver ; vous pouvez recréer un mot de passe."
 }

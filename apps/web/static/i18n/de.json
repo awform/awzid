@@ -4528,5 +4528,12 @@
   "erreur.classe_pleine": "Diese Klasse hat die Höchstzahl an Schülerkonten erreicht.",
   "erreur.prenom_invalide": "Dieser Vorname enthält nicht erlaubte Zeichen.",
   "erreur.mot_de_passe_requis": "Geben Sie zur Bestätigung Ihr Passwort ein.",
-  "elv.accord_requis": "Kreuzen Sie das Feld an: Die Eltern dieser Schüler müssen der Schule ihre Zustimmung gegeben haben."
+  "elv.accord_requis": "Kreuzen Sie das Feld an: Die Eltern dieser Schüler müssen der Schule ihre Zustimmung gegeben haben.",
+  "erreur.lot_deja_cree": "Diese Konten wurden gerade erstellt. Öffnen Sie die Schülerliste, um sie zu finden; Sie können ein neues Passwort erstellen.",
+  "elv.pdf_non_imprimable": "Ein Vorname kann auf diesem Blatt nicht gedruckt werden (Schrift nicht unterstützt). Die Konten sind erstellt; notieren Sie die Benutzernamen von Hand oder senden Sie sie per WhatsApp.",
+  "erreur.fiche_non_imprimable": "Ein Vorname kann auf diesem Blatt nicht gedruckt werden.",
+  "elv.colonne_prendre": "Diese Spalte verwenden",
+  "elv.colonne_titre": "Welche Spalte enthält den Vornamen?",
+  "erreur.profil_rattache_a_un_parent": "Dieser Schüler ist jetzt mit dem Konto eines Elternteils verknüpft: Die Schule kann das Passwort nicht mehr ändern.",
+  "erreur.acces_non_gere_par_l_ecole": "Dieser Benutzername wurde nicht von der Schule erstellt: Sie kann ihn nicht ändern."
 }

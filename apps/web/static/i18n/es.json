@@ -4528,5 +4528,12 @@
   "erreur.classe_pleine": "Esta clase ha alcanzado el número máximo de cuentas de alumnos.",
   "erreur.prenom_invalide": "Este nombre contiene caracteres no permitidos.",
   "erreur.mot_de_passe_requis": "Introduzca su contraseña para confirmar.",
-  "elv.accord_requis": "Marque la casilla: los padres de estos alumnos deben haber dado su consentimiento a la escuela."
+  "elv.accord_requis": "Marque la casilla: los padres de estos alumnos deben haber dado su consentimiento a la escuela.",
+  "erreur.lot_deja_cree": "Estas cuentas acaban de crearse. Abra la lista de alumnos para encontrarlas; puede crear una nueva contraseña.",
+  "elv.pdf_non_imprimable": "Un nombre no se puede imprimir en esta hoja (escritura no admitida). Las cuentas están creadas; anote los identificadores a mano o envíelos por WhatsApp.",
+  "erreur.fiche_non_imprimable": "Un nombre no se puede imprimir en esta hoja.",
+  "elv.colonne_prendre": "Usar esta columna",
+  "elv.colonne_titre": "¿Qué columna contiene el nombre?",
+  "erreur.profil_rattache_a_un_parent": "Este alumno ya está vinculado a la cuenta de un padre o una madre: la escuela ya no puede cambiar su contraseña.",
+  "erreur.acces_non_gere_par_l_ecole": "Este identificador no lo creó la escuela: no puede modificarlo."
 }

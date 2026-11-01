@@ -24,9 +24,19 @@ test('création de 3 élèves, fiche PDF, lien WhatsApp sans mot de passe, conne
   await page.getByTestId('elv-ouvrir').click();
   await expect(page.getByTestId('eleves-lot')).toBeVisible();
 
-  // deux élèves saisis, le troisième collé depuis un tableur
+  // un tableur dont on ne reconnaît pas la colonne du prénom : on demande laquelle prendre
+  await page.getByTestId('elv-coller').click();
+  await page.getByTestId('elv-collage').fill(`Name\tClass\tYear\nZaid\tCE2\t${annee}`);
+  await page.getByTestId('elv-lire').click();
+  await expect(page.getByTestId('elv-ambigu')).toBeVisible();
+  await page.getByTestId('elv-colonne').selectOption('0');
+  await page.getByTestId('elv-colonne-ok').click();
+  await expect(page.getByTestId('elv-prenom-0')).toHaveValue('Zaid');
+
+  // deux élèves saisis (le premier remplace Zaid), le troisième collé depuis un tableur
   await page.getByTestId('elv-prenom-0').fill('Moussa');
   await page.getByTestId('elv-annee-0').fill(annee);
+  await page.getByTestId('elv-ajouter-ligne').click();
   await page.getByTestId('elv-prenom-1').fill('Awa');
   await page.getByTestId('elv-annee-1').fill(annee);
   await page.getByTestId('elv-coller').click();
@@ -86,6 +96,8 @@ test('création de 3 élèves, fiche PDF, lien WhatsApp sans mot de passe, conne
   await expect(encore.getByTestId('elv-mdp-eleve')).not.toHaveText(mdp);
   await page.getByTestId('elv-mdp').fill(password());
   await encore.getByTestId('elv-nouveau').click();
+  // le mot de passe de l'enseignant est effacé de l'écran dès que l'action est faite
+  await expect(page.getByTestId('elv-mdp')).toHaveValue('');
   await expect(encore.getByTestId('elv-mdp-eleve')).toHaveText(/^[a-z2-9]{8}$/);
   const neuf = (await encore.getByTestId('elv-mdp-eleve').innerText()).trim();
   expect(neuf).not.toBe(mdp);

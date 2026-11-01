@@ -730,5 +730,8 @@
   "elv.pdf_erreur": "La fiche n'a pas pu être créée. Réessayez.",
   "elv.mdp_recree": "Nouveau mot de passe de {nom} créé : il s'affiche dans le tableau.",
   "elv.debloque": "Le compte de {nom} est débloqué.",
-  "elv.accord_requis": "Cochez la case : les parents de ces élèves doivent avoir donné leur accord à l'école."
+  "elv.accord_requis": "Cochez la case : les parents de ces élèves doivent avoir donné leur accord à l'école.",
+  "elv.colonne_prendre": "Prendre cette colonne",
+  "elv.colonne_titre": "Quelle colonne contient le prénom ?",
+  "elv.pdf_non_imprimable": "Un prénom ne peut pas être imprimé dans cette fiche (écriture non prise en charge). Les comptes sont créés ; notez les identifiants à la main ou envoyez-les par WhatsApp."
 }
