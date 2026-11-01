@@ -772,7 +772,7 @@
       </div>
     </section>
 
-    {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
+    {#if !isEval && (E.voyelles || E.mots || E.lier || E.copie || E.production || cahierEx.length)}
       <section class="blk cahier etape" data-etape="ecrire" hidden={!voir('ecrire')}>
         <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
         <p class="hint fr">
@@ -785,6 +785,19 @@
                 class="button"
                 href={`${resolve('/ecriture')}?lettre=${encodeURIComponent(x.l)}`}
                 data-testid="tracer-lettre"><Bidi text={t('lecon.tracer_lettre', { l: x.l })} /></a
+              >{/each}
+          </p>
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        {/if}
+        <!-- 1/11/2026 : méthode du couple — la lettre avec les voyelles déjà vues (ecriture.voyelles) ; chaque ligne
+             ouvre le tracé au doigt (budget de l'appareil élève : un seul lien par ligne, pas de rangée de boutons) -->
+        {#if Array.isArray(E.voyelles) && E.voyelles.length}
+          <h3>{t('lecon.voyelles_lettre')}</h3>
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+          <p class="trace" dir="rtl" data-testid="voyelles-lettre">
+            {#each E.voyelles as v, i (i)}<a
+                href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(v))}`}
+                ><Ar text={String(v)} {lettres} /></a
               >{/each}
           </p>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->

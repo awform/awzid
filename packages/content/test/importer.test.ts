@@ -77,9 +77,12 @@ describe.skipIf(!HAS_CONTENT)('import réel en1 + ad1 (sans ressaisie)', () => {
   });
   it('livres gelés : identifiants explicites conformes à la table de correspondance', () => {
     const ids = load.levels.flatMap((l) => l.units.flatMap((u) => u.exercises.map((e) => e.id)));
-    expect(ids).toHaveLength(257);
-    expect(load.issues.filter((i) => i.code.startsWith('id'))).toEqual([]);
     const map = loadIdMaps(join(CONTENT_DIR, 'ids'), []);
+    // 257 au gel du 28/09/2026 ; un exercice AJOUTÉ (1/11/2026 : cahiers d'écriture) entre aussi dans la table
+    const attendus = [...(map?.values() ?? [])].filter((v) => /^(en1|ad1)\./.test(v)).length;
+    expect(attendus).toBeGreaterThanOrEqual(257);
+    expect(ids).toHaveLength(attendus);
+    expect(load.issues.filter((i) => i.code.startsWith('id'))).toEqual([]);
     if (map) for (const id of ids) expect([...map.values()]).toContain(id);
     // l'empreinte ignore le champ « id » : ajouter l'identifiant ne périme aucune réponse
     const ex = load.levels[0]!.units[0]!.exercises[0]!;

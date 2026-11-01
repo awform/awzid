@@ -238,6 +238,16 @@ La proposition de faire filmer des enseignants (§2P.6) est **abandonnée** à l
 
 **4. Limite** : cette analyse est une précaution de chef de projet, pas une consultation juridique. Si le comité le souhaite, un juriste peut relire les crédits avant la publication.
 
+### 3P.10 Décision du 1/11/2026 sur les 14 formes non établies
+
+Les 11 formes `probable` et les 3 formes `divergent` sont tranchées pour l'enseignement. Le détail est dans le champ `decision_2026_11` de chaque forme de `traits_lettres.json`.
+
+- **Tracés conservés** : ـعـ ـع ـغـ ـغ (PAL), ـفـ ـف ـقـ ـق (AB), ـهـ à deux boucles (PAL), ـو ـؤ (AB). Aucune source ne les contredit.
+- **Variantes recommandées maintenues** : مـ en sens horaire ; كـ et ـكـ avec le corps d'abord et la barre une fois le mot fini. L'autre usage reste toléré.
+- **Certitude** : haute pour ـو ـؤ (seule géométrie possible quand la liaison arrive à droite de la tête) et pour كـ ـكـ au stylo ; moyenne à haute pour ـعـ ـع ـغـ ـغ ـفـ ـف ـقـ ـق ; moyenne pour ـهـ et مـ.
+- **Statuts inchangés** : la veille du 1/11/2026 n'a pas apporté de 2ᵉ source explicite. Les manuels officiels consultés (Arabie saoudite, Égypte, Palestine) ne fléchent pas les formes liées ; les méthodes universitaires (Médine, Umm al-Qurā) et la méthode Iqra' (Malaisie) enseignent la lecture et la copie sans flèches publiées. Passer ces formes à `sur` sans nouvelle source serait inexact.
+- **Aucun tracé modifié** : `static/video/traits.json` reste identique.
+
 ---
 
 ## 2P. Deuxième passe (19/10/2026, après-midi) — historique

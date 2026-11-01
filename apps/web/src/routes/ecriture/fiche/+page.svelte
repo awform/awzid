@@ -32,6 +32,14 @@
   const strs = (v: unknown) =>
     Array.isArray(v) ? v.map((x) => String(x).replace(/[[\]]/g, '')) : [];
   const mots = $derived(strs(E.mots));
+  /** 1/11/2026 : les lettres de la leçon à tracer (forme isolée et 4 formes), puis la lettre avec ses voyelles */
+  const voyelles = $derived(strs(E.voyelles));
+  // comme le cahier imprimé : les lettres de `ecriture.lettres` (absente ou vide dans un bilan : aucune)
+  const lettres = $derived(
+    (((unit?.lesson as Obj | undefined)?.lettres ?? []) as Array<{ l: string; formes?: string[] }>)
+      .filter((x) => strs(E.lettres).includes(x.l))
+      .map((x) => x.formes ?? [x.l, x.l, x.l]),
+  );
   const copie = $derived(strs(E.copie));
   const lier = $derived(
     (Array.isArray(E.lier) ? (E.lier as Array<{ lettres?: string[] }>) : []).map((x) =>
@@ -70,6 +78,16 @@
       data-testid="imprimer"
       ><Icon name="telecharger" size={18} /><Bidi text={t('parc.imprimer')} /></button
     >
+    {#if lettres.length || voyelles.length}
+      <h2>{t('lecon.formes')}</h2>
+      {#each [...lettres, ...voyelles.map((v) => [v, v])] as fs, i (i)}
+        <div class="trace-line" lang="ar" dir="rtl" data-testid="fiche-lettre">
+          {#each fs as f, k (k)}<span class="ghost" class:first={k === 0}
+              ><Bidi text={f} base="ar" /></span
+            >{/each}
+        </div>
+      {/each}
+    {/if}
     {#if mots.length}
       <h2>{t('lecon.ecris_mots')}</h2>
       {#each mots as m, i (i)}
