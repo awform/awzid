@@ -158,6 +158,10 @@ describe.skipIf(!URL_)(
 
     it('le refus d’une réinscription ferme l’accès de l’élève de l’école (sans autre inscription active)', async () => {
       const T = await teacher(c, 'refus@exemple.org');
+      const [enseignant] = await c.h.db
+        .select()
+        .from(t.account)
+        .where(eq(t.account.email, 'refus@exemple.org'));
       const a = await newClass(c, T, 'Année 1');
       const b = await newClass(c, T, 'Année 2');
       const r = await creerLot(c, T, a.id, [{ prenom: 'Refus', annee: an }]);
@@ -175,7 +179,7 @@ describe.skipIf(!URL_)(
         .insert(t.reenrolmentOffer)
         .values({ profileId: x.profileId, classId: b.id })
         .returning();
-      const res = await decideReenrolment(c.h.db, offre!.id, [x.profileId], x.profileId, false);
+      const res = await decideReenrolment(c.h.db, offre!.id, [x.profileId], enseignant!.id, false);
       expect(res).toMatchObject({ profileId: x.profileId });
       expect((await connexion(c, x.identifiant, x.motDePasse)).r.statusCode).toBe(401);
       expect(
