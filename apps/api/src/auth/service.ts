@@ -140,6 +140,9 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
         .where(eq(t.session.tokenHash, tokenHash));
   }
   const { tabletClassId, ...rest } = r;
+  // V2-5 : l'élève créé par l'enseignant a un profil dont le titulaire est le compte technique de l'école ; sa session
+  // limitée se comporte exactement comme celle d'un enfant créé par un parent (kind « parent » : liste fermée de routes)
+  if (r.profileId && r.kind === 'ecole') rest.kind = 'parent';
   // tablette de classe : aucun rôle (ni personnel ni famille), seulement les élèves de la classe
   // session limitée d'un enfant : AUCUN rôle non plus (revue M2)
   const roles = tabletClassId || r.profileId ? [] : await accountRoles(db, r.accountId, r.kind);

@@ -17,6 +17,10 @@
       "types": "./dist/liste-communs.d.ts",
       "default": "./dist/liste-communs.js"
     },
+    "./eleves-lot": {
+      "types": "./dist/eleves-lot.d.ts",
+      "default": "./dist/eleves-lot.js"
+    },
     "./telephone": {
       "types": "./dist/telephone.d.ts",
       "default": "./dist/telephone.js"
