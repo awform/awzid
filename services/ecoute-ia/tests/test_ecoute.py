@@ -221,6 +221,29 @@ def test_suivi_passage_relu_avec_contexte_puis_effacement(client):
     assert sid not in ecoute._seances
 
 
+def test_fenetre_relit_les_dernieres_secondes_et_efface(client):
+    """Mode `fenetre` : chaque envoi renvoie la lecture des FENETRE_S dernières secondes (instants de la séance) ;
+    l'audio plus ancien n'est jamais gardé ; la séance est effacée à la fin."""
+    sid = str(uuid.uuid4())
+    x = np.frombuffer(wav(3)[44:], dtype='<i2')
+    envoi = lambda b: client.post(f'/direct/{sid}?mode=fenetre', content=b.tobytes(),  # noqa: E731
+                                  headers={'x-essai-mots': HEX}).json()
+    r1 = envoi(x[:8000])  # 0,5 s : trop court pour une lecture
+    assert r1['fenetre'] and r1['t'] == 0.5 and r1['mots'] == []
+    r2 = envoi(x)
+    assert r2['t'] == 3.5 and r2['mots'] and r2['mots_ctc'] and r2['voix']
+    s = ecoute._seances[sid]
+    assert s.fenetre and not s.suivi
+    # les instants sont ceux de la séance : la fenêtre finit à t
+    assert all(-0.5 <= m['t0'] <= m['t1'] <= r2['t'] + 1.0 for m in r2['mots'])
+    for _ in range(14):  # 14 s de plus : la mémoire reste bornée à la fenêtre
+        r3 = envoi(np.concatenate([x, x])[:16000])
+    assert len(s.buf) <= int(ecoute.FENETRE_S * 16000)
+    assert r3['t'] > ecoute.FENETRE_S and min(m['t0'] for m in r3['mots']) >= r3['t'] - ecoute.FENETRE_S - 1.0
+    client.delete(f'/direct/{sid}')
+    assert sid not in ecoute._seances
+
+
 def test_retrouver_et_suivi_rien_sur_disque(client):
     avant, fd0 = instantane(), fds()
     assert client.post('/ecouter?mode=retrouver', content=opus(6), headers={'x-essai-mots': HEX}).status_code == 200

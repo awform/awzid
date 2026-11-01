@@ -163,6 +163,7 @@ class Seance:
         self.pause = SUIVI_PAUSE_S if suivi else PAUSE_S
         self.coupe = SUIVI_COUPE_S if suivi else COUPE_S
         self.ctx = np.zeros(0, dtype=np.float32)
+        self.fenetre = False  # mode « fenêtre glissante » (voir `_fenetre`)
         self.prov0 = 0  # début (échantillons) du dernier passage fini, encore provisoire
 
     def effacer(self):
@@ -306,6 +307,31 @@ def _suivi(modele, s: Seance, morceau: np.ndarray, partiel_ok: bool = True) -> d
     return out
 
 
+#: mode « fenêtre » : durée relue à chaque envoi (secondes) ; l'audio plus ancien est effacé aussitôt
+FENETRE_S = float(os.environ.get('ECOUTE_FENETRE_S', '10'))
+
+
+def _fenetre(modele, s: Seance, morceau: np.ndarray) -> dict:
+    """SUIVI PAR FENÊTRE GLISSANTE (mode `fenetre`, shazam_coran) : à chaque envoi (≥ 0,5 s d'audio), relecture des
+    FENETRE_S dernières secondes (0,5 s de silence autour, deux lectures : RNN-T et CTC, un seul encodeur). Le service
+    ne décide de rien : il renvoie les mots de la fenêtre avec leurs instants (secondes de la séance) ; l'appareil
+    valide les mots par accord entre lectures successives (`FenetreSuivi`, @awform/hifz). Mémoire : la fenêtre
+    seulement (rien de plus ancien), effacée à la fin de la séance."""
+    sr = asr.SR
+    s.total += len(morceau)
+    s.buf = np.concatenate([s.buf, morceau])[-int(FENETRE_S * sr):].copy()
+    t = s.total / sr
+    debut = t - len(s.buf) / sr
+    mots, ctc, voix = [], [], []
+    if len(s.buf) > sr // 2:
+        xr = asr.rembourrer(s.buf)
+        d = debut - asr.REMBOURRAGE_S
+        r, c = asr.lecture_double(modele, xr)
+        mots, ctc = asr.decaler(r, d), asr.decaler(c, d)
+        voix = [[round(a + d, 2), round(b + d, 2)] for a, b in asr.zones_de_voix(xr)]
+    return {'t': round(t, 2), 'fenetre': True, 'mots': mots, 'mots_ctc': ctc, 'voix': voix}
+
+
 @app.post('/direct/{sid}')
 async def direct(sid: str, req: Request):
     if etat['modele'] is None:
@@ -319,7 +345,9 @@ async def direct(sid: str, req: Request):
         if len(_seances) >= DIRECT_MAX:
             return _erreur(503, 'occupe')
         # le mode est fixé à la création de la séance
-        s = _seances[sid] = Seance(suivi=req.query_params.get('mode') == 'suivi')
+        mode = req.query_params.get('mode')
+        s = _seances[sid] = Seance(suivi=mode == 'suivi')
+        s.fenetre = mode == 'fenetre'
     s.vu = time.monotonic()
     data = await req.body()
     if len(data) % 2 or len(data) > 10 * 2 * asr.SR:
@@ -334,7 +362,7 @@ async def direct(sid: str, req: Request):
         etat['modele'].mots = [bytes.fromhex(w).decode('utf-8')
                                for w in req.headers.get('x-essai-mots', '').split(',') if w]
     async with s.verrou:
-        r = await _calcul(_suivi if s.suivi else _direct, s, morceau)
+        r = await _calcul(_fenetre if s.fenetre else _suivi if s.suivi else _direct, s, morceau)
     if r is None:
         return _erreur(503, 'occupe')
     return r

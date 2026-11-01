@@ -10,3 +10,4 @@ export * from './simulate.js';
 export * from './recital.js';
 export * from './ecoute.js';
 export * from './retrouver.js';
+export * from './suivi.js';
