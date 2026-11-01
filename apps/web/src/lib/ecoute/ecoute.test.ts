@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { comparer, motsAttendus, type MotEntendu } from '@awform/hifz';
-import { aRevoirDe, versetsARevoir, type Bilan } from './bilans';
+import { aRevoirDe, statistiquesErreurs, versetsARevoir, type Bilan } from './bilans';
 import { bilanDe, causeMicro } from './ecoute';
 
 /** A5 — bilan de séance (appareil) : positions des mots à revoir, jamais l'audio ni les mots entendus. */
@@ -40,6 +40,38 @@ describe('A5 : bilan de séance', () => {
     // la plus récente d'abord : 1-2 revue sans erreur -> plus à revoir ; 3-4 à revoir ; « pas compris » ignoré
     const l = [b(1, 0), b(3, 2), b(1, 3), b(5, 4, true)];
     expect(aRevoirDe(l).map((x) => x.from)).toEqual([3]);
+  });
+});
+
+describe('Tarteel titan : historique des erreurs (comptes, jamais une note)', () => {
+  const b = (mots: Bilan['mots'], pasCompris = false): Bilan => ({
+    date: '2026-11-01',
+    s: 2,
+    from: 255,
+    to: 256,
+    versets: [255, 256],
+    aRevoir: mots.length,
+    mots,
+    pasCompris,
+  });
+  it('compte les écarts par type et fait ressortir les versets qui reviennent', () => {
+    const st = statistiquesErreurs([
+      b([
+        [2, 255, 3, 'oublie'],
+        [2, 255, 4, 'oublie'],
+        [2, 256, 1, 'remplace'],
+      ]),
+      b([[2, 255, 3, 'oublie']]),
+      b([[2, 256, 9, 'ordre']], true), // « pas compris » : ignoré
+      b([[2, 255, 7, 'ajoute']]),
+    ]);
+    expect(st.seances).toBe(3);
+    expect(st.parType).toEqual({ oublie: 3, remplace: 1, ajoute: 1 });
+    // 2:255 dans 3 séances (une fois par séance même avec deux mots), 2:256 dans une seule : pas récurrent
+    expect(st.recurrents).toEqual([{ s: 2, a: 255, seances: 3 }]);
+  });
+  it('aucune séance : rien à montrer', () => {
+    expect(statistiquesErreurs([])).toEqual({ seances: 0, parType: {}, recurrents: [] });
   });
 });
 

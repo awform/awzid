@@ -35,7 +35,7 @@ THREADS = int(os.environ.get('THREADS', '4'))
 
 
 def silence(rnd, s):
-    return (rnd.standard_normal(int(s * SR)) * 1e-4).astype(np.float32)
+    return (np.random.default_rng(rnd.randint(0, 2 ** 31)).standard_normal(int(s * SR)) * 1e-4).astype(np.float32)
 
 
 def normal(rnd, p, typ):
@@ -107,6 +107,7 @@ def sessions():
                     'duree': round(len(x) / SR, 2), 'verite': verite, 'ref': ref,
                     'voix': asr.zones_de_voix(x)})
         print(sid, typ, p['rid'], round(len(x) / SR, 1), 's', flush=True)
+        json.dump(out, open(f'{W}/sessions.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
     for typ, n in plan:
         pris, ordre = 0, rnd.sample(P, len(P))

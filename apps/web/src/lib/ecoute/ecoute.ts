@@ -15,8 +15,9 @@ import { loadTexts } from '$lib/i18n';
 import { call } from '$lib/session';
 import type { Bilan } from './bilans';
 import {
+  FenetreSuivi,
   comparer,
-  ecartsDAccord,
+  etatSuivi,
   motsARevoir,
   type EtatMot,
   type MotAttendu,
@@ -188,6 +189,9 @@ export class SuiviDirect {
   secondes = 0;
   /** le serveur a accepté le mode « suivi de la récitation » (erreurs signalées pendant la récitation) */
   suivi = false;
+  /** mode fenêtre glissante : envois de 0,5 s, lectures validées par accord (`FenetreSuivi`) */
+  fenetre = false;
+  private fen = new FenetreSuivi();
 
   constructor(
     private profileId: string,
@@ -199,7 +203,7 @@ export class SuiviDirect {
   ) {}
 
   async demarrer(stream: MediaStream): Promise<boolean> {
-    const r = await call<{ sid: string; suivi?: boolean }>(
+    const r = await call<{ sid: string; suivi?: boolean; mode?: string }>(
       'POST',
       `/profiles/${this.profileId}/ecoute/direct?s=${this.p.s}&from=${this.p.from}&to=${this.p.to}${this.demandeSuivi ? '&suivi=1' : ''}`,
       {},
@@ -210,6 +214,7 @@ export class SuiviDirect {
     }
     this.sid = r.data.sid;
     this.suivi = r.data.suivi === true;
+    this.fenetre = this.suivi && r.data.mode === 'fenetre';
     const AC =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -237,7 +242,8 @@ export class SuiviDirect {
 
   private async envoyer(force = false): Promise<void> {
     const n = this.tampon.reduce((s, b) => s + b.length, 0);
-    if (this.enCours || (!force && n < 16000) || !n) return;
+    // fenêtre : dès 0,5 s d'audio neuf (et la requête précédente revenue) ; sinon morceaux d'une seconde
+    if (this.enCours || (!force && n < (this.fenetre ? 8000 : 16000)) || !n) return;
     this.enCours = true;
     const bloc = new Int16Array(n);
     let o = 0;
@@ -260,11 +266,24 @@ export class SuiviDirect {
         stables?: MotEntendu[];
         stables_ctc?: MotEntendu[];
         provisoires?: MotEntendu[];
+        mots_ctc?: MotEntendu[];
+        fenetre?: boolean;
         error?: { code?: string };
       } | null;
       if (!r.ok || !j) {
         this.erreur(j?.error?.code ?? 'reseau');
         if (r.status === 413) await this.arreter();
+        return;
+      }
+      if (this.fenetre && j.fenetre) {
+        this.fen.ajouter({
+          t: j.t ?? this.secondes,
+          mots: j.mots ?? [],
+          motsCtc: j.mots_ctc ?? [],
+          voix: j.voix ?? [],
+        });
+        this.secondes = j.t ?? this.secondes;
+        this.maj(this.etat());
         return;
       }
       this.surs.push(...(j.mots ?? []));
@@ -305,22 +324,16 @@ export class SuiviDirect {
    * reconnus (stables, provisoires ou partiels) dévoilés ; mot en cours après le dernier reconnu.
    */
   private etatSuivi(): EtatDirect {
-    const opts = { voix: this.voix, enCours: true };
-    const r = comparer(this.att, this.stables, opts);
-    const c = comparer(this.att, this.stablesCtc, opts);
-    const ecarts =
-      r.statut === 'resultat' && c.statut === 'resultat' ? ecartsDAccord(r.ecarts, c.ecarts) : [];
-    const signale = new Set<number>();
-    for (const e of ecarts)
-      if (e.type !== 'ajoute') for (let i = e.i; i <= e.fin; i++) signale.add(i);
-    const tous = comparer(this.att, [...this.stables, ...this.provisoires, ...this.partiel], {
-      enCours: true,
-    });
-    const mots: EtatMot[] = r.mots.map((m, i) =>
-      signale.has(i) ? m : m === 'ok' || tous.mots[i] === 'ok' ? 'ok' : 'non_recite',
-    );
-    const fin = Math.max(r.finRecitee, tous.finRecitee);
-    return { resultat: { ...r, mots, ecarts }, courant: fin + 1, secondes: this.secondes };
+    const e = this.fenetre
+      ? this.fen.entree()
+      : {
+          stables: this.stables,
+          stablesCtc: this.stablesCtc,
+          provisoires: this.provisoires,
+          partiel: this.partiel,
+          voix: this.voix,
+        };
+    return { ...etatSuivi(this.att, e), secondes: this.secondes };
   }
 
   /**

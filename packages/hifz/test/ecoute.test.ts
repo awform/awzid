@@ -4,6 +4,7 @@ import {
   comparer,
   motsARevoir,
   motsAttendus,
+  motsRepetes,
   ressemblance,
   type MotEntendu,
   type VersetTexte,
@@ -111,6 +112,45 @@ describe('A5 : écarts sur cas simulés', () => {
     const r = comparer(ATT, entendu(w).ent, { voix: entendu(w).voix });
     expect(r.ecarts.length).toBeGreaterThanOrEqual(1);
     expect(r.ecarts.every((e) => e.type === 'ordre' && e.i >= 7 && e.fin <= 8)).toBe(true);
+  });
+
+  it('reprises normales : mot redit, reprise de quelques mots, retour au verset précédent → aucun écart', () => {
+    const base = nus();
+    const sans = (w: string[]) => comparer(ATT, entendu(w).ent, { voix: entendu(w).voix }).ecarts;
+    // un mot dit deux fois de suite
+    const redit = [...base];
+    redit.splice(4, 0, base[3]!);
+    expect(sans(redit)).toEqual([]);
+    // l'élève s'arrête et reprend cinq mots en arrière
+    const reprise = [...base];
+    reprise.splice(10, 0, ...base.slice(5, 10));
+    expect(sans(reprise)).toEqual([]);
+    // retour au verset précédent : le verset 1 est redit en entier après le verset 2
+    const retour = [...base.slice(0, 13), ...base.slice(0, 7), ...base.slice(7)];
+    expect(sans(retour)).toEqual([]);
+    // et un vrai mot ajouté, lui, est toujours signalé
+    const ajout = [...base];
+    ajout.splice(10, 0, 'السيارة');
+    expect(sans(ajout)).toEqual([expect.objectContaining({ type: 'ajoute', i: 9 })]);
+  });
+
+  it('motsRepetes : un mot seul n’est une répétition que collé à son semblable', () => {
+    const m = (w: string[]) => w.map((x) => ({ w: x, conf: 0.9 }));
+    expect(motsRepetes(m(['ذهب', 'الولد', 'ذهب', 'المدرسة']))).toEqual([
+      false,
+      false,
+      false,
+      false,
+    ]);
+    expect(motsRepetes(m(['ذهب', 'ذهب', 'المدرسة']))).toEqual([true, true, false]);
+    expect(motsRepetes(m(['ذهب', 'الولد', 'الى', 'ذهب', 'الولد', 'الى']))).toEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+    ]);
   });
 
   it('verset sauté : un seul écart « verset sauté »', () => {
