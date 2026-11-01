@@ -38,7 +38,7 @@ describe('fiche PDF (sans base)', () => {
     expect(vingtEtUn.toString('latin1')).toContain('/Count 3');
     expect(vingtEtUn.toString('latin1').trimEnd().endsWith('%%EOF')).toBe(true);
     expect(texteWinAnsi('Éa(b)\\')).toBe('(\xC9a\\(b\\)\\\\)');
-    expect(texteWinAnsi('أ')).toBe('(?)');
+    expect(() => texteWinAnsi('أ')).toThrow();
   });
 });
 

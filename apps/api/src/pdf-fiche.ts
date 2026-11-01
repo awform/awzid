@@ -5,8 +5,12 @@
  * Les mots de passe ne sont écrits nulle part ailleurs : ce document est fabriqué à la demande, jamais conservé.
  */
 
+import { translitterer } from '@awform/school/eleves-lot';
+
 export interface Etiquette {
   prenom: string;
+  /** année de naissance, imprimée à côté du prénom (distingue deux élèves de même prénom) */
+  annee?: number | null;
   login: string;
   motDePasse: string;
 }
@@ -49,16 +53,32 @@ const CP1252: Record<number, number> = {
   0x0178: 0x9f,
 };
 
-/** chaîne PDF « (…) » en WinAnsi, parenthèses et barre oblique échappées */
+/** Un caractère n'a pas de forme dans la police de la fiche : la fiche est REFUSÉE (jamais un « ? » imprimé). */
+export class CaractereNonImprimable extends Error {
+  constructor(public readonly caractere: string) {
+    super('fiche_non_imprimable');
+    this.name = 'CaractereNonImprimable';
+  }
+}
+
+const octetWinAnsi = (cp: number): number | null =>
+  cp >= 0x20 && cp <= 0x7e ? cp : cp >= 0xa0 && cp <= 0xff ? cp : (CP1252[cp] ?? null);
+
+/**
+ * Texte imprimable avec les polices standard (WinAnsi). Un prénom ou un nom d'école en écriture arabe s'imprime
+ * en lettres latines simples (translittération) : intégrer une police arabe avec liaison des lettres et sens de
+ * lecture exigerait un moteur de mise en forme absent du projet. Ce qui reste non imprimable fait refuser la fiche.
+ */
+export function pourFiche(s: string): string {
+  return [...s].every((ch) => octetWinAnsi(ch.codePointAt(0)!) !== null) ? s : translitterer(s);
+}
+
+/** chaîne PDF « (…) » en WinAnsi, parenthèses et barre oblique échappées ; lève CaractereNonImprimable */
 export function texteWinAnsi(s: string): string {
   let out = '';
   for (const ch of s) {
-    const cp = ch.codePointAt(0)!;
-    let b: number;
-    if (cp >= 0x20 && cp <= 0x7e) b = cp;
-    else if (cp >= 0xa0 && cp <= 0xff) b = cp;
-    else if (CP1252[cp] !== undefined) b = CP1252[cp]!;
-    else b = 0x3f;
+    const b = octetWinAnsi(ch.codePointAt(0)!);
+    if (b === null) throw new CaractereNonImprimable(ch);
     const c = String.fromCharCode(b);
     out += c === '(' || c === ')' || c === '\\' ? `\\${c}` : c;
   }
@@ -84,9 +104,12 @@ function contenuPage(
       c.push(
         `BT /${police} ${taille} Tf ${gris} g ${(x + dx).toFixed(2)} ${(yHaut - dy).toFixed(2)} Td ${texteWinAnsi(s)} Tj ET`,
       );
-    const entete = [d.ecole, d.classe, d.date].filter(Boolean).join(' - ');
+    const entete = [d.ecole, d.classe, d.date]
+      .filter(Boolean)
+      .map((x) => pourFiche(x!))
+      .join(' - ');
     t(8, 'F1', 14, 20, coupe(entete, 56), 0.35);
-    t(16, 'F2', 14, 44, coupe(e.prenom, 26));
+    t(16, 'F2', 14, 44, coupe(`${pourFiche(e.prenom)}${e.annee ? ` (${e.annee})` : ''}`, 26));
     t(8.5, 'F1', 14, 70, 'Identifiant', 0.35);
     t(17, 'F3', 14, 88, e.login);
     t(8.5, 'F1', 14, 110, 'Mot de passe', 0.35);

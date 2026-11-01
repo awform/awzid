@@ -33,6 +33,7 @@ import {
   LOT_MAX,
   lienWhatsappParents,
   prenomValide,
+  premierMot,
 } from '@awform/school/eleves-lot';
 import { hashSecret, verifySecret } from './auth/crypto.js';
 import { emailKey } from './auth/common.js';
@@ -48,14 +49,25 @@ import {
   reserveAttempt,
 } from './auth/service.js';
 import { err, UUID } from './guards.js';
-import { ficheClassePdf, type Etiquette } from './pdf-fiche.js';
+import { CaractereNonImprimable, ficheClassePdf, type Etiquette } from './pdf-fiche.js';
 
 /** créations en liste par enseignant et par heure */
 export const LOTS_PAR_HEURE = 10;
 
 const LANGUE = { enum: [...LANGUES_MESSAGE] } as const;
 
-/** identifiants `prénom-NNN` distincts entre eux et libres en base (3 chiffres, puis 4 si la place manque) */
+/** Plus aucun identifiant libre pour ces prénoms (jamais une erreur 500 : l'API répond 409). */
+export class IdentifiantsEpuises extends Error {
+  constructor() {
+    super('identifiants_epuises');
+    this.name = 'IdentifiantsEpuises';
+  }
+}
+
+/**
+ * identifiants `prénom-NNN` distincts entre eux et libres en base : 3 chiffres, puis 4 si la place manque, puis 5
+ * (la base du prénom est raccourcie pour rester à 24 caractères). Épuisés : `IdentifiantsEpuises`.
+ */
 export async function tirerIdentifiants(
   db: Db,
   prenoms: readonly string[],
@@ -63,16 +75,16 @@ export async function tirerIdentifiants(
 ): Promise<string[]> {
   const choisis: string[] = new Array(prenoms.length).fill('');
   const pris = new Set<string>();
-  for (let tour = 0; tour < 8; tour++) {
-    const quatre = tour >= 3;
+  for (let tour = 0; tour < 9; tour++) {
+    const chiffres = tour < 3 ? 3 : tour < 6 ? 4 : 5;
     const candidats: string[] = [];
     prenoms.forEach((p, i) => {
       if (choisis[i]) return;
       const base = baseIdentifiant(p)
-        .slice(0, quatre ? 19 : 20)
+        .slice(0, 24 - 1 - chiffres)
         .replace(/-+$/g, '');
       for (let k = 0; k < 40; k++) {
-        const c = quatre ? `${base}-${tirer(1000, 10_000)}` : `${base}-${tirer(100, 1000)}`;
+        const c = `${base}-${tirer(10 ** (chiffres - 1), 10 ** chiffres)}`;
         if (!pris.has(c) && LOGIN_ENFANT.test(c)) {
           pris.add(c);
           candidats.push(c);
@@ -82,14 +94,13 @@ export async function tirerIdentifiants(
       }
     });
     const dejaPris = await loginsPris(db, candidats);
-    if (!dejaPris.size) break;
-    // ceux qui existent déjà en base sont retirés et retirés au sort au tour suivant
+    if (!dejaPris.size && choisis.every((c) => c)) return choisis;
+    // ceux qui existent déjà en base sont retirés et tirés de nouveau au tour suivant
     choisis.forEach((c, i) => {
       if (dejaPris.has(c)) choisis[i] = '';
     });
   }
-  if (choisis.some((c) => !c)) throw new Error('identifiants_epuises');
-  return choisis;
+  throw new IdentifiantsEpuises();
 }
 
 /** mot de passe de 8 caractères que la règle des familles accepte (jamais un mot de passe courant ni l'identifiant) */
@@ -241,7 +252,8 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
 
       const ecole = await schoolById(db, cls.schoolId);
       const lignes: Array<{ ligne: number; code: string }> = [];
-      const eleves = req.body.eleves.map((e) => ({ prenom: e.prenom.trim(), annee: e.annee }));
+      // seul le PREMIER MOT est gardé (identifiant, pseudonyme, registre) : jamais de nom de famille
+      const eleves = req.body.eleves.map((e) => ({ prenom: premierMot(e.prenom), annee: e.annee }));
       eleves.forEach((e, i) => {
         const age = ageFromYear(e.annee);
         if (!prenomValide(e.prenom)) lignes.push({ ligne: i + 1, code: 'prenom_invalide' });
@@ -268,10 +280,15 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       let mdps: string[] = [];
       let logins: string[] = [];
       for (let essai = 0; essai < 3 && !res; essai++) {
-        logins = await tirerIdentifiants(
-          db,
-          eleves.map((e) => e.prenom),
-        );
+        try {
+          logins = await tirerIdentifiants(
+            db,
+            eleves.map((e) => e.prenom),
+          );
+        } catch (e) {
+          if (e instanceof IdentifiantsEpuises) return err(reply, 409, 'identifiant_indisponible');
+          throw e;
+        }
         mdps = eleves.map((e, i) => motDePasseEleve(logins[i]!, e.prenom));
         const hashes = await empreintes(mdps);
         try {
@@ -370,6 +387,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           pupilId: t.classPupil.id,
           prenom: t.classPupil.displayName,
           login: t.profileLogin.login,
+          annee: t.profile.birthYear,
           owner: t.profile.ownerAccountId,
           creePar: t.profileLogin.createdByAccountId,
         })
@@ -396,16 +414,24 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       if (demandes.some((d) => !parId.has(d.pupilId))) return err(reply, 404, 'introuvable');
       const etiquettes: Etiquette[] = demandes.map((d) => ({
         prenom: parId.get(d.pupilId)!.prenom,
+        annee: parId.get(d.pupilId)!.annee,
         login: parId.get(d.pupilId)!.login,
         motDePasse: d.motDePasse,
       }));
       await audit(db, me(req), 'ecole.fiche.pdf', cls.id, { nombre: etiquettes.length });
-      const pdf = ficheClassePdf({
-        ecole: await nomEcole(cls),
-        classe: cls.name,
-        date: new Date().toISOString().slice(0, 10),
-        etiquettes,
-      });
+      let pdf: Buffer;
+      try {
+        pdf = ficheClassePdf({
+          ecole: await nomEcole(cls),
+          classe: cls.name,
+          date: new Date().toISOString().slice(0, 10),
+          etiquettes,
+        });
+      } catch (e) {
+        // un caractère sans forme dans la police : aucune fiche (jamais un « ? » imprimé à la place d'un prénom)
+        if (e instanceof CaractereNonImprimable) return err(reply, 422, 'fiche_non_imprimable');
+        throw e;
+      }
       return reply
         .header('content-type', 'application/pdf')
         .header('cache-control', 'no-store')
