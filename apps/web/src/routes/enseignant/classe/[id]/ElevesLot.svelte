@@ -72,8 +72,23 @@
     return t(`elv.motif_${code}`);
   }
 
+  /** choix de l'enseignant quand le collage est ambigu (colonne du prénom, ordre nom / prénom) */
+  let colonneChoisie: number | undefined;
+  let ordreChoisi: 'nom-prenom' | 'prenom-nom' | undefined;
+  let ordre = $state<'nom-prenom' | 'prenom-nom'>('nom-prenom');
+
   function lireCollage() {
-    const r = lireListeEleves(collage, undefined, ambigu ? Number(colonne) : undefined);
+    colonneChoisie = undefined;
+    ordreChoisi = undefined;
+    lire();
+  }
+  function confirmerChoix() {
+    if (ambigu?.ordre) ordreChoisi = ordre;
+    else colonneChoisie = Number(colonne);
+    lire();
+  }
+  function lire() {
+    const r = lireListeEleves(collage, undefined, colonneChoisie, ordreChoisi);
     if (r.ambigu) {
       ambigu = r.ambigu;
       colonne = String(r.ambigu.colonnes[0]?.index ?? 0);
@@ -318,16 +333,25 @@
             oninput={() => (ambigu = null)}></textarea>
           {#if ambigu}
             <div class="ambigu" role="group" aria-labelledby="elv-col-t" data-testid="elv-ambigu">
-              <p id="elv-col-t"><Bidi text={t('elv.colonne_titre')} /></p>
-              <select bind:value={colonne} data-testid="elv-colonne" aria-labelledby="elv-col-t">
-                {#each ambigu.colonnes as c (c.index)}
-                  <option
-                    value={String(c.index)}
-                    label={`${c.titre} — ${ambigu.apercu[c.index] ?? ''}`}
-                  ></option>
-                {/each}
-              </select>
-              <button type="button" onclick={lireCollage} data-testid="elv-colonne-ok"
+              {#if ambigu.ordre}
+                <p id="elv-col-t"><Bidi text={t('elv.ordre_titre')} /></p>
+                <p class="petit"><Bidi text={ambigu.apercu[0] ?? ''} /></p>
+                <select bind:value={ordre} data-testid="elv-ordre" aria-labelledby="elv-col-t">
+                  <option value="nom-prenom" label={t('elv.ordre_nom_prenom')}></option>
+                  <option value="prenom-nom" label={t('elv.ordre_prenom_nom')}></option>
+                </select>
+              {:else}
+                <p id="elv-col-t"><Bidi text={t('elv.colonne_titre')} /></p>
+                <select bind:value={colonne} data-testid="elv-colonne" aria-labelledby="elv-col-t">
+                  {#each ambigu.colonnes as c (c.index)}
+                    <option
+                      value={String(c.index)}
+                      label={`${c.titre} — ${ambigu.apercu[c.index] ?? ''}`}
+                    ></option>
+                  {/each}
+                </select>
+              {/if}
+              <button type="button" onclick={confirmerChoix} data-testid="elv-colonne-ok"
                 ><Bidi text={t('elv.colonne_prendre')} /></button
               >
             </div>

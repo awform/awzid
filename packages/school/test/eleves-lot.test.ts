@@ -103,10 +103,16 @@ describe('colonne « prénom » d’un tableur (cinq langues)', () => {
     expect(r.rejets).toEqual([]);
     expect(r.eleves).toEqual([{ prenom: 'Moussa', annee: an }]);
   });
-  it('une seule colonne de texte avec un intitulé général : elle est prise', () => {
-    expect(lireListeEleves(`Name\tYear\nMoussa\t${an}`, 2026).eleves).toEqual([
+  it('un intitulé général (« Name », « Nom et prénom ») n’est jamais retenu seul : on demande', () => {
+    const r = lireListeEleves(`Name\tYear\nMoussa\t${an}`, 2026);
+    expect(r.eleves).toEqual([]);
+    expect(r.ambigu?.colonnes).toEqual([{ index: 0, titre: 'Name' }]);
+    expect(lireListeEleves(`Name\tYear\nMoussa\t${an}`, 2026, 0).eleves).toEqual([
       { prenom: 'Moussa', annee: an },
     ]);
+    const np = lireListeEleves(`Nom et prénom\tAnnée\nDIOP Fatou\t${an}`, 2026);
+    expect(np.eleves).toEqual([]);
+    expect(np.ambigu?.colonnes[0]).toEqual({ index: 0, titre: 'Nom et prénom' });
   });
   it('plusieurs colonnes de texte sans intitulé reconnu : on demande laquelle prendre', () => {
     const t = `Name\tClass\tYear\nMoussa\tCE2\t${an}`;
@@ -128,9 +134,51 @@ describe('colonne « prénom » d’un tableur (cinq langues)', () => {
     expect(r.rejets.map((x) => x.code)).toEqual(['annee_manquante']);
     expect(r.eleves).toEqual([{ prenom: 'Nomar', annee: an }]);
   });
-  it('seul le premier mot est gardé', () => {
-    expect(lireListeEleves(`Fatou Bintou Diop ${an}`, 2026).eleves[0]?.prenom).toBe('Fatou');
+  it('seul le premier mot d’une colonne « prénom » est gardé', () => {
+    expect(lireListeEleves(`Prénom\tAnnée\nFatou Bintou\t${an}`, 2026).eleves[0]?.prenom).toBe(
+      'Fatou',
+    );
     expect(premierMot('  Jean-Éric   Ndiaye ')).toBe('Jean-Éric');
+  });
+  it('« DIOP Fatou » ou « Fatou DIOP » : l’ordre est demandé, puis le nom de famille n’est jamais pris', () => {
+    for (const texte of [
+      `DIOP Fatou ${an}`,
+      `Fatou DIOP ${an}`,
+      `Nom et prénom\tAnnée\nDIOP Fatou\t${an}`,
+    ]) {
+      const colonne = texte.includes('\t') ? 0 : undefined;
+      const r = lireListeEleves(texte, 2026, colonne);
+      expect(r.eleves, texte).toEqual([]);
+      expect(r.ambigu?.ordre, texte).toBe(true);
+      expect(r.ambigu?.apercu[0]).toMatch(/Fatou/);
+    }
+    const nomPrenom = lireListeEleves(
+      `DIOP Fatou ${an}\nNDIAYE Awa ${an}`,
+      2026,
+      undefined,
+      'nom-prenom',
+    );
+    expect(nomPrenom.eleves).toEqual([
+      { prenom: 'Fatou', annee: an },
+      { prenom: 'Awa', annee: an },
+    ]);
+    const prenomNom = lireListeEleves(
+      `Fatou DIOP ${an}\nAwa NDIAYE ${an}`,
+      2026,
+      undefined,
+      'prenom-nom',
+    );
+    expect(prenomNom.eleves).toEqual([
+      { prenom: 'Fatou', annee: an },
+      { prenom: 'Awa', annee: an },
+    ]);
+    // un mot seul : aucune question
+    expect(lireListeEleves(`Fatou ${an}`, 2026).ambigu).toBeUndefined();
+  });
+  it('un intitulé « prénom » sûr n’a pas besoin de l’ordre', () => {
+    const r = lireListeEleves(`Nom\tPrénom\tAnnée\nDIOP\tFatou Bintou\t${an}`, 2026);
+    expect(r.ambigu).toBeUndefined();
+    expect(r.eleves).toEqual([{ prenom: 'Fatou', annee: an }]);
   });
 });
 
@@ -160,6 +208,9 @@ describe('translittération de l’arabe (identifiant et étiquette)', () => {
     ['عبد', 'abd'],
     ['زينب', 'zinb'],
     ['Moussa', 'Moussa'],
+    ['Ɓaaba', 'Baaba'],
+    ['Ɗiko Ŋgoy Ƴaya', 'Diko Nggoy Yaya'],
+    ['ɓaaba ɗiko', 'baaba diko'],
   ])('%s → %s', (ar, latin) => {
     expect(translitterer(ar)).toBe(latin);
   });

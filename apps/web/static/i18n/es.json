@@ -4535,5 +4535,9 @@
   "elv.colonne_prendre": "Usar esta columna",
   "elv.colonne_titre": "¿Qué columna contiene el nombre?",
   "erreur.profil_rattache_a_un_parent": "Este alumno ya está vinculado a la cuenta de un padre o una madre: la escuela ya no puede cambiar su contraseña.",
-  "erreur.acces_non_gere_par_l_ecole": "Este identificador no lo creó la escuela: no puede modificarlo."
+  "erreur.acces_non_gere_par_l_ecole": "Este identificador no lo creó la escuela: no puede modificarlo.",
+  "fam.identifiant_retire": "La contraseña entregada por la escuela ya no funciona. Cree un nuevo identificador para su hijo: abra «¿Quién aprende?» y después el acceso de su hijo.",
+  "elv.ordre_titre": "En cada fila, ¿qué palabra es el nombre?",
+  "elv.ordre_nom_prenom": "Primero el apellido y después el nombre (DIOP Fatou)",
+  "elv.ordre_prenom_nom": "Primero el nombre y después el apellido (Fatou DIOP)"
 }

@@ -4535,5 +4535,9 @@
   "elv.colonne_prendre": "استعمال هذا العمود",
   "elv.colonne_titre": "أي عمود يحتوي على الاسم؟",
   "erreur.profil_rattache_a_un_parent": "أصبح هذا التلميذ مرتبطًا بحساب أحد الأولياء: لم يعد بإمكان المدرسة تغيير كلمة مروره.",
-  "erreur.acces_non_gere_par_l_ecole": "لم تنشئ المدرسة اسم المستخدم هذا: لا يمكنها تعديله."
+  "erreur.acces_non_gere_par_l_ecole": "لم تنشئ المدرسة اسم المستخدم هذا: لا يمكنها تعديله.",
+  "fam.identifiant_retire": "لم تعد كلمة المرور التي سلّمتها المدرسة تعمل. أنشئ اسم مستخدم جديدًا لطفلك: افتح «من يتعلم؟» ثم وصول طفلك.",
+  "elv.ordre_titre": "في كل سطر، أي كلمة هي الاسم الأول؟",
+  "elv.ordre_nom_prenom": "اللقب أولًا ثم الاسم (DIOP Fatou)",
+  "elv.ordre_prenom_nom": "الاسم أولًا ثم اللقب (Fatou DIOP)"
 }

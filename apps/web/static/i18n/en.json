@@ -4535,5 +4535,9 @@
   "elv.colonne_prendre": "Use this column",
   "elv.colonne_titre": "Which column contains the first name?",
   "erreur.profil_rattache_a_un_parent": "This learner is now linked to a parent’s account: the school can no longer change the password.",
-  "erreur.acces_non_gere_par_l_ecole": "This username was not created by the school: the school cannot change it."
+  "erreur.acces_non_gere_par_l_ecole": "This username was not created by the school: the school cannot change it.",
+  "fam.identifiant_retire": "The password given by the school no longer works. Create a new username for your child: open “Who is learning?”, then your child’s access.",
+  "elv.ordre_titre": "In each row, which word is the first name?",
+  "elv.ordre_nom_prenom": "Family name first, then first name (DIOP Fatou)",
+  "elv.ordre_prenom_nom": "First name first, then family name (Fatou DIOP)"
 }

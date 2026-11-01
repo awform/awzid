@@ -12,7 +12,7 @@ import { hashSecret } from './crypto.js';
 import { checkPassword } from './passwords.js';
 import { audit, cleGlobaleIdentifiant, clearFailures, reserveAttempt } from './service.js';
 import { emailKey, err, type AuthKit } from './common.js';
-import { translitterer } from '@awform/school/eleves-lot';
+import { normaliserPrenom, translitterer } from '@awform/school/eleves-lot';
 import { parentGate } from '../guards.js';
 
 /** 3 à 24 caractères [a-z0-9-], au moins une lettre (jamais confondu avec un numéro), ni tiret au début ni à la fin. */
@@ -23,7 +23,7 @@ export const estIdentifiantEnfant = (saisie: string) =>
 /** « prénom » → base sûre (sans accents ni signes), au plus 20 caractères */
 export function baseIdentifiant(prenom: string): string {
   // prénom en écriture arabe : lettres latines simples (« أمينة » → « amina »), sinon il ne reste rien
-  const b = translitterer(prenom ?? '')
+  const b = translitterer(normaliserPrenom(prenom ?? ''))
     .toLowerCase()
     .replace(/[àáâãäå]/g, 'a')
     .replace(/ç/g, 'c')

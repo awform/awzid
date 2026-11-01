@@ -5,7 +5,7 @@
  * Les mots de passe ne sont écrits nulle part ailleurs : ce document est fabriqué à la demande, jamais conservé.
  */
 
-import { translitterer } from '@awform/school/eleves-lot';
+import { normaliserPrenom, translitterer } from '@awform/school/eleves-lot';
 
 export interface Etiquette {
   prenom: string;
@@ -70,7 +70,17 @@ const octetWinAnsi = (cp: number): number | null =>
  * lecture exigerait un moteur de mise en forme absent du projet. Ce qui reste non imprimable fait refuser la fiche.
  */
 export function pourFiche(s: string): string {
-  return [...s].every((ch) => octetWinAnsi(ch.codePointAt(0)!) !== null) ? s : translitterer(s);
+  return [...s].every((ch) => octetWinAnsi(ch.codePointAt(0)!) !== null)
+    ? s
+    : translitterer(normaliserPrenom(s));
+}
+
+/**
+ * En-tête d'une étiquette (nom d'école, de classe) : translittéré, et ce qui ne s'imprime toujours pas est retiré —
+ * un nom de classe exotique ne doit pas faire refuser toute la fiche (seul un PRÉNOM non imprimable la refuse).
+ */
+export function pourEntete(s: string): string {
+  return [...pourFiche(s)].filter((ch) => octetWinAnsi(ch.codePointAt(0)!) !== null).join('');
 }
 
 /** chaîne PDF « (…) » en WinAnsi, parenthèses et barre oblique échappées ; lève CaractereNonImprimable */
@@ -106,7 +116,7 @@ function contenuPage(
       );
     const entete = [d.ecole, d.classe, d.date]
       .filter(Boolean)
-      .map((x) => pourFiche(x!))
+      .map((x) => pourEntete(x!))
       .join(' - ');
     t(8, 'F1', 14, 20, coupe(entete, 56), 0.35);
     t(16, 'F2', 14, 44, coupe(`${pourFiche(e.prenom)}${e.annee ? ` (${e.annee})` : ''}`, 26));

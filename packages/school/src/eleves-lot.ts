@@ -32,6 +32,8 @@ export interface ColonneAmbigue {
   colonnes: Array<{ index: number; titre: string }>;
   /** la première ligne de données, pour que l'enseignant reconnaisse la colonne */
   apercu: string[];
+  /** vrai : la colonne est connue mais ses cellules ont plusieurs mots ; l'enseignant dit l'ordre (nom puis prénom, ou l'inverse) */
+  ordre?: boolean;
 }
 
 const ANNEE_MIN = 1990;
@@ -68,6 +70,29 @@ export function premierMot(s: string): string {
 }
 
 // ------------------------------------------------------------------ translittération de l'arabe
+
+/**
+ * Normalisation NFKC du PRÉNOM SAISI seulement (formes de présentation arabes, lettres pleine chasse…), avant la
+ * translittération. Jamais appliquée à un texte du Coran ni d'un livre.
+ */
+export function normaliserPrenom(s: string): string {
+  // eslint-disable-next-line no-restricted-syntax -- prénom saisi par l'enseignant, jamais un texte coranique
+  return (s ?? '').normalize('NFKC');
+}
+
+/** lettres latines étendues (peul, etc.) sans équivalent dans les polices standard */
+const LATIN_ETENDU: Record<string, string> = {
+  ɓ: 'b',
+  Ɓ: 'B',
+  ɗ: 'd',
+  Ɗ: 'D',
+  ŋ: 'ng',
+  Ŋ: 'Ng',
+  ƴ: 'y',
+  Ƴ: 'Y',
+  ɲ: 'ny',
+  Ɲ: 'Ny',
+};
 
 const AR: Record<string, string> = {
   ا: 'a',
@@ -139,7 +164,10 @@ const VOYELLES = /[aeiou]/;
  * « a » après chaque consonne sauf la dernière. Ce n'est pas une transcription savante. Le texte non arabe reste tel quel.
  */
 export function translitterer(s: string): string {
-  const mots = sansMarques(s ?? '').split(/(\s+)/u);
+  const mots = [...sansMarques(s ?? '')]
+    .map((c) => LATIN_ETENDU[c] ?? c)
+    .join('')
+    .split(/(\s+)/u);
   return mots
     .map((mot) => {
       if (!/[؀-ۿ]/u.test(mot)) return mot;
@@ -321,6 +349,8 @@ export function lireListeEleves(
   texte: string,
   anneeCourante = new Date().getUTCFullYear(),
   colonnePrenom?: number,
+  /** ordre des mots d'une cellule « nom et prénom » (choisi par l'enseignant) */
+  ordre?: 'nom-prenom' | 'prenom-nom',
 ): { eleves: LigneEleve[]; rejets: RejetLigne[]; ambigu?: ColonneAmbigue } {
   const eleves: LigneEleve[] = [];
   const rejets: RejetLigne[] = [];
@@ -346,23 +376,29 @@ export function lireListeEleves(
   const colsTexte = (cells: string[]) =>
     cells.map((c, i) => (c && !estNombre(c) ? i : -1)).filter((i) => i >= 0);
 
-  // colonne du prénom
+  // colonne du prénom. `sure` : l'intitulé dit « prénom » sans ambiguïté (sinon, plusieurs mots dans la cellule
+  // ne se tranchent pas seuls : « DIOP Fatou » ou « Fatou DIOP » ?)
   let col: number | null = null;
+  let sure = false;
   if (colonnePrenom !== undefined) col = colonnePrenom;
   else if (enteteCells && enteteCells.length > 1) {
     const normes = enteteCells.map(normaliser);
     const sures = normes.map((n, i) => (PRENOM_SUR.has(n) ? i : -1)).filter((i) => i >= 0);
-    if (sures.length === 1) col = sures[0]!;
-    else if (sures.length === 0) {
-      // ni « prénom » ni autre : s'il ne reste qu'une colonne hors nom de famille et année, c'est elle
+    if (sures.length === 1) {
+      col = sures[0]!;
+      sure = true;
+    } else if (sures.length === 0) {
+      // ni « prénom » ni autre : s'il ne reste qu'une colonne hors nom de famille, année et intitulé général, c'est elle
       const restes = normes
-        .map((n, i) => (n && !NOM_FAMILLE.has(n) && !ANNEE_TITRE.has(n) ? i : -1))
+        .map((n, i) =>
+          n && !NOM_FAMILLE.has(n) && !ANNEE_TITRE.has(n) && !AMBIGUS.has(n) ? i : -1,
+        )
         .filter((i) => i >= 0);
       if (restes.length === 1) col = restes[0]!;
     }
   } else if (!enteteCells || enteteCells.length <= 1) {
     const maxTexte = Math.max(0, ...donnees.map((d) => colsTexte(d.cellules).length));
-    if (maxTexte <= 1) col = -1; // une seule colonne de texte : la première de chaque ligne
+    if (maxTexte <= 1 && !enteteCells) col = -1; // une seule colonne de texte : la première de chaque ligne
   }
   if (col === null && donnees.length) {
     const ref = donnees[0]!.cellules;
@@ -377,6 +413,7 @@ export function lireListeEleves(
     };
   }
 
+  const lus: Array<{ nom: string; annee: number; numero: number; texte: string }> = [];
   for (const d of donnees) {
     const rejet = (code: CodeRejet) => rejets.push({ ligne: d.numero, texte: d.ligne, code });
     const annees = [...d.ligne.matchAll(/(?<!\d)(\d{4})(?!\d)/g)].map((m) => m[1]!);
@@ -390,24 +427,37 @@ export function lireListeEleves(
       rejet('annee_invalide');
       continue;
     }
-    let prenom: string;
+    let nom: string;
     if (d.cellules.length > 1) {
       const i = col !== null && col >= 0 ? col : colsTexte(d.cellules)[0];
-      prenom = i === undefined ? '' : (d.cellules[i] ?? '');
+      nom = i === undefined ? '' : (d.cellules[i] ?? '');
     } else {
-      prenom = d.ligne.replace(/[\s/.-]*\d{4}[\s/.-]*$/, '').replace(/^["']+|["']+$/g, '');
-      if (!prenom || prenom === d.ligne) prenom = d.ligne.replace(/\d+/g, ' ').trim();
+      nom = d.ligne.replace(/[\s/.-]*\d{4}[\s/.-]*$/, '').replace(/^["']+|["']+$/g, '');
+      if (!nom || nom === d.ligne) nom = d.ligne.replace(/\d+/g, ' ').trim();
     }
-    prenom = premierMot(prenom.replace(/\s+/g, ' '));
-    if (!prenom || estNombre(prenom)) {
+    nom = nom.replace(/\s+/g, ' ').trim();
+    if (!nom || estNombre(nom)) {
       rejet('prenom_manquant');
       continue;
     }
+    lus.push({ nom, annee, numero: d.numero, texte: d.ligne });
+  }
+
+  // plusieurs mots dans une cellule dont l'intitulé ne dit pas « prénom » : l'enseignant dit dans quel ordre
+  if (!sure && ordre === undefined) {
+    const multi = lus.find((x) => x.nom.includes(' '));
+    if (multi)
+      return { eleves: [], rejets: [], ambigu: { colonnes: [], apercu: [multi.nom], ordre: true } };
+  }
+  for (const x of lus) {
+    const mots = x.nom.split(' ');
+    // « nom puis prénom » : le prénom est le deuxième mot ; sinon le premier. Jamais le nom de famille.
+    const prenom = !sure && ordre === 'nom-prenom' ? (mots[1] ?? mots[0]!) : mots[0]!;
     if (!prenomValide(prenom)) {
-      rejet('prenom_invalide');
+      rejets.push({ ligne: x.numero, texte: x.texte, code: 'prenom_invalide' });
       continue;
     }
-    eleves.push({ prenom, annee });
+    eleves.push({ prenom, annee: x.annee });
   }
   return { eleves, rejets };
 }

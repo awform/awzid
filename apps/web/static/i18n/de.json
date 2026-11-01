@@ -4535,5 +4535,9 @@
   "elv.colonne_prendre": "Diese Spalte verwenden",
   "elv.colonne_titre": "Welche Spalte enthält den Vornamen?",
   "erreur.profil_rattache_a_un_parent": "Dieser Schüler ist jetzt mit dem Konto eines Elternteils verknüpft: Die Schule kann das Passwort nicht mehr ändern.",
-  "erreur.acces_non_gere_par_l_ecole": "Dieser Benutzername wurde nicht von der Schule erstellt: Sie kann ihn nicht ändern."
+  "erreur.acces_non_gere_par_l_ecole": "Dieser Benutzername wurde nicht von der Schule erstellt: Sie kann ihn nicht ändern.",
+  "fam.identifiant_retire": "Das von der Schule ausgegebene Passwort funktioniert nicht mehr. Legen Sie einen neuen Benutzernamen für Ihr Kind an: Öffnen Sie „Wer lernt?“ und dann den Zugang Ihres Kindes.",
+  "elv.ordre_titre": "Welches Wort ist in jeder Zeile der Vorname?",
+  "elv.ordre_nom_prenom": "Zuerst der Familienname, dann der Vorname (DIOP Fatou)",
+  "elv.ordre_prenom_nom": "Zuerst der Vorname, dann der Familienname (Fatou DIOP)"
 }

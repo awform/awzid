@@ -704,5 +704,6 @@
   "bascule.ajouter_enfant": "Ajouter un enfant",
   "bascule.mon_espace": "Mon espace d'apprentissage",
   "bascule.aide_mon_espace": "Un toucher pour apprendre vous aussi : votre espace est à vous, séparé de celui de vos enfants.",
-  "bascule.code_parent": "Code parent (4 chiffres) pour passer à {nom}"
+  "bascule.code_parent": "Code parent (4 chiffres) pour passer à {nom}",
+  "fam.identifiant_retire": "Le mot de passe remis par l’école ne fonctionne plus. Créez un nouvel identifiant pour votre enfant : ouvrez « Qui apprend ? », puis l’accès de votre enfant."
 }
