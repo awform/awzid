@@ -6,19 +6,19 @@ bloquant. Compression Brotli (qualité 11).
 
 | Indicateur | Mesure | Budget | Tenu |
 |---|---|---|---|
-| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 346.0 Ko | ≤ 350.0 Ko | oui |
-| (a) marge restante sous le budget de l'appareil élève | 4.0 Ko (4062 o) | ≥ 3.0 Ko | oui |
-| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 102.8 Ko | ≤ 150.0 Ko | oui |
-| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 2.47 s (élève, premier lancement ; relance 1.13 s ; mesuré le 2026-11-01) | < 3 s | oui |
-| Page la plus lourde au premier chargement (`/coran/lecteur`) | 138.7 Ko | ≤ 150.0 Ko | oui |
+| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 345.9 Ko | ≤ 350.0 Ko | oui |
+| (a) marge restante sous le budget de l'appareil élève | 4.1 Ko (4177 o) | ≥ 3.0 Ko | oui |
+| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 102.6 Ko | ≤ 150.0 Ko | oui |
+| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.81 s (élève, premier lancement ; relance 0.69 s ; mesuré le 2026-10-29) | < 3 s | oui |
+| Page la plus lourde au premier chargement (`/coran/lecteur`) | 138.6 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
 
 | Élément | Poids transféré |
 |---|---|
-| (a) dont JS + CSS de la coquille de l'élève | 322.2 Ko |
+| (a) dont JS + CSS de la coquille de l'élève | 322.1 Ko |
 | (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`, `/i18n/fr-hifz.json`, `/i18n/fr-arabe.json`, `/i18n/fr-suivi.json`) | 23.8 Ko |
-| Pages du personnel, NON préchargées (36 fichiers) | 75.6 Ko |
+| Pages du personnel, NON préchargées (36 fichiers) | 75.9 Ko |
 | Pages rares, en ligne seulement, NON préchargées (72 fichiers) | 78.2 Ko |
 | Modules à la demande qui ont besoin du réseau, NON préchargés (42 fichiers) | 70.5 Ko |
 | Pages de l’élève gardées au premier usage (Madjaliss, cahier « Je parle »), NON préchargées (39 fichiers) | 104.4 Ko |
@@ -30,10 +30,10 @@ bloquant. Compression Brotli (qualité 11).
 | Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | 47.9 Ko |
 | Cahier de lecture, à la demande à la première ouverture (6 fichiers) | 28.6 Ko (≤ 32.0 Ko) |
 | Cahier « Je parle », à la demande à la première ouverture (2 fichiers) | 12.2 Ko (≤ 16.0 Ko) |
-| « La prière de A à Z », à la demande à la première ouverture (20 fichiers) | 52.0 Ko (≤ 56.0 Ko) |
+| « La prière de A à Z », à la demande à la première ouverture (20 fichiers) | 51.9 Ko (≤ 56.0 Ko) |
 | « La prière de A à Z » : données de l'écran le plus lourd (`s5.json`, 25 fichiers, chargés écran par écran) | 13.7 Ko (≤ 24.0 Ko) |
 | « Mots du Coran », à la demande à la première ouverture (2 fichiers) | 7.8 Ko (≤ 16.0 Ko) |
-| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 747.0 Ko |
+| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 747.3 Ko |
 | dont CSS | 93.7 Ko |
 | Service worker | 8.4 Ko |
 | Polices WOFF2 (une seule fois, déjà compressées) | 334.7 Ko (≤ 600.0 Ko) |
@@ -43,11 +43,11 @@ bloquant. Compression Brotli (qualité 11).
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/coran/lecteur` | 138.7 Ko |
-| `/lecons/[id]` | 135.7 Ko |
-| `/hifz/[outil]` | 113.7 Ko |
-| `/hifz` | 113.6 Ko |
+| `/coran/lecteur` | 138.6 Ko |
+| `/lecons/[id]` | 135.5 Ko |
+| `/hifz/[outil]` | 113.6 Ko |
+| `/hifz` | 113.5 Ko |
 | `/enseignant/classe/[id]` | 111.4 Ko |
-| `/inscription` | 111.2 Ko |
-| `/lectures/[code]` | 110.9 Ko |
-| `/lectures` | 110.9 Ko |
+| `/inscription` | 111.1 Ko |
+| `/lectures` | 110.8 Ko |
+| `/lectures/[code]` | 110.8 Ko |

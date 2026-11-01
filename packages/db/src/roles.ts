@@ -127,8 +127,9 @@ export const API_GRANTS: Record<string, Right[]> = {
   school_year: RIU,
   enrolment: RIU,
   profile_custodian: RIU,
-  // V2-3 : identifiant et mot de passe d'un profil d'enfant (supprimés en cascade avec le profil)
-  profile_login: RIU,
+  // V2-3 : identifiant et mot de passe d'un profil d'enfant (supprimés en cascade avec le profil). DELETE : retrait de
+  // l'accès par le parent, départ d'un élève de l'école, reprise par un parent (sans lui : « permission denied » en production)
+  profile_login: ALL,
   profile_level: RIU,
   subject: R,
   quran_lemma: R,

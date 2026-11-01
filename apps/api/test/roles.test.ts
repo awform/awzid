@@ -100,6 +100,24 @@ describe.skipIf(!URL_)('comptes PostgreSQL séparés (awform_test)', () => {
     expect(rows[0]).toEqual({ su: false, cdb: false, cr: false });
   });
 
+  it('API sous son compte : l’identifiant d’un profil peut être supprimé (retrait par le parent, départ d’un élève, reprise par un parent)', async () => {
+    const { rows } = await owner.pool.query(
+      "insert into account (kind) values ('ecole') returning id",
+    );
+    const prof = await owner.pool.query(
+      "insert into profile (owner_account_id, kind, pseudonym, birth_year, avatar) values ($1, 'enfant', 'Awa', 2017, 'etoile') returning id",
+      [rows[0].id],
+    );
+    await owner.pool.query(
+      "insert into profile_login (profile_id, login, password_hash) values ($1, 'awa-roles-1', 'x')",
+      [prof.rows[0].id],
+    );
+    const r = await api.pool.query('delete from profile_login where profile_id = $1', [
+      prof.rows[0].id,
+    ]);
+    expect(r.rowCount).toBe(1);
+  });
+
   it('API sous son compte : inscription, profil, consentements, journal — mais aucune DDL ni retouche du Coran', async () => {
     const r = await app.inject({
       method: 'POST',
