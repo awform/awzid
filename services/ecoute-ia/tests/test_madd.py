@@ -65,7 +65,10 @@ def test_jamais_correct_la_seule_valeur_possible_est_trop_court_ou_rien():
                 assert 'correct' not in str(r).lower() and 'ok' not in r
 
 
-def test_seulement_les_madd_longs():
+def test_seulement_les_madd_longs(monkeypatch):
+    # le lāzim est ÉTEINT par la configuration calibrée (seuils_tajwid.json : 3 mesures seulement, voir test_seuils_tajwid.py) ; ici on le
+    # rallume pour vérifier la logique elle-même
+    monkeypatch.setattr(madd, 'TYPES_ALLUMES', ('muttasil', 'lazim'))
     court = verset(2, 4)  # ṭabīʿī : 2 temps dans la référence
     r = madd.decider(court, verset(2, 1), 0, 'muttasil', 1)
     assert r == {'indication': None, 'raison': 'madd_non_long'}

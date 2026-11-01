@@ -19,16 +19,20 @@ from __future__ import annotations
 
 import os
 
+import seuils_tajwid
+
 MADD = {'ا', 'ۥ', 'ۦ'}  # unités de voyelle longue (a, u, i)
 HARAKA = {'َ', 'ُ', 'ِ'}
 TRAME = 0.04
-R_COURT = float(os.environ.get('MADD_R_COURT', '0.70'))
+R_COURT = float(os.environ.get('MADD_R_COURT', seuils_tajwid.seuil('madd_muttasil', 0.70)))
 P_MIN = float(os.environ.get('MADD_P_MIN', '0.95'))
 # part maximale de phonèmes différents entre l'élève et la référence : au-delà, le verset est « mal reconnu » et rien n'est analysé
 DIST_MAX = float(os.environ.get('MADD_DIST_MAX', '0.25'))
 # temps minimum du madd dans la RÉFÉRENCE pour qu'il compte comme « long » selon son type
 UNITES_MIN = {'muttasil': 4, 'lazim': 6}
 TYPES = tuple(UNITES_MIN)
+# types de madd dont la configuration calibrée (seuils_tajwid.json) laisse le service signaler une indication ; les autres : silence
+TYPES_ALLUMES = tuple(x for x in TYPES if seuils_tajwid.est_allumee('madd_' + x))
 
 
 def runs(toks: list[dict]) -> list[tuple[int, int, int]]:
@@ -122,35 +126,44 @@ def aligner_runs(ref: list[dict], hyp: list[dict]) -> list[tuple[int, int, int] 
     return [par_debut.get(corr.get(r[1])) for r in runs(ref)]
 
 
+def rapport(ref: list[dict], hyp: list[dict], k: int, type_madd: str, n_madd: int | None = None) -> tuple[str, float | None, float | None, int | None]:
+    """Cœur de la décision, SANS seuil de rapport : (raison, r, p_min, unités). `raison` vaut 'mesure' quand le rapport r a été calculé
+    (alors r, p_min et unités sont renseignés) ; sinon c'est le code de silence et r vaut None. Sert à `decider` (qui compare r à R_COURT)
+    et à la calibration (services/ecoute-ia/calibration) : une seule logique, pas deux copies."""
+    if type_madd not in UNITES_MIN:
+        return 'type_non_long', None, None, None
+    if type_madd not in TYPES_ALLUMES:
+        return 'type_eteint', None, None, None
+    if not ref or not hyp:
+        return 'audio_vide', None, None, None
+    rr = runs(ref)
+    if n_madd is not None and n_madd != len(rr):
+        return 'correspondance_incertaine', None, None, None
+    if not (0 <= k < len(rr)):
+        return 'cible_introuvable', None, None, None
+    m_ref = mesure(ref, rr[k])
+    if m_ref['unites'] < UNITES_MIN[type_madd]:
+        return 'madd_non_long', None, None, None
+    if distance_relative(ref, hyp) > DIST_MAX:
+        return 'verset_mal_reconnu', None, None, None
+    ch = aligner_runs(ref, hyp)[k]
+    if ch is None:
+        return 'madd_non_retrouve', None, None, None
+    mh = mesure(hyp, ch)
+    if mh['p_min'] < P_MIN:
+        return 'confiance_insuffisante', None, mh['p_min'], mh['unites']
+    n_ph = nb_phonemes(ref)
+    r = (mh['duree_s'] / debit(hyp, n_ph)) / (m_ref['duree_s'] / debit(ref, n_ph))
+    return 'mesure', r, mh['p_min'], mh['unites']
+
+
 def decider(ref: list[dict], hyp: list[dict], k: int, type_madd: str, n_madd: int | None = None) -> dict:
     """Décision pour LE madd n° k (0 = premier) du verset : {'indication': 'trop_court' | None, 'raison': code}.
     `n_madd` : nombre de madd du verset selon les annotations de tajwīd (contrôle de correspondance) ; s'il ne coïncide pas avec les madd
     décodés dans la référence, on se tait. Seule valeur d'`indication` possible en dehors de None : « trop_court »."""
-    def silence(raison: str) -> dict:
+    raison, r, _p, _u = rapport(ref, hyp, k, type_madd, n_madd)
+    if raison != 'mesure':
         return {'indication': None, 'raison': raison}
-
-    if type_madd not in UNITES_MIN:
-        return silence('type_non_long')
-    if not ref or not hyp:
-        return silence('audio_vide')
-    rr = runs(ref)
-    if n_madd is not None and n_madd != len(rr):
-        return silence('correspondance_incertaine')
-    if not (0 <= k < len(rr)):
-        return silence('cible_introuvable')
-    m_ref = mesure(ref, rr[k])
-    if m_ref['unites'] < UNITES_MIN[type_madd]:
-        return silence('madd_non_long')
-    if distance_relative(ref, hyp) > DIST_MAX:
-        return silence('verset_mal_reconnu')
-    ch = aligner_runs(ref, hyp)[k]
-    if ch is None:
-        return silence('madd_non_retrouve')
-    mh = mesure(hyp, ch)
-    if mh['p_min'] < P_MIN:
-        return silence('confiance_insuffisante')
-    n_ph = nb_phonemes(ref)
-    r = (mh['duree_s'] / debit(hyp, n_ph)) / (m_ref['duree_s'] / debit(ref, n_ph))
     if r < R_COURT:
         return {'indication': 'trop_court', 'raison': 'sous_le_seuil'}
-    return silence('zone_non_signalee')
+    return {'indication': None, 'raison': 'zone_non_signalee'}
