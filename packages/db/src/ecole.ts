@@ -488,19 +488,32 @@ export async function ensureSchoolAccount(db: Db, schoolId: string): Promise<str
   const s = await schoolById(db, schoolId);
   if (!s) throw new Error('école inconnue');
   if (s.accountId) return s.accountId;
-  return db.transaction(async (tx) => {
-    const [a] = await tx
-      .insert(t.account)
-      .values({ kind: 'ecole', country: s.country ?? null })
-      .returning({ id: t.account.id });
-    const done = await tx
-      .update(t.school)
-      .set({ accountId: a!.id })
-      .where(and(eq(t.school.id, schoolId), isNull(t.school.accountId)))
-      .returning({ id: t.school.id });
-    if (!done.length) throw new Error('compte de l’école créé en parallèle : réessayer');
-    return a!.id;
-  });
+  // deux premières demandes simultanées (double envoi) : la perdante relit le compte créé par la gagnante
+  return creerCompteEcole(db, schoolId);
+}
+
+async function creerCompteEcole(db: Db, schoolId: string): Promise<string> {
+  const s = await schoolById(db, schoolId);
+  if (!s) throw new Error('école inconnue');
+  return db
+    .transaction(async (tx) => {
+      const [a] = await tx
+        .insert(t.account)
+        .values({ kind: 'ecole', country: s.country ?? null })
+        .returning({ id: t.account.id });
+      const done = await tx
+        .update(t.school)
+        .set({ accountId: a!.id })
+        .where(and(eq(t.school.id, schoolId), isNull(t.school.accountId)))
+        .returning({ id: t.school.id });
+      if (!done.length) throw new Error('compte de l’école créé en parallèle : réessayer');
+      return a!.id;
+    })
+    .catch(async (e) => {
+      const x = await schoolById(db, schoolId);
+      if (x?.accountId) return x.accountId;
+      throw e;
+    });
 }
 
 /** École dont ce compte est le compte technique (null sinon). */

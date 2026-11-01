@@ -28,6 +28,8 @@ export interface AuthCtx {
   tablet: { classId: string } | null;
   /** V2-3 : session d'un ENFANT (identifiant + mot de passe) : limitée à CE profil, apprentissage seulement */
   profileId: string | null;
+  /** V2-5 : élève créé par l'enseignant (compte technique de l'école + session limitée à son profil) */
+  eleveEcole?: boolean;
 }
 
 /** Rôles de PERSONNEL : les espaces qu'ils ouvrent exigent le second facteur. */
@@ -147,6 +149,8 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
     ...rest,
     tokenHash,
     roles,
+    // V2-5 : élève de l'école (kind « ecole » conservé ; ce drapeau ouvre SEULEMENT son propre profil, aux endroits voulus)
+    eleveEcole: !!r.profileId && r.kind === 'ecole',
     tablet: tabletClassId ? { classId: tabletClassId } : null,
   };
 }

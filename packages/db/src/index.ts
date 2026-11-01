@@ -37,3 +37,4 @@ export * from './beta-acces.js';
 export * from './khatma.js';
 export * from './hifz-classe.js';
 export * from './funnel.js';
+export * from './eleves-lot.js';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
-  import { onMount } from 'svelte';
+  import { onMount, type Component } from 'svelte';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { note, suraName, type Counters } from '@awform/hifz';
@@ -149,10 +149,23 @@
   const live = $derived(note(counters));
   const FIELDS = ['aides', 'hesitations', 'sauts', 'oublis', 'claires', 'discretes'] as const;
 
+  // V2-5 : création des comptes d'élèves en liste (écran chargé à la demande ; `?eleves` l'ouvre directement)
+  let ElevesLot = $state<Component<{
+    classeId: string;
+    onferme: () => void;
+    onchange: () => void;
+  }> | null>(null);
+  let lotOuvert = $state(false);
+  async function ouvrirLot() {
+    ElevesLot = (await import('./ElevesLot.svelte')).default;
+    lotOuvert = true;
+  }
+
   onMount(async () => {
     me = await fetchMe();
     if (isTeacher && !blocked) await load();
     loaded = true;
+    if (cls && page.url.searchParams.has('eleves')) await ouvrirLot();
   });
 
   async function load() {
@@ -500,6 +513,16 @@
         <button type="submit" data-testid="ajouter-groupe">{t('classe.ajouter_groupe')}</button>
       </form>
     </section>
+
+    {#if lotOuvert && ElevesLot}
+      <ElevesLot classeId={id} onferme={() => (lotOuvert = false)} onchange={load} />
+    {:else}
+      <p>
+        <button type="button" class="primary" onclick={ouvrirLot} data-testid="elv-ouvrir"
+          >{t('elv.ouvrir')}</button
+        >
+      </p>
+    {/if}
 
     <section class="card">
       <h2 id="titre-eleves">{t('classe.eleves')}</h2>

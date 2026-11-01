@@ -65,6 +65,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/conversation\/JeParle\.svelte$/,
   // 25/10/2026 : « Mots du Coran » (bande « Je reconnais X % des mots » du lecteur, importée à la demande quand `coran_mots` est ouvert)
   /src\/lib\/coran-mots\/index\.ts$/,
+  // V2-4 : feuille de bascule Moi / enfants (chargée au premier toucher sur le prénom du profil actif)
+  /src\/lib\/(BasculeProfils\.svelte|bascule-ouvrir\.ts)$/,
 ];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [

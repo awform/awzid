@@ -19,7 +19,7 @@
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
-  import { cachedMe, fetchMe, logout, type Me } from '$lib/session';
+  import { cachedMe, fetchMe, logout, peutBasculer, type Me } from '$lib/session';
   import { restreindreEnvoiAuProfil } from '$lib/sync-core';
   import { navPourEnfant, pageOuverteAEnfant } from '$lib/enfant-session';
 
@@ -320,8 +320,18 @@
         ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></button
       >{/if}
     {#if profile}
-      <span class="who" data-testid="eleve-actif" data-prive><Bidi text={profile.pseudonym} /></span
-      >
+      {#if peutBasculer(me)}
+        <button
+          class="who"
+          onclick={() => void import('$lib/bascule-ouvrir').then((m) => m.ouvrir(me!, profile))}
+          data-testid="eleve-actif"
+          data-prive><Bidi text={profile.pseudonym} /></button
+        >
+      {:else}
+        <span class="who" data-testid="eleve-actif" data-prive
+          ><Bidi text={profile.pseudonym} /></span
+        >
+      {/if}
       <!-- D1 : « Changer d'élève » est en tête de la page « Compte » (en-tête allégé, prénom jamais tronqué) -->
     {/if}
     <button
@@ -478,6 +488,16 @@
     cursor: pointer;
   }
   /* D1 : le prénom n'est jamais tronqué (au besoin sur deux lignes) */
+  button.who {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font-family: inherit;
+  }
+  button.who::after {
+    content: ' ▾';
+  }
   .who {
     font-weight: 700;
     font-size: 0.95rem;

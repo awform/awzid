@@ -15,6 +15,7 @@ import { levelParts } from '@awform/content';
 import { looksQuranic, skeleton } from '@awform/content/audio-cle';
 import type { Db } from './client.js';
 import { currentLevels } from './niveaux.js';
+import { fermerAccesEleve } from './school.js';
 import * as t from './schema.js';
 
 export type Subject = 'arabe' | 'sciences' | 'coran';
@@ -728,8 +729,9 @@ export async function decideReenrolment(
         .values({ classId: o.classId, profileId: o.profileId, addedBy: by })
         .onConflictDoNothing();
     else
-      // refus : l'élève ne figure plus sur la liste de la classe suivante (rien d'autre n'est effacé)
-      await tx
+    // refus : l'élève ne figure plus sur la liste de la classe suivante (rien d'autre n'est effacé)
+    {
+      const partis = await tx
         .update(t.classPupil)
         .set({ leftAt: new Date() })
         .where(
@@ -738,7 +740,11 @@ export async function decideReenrolment(
             eq(t.classPupil.profileId, o.profileId),
             isNull(t.classPupil.leftAt),
           ),
-        );
+        )
+        .returning({ id: t.classPupil.id });
+      // sans classe pour l'année suivante, l'élève de l'école n'a plus d'accès (sauf s'il reste inscrit ailleurs)
+      for (const x of partis) await fermerAccesEleve(tx as unknown as Db, x.id);
+    }
     return { classId: o.classId, profileId: o.profileId };
   });
 }

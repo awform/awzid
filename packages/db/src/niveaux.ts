@@ -11,7 +11,7 @@ import { and, asc, desc, eq, inArray, isNull, ne, or, sql } from 'drizzle-orm';
 import { lemmaLevelCode, levelParts, subjectOf } from '@awform/content';
 import type { Db } from './client.js';
 import { currentSchoolYear } from './ecole.js';
-import { archivePupil, openEnrolment } from './school.js';
+import { archivePupil, fermerAccesEleve, openEnrolment } from './school.js';
 import * as t from './schema.js';
 
 /** A39 : « lecons » = niveau ouvert en mode serein (leçons faites) ; « choix » = niveau choisi par l'élève adulte. */
@@ -298,6 +298,8 @@ export async function closeSchoolYear(
           .where(
             and(eq(t.classMember.classId, pu.classId), eq(t.classMember.profileId, pu.profileId)),
           );
+        // pas de classe suivante : plus d'accès (identifiant créé par l'école), sauf élève resté inscrit ailleurs
+        await fermerAccesEleve(d, pu.pupilId);
       }
     }
     const archived = await tx

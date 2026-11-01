@@ -44,7 +44,9 @@ const UUID = { type: 'string', format: 'uuid' } as const;
 /** Contrôle des droits sur le contenu (audit PAY-4) ; `null` : droits non appliqués (AWFORM_DROITS=off). */
 export interface ContentRights {
   /** droit du compte (abonnements, licence d'école d'une classe d'un de ses profils) ; anonyme : gratuit */
-  of(auth: { accountId: string; kind: string } | undefined | null): Promise<Entitlement | null>;
+  of(
+    auth: { accountId: string; kind: string; profileId?: string | null } | undefined | null,
+  ): Promise<Entitlement | null>;
   canOpen(e: Entitlement | null, unit: { n: number; levelCode?: string }): boolean;
 }
 
@@ -618,6 +620,29 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           { planCode: 'licence_ecole', status: 'active', currentPeriodEnd: null },
         ]);
       if (!auth) return entitlementOf([]);
+      // session limitée à UN profil (enfant d'un parent, élève de l'école) : le droit de CE profil seulement, en un
+      // nombre fixe de requêtes (jamais une boucle sur tous les profils du titulaire : le compte technique d'une école
+      // en porte des centaines). Élève de l'école : la licence de SON école ; enfant d'un parent : l'abonnement du parent.
+      if (auth.profileId) {
+        const subs = auth.kind === 'ecole' ? [] : (await subsOf(auth.accountId)).map(like);
+        const schoolLicence = await schoolLicenceFor(auth.profileId);
+        const packs =
+          auth.kind === 'ecole'
+            ? []
+            : await db
+                .selectDistinct({ level: t.levelPass.levelCode })
+                .from(t.levelPass)
+                .where(
+                  and(
+                    eq(t.levelPass.accountId, auth.accountId),
+                    gt(t.levelPass.endsAt, new Date()),
+                  ),
+                );
+        return {
+          ...entitlementOf(subs, { schoolLicence }),
+          packs: packs.map((p) => (typeof p === 'string' ? p : p.level)),
+        };
+      }
       // lot F2 : tablette de classe (compte de l'école) — la licence de l'école
       if (auth.kind === 'ecole') {
         const s = await schoolOfAccount(db, auth.accountId);

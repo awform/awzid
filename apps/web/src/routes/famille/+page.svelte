@@ -94,14 +94,20 @@
   async function attach(e: SubmitEvent) {
     e.preventDefault();
     error = msg = '';
-    const r = await call<{ profileId: string; titulaire: boolean }>('POST', '/profiles/rattacher', {
-      code,
-      password,
-    });
+    const r = await call<{ profileId: string; titulaire: boolean; identifiantRetire?: boolean }>(
+      'POST',
+      '/profiles/rattacher',
+      {
+        code,
+        password,
+      },
+    );
     password = '';
     if (!r.ok) return fail(r.code);
     code = '';
     msg = t(r.data!.titulaire ? 'fam.rattache_titulaire' : 'fam.rattache_parent');
+    // l'identifiant donné par l'école est supprimé : le parent en crée un nouveau
+    if (r.data!.identifiantRetire) msg += ` ${t('fam.identifiant_retire')}`;
     await load();
   }
 

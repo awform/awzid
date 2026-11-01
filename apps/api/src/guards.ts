@@ -37,7 +37,10 @@ export async function familyProfile(
     return null;
   }
   // lot F2 : un compte de personnel SEUL n'est pas une famille ; un compte parent qui est aussi enseignant l'est
-  if (staffOnly(req.auth) || (req.auth.kind === 'ecole' && !req.auth.tablet)) {
+  if (
+    staffOnly(req.auth) ||
+    (req.auth.kind === 'ecole' && !req.auth.tablet && !req.auth.eleveEcole)
+  ) {
     err(reply, 403, 'reserve_aux_familles');
     return null;
   }

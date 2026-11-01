@@ -12,6 +12,7 @@ import { hashSecret } from './crypto.js';
 import { checkPassword } from './passwords.js';
 import { audit, cleGlobaleIdentifiant, clearFailures, reserveAttempt } from './service.js';
 import { emailKey, err, type AuthKit } from './common.js';
+import { normaliserPrenom, translitterer } from '@awform/school/eleves-lot';
 import { parentGate } from '../guards.js';
 
 /** 3 à 24 caractères [a-z0-9-], au moins une lettre (jamais confondu avec un numéro), ni tiret au début ni à la fin. */
@@ -21,7 +22,8 @@ export const estIdentifiantEnfant = (saisie: string) =>
 
 /** « prénom » → base sûre (sans accents ni signes), au plus 20 caractères */
 export function baseIdentifiant(prenom: string): string {
-  const b = (prenom ?? '')
+  // prénom en écriture arabe : lettres latines simples (« أمينة » → « amina »), sinon il ne reste rien
+  const b = translitterer(normaliserPrenom(prenom ?? ''))
     .toLowerCase()
     .replace(/[àáâãäå]/g, 'a')
     .replace(/ç/g, 'c')
@@ -278,6 +280,8 @@ export async function ressaisieParent(
 
 /** disponibilité d'un identifiant : 20 demandes par heure et par compte (revue I2 : pas d'énumération) */
 export const DISPONIBILITE_PAR_HEURE = 20;
+/** disponibilité d'un identifiant : 60 demandes par heure et par adresse (plusieurs comptes derrière la même) */
+export const DISPONIBILITE_PAR_ADRESSE = 60;
 
 export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
   const { db, needParent } = kit;
@@ -298,6 +302,11 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
     },
     async (req, reply) => {
       const parent = req.auth!.accountId;
+      // plafond par ADRESSE (tous comptes confondus) : 60 demandes par heure, puis pause d'une heure
+      if (!(await reserveAttempt(db, `ld-ip:${req.ip}`, DISPONIBILITE_PAR_ADRESSE, 60))) {
+        await audit(db, parent, 'profil.login_disponible_limite_adresse');
+        return err(reply, 429, 'trop_de_demandes');
+      }
       // limite stricte par compte (réservation atomique ; au-delà, pause d'une heure) et trace dans le journal
       if (!(await reserveAttempt(db, `ld:${parent}`, DISPONIBILITE_PAR_HEURE, 60))) {
         await audit(db, parent, 'profil.login_disponible_limite');

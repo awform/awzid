@@ -175,7 +175,7 @@ describe.skipIf(!URL)('lot F2 — école, rôles, responsables, niveaux (awform_
     ).toBe(401);
     const at = await c.req('POST', '/api/v1/profiles/rattacher', fam.P, { code, password: PW });
     expect(at.statusCode, at.body).toBe(201);
-    expect(at.json()).toEqual({ profileId, titulaire: true });
+    expect(at.json()).toEqual({ profileId, titulaire: true, identifiantRetire: false });
     expect((await me(fam.P)).profiles.map((x: { id: string }) => x.id)).toContain(profileId);
     // code à usage unique
     expect(
@@ -321,7 +321,7 @@ describe.skipIf(!URL)('lot F2 — école, rôles, responsables, niveaux (awform_
       code: inv.json().code,
       password: PW,
     });
-    expect(ok.json()).toEqual({ profileId: kid, titulaire: false });
+    expect(ok.json()).toEqual({ profileId: kid, titulaire: false, identifiantRetire: false });
     const m2 = await me(p2.P);
     expect(m2.profiles).toEqual([expect.objectContaining({ id: kid, lien: 'parent' })]);
     expect((await c.req('GET', `/api/v1/hifz/profiles/${kid}`, p2.P)).statusCode).toBe(200);

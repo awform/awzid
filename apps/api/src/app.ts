@@ -48,6 +48,8 @@ import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
+import { registerEcoleEleves } from './ecole-eleves.js';
+import { erreurSure } from './log-sur.js';
 import { registerParcoursA27 } from './parcours-a27.js';
 import { registerCoranMots } from './coran-mots.js';
 import { registerSereinA39 } from './serein-a39.js';
@@ -262,7 +264,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         return reply
           .code(err.statusCode)
           .send({ error: { code: 'requete_invalide', message: err.message } });
-      req.log.error(err);
+      // jamais les paramètres d'une requête (empreinte, prénom, année, identifiant) dans les journaux
+      req.log.error(erreurSure(err));
       return reply.code(500).send({ error: { code: 'erreur_interne', message: 'erreur interne' } });
     },
   );
@@ -371,6 +374,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerEcoleF2(app, db, edition, {
     secureFor: (req) => (cookieSecure === 'auto' ? req.protocol === 'https' : cookieSecure),
   });
+  // V2-5 : l'enseignant crée les comptes de ses élèves en liste (fiche PDF, mots de passe, WhatsApp)
+  registerEcoleEleves(app, db);
   // A27 : parcours par niveau (espace, accueil, écriture, mots du Coran, positionnement, passage)
   registerParcoursA27(app, db, edition);
   // mots du Coran : « Je reconnais X % des mots », recherche par mot et par racine, fiche racine (interrupteur coran_mots)
