@@ -182,7 +182,23 @@
     etape = 'accord';
   }
 
+  /**
+   * « Un indice » (texte caché) : montre quelques secondes le mot attendu ensuite, comme le « coup d'œil » des applis de
+   * mémorisation. Ce n'est pas une erreur : le nombre d'indices demandés est seulement affiché.
+   */
+  let indice = $state(-1);
+  let indices = $state(0);
+  let finIndice: ReturnType<typeof setTimeout> | null = null;
+  function demanderIndice() {
+    indice = direct?.courant ?? 0;
+    indices++;
+    if (finIndice) clearTimeout(finIndice);
+    finIndice = setTimeout(() => (indice = -1), 2500);
+  }
+
   async function commencer(enDirect: boolean) {
+    indice = -1;
+    indices = 0;
     erreur = '';
     signale = false;
     resultat = null;
@@ -465,6 +481,17 @@
         </div>
       {/if}
 
+      {#if etape === 'direct' && masque}
+        <p class="small">
+          <button type="button" onclick={demanderIndice} data-testid="ecoute-indice"
+            >{t('ec.indice')}</button
+          >
+          {#if indices}<span class="muted" data-testid="ecoute-indices"
+              >{t('ec.indices', { n: indices })}</span
+            >{/if}
+        </p>
+      {/if}
+
       {#if versets.length}
         <TexteEcoute
           {versets}
@@ -472,6 +499,7 @@
           {etats}
           {ajouts}
           {sautes}
+          {indice}
           courant={direct?.courant ?? -1}
           masque={masque && etape === 'direct'}
           surverset={etape === 'resultat' && etat.shazam && resultat?.statut === 'resultat'

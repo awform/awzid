@@ -55,6 +55,8 @@
   "ec.carnet_ligne": "{sourate}, versets {de} à {a} : {n, plural, one {# mot} other {# mots}} à revoir",
   "ec.carnet_ouvrir": "Revoir ce passage",
   "ec.carnet_aide": "Gardé seulement sur cet appareil. Seul ton maître juge ta récitation.",
+  "ec.indice": "Un indice",
+  "ec.indices": "{n, plural, one {# indice demandé} other {# indices demandés}}",
   "ec.stats_titre": "Ce qui revient",
   "ec.stats_types": "Sur tes {s} dernières séances : {o} mots oubliés, {r} changés, {d} dans le désordre, {j} en trop, {v} dans des versets sautés.",
   "ec.stats_revient": "{sourate}, verset {a} : à revoir dans {n} séances",
