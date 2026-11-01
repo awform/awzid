@@ -67,6 +67,30 @@ export function ressemblance(cleA: string, cleB: string): number {
   return Math.max(ratio(cleA, cleB), s);
 }
 
+/**
+ * Lettres que la machine CONFOND souvent entre elles (ذ ز ظ ض د ; ث س ص ; ط ت ; ح ه) : classées ensemble pour la ressemblance
+ * TOLÉRANTE. Une différence sur ces seules lettres est une mauvaise lecture de la machine bien plus souvent qu'un autre mot ;
+ * et la différence de prononciation entre elles est du tajwīd, hors de ce que la machine juge (règles A5).
+ */
+const CLASSES_CONFUSES: Record<string, string> = {
+  ذ: 'ز',
+  ظ: 'ز',
+  ض: 'ز',
+  د: 'ز',
+  ث: 'س',
+  ص: 'س',
+  ط: 'ت',
+  ح: 'ه',
+};
+const classes = (c: string) => c.replace(/[ذظضدثصطح]/g, (x) => CLASSES_CONFUSES[x]!);
+
+/** Ressemblance tolérante : celle d'avant, ou celle des clés aux lettres confondues classées ensemble (plafonnée à 0,95). */
+export function ressemblanceTolerante(cleA: string, cleB: string): number {
+  const r = ressemblance(cleA, cleB);
+  if (r >= 0.95 || !SEUILS.tolerance) return r;
+  return Math.max(r, 0.95 * ressemblance(classes(cleA), classes(cleB)));
+}
+
 // ------------------------------------------------------------------ texte attendu
 
 /** Lettres isolées (al-muqaṭṭaʿāt) : prononcées en noms de lettres (« alif lām mīm ») — jamais signalées. */
@@ -163,6 +187,13 @@ export const SEUILS = {
   voixDoute: 1.5,
   /** part minimale des mots attendus reconnus pour donner un résultat */
   couvertureMin: 0.5,
+  /**
+   * oubli d'au moins ce nombre de mots de suite (un verset sauté, une phrase) : la machine n'« avale » pas une suite de
+   * mots ; seuls comptent les voisins reconnus (pas de pénalité d'orthographe ni de mot court) et le silence à leur place
+   */
+  groupeLong: 3,
+  /** 1 : la ressemblance tolère les lettres que la machine confond (ذ ز ظ ض د, ث س ص, ط ت, ح ه) */
+  tolerance: 1,
 };
 
 const costEg = (sim: number) => (sim >= SEUILS.meme ? (1 - sim) * 0.5 : 1.2 - sim);
@@ -190,7 +221,7 @@ export function aligner(
     const key = i * W + j;
     let v = simMemo.get(key);
     if (v === undefined) {
-      v = ressemblance(att[i]!.cle, cles[j]!);
+      v = ressemblanceTolerante(att[i]!.cle, cles[j]!);
       simMemo.set(key, v);
     }
     return v;
@@ -402,6 +433,8 @@ export interface OptionsComparaison {
   enCours?: boolean;
   /** interne : les reprises ont déjà été retirées de ce qui a été entendu */
   sansReprises?: boolean;
+  /** diagnostic (banc de mesure) : reçoit les décisions prises sur les oublis, remplacements et ajouts */
+  trace?: (info: Record<string, unknown>) => void;
 }
 
 /**
@@ -575,7 +608,8 @@ export function comparer(
         iav === undefined ? 1 : (okSim.get(iav) ?? 1),
         iap === undefined ? 1 : (okSim.get(iap) ?? 1),
       );
-      if (simVoisins < 0.9) conf *= 0.5;
+      const long = c.fin - c.i + 1 >= SEUILS.groupeLong;
+      if (simVoisins < 0.9 && !long) conf *= 0.5;
       // mot COURT oublié seul (هو، فهم) : souvent avalé par la machine — il faut des voisins très sûrs
       if (c.fin === c.i && att[c.i]!.cle.length <= 3 && conf < 0.92) conf *= 0.5;
       const e0 = av !== undefined ? ent[av] : undefined;
@@ -584,13 +618,28 @@ export function comparer(
         const v = voixEntre(voix, e0.t1 + 0.08, e1.t0 - 0.08);
         // des mots entendus non reconnus dans le trou : ils expliquent cette voix (remplacement, répétition)
         if (v > SEUILS.voixDoute) conf *= 0.3;
-      }
+        opts.trace?.({
+          oublie: [c.i, c.fin],
+          voix: round(v),
+          conf: round(conf),
+          simVoisins: round(simVoisins),
+        });
+      } else
+        opts.trace?.({ oublie: [c.i, c.fin], sansVoisinTemps: true, conf: round(conf), iav, iap });
     }
     if (
       c.type === 'remplace' &&
       (c.conf < SEUILS.confMot * 0.9 || cleMot(ent[c.j!]!.w).length < 2 || serie(c.j!) >= 2)
     )
       conf = 0;
+    if (c.type === 'remplace')
+      opts.trace?.({
+        remplace: [c.i, c.fin],
+        entendu: ent[c.j!]?.w,
+        confMachine: round(c.conf),
+        serie: serie(c.j!),
+        conf,
+      });
     if (conf >= SEUILS.confEcart) {
       const a = att[c.i]!;
       ecarts.push({ type: c.type, i: c.i, fin: c.fin, s: a.s, a: a.a, confiance: round(conf) });

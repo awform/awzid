@@ -149,6 +149,17 @@ def charger_sessions():
     lim = int(os.environ.get('LIMITE', '0'))
     pas = int(os.environ.get('PAS', '1'))  # PAS=k : une séance sur k (essais rapides)
     S = S[::pas]
+    # PART=k/n : les séances d'indice ≡ k (mod n) (plusieurs processus en parallèle) ; DEJA=<fichier> : sauter les séances déjà lues
+    part = os.environ.get('PART')
+    if part:
+        k_, n_ = map(int, part.split('/'))
+        S = [s for i, s in enumerate(S) if i % n_ == k_]
+    deja = os.environ.get('DEJA')
+    if deja and os.path.exists(deja):
+        ids = {x['id'] for x in json.load(open(deja, encoding='utf-8'))}
+        S = [s for s in S if s['id'] not in ids]
+    if os.environ.get('SHUF'):  # ordre mélangé (graine fixe) : si on s'arrête avant la fin, tous les types sont représentés
+        random.Random(5).shuffle(S)
     return S[:lim] if lim else S
 
 

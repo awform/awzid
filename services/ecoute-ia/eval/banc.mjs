@@ -19,11 +19,22 @@ import { resolve } from 'node:path';
 const HIFZ = resolve(
   process.env.HIFZ ?? new URL('../../../packages/hifz/dist', import.meta.url).pathname,
 );
-const { FenetreSuivi, REGLAGES_FENETRE, etatSuivi, instantsDesMots, motsAttendus } = await import(
-  pathToFileURL(join(HIFZ, 'index.js')).href
-);
+const {
+  FenetreSuivi,
+  REGLAGES_ETAT,
+  REGLAGES_FENETRE,
+  SEUILS,
+  comparer,
+  etatSuivi,
+  instantsDesMots,
+  motsAttendus,
+} = await import(pathToFileURL(join(HIFZ, 'index.js')).href);
 
 const [TSV, DIR, ...METHODES] = process.argv.slice(2);
+// SEUILS='{"different":0.55}' : change les seuils de comparaison (SEUILS de ecoute.ts) pour un balayage
+if (process.env.SEUILS) Object.assign(SEUILS, JSON.parse(process.env.SEUILS));
+// ETAT='{"mode":"accord"}' : règles de l'état du suivi (accord | rnnt | veto)
+if (process.env.ETAT) Object.assign(REGLAGES_ETAT, JSON.parse(process.env.ETAT));
 const REGL = process.env.REGLAGES
   ? { ...REGLAGES_FENETRE, ...JSON.parse(process.env.REGLAGES) }
   : REGLAGES_FENETRE;
@@ -149,6 +160,12 @@ function analyser(methode, lect) {
     }
     if (process.env.DIAGMISS && v && vu === null && dernier) {
       const { resultat, e } = dernier;
+      const traces = [];
+      comparer(att, e.stables, {
+        voix: e.voix,
+        enCours: true,
+        trace: (x) => traces.push(JSON.stringify(x)),
+      });
       const a = Math.max(0, v.i - 3);
       const b = v.fin + 4;
       console.error(
@@ -160,7 +177,7 @@ function analyser(methode, lect) {
           .map((w) => `${w.w}[${w.conf}]`)
           .join(
             ' ',
-          )}\n  écarts finaux : ${JSON.stringify(resultat.ecarts.map((z) => `${z.type}:${z.i}-${z.fin}`))} doutes=${resultat.doutes} statut=${resultat.statut}`,
+          )}\n  écarts finaux : ${JSON.stringify(resultat.ecarts.map((z) => `${z.type}:${z.i}-${z.fin}`))} doutes=${resultat.doutes} statut=${resultat.statut}\n  décisions : ${traces.filter((z) => z.includes(`[${v.i - 1},`) || z.includes(`[${v.i},`) || z.includes(`,${v.fin}]`)).join(' ')}`,
       );
     }
     const T_ = (res.types[se.type] ??= {
@@ -219,6 +236,14 @@ function analyser(methode, lect) {
         ]),
     ),
     delai_erreur_s: { mediane: r2(q(res.delaisErr, 0.5)), p90: r2(q(res.delaisErr, 0.9)) },
+    resume: (() => {
+      const err = Object.entries(res.types).filter(([k]) => !NORMAL.has(k));
+      const vues = err.reduce((s, [, t]) => s + t.vues, 0);
+      const n = err.reduce((s, [, t]) => s + t.n, 0);
+      const autres = err.reduce((s, [, t]) => s + t.fausses, 0);
+      const j = res.types.juste ?? { n: 0, seancesFausses: 0, fausses: 0 };
+      return `erreurs vues ${vues}/${n} (${r2((100 * vues) / (n || 1))} %), autres alertes en séances d'erreur ${autres} ; fausses alertes : justes ${j.seancesFausses}/${j.n}, normales ${norm.reduce((s, [, t]) => s + t.seancesFausses, 0)}/${norm.reduce((s, [, t]) => s + t.n, 0)} séances ; délai mot ${r2(q(res.delais, 0.5))}/${r2(q(res.delais, 0.9))} s, erreur ${r2(q(res.delaisErr, 0.5))} s`;
+    })(),
     calcul_par_lecture_s: {
       mediane: r2(q(res.calculs, 0.5)),
       p90: r2(q(res.calculs, 0.9)),
@@ -230,7 +255,10 @@ function analyser(methode, lect) {
 const sortie = {};
 for (const m of METHODES) {
   const [nom, f] = m.split(':');
-  const lect = JSON.parse(readFileSync(join(DIR, f), 'utf8'));
+  let lect = JSON.parse(readFileSync(join(DIR, f), 'utf8'));
+  // SOUS=pair|impair : moitié des séances (réglage sur une moitié, vérification sur l'autre)
+  if (process.env.SOUS === 'pair') lect = lect.filter((_, k) => k % 2 === 0);
+  if (process.env.SOUS === 'impair') lect = lect.filter((_, k) => k % 2 === 1);
   sortie[`${nom}:${f}`] = analyser(nom, lect);
 }
 if (process.env.EXPORT) writeFileSync(process.env.EXPORT, JSON.stringify(EXPORTE));

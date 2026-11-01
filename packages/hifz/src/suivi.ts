@@ -9,6 +9,7 @@ import {
   comparer,
   ecartsDAccord,
   ressemblance,
+  type Ecart,
   type EtatMot,
   type MotAttendu,
   type MotEntendu,
@@ -35,12 +36,35 @@ export interface EtatSuivi {
  * État du texte pendant le suivi : écarts des mots STABLES vus par les deux lectures (sinon rien n'est signalé) ; mots
  * reconnus (stables, provisoires ou partiels) dévoilés ; mot en cours après le dernier reconnu.
  */
+export const REGLAGES_ETAT = {
+  /**
+   * Comment les deux lectures décident d'un écart : `accord` = les deux (RNN-T et tête CTC) le voient ; `rnnt` = la lecture
+   * RNN-T suffit ; `veto` = la lecture RNN-T le voit et la tête CTC ne CONTREDIT pas (elle ne lit pas « ok » la moitié au moins des
+   * mots visés) ; un mot AJOUTÉ exige toujours l'accord des deux (c'est l'écart le plus exposé aux mots mal lus).
+   */
+  mode: 'veto' as 'accord' | 'rnnt' | 'veto',
+};
+
 export function etatSuivi(att: readonly MotAttendu[], e: EntreeSuivi): EtatSuivi {
   const opts = { voix: e.voix, enCours: true };
   const r = comparer(att, e.stables, opts);
-  const c = comparer(att, e.stablesCtc, opts);
-  const ecarts =
-    r.statut === 'resultat' && c.statut === 'resultat' ? ecartsDAccord(r.ecarts, c.ecarts) : [];
+  let ecarts: Ecart[] = [];
+  if (REGLAGES_ETAT.mode === 'rnnt') ecarts = r.statut === 'resultat' ? r.ecarts : [];
+  else {
+    const c = comparer(att, e.stablesCtc, opts);
+    if (r.statut !== 'resultat' || c.statut !== 'resultat') ecarts = [];
+    else if (REGLAGES_ETAT.mode === 'accord') ecarts = ecartsDAccord(r.ecarts, c.ecarts);
+    else {
+      const accord = ecartsDAccord(r.ecarts, c.ecarts);
+      ecarts = r.ecarts.filter((x) => {
+        if (accord.includes(x)) return true;
+        if (x.type === 'ajoute') return false;
+        let ok = 0;
+        for (let i = x.i; i <= x.fin; i++) if (c.mots[i] === 'ok') ok++;
+        return ok * 2 < x.fin - x.i + 1;
+      });
+    }
+  }
   const signale = new Set<number>();
   for (const x of ecarts)
     if (x.type !== 'ajoute') for (let i = x.i; i <= x.fin; i++) signale.add(i);
