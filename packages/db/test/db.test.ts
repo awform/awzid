@@ -61,7 +61,7 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
       0,
     );
     expect(r).toMatchObject({ status: 'cree', units: nUnits, exercises: nEx });
-    if (REAL_BOOKS) expect(r).toMatchObject({ units: 51, exercises: 257 });
+    if (REAL_BOOKS) expect(r).toMatchObject({ units: 51, exercises: 264 });
     const ed = await currentEdition(h.db);
     expect(ed?.code).toBe('test.1');
     const levels = await listLevels(h.db, ed!.id);
