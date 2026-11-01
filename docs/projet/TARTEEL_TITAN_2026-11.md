@@ -1,142 +1,156 @@
-# Suivi de la récitation « Tarteel titan » (1er novembre 2026)
+# Suivi de la récitation « Tarteel titan » (1er novembre 2026, phases 1 et 2)
 
-Branche `tarteel-titan-wip` (depuis `main` = c8b539f), interrupteur `shazam_coran` (canal bêta, inchangé). Rapport chiffré, fonctions
-ajoutées, reste à faire. Mesures faites sur la VM `awform-dev` le 01/11/2026 (service réel : NeMo FastConformer RNN-T + tête CTC,
-processeur seul, 4 cœurs, `nice 10`, VM chargée par d'autres travaux : charge 3 à 10 pendant les mesures).
+Branche `tarteel-titan-2-wip` (rebasée sur `origin/main` 9823ec5 ; la phase 1 reste sur `tarteel-titan-wip`), interrupteur `shazam_coran`
+(canal bêta, inchangé). Mesures faites sur la VM `awform-dev` le 01/11/2026 : service réel (NeMo FastConformer RNN-T + tête CTC,
+processeur seul), `nice 10`, au plus 4 cœurs, VM partagée et souvent saturée (charge 7 à 22) — **les durées de calcul, donc les latences,
+dépendent de cette charge** (§ 5).
 
-## 1. Résumé
+## 1. Ce qui est atteint et ce qui ne l'est pas
 
-| | Avant | Après |
-|---|---|---|
-| Mot dévoilé, de la FIN du mot à l'affichage (médiane / 90ᵉ centile) | 1,6 s / 5,2 s | **1,43 s / 2,84 s** |
-| Mots dévoilés en moins de 1,5 s / de 3 s | 48 % / 72 % | **54 % / 92 %** |
-| Mots récités retrouvés à la fin (suivis) | 839 / 839 | 835 / 839 (99,5 %) |
-| Erreur signalée, de l'erreur à l'écran (médiane / 90ᵉ) | 8,5 s / 15,2 s (11 s sur le jeu de 2026-10) | **4,7 s / 5,5 s** |
-| Fausses alertes, récitations NORMALES (76 séances, dont 54 normales) | **24 alertes dans 8 séances** (reprise 3/6, retour au verset précédent 5/5) | **1 alerte dans 1 séance** (retour au verset précédent, 1/5) |
-| Fausses alertes, récitations justes, bruitées, au téléphone, avec pause de 6 s, mot redit | 0 | 0 |
-| Erreurs simulées vues (oubli, remplacement, ajout, verset sauté) | 8 / 22 | 7 / 22 |
-| Calcul du service par lecture (médiane) | 0,31 s (une lecture par seconde) | 0,57 s (une lecture toutes les 0,5 s) |
+Banc 2 (§ 3) : 190 séances lues, dont 50 justes, 59 reprises / retours / mots répétés (récitation normale) et **81 séances avec une
+erreur** (oubli, remplacement, ajout, verset sauté ; premier et dernier mot jamais visés).
 
-Lecture honnête : **la vitesse d'affichage des mots et le silence sur les récitations normales sont nettement meilleurs ; les erreurs
-sont dites deux fois plus tôt (4,7 s au lieu de 8,5 s), mais l'objectif « moins de 3 s » n'est pas atteint pour les erreurs** (il l'est pour
-92 % des mots dévoilés ; la médiane des mots, 1,43 s, passe sous 1,5 s). Le nombre d'erreurs vues ne progresse pas (7 contre 8 sur 22,
-l'échantillon est petit) : on a choisi de se taire dans le doute. **Le coût de calcul est multiplié par environ 3,7** (§ 5).
+| | Avant (ancien service + comparateur c8b539f) | Phase 1 (fenêtre, accord des 2 têtes) | **Phase 2 (défaut actuel)** |
+|---|---|---|---|
+| Erreurs vues, ensemble (81) | 9 (11 %) | 22 (27 %) | **49 (60 %)**, intervalle à 95 % : 50 à 70 % |
+| Erreurs vues, moitié de **réglage** (41) | n. m. | 16 (39 %) | 31 (76 %), 61 à 86 % |
+| Erreurs vues, moitié de **vérification** (40) | n. m. | 6 (15 %), 7 à 29 % | **18 (45 %), 31 à 60 %** |
+| oubli / remplacement / ajout / verset sauté (sur 20 / 22 / 20 / 19) | 5 / 3 / 1 / 0 | 6 / 3 / 4 / 9 | 15 / 16 / 9 / 9 |
+| Fausses alertes sur 50 séances **justes** | 2 | 1 | **0** |
+| Fausses alertes sur 59 séances de **reprise, retour, mot répété** | 24 séances (reprise 9/20, retour 12/19, mot répété 3/20) | 8 séances | **3 séances** (reprise 2/20, retour 1/19) |
+| Mots récités retrouvés à la fin | 97,7 % | 99,4 % | 99,8 % |
+| Erreur dite : délai médian, pas de 0,5 s (32 séances) | 10,9 s | n. m. | **5,0 s** (fenêtre 10 s) / 4,9 s (fenêtre 6 s) |
+| Mot dévoilé : médiane (pas de 0,5 s, mêmes 32 séances) | **1,24 s** | n. m. | 1,72 s (fenêtre 10 s) / 1,47 s (fenêtre 6 s) |
+| Calcul par lecture, médiane (même période) | 0,31 s | — | 0,71 s / 0,61 s |
 
-## 2. Banc de mesure (reproductible)
+*n. m. = non mesuré sur ce découpage.* Intervalles : Wilson à 95 %.
 
-`services/ecoute-ia/eval/banc.py` (séances et lectures), `banc.mjs` (analyse avec le code de l'appli), `banc.sh` (lancement sous le verrou
-de la VM). Graine fixe. Récitations RÉELLES du Complexe (5 récitateurs Ḥafṣ, lecture seule), 76 séances, 59,5 min :
+**Objectifs NON atteints, à lire avant tout :**
+1. **18 erreurs vues sur 22 (82 %) : non atteint.** 60 % sur l'ensemble, **45 % sur la moitié de vérification** (le chiffre à retenir). Les 76 %
+   de la moitié de réglage sont optimistes (voir ci-dessous).
+2. **Erreur dite en moins de 3 s : non atteint.** Médiane 4,9 à 5,0 s au pas de 0,5 s ; au mieux 3,8 s avec une fenêtre de 6 s et un
+   réseau à 0,05 s (13 séances d'erreur seulement).
+3. **Mot dévoilé en moins de 1,5 s : atteint à moitié.** Médiane 1,47 s avec la fenêtre de 6 s, mais **l'ancien mode était plus rapide
+   (1,24 s) à charge égale** : la fenêtre calcule 2 fois plus par lecture. Ma conclusion de la phase 1 (« 1,6 → 1,43 s ») venait de deux
+   périodes de charge différentes et **ne tient pas** ; elle est remplacée par ce tableau.
+4. **Capacité : la fenêtre coûte environ 2,3 à 3,7 fois plus de calcul** que l'ancien mode (§ 5).
 
-| Type | Séances | Vérité attendue |
-|---|---|---|
-| juste | 15 | aucune alerte |
-| bruit (bruit blanc à 15 dB sous la voix) · téléphone (bande 200-3 800 Hz, bruit, Opus 24 kb/s) | 8 · 8 | aucune alerte |
-| mot répété · reprise (l'élève reprend 3 à 5 mots en arrière) · retour au verset précédent · pause de 6 s | 6 · 6 · 5 · 6 | aucune alerte (récitation normale) |
-| oubli · remplacement · ajout · verset sauté | 6 · 6 · 5 · 5 | un écart sur le mot visé (± 1 mot) |
+**Pourquoi 76 % puis 45 % ?** Les réglages (marge, veto, seuils : une vingtaine de combinaisons) ont été choisis sur la moitié « paire » des
+séances, puis vérifiés sur la moitié « impaire ». L'écart (31 points ; test du χ² : p ≈ 0,005, intervalle de la différence ±21 points) n'est pas
+du seul hasard de petit échantillon : (a) **sur-réglage** (la moitié de réglage a servi à choisir parmi ~20 configurations, ce qui gonfle son
+score), et (b) **dispersion réelle** entre séances : les versets sautés sont vus 7 fois sur 10 dans une moitié et 2 sur 9 dans l'autre, selon que
+les mots mal lus à la coupure tombent bien ou mal. Les gains des leviers eux-mêmes sont confirmés des deux côtés (phase 1 → phase 2 :
+39 → 76 % et 15 → 45 %). La vraie performance attendue est donc **entre 45 et 60 %**, à confirmer avec de vraies voix (§ 9).
 
-La séance est REJOUÉE EN TEMPS RÉEL : l'audio arrive à la vitesse de la parole (paquets de 0,256 s comme le navigateur), le client envoie
-dès que la requête précédente est revenue, le service met le temps de calcul MESURÉ, le réseau coûte 0,15 s aller-retour (variable `RTT`).
-À chaque réponse, le code de production (`etatSuivi`, `FenetreSuivi`, `comparer` de `@awform/hifz`) dit ce qui serait montré. Les instants
-de référence de chaque mot viennent de la lecture de TOUTE la séance (`instantsDesMots`). Relancer :
+## 2. Décisions du référent appliquées (01/11/2026)
 
-```
-BANC_DIR=~/tarteel2-banc bash services/ecoute-ia/eval/banc.sh sessions         # séances (≈ 25 min)
-BANC_DIR=~/tarteel2-banc bash services/ecoute-ia/eval/banc.sh lire base        # service d'avant (≈ 23 min)
-BANC_DIR=~/tarteel2-banc bash services/ecoute-ia/eval/banc.sh lire fen         # fenêtre glissante (≈ 80 min)
-node services/ecoute-ia/eval/banc.mjs <tanzil-uthmani.tsv> ~/tarteel2-banc base:lect-base.json fen:lect-fen.json
-# HIFZ=<dossier dist> compare avec un autre état du code ; REGLAGES='{"margeDroite":1}' ; RTT=0.3 ; DIAG=1 détaille les fausses alertes
-```
+- **Entraînement** : la reprise, le retour en arrière et la pause ne sont jamais des erreurs ; « Un indice » est permis. Levier (4) conservé
+  (§ 4) : on préfère rater une erreur que gronder un élève qui se reprend.
+- **Mode « Récitation devant le maître » (test de hifẓ)**, ajouté : case sur l'écran de départ ; la reprise et la longue hésitation (silence de plus de
+  4 s entre deux mots) sont comptées **à part** comme « hésitations », jamais comme des erreurs (`hesitations()` dans `@awform/hifz`, nombres
+  renvoyés par l'API, jamais les mots) ; chaque « Un indice » est compté comme « **aide reçue** » ; le résultat affiche trois comptes distincts
+  (erreurs signalées, hésitations avec le détail reprises / longues pauses, aides reçues) et rappelle que ce sont des comptes, pas une note ; le bilan de
+  l'appareil garde ces deux nombres. Aucun mot n'est ajouté au texte coranique.
+- **Waqf** : aucune règle nouvelle ; une pause n'est jamais signalée.
 
-Limites du banc : récitateurs professionnels (et non des élèves) ; bruit et téléphone SIMULÉS ; les coupes sont faites dans l'audio (une
-reprise ou un retour est un collage, avec 0,5 s de silence) ; 76 séances sur 8 passages seulement (peu de diversité de texte) ; les erreurs
-vues portent sur 5 à 6 séances par type (les pourcentages bougent beaucoup avec une séance). Les chiffres du banc ne remplacent pas la
-mesure en bêta avec de vraies voix (§ 7).
+## 3. Banc 2 (reproductible)
 
-## 3. Ce qui a changé
+`services/ecoute-ia/eval/` : `banc2.py` (séances), `banc.py` (lectures : `base` = ancien service, `fen` = fenêtre ; `TOPK=1` garde les
+8 meilleurs jetons CTC par trame), `banc.mjs` (analyse en temps réel avec le code de l'appli), `banc.sh` (lancement), `sweep3.sh` (balayage de
+réglages), `gop.py` (étude GOP). Graine fixe. 222 séances prévues, 205 lues pour la fenêtre (types bruit, téléphone, pause : 5 chacun seulement,
+calcul limité ; 2 séances manquantes), 192 pour l'ancien service, 190 en commun.
+- 44 passages, 11 récitateurs : les 5 du Complexe et 6 d'everyayah en **lecture seule** (`~/tajwid-donnees/everyayah` : Alafasy, Husary,
+  Abdul Basit murattal, Sudais, Ali Jaber, Abu Bakr ash-Shaatree).
+- 11 passages à **versets très proches** (mutashābihāt) trouvés par recouvrement des 3-grammes de mots du texte Tanzil (110 versets ont une
+  sœur) ; 8 remplacements sont des « confusions » : le mot est remplacé par le mot du verset presque identique, du même récitateur.
+- Quotas : juste 50, oubli 20, remplacement 22, ajout 20, verset sauté 19, mot répété 20, reprise 20, retour en arrière 19 (+ pause, bruit, téléphone).
+- Lecture des séances au **pas de 1 s** (la VM saturée ne permettait pas mieux) ; la latence est mesurée à part au pas de 0,5 s sur 32 séances.
+- Limites : récitateurs professionnels ; erreurs et reprises sont des collages d'audio (coupes) ; 44 passages ; les vraies voix d'élèves manquent.
+- Incident de mesure : des conteneurs de lecture lancés par moi n'avaient pas été arrêtés par mes relances (le client `docker` tué ne les arrête
+  pas) ; ils ont tourné en double pendant ~2 h, écrasé des fichiers de sortie et chargé la VM. Corrigé (arrêt par identifiant, séances relues ou
+  reconstituées depuis les fichiers survivants, 205 séances uniques vérifiées). Aucun conteneur d'autrui n'a été touché.
 
-1. **Suivi par fenêtre glissante** (`FenetreSuivi`, `packages/hifz/src/suivi.ts` ; service : `mode=fenetre` dans `ecoute.py`). L'appareil
-   envoie 0,5 s d'audio dès que la requête précédente est revenue ; le service relit les 10 dernières secondes (deux lectures, un seul
-   encodeur) et renvoie les mots avec leurs instants. Un mot n'est VALIDÉ (donc susceptible de faire signaler un écart) que s'il est à plus
-   de 1 s du bord de la fenêtre ET lu pareil, au même endroit, par la lecture précédente (accord entre lectures successives) ; après 3,5 s
-   sans accord, la lecture la plus récente tranche. Les mots non validés dévoilent seulement le texte. Le service ne décide de rien et ne
-   garde que la fenêtre (10 s) en mémoire, effacée à la fin (garanties inchangées, testées). Mode par défaut ; `AWFORM_ECOUTE_SUIVI_MODE=suivi`
-   ramène l'ancien mode (passages relus avec contexte), sans autre changement. L'essai précédent (fenêtre naïve, § 10.4 de ECOUTE_IA.md :
-   20 à 38 fausses alertes sur 40) échouait parce que chaque mot venait d'une seule lecture, coupée n'importe où.
-2. **Reprises, retours et mots redits jamais signalés** (`comparer`). Un mot entendu qui répète des mots déjà dits (suite de 2 mots, ou mot
-   collé à son semblable) et qui ne correspond à aucun mot attendu est retiré, puis on recompare : un retour au verset précédent n'est plus
-   pris pour des « mots remplacés » ou « ajoutés ». Un refrain du texte redit comme prévu n'est jamais retiré (il est apparié). À lui seul,
-   ce changement fait passer le mode d'avant de 24 à 3 fausses alertes sur les mêmes lectures.
-3. **Mots mal lus en série = doute** : au moins deux mots entendus de suite sans correspondant (la machine a « halluciné » : un mot lu
-   « لفضيلة الدكتور »…) ne font plus signaler ni remplacement ni ajout. Un seul mot entendu à la place d'un autre reste signalé s'il est sûr.
-   Contrepartie mesurée : l'ancien mode perd ses « versets sautés » (4/5 → 0/5) qui n'étaient vus qu'à travers de tels mots ; en fenêtre : 2/5.
-4. **Séance « fenêtre » plus lourde** : compte 3 séances ordinaires dans `ECOUTE_DIRECT_MAX` (variable `ECOUTE_FENETRE_POIDS`).
-5. **Historique des erreurs** (comparaison avec les applis de mémorisation) : dans « À revoir », types d'écart sur les dernières séances et
-   versets qui REVIENNENT d'une séance à l'autre, avec lien pour les revoir (`statistiquesErreurs`, `bilans.ts`). Des comptes, jamais une
-   note ; gardé sur l'appareil seulement ; 5 langues.
-6. **« Un indice »** (texte caché) : montre 2,5 s le mot attendu ensuite, en gris ; le nombre d'indices demandés est affiché ; ce n'est pas
-   une erreur. 5 langues.
-7. Aide du suivi : « quelques secondes après » au lieu de « une dizaine de secondes après ».
+## 4. Leviers essayés (réglage sur la moitié paire, vérification sur l'impaire)
 
-## 4. Fonctions des autres applis (recherche web du 01/11/2026)
+**Retenus**
+1. **Veto de la tête CTC** (`REGLAGES_ETAT.mode = 'veto'`) : un écart vu par le RNN-T est montré sauf si la CTC lit « ok » la moitié au moins des mots
+   visés ; un mot **ajouté** exige toujours l'accord des deux. Moitié impaire : 7 → 17 erreurs vues sur 40 pour 1 fausse alerte de plus sur 25 justes.
+2. **Marge de validation 0,5 s et attente d'accord 2,5 s** (avant : 1 s et 3,5 s) : +4 à +7 erreurs vues, 0 fausse alerte de plus sur les justes.
+3. **Confiance minimale d'un remplacement 0,65** (avant 0,75) : +2 sur la moitié impaire.
+4. **Attente en fin de liste (levier 4)** : en direct, un mot parmi les 2 derniers entendus n'est pas encore signalé « remplacé » ou « ajouté » (la suite peut
+   montrer une reprise). Coût : ~10 points d'erreurs vues (70 → 60 % sur l'ensemble) ; gain : fausses alertes sur reprises / retours / mots répétés de
+   12 % à 3 % des séances. **Conservé sur décision du référent.**
+5. Les points 1 à 3 s'ajoutent aux acquis de la phase 1 : reprises et retours jamais « ajoutés », mots mal lus en série = doute.
 
-Sources : pages et blog de Tarteel (App Store, tarteel.ai/blog : « Introducing Automatic Recitation and Memorization », « Introducing Mistake
-Detection », « Tarteel Tutorials: Memorization Mistake Detection »), fiches tierces (similarlabs.com, g2.com). Non vérifié sur l'appli
-elle-même ; les deux recherches n'ont rien donné sur les autres applis (Hifz, Ayat, Quran Pal…) : à compléter.
+**Essayés, non retenus (mesurés)** : tolérance aux lettres que la machine confond (ذ ز ظ ض د, ث س ص, ط ت, ح ه) : aucun gain, gardée désactivable
+(`SEUILS.tolerance`) ; seuil « mot différent » plus haut : plus de fausses alertes ; coût plus élevé d'écarter un mot entendu qui ressemble au texte
+(`coutAjFort`) : aucun gain, plus de fausses alertes ; ancrage d'un passage sauté (`ancrageMin`) : neutre sur ce banc, gardé (testé unitairement) ;
+voix tolérée 2,5 ou 3 s : plus de fausses alertes. **GOP par alignement forcé CTC** (probabilité du mot attendu, pour séparer « mal lu » de « pas dit ») :
+99,5 % des mots Tanzil sont tokenisables, mais sur 500 mots JUSTES le quart a un score ≤ −9,9 (−14 = absent) : inutilisable tel quel ; il faudrait un
+treillis de segmentations et les logits complets. Non retenu.
 
-| Fonction chez Tarteel | Chez Awzid |
-|---|---|
-| Suivi mot à mot de la récitation (gratuit chez eux) | oui (existant) |
-| Mode mémorisation : mots non récités cachés, dévoilés au fur et à mesure | oui (existant, texte caché) |
-| Détection d'erreurs en direct : mot manqué, ajouté, remplacé | oui, plus tôt et sans fausse alerte sur les reprises (ce chantier) |
-| Peek / versets cachés : voir un mot pour se rappeler | **ajouté : « Un indice »** |
-| Historique des erreurs (« Historical Mistake Tracking ») | **ajouté : types d'écart et versets qui reviennent** (+ existant : « À revoir », justesse par page, progression par sourate) |
-| Objectifs de mémorisation et de révision, séances reprises | existant en partie (khatma, plan du jour) ; reprise de séance : non |
-| Mode écoute passive | existant (lecteur, récitateurs) |
-| Rappel espacé (un rapport tiers non vérifié parle de FSRS) | non : voir § 7 |
+**Pourquoi le reste est manqué** (32 manqués) : 11 ajouts dont le mot ajouté n'est pas lu par la machine (collage court, avalé) ; 10 versets sautés où
+quelques mots entendus au hasard à la coupure s'attachent aux mots du passage sauté et sont tus par les règles « mots mal lus en série » ; des oublis
+voisins de mots mal lus. Se taire dans le doute est le choix voulu.
 
-Pas copié : leur présentation, leurs noms, leur marque. Rien de payant bloqué : tout reste dans l'interrupteur `shazam_coran`.
+## 5. Coût de calcul, latence et compromis (étape 3)
 
-## 5. Coût de calcul et limites de capacité (à lire avant d'ouvrir)
+Pas de 0,5 s, 32 séances, mêmes séances pour les trois colonnes, VM chargée :
 
-- Mode d'avant : 0,31 s de calcul par seconde d'audio (médiane) ; fenêtre : **1,14 s par seconde d'audio** (0,57 s par lecture, une lecture
-  toutes les 0,5 s : le service est à la limite de la cadence tant que le processeur est occupé par autre chose). Avec 4 fils : environ UN élève
-  suivi à la fois par tranche de 4 cœurs ; `ECOUTE_DIRECT_MAX=6` accepte donc 2 séances « fenêtre ». À grande échelle : serveur de calcul
-  dédié ou carte graphique (déjà noté dans ECOUTE_IA.md § 4).
-- Sous charge, le client attend le retour de la requête précédente avant d'envoyer : le délai augmente mais rien ne s'empile.
-- Un essai à fenêtre de 6 s (calcul plus court) était prévu ; voir § 8 pour son état.
+| | Ancien service | Fenêtre 10 s | Fenêtre 6 s |
+|---|---|---|---|
+| Calcul par lecture (médiane / 90ᵉ) | 0,31 / 0,78 s | 0,71 / 1,07 s | 0,61 / 0,84 s |
+| Mot dévoilé (médiane) ; part < 1,5 s ; part < 3 s | 1,24 s ; 62 % ; 88 % | 1,72 s ; 42 % ; 87 % | 1,47 s ; 51 % ; 83 % |
+| Erreur dite (médiane / 90ᵉ) | 10,9 s | 5,0 / 7,3 s | 4,9 / 5,7 s |
+| Erreurs vues (13 séances d'erreur) | 1 | 6 | 6 |
 
-## 6. Fiabilité : ce qui reste
+- **Fenêtre de 6 s au lieu de 10 s** : −14 % de calcul, mot dévoilé −0,25 s, mêmes erreurs vues, une fausse alerte de moins. Meilleur compromis ;
+  non basculé par défaut (13 séances d'erreur : trop peu pour trancher) — `ECOUTE_FENETRE_S=6` suffit à l'essayer.
+- **Réseau** (fenêtre 6 s, aller-retour 0,30 / 0,15 / 0,05 s) : mot 1,67 / 1,47 / 1,24 s ; erreur 5,6 / 4,9 / 3,8 s.
+- **Encodeur en streaming à contexte conservé** : non essayé ; le FastConformer de ce modèle (attention globale) n'a pas de version « cache-aware »
+  disponible ; il faudrait un autre modèle (nouvelle évaluation de licence et de justesse).
+- **Capacité** : 1,1 s de calcul par seconde d'audio en fenêtre contre 0,3 s : une séance « fenêtre » compte pour 3 séances ordinaires dans
+  `ECOUTE_DIRECT_MAX` (`ECOUTE_FENETRE_POIDS`). Avec 6 : 2 séances à la fois sur 4 cœurs. À l'ouverture : serveur de calcul dédié ou carte graphique.
+- **Piste à fort effet (non faite)** : séparer les deux rôles — dévoiler les mots par une lecture CTC courte (4 s, ~0,15 s de calcul, comme l'ancien
+  mode) et décider des erreurs par la fenêtre. Rendrait le mot dévoilé aussi rapide que l'ancien mode (≈ 1,2 s) en gardant le gain sur les erreurs.
 
-- 1 fausse alerte sur 54 séances normales : un retour au verset précédent où le texte attendu et le verset redit se ressemblent (deux versets
-  du Coran presque identiques : « لعنة الله » / « غضب الله ») ; la machine a bien lu, c'est la comparaison qui ne peut pas savoir lequel est
-  visé. À garder en tête pour les passages « mutashābih ».
-- Les mots mal lus par le modèle (« تفسير سورة الأعراف الدرس » lu à la place d'une suite de mots) sont maintenant en doute quand ils sont en
-  série ; un mot isolé mal lu avec une forte confiance peut encore être signalé (rare : 0 sur 15 séances justes).
-- Premier et dernier mot de la portion : jamais signalés (inchangé), basmala facultative, istiʿādha, āmīn, ṣadaqa-llāh : jamais signalés
-  (existant, testé).
+### Recommandation WebSocket (non codé)
+- **Gain attendu** : chaque 0,1 s d'aller-retour en moins retire ≈ 0,1 à 0,15 s au mot dévoilé et ≈ 0,4 à 0,5 s à l'erreur dite (13 séances, bruité).
+  Passer de 0,15 s à 0,05 s : mot 1,47 → 1,24 s (−16 %), erreur 4,9 → 3,8 s (−22 %). **Ne suffit pas** à passer sous 3 s.
+- **Coût** : environ 3 à 4 jours (route WebSocket Fastify avec authentification à l'ouverture, relais vers le service avec file et contre-pression,
+  reprise après coupure, configuration du proxy, tests unitaires et e2e), plus le risque d'exploitation (connexions longues, limites par compte).
+  Le service gère déjà une file ; un seul canal par élève remplace une requête HTTP toutes les 0,5 s.
+- **Recommandation** : (1) d'abord **mesurer l'aller-retour réel** des téléphones en bêta (une heure : horodater les requêtes actuelles) ;
+  (2) faire la séparation « lecture rapide pour les mots » ci-dessus (gain de ≈ 0,5 s sur les mots, sans nouveau transport) ; (3) WebSocket seulement si
+  l'aller-retour mesuré dépasse 0,2 s (réseaux mobiles d'Afrique de l'Ouest : probable), avec une cible de calcul ≤ 0,3 s par lecture (fenêtre 6 s,
+  GPU ou modèle en flux continu) sinon le gain réseau est noyé dans l'attente.
 
-**Questions religieuses / tajwīd, notées sans trancher** : (1) une reprise ou un retour en arrière est ici traité comme NORMAL (jamais une erreur) ;
-c'est une décision de produit à faire confirmer par un maître : en examen de hifẓ, reprendre un mot peut compter comme une hésitation ;
-(2) les arrêts (waqf) : aucun traitement nouveau, une pause de 6 s au milieu d'un verset n'est pas signalée ; la reprise après un waqf
-« mauvais » (arrêt sur un mot qui ne le permet pas) n'est pas évaluée (c'est du tajwīd, hors périmètre) ; (3) « Un indice » : à valider par un
-maître pour l'usage en mode hifẓ (il montre un mot ; il ne note rien).
+## 6. Fonctions comparées aux autres applis (rappel, recherche du 01/11/2026)
+Inchangé : suivi mot à mot, texte caché, détection d'erreurs, « Un indice » (peek), historique des erreurs (types, versets qui reviennent),
+mode devant le maître (nouveau, hésitations et aide reçue à part). Sources : pages et blog de Tarteel, fiches tierces ; non vérifié sur l'appli ;
+rien trouvé sur d'autres applis. Rien n'est copié de leur design ni de leur marque.
 
-## 7. Reste à faire (par ordre de valeur)
+## 7. Questions religieuses / tajwīd (notées, non tranchées)
+- Décidées par le référent (§ 2) : reprise, retour, pause, indice.
+- À valider par un maître : le seuil de « longue hésitation » (4 s) ; qu'un verset sauté soit dit « sauté » (et pas « oublié ») ; le traitement
+  des versets presque identiques (la machine ne sait pas lequel est visé : 1 fausse alerte sur 59 reprises / retours vient de « لعنة الله » / « غضب الله »).
+- La tolérance aux lettres confondues (désactivée par défaut) mettrait de côté des différences de prononciation entre lettres proches : c'est du
+  tajwīd, hors de ce que la machine juge.
 
-1. **Vraies voix** (30 adultes volontaires, puis enfants) avec le bouton « l'IA s'est trompée » ; remesurer ce banc avec leurs séances.
-2. **Moins de 3 s pour les erreurs** : la limite est la comparaison (un oubli n'est sûr qu'après le mot SUIVANT validé), pas le calcul.
-   Pistes : encodeur « cache-aware streaming » (le contexte reste dans l'encodeur : fenêtre bien plus courte, coût divisé), WebSocket au lieu
-   d'une requête HTTP par 0,5 s (−0,1 à −0,2 s), serveur de calcul avec carte graphique.
-3. Plus de diversité de texte dans le banc (8 passages seulement) et plus de séances par type d'erreur (≥ 20).
-4. Rappel espacé des versets fragiles (les versets qui reviennent dans l'historique pourraient alimenter le plan de révision du carnet).
-5. Reprise d'une séance interrompue ; statistiques par mot (pas seulement par verset) ; objectif de révision quotidien relié à l'historique.
-6. Comparer avec d'autres applis que Tarteel (non couvert par la recherche faite).
+## 8. Fichiers
+`packages/hifz/src/{ecoute,suivi}.ts` (comparaison, veto, attente, ancrage, hésitations, fenêtre) ; `services/ecoute-ia/{ecoute,asr}.py` (mode
+`fenetre`, poids des séances, top-k CTC) ; `apps/api/src/ecoute-ia.ts` (mode par défaut `fenetre`, `hesitations`) ;
+`apps/web/src/lib/ecoute/` (fenêtre, indice, historique, mode devant le maître) ; `AWFORM_ECOUTE_SUIVI_MODE=suivi` ramène l'ancien mode.
 
-## 8. Tests
+## 9. Reste à faire (par ordre de valeur)
+1. **Vraies voix** (30 adultes volontaires, puis enfants) avec le bouton « l'IA s'est trompée » ; remesurer ce banc : seule vraie réponse sur 45 ou 60 %.
+2. Lecture rapide des mots + fenêtre pour les erreurs (§ 5) ; essayer la fenêtre de 6 s sur plus de séances.
+3. Mesurer l'aller-retour réel en bêta, puis décider du WebSocket.
+4. Ajouts non vus : détecter un mot de trop par la durée de voix inexpliquée plutôt que par le mot lu.
+5. Versets sautés : meilleure gestion des mots mal lus à la coupure (ancrage plus tolérant, validé sur plus de séances).
+6. Rappel espacé des versets fragiles ; reprise d'une séance interrompue ; autres applis à comparer.
 
-- Unitaires : `packages/hifz` 87 (dont `suivi-fenetre.test.ts`, 7 : validation par accord, bord de fenêtre, mot instable, oubli, durée de
-  dévoilement ; `ecoute.test.ts` : reprises, retour au verset précédent, refrain, mots mal lus en série) ; API `shazam.test.ts` 12 + `a5.test.ts`
-  11 (mode par défaut, retour à l'ancien mode) ; web `src/lib/ecoute` + `i18n` 61 (historique des erreurs) ; service Python 17
-  (`test_ecoute.py` : mode fenêtre, mémoire bornée à la fenêtre, rien sur le disque, poids d'une séance fenêtre).
-- e2e : `e2e/shazam.spec.ts` (suivi par fenêtre de bout en bout avec le service factice `ecoute-essai.mjs`, qui sait maintenant le mode
-  `fenetre` ; « Un indice »), `e2e/a5.spec.ts` ; lancés sous `flock ~/.awzid-e2e.lock` (résultat dans le journal de la branche).
+## 10. Tests
+- Unitaires : `packages/hifz` 94 (comparaison, reprises, mots mal lus en série, ancrage, hésitations, veto, fenêtre) ; API `shazam` + `a5` 23 ;
+  web `src/lib/ecoute` + i18n 61 ; service Python 17 ; lint, prettier, svelte-check propres.
+- e2e sous `flock ~/.awzid-e2e.lock` : `shazam.spec.ts` + `a5.spec.ts`, **16 réussis** (suivi par fenêtre, « Un indice », mode devant le maître, accessibilité AA).

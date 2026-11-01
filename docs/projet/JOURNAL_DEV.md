@@ -9,6 +9,11 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 01/11/2026 (phase 2) — « Tarteel titan » : banc élargi, veto de la tête CTC, mode « devant le maître » (branche `tarteel-titan-2-wip`) ; NON déployé
+
+- Banc 2 : 190 séances (50 justes, 81 avec erreur, 59 reprises/retours/mots répétés), 44 passages dont 11 à versets très proches, 11 récitateurs (everyayah en lecture seule). Erreurs vues : avant 9/81, phase 1 22/81, phase 2 **49/81 (60 %) ; moitié de vérification 18/40 (45 %, IC 31-60 %)** ; 0 fausse alerte sur 50 justes, 3/59 reprises-retours. 18/22 et « erreur < 3 s » NON atteints (erreur dite 5,0 s) ; le mot dévoilé n'est pas plus rapide qu'avant à charge égale (1,47 s contre 1,24 s).
+- Mode « Récitation devant le maître » : hésitations (reprises, pauses > 4 s) et aide reçue (indices) comptées à part. Détail, WebSocket (non codé) et reste à faire : `TARTEEL_TITAN_2026-11.md`.
+
 ## 01/11/2026 — Suivi de la récitation « Tarteel titan » (branche `tarteel-titan-wip`, interrupteur `shazam_coran`) ; NON déployé
 
 - Banc reproductible (`services/ecoute-ia/eval/banc.*`, 76 séances réelles + fautes simulées + cas normaux : mot répété, reprise, retour, pause, bruit, téléphone), rejoué en temps réel.
