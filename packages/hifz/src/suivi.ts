@@ -48,7 +48,7 @@ export const REGLAGES_ETAT = {
 export function etatSuivi(att: readonly MotAttendu[], e: EntreeSuivi): EtatSuivi {
   const opts = { voix: e.voix, enCours: true };
   const r = comparer(att, e.stables, opts);
-  let ecarts: Ecart[] = [];
+  let ecarts: Ecart[];
   if (REGLAGES_ETAT.mode === 'rnnt') ecarts = r.statut === 'resultat' ? r.ecarts : [];
   else {
     const c = comparer(att, e.stablesCtc, opts);
