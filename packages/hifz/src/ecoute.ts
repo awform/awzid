@@ -355,6 +355,8 @@ export interface OptionsComparaison {
   voix?: ReadonlyArray<readonly [number, number]>;
   /** suivi en direct : la fin est encore en cours (rien n'est signalé après le dernier mot reconnu) */
   enCours?: boolean;
+  /** interne : les reprises ont déjà été retirées de ce qui a été entendu */
+  sansReprises?: boolean;
 }
 
 /**
@@ -367,6 +369,39 @@ export function comparer(
   opts: OptionsComparaison = {},
 ): ResultatEcoute {
   const ops = aligner(att, ent, !!opts.enCours);
+  // REPRISES : un mot entendu qui répète un mot ou une suite de mots déjà dits et qui ne correspond à aucun mot attendu
+  // (retour au verset précédent pris pour des « mots remplacés » ou « ajoutés ») est retiré, puis on recompare. Un mot
+  // répété qui correspond bien au texte (refrain du Coran redit à chaque verset) reste : il est apparié, donc jamais retiré.
+  if (!opts.sansReprises) {
+    const rep = motsRepetes(ent);
+    if (rep.some(Boolean)) {
+      const retires = new Set<number>();
+      for (const o of ops) {
+        if (o.t === 'aj' && rep[o.j]) retires.add(o.j);
+        else if (o.t === 'eg' && o.sim < SEUILS.meme && rep[o.j]) retires.add(o.j);
+      }
+      if (retires.size)
+        return comparer(
+          att,
+          ent.filter((_, j) => !retires.has(j)),
+          { ...opts, sansReprises: true },
+        );
+    }
+  }
+  // MOTS ENTENDUS SANS CORRESPONDANT : si au moins deux se suivent, la machine a sans doute mal lu (un mot lu en deux, un
+  // passage « halluciné » comme « لفضيلة الدكتور » à la place d'un mot) : aucun remplacement ni ajout n'est signalé à cet
+  // endroit (doute). Un seul mot entendu en trop ou à la place d'un autre reste signalé s'il est sûr.
+  const inexpliques = ent.map(() => false);
+  for (const o of ops) {
+    if (o.t === 'aj') inexpliques[o.j] = true;
+    else if (o.t === 'eg' && o.sim < SEUILS.meme) inexpliques[o.j] = true;
+  }
+  const serie = (j: number) => {
+    let n = 1;
+    for (let x = j - 1; x >= 0 && inexpliques[x]; x--) n++;
+    for (let x = j + 1; x < ent.length && inexpliques[x]; x++) n++;
+    return n;
+  };
   const etat: EtatMot[] = att.map(() => 'non_recite');
   const okEnt = new Map<number, number>(); // mot attendu -> mot entendu reconnu
   const okSim = new Map<number, number>(); // mot attendu -> ressemblance avec le mot entendu
@@ -506,7 +541,10 @@ export function comparer(
         if (v > SEUILS.voixDoute) conf *= 0.3;
       }
     }
-    if (c.type === 'remplace' && (c.conf < SEUILS.confMot * 0.9 || cleMot(ent[c.j!]!.w).length < 2))
+    if (
+      c.type === 'remplace' &&
+      (c.conf < SEUILS.confMot * 0.9 || cleMot(ent[c.j!]!.w).length < 2 || serie(c.j!) >= 2)
+    )
       conf = 0;
     if (conf >= SEUILS.confEcart) {
       const a = att[c.i]!;
@@ -524,6 +562,10 @@ export function comparer(
   for (const ad of ajouts) {
     if (pris.has(ad.j)) continue;
     if (repetes[ad.j]) continue; // reprise, retour en arrière, mot redit : normal en récitation
+    if (serie(ad.j) >= 2) {
+      doutes++; // plusieurs mots entendus de suite sans correspondant : mal lu, pas une faute
+      continue;
+    }
     if (ad.apres < debut || ad.apres >= finR) continue;
     const e = ent[ad.j]!;
     const k = cleMot(e.w);

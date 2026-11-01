@@ -134,6 +134,55 @@ describe('A5 : écarts sur cas simulés', () => {
     expect(sans(ajout)).toEqual([expect.objectContaining({ type: 'ajoute', i: 9 })]);
   });
 
+  it('retour au premier verset AVANT de continuer : la suite n’est pas prise pour des mots remplacés', () => {
+    const base = nus();
+    // verset 1, verset 2, retour au verset 1, puis verset 3
+    const retour = [...base.slice(0, 13), ...base.slice(0, 7), ...base.slice(13)];
+    const r = comparer(ATT, entendu(retour).ent, { voix: entendu(retour).voix });
+    expect(r.ecarts).toEqual([]);
+    // en suivi (fin ouverte), au moment où le retour vient d’être dit
+    const enCours = comparer(ATT, entendu(retour.slice(0, 20)).ent, {
+      voix: entendu(retour).voix,
+      enCours: true,
+    });
+    expect(enCours.ecarts).toEqual([]);
+    // un vrai mot remplacé HORS de la reprise reste signalé
+    const faute = [...retour];
+    faute[3] = 'السوق';
+    const f = comparer(ATT, entendu(faute).ent, { voix: entendu(faute).voix });
+    expect(f.ecarts.some((e) => e.type === 'remplace' && e.i === 3)).toBe(true);
+  });
+
+  it('un refrain du texte redit comme prévu n’est jamais retiré (il correspond à des mots attendus)', () => {
+    const refrain = motsAttendus([
+      { s: 201, a: 1, text: 'قَالَ الوَلَدُ سَافَرَ التَّاجِرُ بِالقِطَارِ' },
+      { s: 201, a: 2, text: 'قَالَ الوَلَدُ سَافَرَ التَّاجِرُ بِالقِطَارِ' },
+    ]);
+    const mots = refrain.map((m, n) => ({ w: m.cle, conf: 0.95, t0: n * 0.5, t1: n * 0.5 + 0.4 }));
+    const voix = mots.map((e) => [e.t0, e.t1] as [number, number]);
+    const r = comparer(refrain, mots, { voix });
+    expect(r.ecarts).toEqual([]);
+    expect(r.couverture).toBe(1);
+    // le second refrain oublié EST signalé
+    const sans = mots.slice(0, 6);
+    const o = comparer(refrain, sans, { voix });
+    expect(o.ecarts.every((e) => e.type !== 'ajoute')).toBe(true);
+  });
+
+  it('plusieurs mots entendus de suite sans correspondant (mal lu) : doute, rien n’est signalé', () => {
+    const w = nus();
+    // un mot attendu lu comme DEUX mots inconnus : ni « remplacé » ni « ajouté »
+    w.splice(3, 1, 'السوق', 'الحديقة');
+    const r = comparer(ATT, entendu(w).ent, { voix: entendu(w).voix });
+    expect(r.ecarts).toEqual([]);
+    // un seul mot inconnu à sa place reste un remplacement sûr
+    const un = nus();
+    un[3] = 'السوق';
+    expect(comparer(ATT, entendu(un).ent, { voix: entendu(un).voix }).ecarts).toEqual([
+      expect.objectContaining({ type: 'remplace', i: 3 }),
+    ]);
+  });
+
   it('motsRepetes : un mot seul n’est une répétition que collé à son semblable', () => {
     const m = (w: string[]) => w.map((x) => ({ w: x, conf: 0.9 }));
     expect(motsRepetes(m(['ذهب', 'الولد', 'ذهب', 'المدرسة']))).toEqual([

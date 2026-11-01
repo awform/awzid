@@ -86,9 +86,13 @@ export interface DirectBrut {
 }
 /** Façon de suivre la récitation en direct : `suivi` = passages relus avec contexte ; `fenetre` = fenêtre glissante */
 export type ModeSuivi = 'suivi' | 'fenetre';
-/** Mode du suivi (AWFORM_ECOUTE_SUIVI_MODE ; `fenetre` = fenêtre glissante, par défaut `suivi` = passages) */
+/**
+ * Mode du suivi (AWFORM_ECOUTE_SUIVI_MODE). Par défaut `fenetre` (fenêtre glissante, chantier « Tarteel titan » du
+ * 01/11/2026 : mots dévoilés plus vite, erreurs dites ~2× plus tôt, moins de fausses alertes sur reprises) ; `suivi` = les
+ * passages relus avec contexte (avant), à garder si le serveur d'écoute manque de calcul (la fenêtre coûte environ 3,7×).
+ */
 export const modeSuivi = (): ModeSuivi =>
-  process.env.AWFORM_ECOUTE_SUIVI_MODE === 'fenetre' ? 'fenetre' : 'suivi';
+  process.env.AWFORM_ECOUTE_SUIVI_MODE === 'suivi' ? 'suivi' : 'fenetre';
 /** « Retrouve ce verset » : deux lectures du même extrait (RNN-T et tête CTC), voix entendue */
 export interface RetrouverBrut {
   mots: MotEntendu[];

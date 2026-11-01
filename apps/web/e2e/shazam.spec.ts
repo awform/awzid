@@ -208,7 +208,12 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
     await expect(suivre).toHaveText('Suivre ma récitation');
     await expect(page.getByTestId('suivi-aide')).toContainText('avec le mot attendu');
     await expect(page.getByTestId('ecoute-masque')).toBeChecked();
+    // le suivi se fait par fenêtre glissante (mode par défaut du chantier « Tarteel titan »)
+    const debut = page.waitForResponse(
+      (r) => /\/ecoute\/direct\?/.test(r.url()) && r.request().method() === 'POST',
+    );
     await suivre.click();
+    expect(((await (await debut).json()) as { mode?: string }).mode).toBe('fenetre');
     await expect(page.getByTestId('ecoute-en-cours')).toBeVisible();
     // texte caché : les mots reconnus apparaissent, l'erreur arrive PENDANT la récitation
     await expect(page.locator('[data-testid="ecoute-texte"].masque')).toBeVisible();

@@ -82,6 +82,14 @@ http
       }
       if (req.method === 'POST' && u === '/ecouter')
         return json(res, 200, { mots, voix, duree: 3, calcul: 0.1 });
+      // suivi par fenêtre glissante (mode « fenetre ») : chaque envoi relit la fenêtre ; les instants avancent de 4 s
+      // par envoi, donc dès le 2e envoi les mots du 1er sont assez anciens pour être validés (le 3e mot est oublié)
+      const fe = /^\/direct\/([0-9a-f-]{36})\?mode=fenetre$/.exec(u);
+      if (fe && req.method === 'POST') {
+        const n = (suivis.get(fe[1]) ?? 0) + 1;
+        suivis.set(fe[1], n);
+        return json(res, 200, { fenetre: true, t: 4 * n, mots, mots_ctc: mots, voix });
+      }
       const sv = /^\/direct\/([0-9a-f-]{36})\?mode=suivi$/.exec(u);
       if (sv && req.method === 'POST') {
         const n = (suivis.get(sv[1]) ?? 0) + 1;
