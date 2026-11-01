@@ -335,7 +335,7 @@ export async function acceptParentInvite(
   code: string,
   parentAccountId: string,
   evidence: object,
-): Promise<{ profileId: string; titulaire: boolean } | null> {
+): Promise<{ profileId: string; titulaire: boolean; identifiantRetire: boolean } | null> {
   const inv = await openInvite(db, code, 'parent');
   if (!inv) return null;
   return db.transaction(async (tx) => {
@@ -353,14 +353,33 @@ export async function acceptParentInvite(
       .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
       .where(eq(t.profile.id, inv.profileId));
     let titulaire = false;
+    let identifiantRetire = false;
     if (p?.ownerKind === 'ecole') {
       await tx
         .update(t.profile)
         .set({ ownerAccountId: parentAccountId })
         .where(eq(t.profile.id, inv.profileId));
       titulaire = true;
+      // Le mot de passe imprimé par l'école ne vaut plus rien : l'identifiant créé par l'école est supprimé et toutes les
+      // sessions de l'enfant sont fermées, dans la même transaction. Le parent crée un nouvel identifiant à son tour.
+      const retire = await tx
+        .delete(t.profileLogin)
+        .where(eq(t.profileLogin.profileId, inv.profileId))
+        .returning({ id: t.profileLogin.profileId });
+      identifiantRetire = retire.length > 0;
+      await tx
+        .update(t.session)
+        .set({ revokedAt: new Date() })
+        .where(and(eq(t.session.profileId, inv.profileId), isNull(t.session.revokedAt)));
+      // journal sans donnée personnelle (ni identifiant, ni prénom) : seulement l'événement et le profil
+      await tx.insert(t.auditLog).values({
+        actorAccountId: parentAccountId,
+        action: 'profil.reprise_parent',
+        target: inv.profileId,
+        after: { identifiantEcoleRetire: identifiantRetire },
+      });
     }
-    return { profileId: inv.profileId, titulaire };
+    return { profileId: inv.profileId, titulaire, identifiantRetire };
   });
 }
 

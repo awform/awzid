@@ -176,16 +176,34 @@ export async function archivePupil(
 
 /**
  * Départ d'un élève dont le compte technique de l'école est titulaire : son identifiant est retiré (la connexion est
- * refusée) et ses sessions sont fermées. Rattaché à un parent, le profil lui appartient : rien n'est touché.
+ * refusée) et ses sessions sont fermées — SAUF s'il reste une ligne active dans une classe de la même école (autre
+ * classe, réinscription). Rattaché à un parent, le profil lui appartient : rien n'est touché.
  */
 export async function fermerAccesEleve(db: Db, pupilId: string): Promise<void> {
   const [x] = await db
-    .select({ profileId: t.classPupil.profileId, ownerKind: t.account.kind })
+    .select({
+      profileId: t.classPupil.profileId,
+      ownerKind: t.account.kind,
+      schoolId: t.classGroup.schoolId,
+    })
     .from(t.classPupil)
+    .innerJoin(t.classGroup, eq(t.classGroup.id, t.classPupil.classId))
     .innerJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
     .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
     .where(eq(t.classPupil.id, pupilId));
   if (!x?.profileId || x.ownerKind !== 'ecole') return;
+  const [reste] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(t.classPupil)
+    .innerJoin(t.classGroup, eq(t.classGroup.id, t.classPupil.classId))
+    .where(
+      and(
+        eq(t.classPupil.profileId, x.profileId),
+        isNull(t.classPupil.leftAt),
+        eq(t.classGroup.schoolId, x.schoolId),
+      ),
+    );
+  if ((reste?.n ?? 0) > 0) return;
   await db.delete(t.profileLogin).where(eq(t.profileLogin.profileId, x.profileId));
   await db
     .update(t.session)
