@@ -8,17 +8,8 @@ import { eq } from 'drizzle-orm';
 import { setupBilling } from '@awform/billing';
 import { schema as t } from '@awform/db';
 import { codePg } from '../src/ecole-eleves.js';
-import {
-  child,
-  cookieOf,
-  newClass,
-  parent,
-  PW,
-  setup,
-  teacher,
-  YEAR,
-  type Ctx,
-} from './helpers.js';
+import { compterRequetes, connexion, creerLot } from './eleves-aide.js';
+import { child, newClass, parent, PW, setup, teacher, YEAR, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const UNITS = [
@@ -26,48 +17,6 @@ const UNITS = [
   { id: 'en1.l07', n: 7 },
 ];
 const an = YEAR - 9;
-
-export async function creerLot(
-  c: Ctx,
-  T: Record<string, string>,
-  classId: string,
-  eleves: Array<{ prenom: string; annee: number }>,
-  extra: Record<string, unknown> = {},
-) {
-  return c.req('POST', `/api/v1/ecole/classes/${classId}/eleves/lot`, T, {
-    eleves,
-    accordParents: true,
-    password: PW,
-    ...extra,
-  });
-}
-
-export async function connexion(c: Ctx, identifiant: string, motDePasse: string) {
-  const r = await c.req(
-    'POST',
-    '/api/v1/auth/login',
-    {},
-    { email: identifiant, password: motDePasse },
-  );
-  return { r, E: { cookie: cookieOf(r) } };
-}
-
-/** nombre de requêtes SQL passées pendant `f` */
-export async function compterRequetes(c: Ctx, f: () => Promise<unknown>): Promise<number> {
-  const pool = c.h.pool as unknown as { query: (...a: unknown[]) => unknown };
-  const orig = pool.query.bind(pool);
-  let n = 0;
-  pool.query = (...a: unknown[]) => {
-    n++;
-    return orig(...a);
-  };
-  try {
-    await f();
-  } finally {
-    pool.query = orig;
-  }
-  return n;
-}
 
 describe('codePg (sans base)', () => {
   it('lit le code PostgreSQL dans la cause d’une erreur drizzle', () => {

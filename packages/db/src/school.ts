@@ -170,6 +170,27 @@ export async function archivePupil(
     .update(t.enrolment)
     .set({ outcome, toDay: now.toISOString().slice(0, 10), decidedBy: by, decidedAt: now })
     .where(and(eq(t.enrolment.pupilId, pupilId), eq(t.enrolment.outcome, 'en_cours')));
+  // V2-5 : un élève PARTI ne se connecte plus (passage de classe, transfert : il reste élève de l'école)
+  if (outcome === 'parti') await fermerAccesEleve(db, pupilId);
+}
+
+/**
+ * Départ d'un élève dont le compte technique de l'école est titulaire : son identifiant est retiré (la connexion est
+ * refusée) et ses sessions sont fermées. Rattaché à un parent, le profil lui appartient : rien n'est touché.
+ */
+export async function fermerAccesEleve(db: Db, pupilId: string): Promise<void> {
+  const [x] = await db
+    .select({ profileId: t.classPupil.profileId, ownerKind: t.account.kind })
+    .from(t.classPupil)
+    .innerJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
+    .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
+    .where(eq(t.classPupil.id, pupilId));
+  if (!x?.profileId || x.ownerKind !== 'ecole') return;
+  await db.delete(t.profileLogin).where(eq(t.profileLogin.profileId, x.profileId));
+  await db
+    .update(t.session)
+    .set({ revokedAt: new Date() })
+    .where(and(eq(t.session.profileId, x.profileId), isNull(t.session.revokedAt)));
 }
 
 export async function addPaperPupil(

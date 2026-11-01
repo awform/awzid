@@ -14,7 +14,7 @@
  */
 import { randomInt } from 'node:crypto';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, asc, eq, inArray, isNull, like } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, like, sql } from 'drizzle-orm';
 import {
   creerElevesEnLot,
   PLAFOND_CLASSE,
@@ -164,6 +164,26 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
     await clearFailures(db, key);
     return true;
   };
+
+  /**
+   * Comptes qui peuvent avoir créé un identifiant au nom de l'école : son personnel (membres, enseignants de ses classes).
+   * Un identifiant créé par un parent (enfant venu de la famille, rattaché à la classe) n'est JAMAIS vu ni modifié
+   * par l'école.
+   */
+  const personnelEcole = async (schoolId: string, moi: string) => {
+    const r = await db.execute<{ a: string }>(sql`
+      SELECT account_id AS a FROM school_member WHERE school_id = ${schoolId}::uuid
+      UNION SELECT ct.account_id FROM class_teacher ct JOIN class_group cg ON cg.id = ct.class_id
+        WHERE cg.school_id = ${schoolId}::uuid`);
+    return new Set<string>([moi, ...r.rows.map((x) => x.a)]);
+  };
+  /** L'école gère-t-elle cet identifiant ? Profil dont le compte technique de l'école est titulaire ET identifiant créé par son personnel. */
+  const geree = (
+    ligne: { owner: string | null; creePar: string | null },
+    compteEcole: string | null,
+    personnel: Set<string>,
+  ) =>
+    !!compteEcole && ligne.owner === compteEcole && !!ligne.creePar && personnel.has(ligne.creePar);
 
   const nomEcole = async (cls: { schoolId: string; schoolName: string | null }) =>
     cls.schoolName || (await schoolById(db, cls.schoolId))?.name || null;
@@ -350,9 +370,12 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           pupilId: t.classPupil.id,
           prenom: t.classPupil.displayName,
           login: t.profileLogin.login,
+          owner: t.profile.ownerAccountId,
+          creePar: t.profileLogin.createdByAccountId,
         })
         .from(t.classPupil)
         .innerJoin(t.profileLogin, eq(t.profileLogin.profileId, t.classPupil.profileId))
+        .innerJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
         .where(
           and(
             eq(t.classPupil.classId, cls.id),
@@ -363,8 +386,13 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
             ),
           ),
         );
-      const parId = new Map(rows.map((r) => [r.pupilId, r]));
-      // un seul élève étranger à la classe (ou sans identifiant) : rien n'est fabriqué
+      const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
+      const personnel = await personnelEcole(cls.schoolId, me(req));
+      // seuls les identifiants créés par l'école pour ses élèves s'impriment (jamais ceux d'un parent)
+      const parId = new Map(
+        rows.filter((r) => geree(r, compteEcole, personnel)).map((r) => [r.pupilId, r]),
+      );
+      // un seul élève étranger à la classe (ou sans identifiant, ou géré par un parent) : rien n'est fabriqué
       if (demandes.some((d) => !parId.has(d.pupilId))) return err(reply, 404, 'introuvable');
       const etiquettes: Etiquette[] = demandes.map((d) => ({
         prenom: parId.get(d.pupilId)!.prenom,
@@ -406,23 +434,32 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           prenom: t.classPupil.displayName,
           profileId: t.classPupil.profileId,
           login: t.profileLogin.login,
+          owner: t.profile.ownerAccountId,
+          creePar: t.profileLogin.createdByAccountId,
         })
         .from(t.classPupil)
         .leftJoin(t.profileLogin, eq(t.profileLogin.profileId, t.classPupil.profileId))
+        .leftJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
         .where(and(eq(t.classPupil.classId, cls.id), isNull(t.classPupil.leftAt)))
         .orderBy(asc(t.classPupil.displayName), asc(t.classPupil.id));
       const nom = await nomEcole(cls);
       const langue = req.query.langue ?? 'fr';
+      const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
+      const personnel = await personnelEcole(cls.schoolId, me(req));
       reply.header('cache-control', 'no-store');
       return {
-        eleves: rows.map((r) => ({
-          pupilId: r.pupilId,
-          prenom: r.prenom,
-          identifiant: r.login ?? null,
-          whatsapp: r.login
-            ? lienWhatsappParents(langue, { prenom: r.prenom, login: r.login, ecole: nom })
-            : null,
-        })),
+        eleves: rows.map((r) => {
+          // l'identifiant d'un enfant venu d'un parent n'est pas montré à l'école
+          const login = r.login && geree(r, compteEcole, personnel) ? r.login : null;
+          return {
+            pupilId: r.pupilId,
+            prenom: r.prenom,
+            identifiant: login,
+            whatsapp: login
+              ? lienWhatsappParents(langue, { prenom: r.prenom, login, ecole: nom })
+              : null,
+          };
+        }),
       };
     },
   );
@@ -474,6 +511,21 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       if (!(await ressaisie(req, reply, req.body.password))) return reply;
       const ek = emailKey(lg.login);
       reply.header('cache-control', 'no-store');
+      // La recréation n'est permise que pour un profil dont le compte technique de l'école est TOUJOURS titulaire et
+      // dont l'identifiant a été créé par son personnel. Rattaché à un parent, l'enfant est le sien : 409. Le
+      // déblocage (levée de la pause) reste permis tant que l'école est responsable.
+      if (!req.body.debloquer) {
+        const [prof] = await db
+          .select({ owner: t.profile.ownerAccountId })
+          .from(t.profile)
+          .where(eq(t.profile.id, pu.profileId));
+        const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
+        if (!prof || prof.owner !== compteEcole)
+          return err(reply, 409, 'profil_rattache_a_un_parent');
+        const personnel = await personnelEcole(cls.schoolId, me(req));
+        if (!geree({ owner: prof.owner, creePar: lg.createdByAccountId }, compteEcole, personnel))
+          return err(reply, 409, 'acces_non_gere_par_l_ecole');
+      }
       if (req.body.debloquer) {
         await db
           .update(t.profileLogin)
