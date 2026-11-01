@@ -1,0 +1,123 @@
+{
+  "iqlab::P_n": {
+    "seuil": 0.00616,
+    "n_justes": 2404,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "iqlab_n": "8/25",
+    "iqlab_izhar": "16/25",
+    "iqlab_court": "0/25"
+  },
+  "iqlab::1-P_۾": {
+    "seuil": 0.44504,
+    "n_justes": 2404,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "iqlab_n": "12/25",
+    "iqlab_izhar": "22/25",
+    "iqlab_court": "0/25"
+  },
+  "iqlab::max(n,ں) (ancien)": {
+    "seuil": 0.0215,
+    "n_justes": 2404,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "iqlab_n": "2/25",
+    "iqlab_izhar": "11/25",
+    "iqlab_court": "0/25"
+  },
+  "iqlab::1/r_tabii": {
+    "seuil": 0.5,
+    "n_justes": 149,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "iqlab_izhar": "22/25",
+    "iqlab_court": "25/25"
+  },
+  "idgham_ghunna::Pp_n": {
+    "seuil": 0.02205,
+    "n_justes": 10968,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "idgh_izhar": "5/25",
+    "idgh_court": "0/25"
+  },
+  "idgham_ghunna::1/r_tabii_bloc": {
+    "seuil": 9.0,
+    "n_justes": 570,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "idgh_izhar": "1/25",
+    "idgh_court": "0/25"
+  },
+  "idgham_ghunna::1/r_tabii (ancienne fenêtre)": {
+    "seuil": 9.0,
+    "n_justes": 570,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "idgh_izhar": "1/25",
+    "idgh_court": "0/25"
+  },
+  "idgham_ghunna::1/r_large (voyelle du tanwīn + tenue + و/ي)": {
+    "seuil": 0.41666666666666663,
+    "n_justes": 570,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "idgh_izhar": "18/25",
+    "idgh_court": "22/25"
+  },
+  "idgham_sans::Pp_n|ں": {
+    "seuil": 0.01304,
+    "n_justes": 4742,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "idghs_n": "21/25"
+  },
+  "lam_allah_tafkhim::dF2": {
+    "seuil": -230.361285552729,
+    "n_justes": 519,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "lam_leger": "25/25"
+  },
+  "lam_allah_tafkhim::rF2": {
+    "seuil": 0.8333909271003668,
+    "n_justes": 519,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "lam_leger": "25/25"
+  },
+  "lam_allah_tafkhim::1-tafkhim (ancien)": {
+    "seuil": 0.94472,
+    "n_justes": 9241,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "lam_leger": "13/25"
+  },
+  "lam_allah_tarqiq::tafkhim": {
+    "seuil": 0.06957,
+    "n_justes": 3287,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "lam_lourd": "25/25"
+  },
+  "lam_allah_tarqiq::-dF2": {
+    "seuil": 113.76947534675878,
+    "n_justes": 217,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "lam_lourd": "24/25"
+  },
+  "ghunna::1/r_tabii": {
+    "seuil": 0.5,
+    "n_justes": 1870,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "ghunna_court70": "24/25",
+    "ghunna_court50": "22/25"
+  },
+  "ikhfa::1/r_tabii": {
+    "seuil": 0.47368421052631576,
+    "n_justes": 1243,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "ikhfa_court": "23/25",
+    "ikhfa_izhar": "22/25"
+  },
+  "ikhfa::P_n": {
+    "seuil": 0.02158,
+    "n_justes": 23228,
+    "seuil_appris_sur": "5 voix, Coran entier",
+    "ikhfa_izhar": "13/25"
+  },
+  "izhar::r_tabii": {
+    "seuil": 0.625,
+    "n_justes": 741,
+    "seuil_appris_sur": "Ayyūb seul (optimiste)",
+    "izhar_long": "21/25"
+  }
+}
