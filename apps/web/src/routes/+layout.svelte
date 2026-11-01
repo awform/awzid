@@ -325,7 +325,7 @@
           class="who"
           onclick={() => void import('$lib/bascule-ouvrir').then((m) => m.ouvrir(me!, profile))}
           data-testid="eleve-actif"
-          data-prive><Bidi text={profile.pseudonym} /> ▾</button
+          data-prive><Bidi text={profile.pseudonym} /></button
         >
       {:else}
         <span class="who" data-testid="eleve-actif" data-prive
@@ -494,6 +494,9 @@
     background: none;
     color: inherit;
     font-family: inherit;
+  }
+  button.who::after {
+    content: ' ▾';
   }
   .who {
     font-weight: 700;
