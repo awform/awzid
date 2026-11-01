@@ -23,6 +23,8 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
   let P: Record<string, string>;
   let pin: Record<string, string>;
   let enfantFamille: string;
+  let sessionAvant: Record<string, string>;
+  let rattache: { identifiantRetire: boolean; titulaire: boolean };
 
   beforeAll(async () => {
     c = await setup(URL_!);
@@ -38,11 +40,13 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
     const fam = await parent(c, 'famille-revue@exemple.org');
     P = fam.P;
     pin = fam.pin;
-    // A est rattaché au compte d’un parent (code remis par l’école)
+    // A est connecté, puis rattaché au compte d’un parent (code remis par l’école)
+    sessionAvant = (await connexion(c, A.identifiant, A.motDePasse)).E;
     const code = (await c.req('POST', `/api/v1/ecole/pupils/${A.pupilId}/code-parent`, T)).json()
       .code;
     const at = await c.req('POST', '/api/v1/profiles/rattacher', P, { code, password: PW });
     expect(at.statusCode, at.body).toBe(201);
+    rattache = at.json();
     // un enfant de la famille, avec SON identifiant (créé par le parent), inscrit dans la classe par le code de classe
     enfantFamille = await child(c, pin, 'Yanis');
     const acces = await c.req('POST', `/api/v1/profiles/${enfantFamille}/acces`, pin, {
@@ -62,57 +66,89 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
   const mdp = (id: string, corps: object = { password: PW }) =>
     c.req('POST', `/api/v1/ecole/pupils/${id}/mot-de-passe`, T, corps);
 
-  it('point 1 — après rattachement : recréation refusée (409), identifiant et mot de passe intacts, déblocage permis', async () => {
+  it('I-4 — à la reprise par un parent, l’identifiant de l’école est supprimé et ses sessions sont fermées', async () => {
+    expect(rattache).toMatchObject({ titulaire: true, identifiantRetire: true });
+    expect((await c.req('GET', '/api/v1/auth/me?doux=1', sessionAvant)).json().anonyme).toBe(true);
+    // le mot de passe imprimé par l’école ne vaut plus rien
+    expect((await connexion(c, A.identifiant, A.motDePasse)).r.statusCode).toBe(401);
+    expect(
+      (await c.h.db.select().from(t.profileLogin).where(eq(t.profileLogin.profileId, A.profileId)))
+        .length,
+    ).toBe(0);
+    // journal sans donnée personnelle
+    const j = await c.h.pool.query(
+      `SELECT after FROM audit_log WHERE action = 'profil.reprise_parent' AND target = $1`,
+      [A.profileId],
+    );
+    expect(j.rows).toHaveLength(1);
+    expect(JSON.stringify(j.rows[0].after)).not.toContain(A.identifiant);
+  });
+
+  it('point 1 / I-1 — après rattachement : recréation ET déblocage refusés (409), jamais d’identifiant renvoyé', async () => {
     const [prof] = await c.h.db.select().from(t.profile).where(eq(t.profile.id, A.profileId));
     const [par] = await c.h.db
       .select()
       .from(t.account)
       .where(eq(t.account.email, 'famille-revue@exemple.org'));
     expect(prof!.ownerAccountId).toBe(par!.id); // le parent est devenu titulaire
-    const avant = (
-      await c.h.db.select().from(t.profileLogin).where(eq(t.profileLogin.profileId, A.profileId))
-    )[0]!;
-    const r = await mdp(A.pupilId);
-    expect(r.statusCode).toBe(409);
-    expect(r.json().error.code).toBe('profil_rattache_a_un_parent');
-    const apres = (
-      await c.h.db.select().from(t.profileLogin).where(eq(t.profileLogin.profileId, A.profileId))
-    )[0]!;
-    expect(apres.passwordHash).toBe(avant.passwordHash);
-    expect((await connexion(c, A.identifiant, A.motDePasse)).r.statusCode).toBe(200);
-    // le déblocage reste permis
-    const d = await mdp(A.pupilId, { password: PW, debloquer: true });
-    expect(d.statusCode, d.body).toBe(200);
-    // un élève resté à l’école : recréation permise
+    for (const corps of [{ password: PW }, { password: PW, debloquer: true }]) {
+      const r = await mdp(A.pupilId, corps);
+      expect(r.statusCode, r.body).toBe(409);
+      expect(r.json().error.code).toBe('profil_rattache_a_un_parent');
+      expect(r.body).not.toContain(A.identifiant);
+    }
+    // le parent donne un NOUVEL identifiant à son enfant (route parent existante)
+    const acces = await c.req('POST', `/api/v1/profiles/${A.profileId}/acces`, pin, {
+      identifiant: 'awa-parent-1',
+      motDePasse: 'nuage-bleu-77',
+      declaration: true,
+      password: PW,
+    });
+    expect(acces.statusCode, acces.body).toBe(201);
+    expect((await connexion(c, 'awa-parent-1', 'nuage-bleu-77')).r.statusCode).toBe(200);
+    // un élève resté à l’école : recréation et déblocage permis
     const ok = await mdp(B.pupilId);
     expect(ok.statusCode, ok.body).toBe(200);
     expect(ok.json().motDePasse).toMatch(/^[a-z2-9]{8}$/);
+    expect((await mdp(B.pupilId, { password: PW, debloquer: true })).statusCode).toBe(200);
   });
 
-  it('point 1 — un identifiant créé par un autre compte n’est jamais recréé par l’école', async () => {
-    // l’identifiant de Demba est attribué (par erreur ou par manipulation) à un compte étranger à l’école
-    const [etranger] = await c.h.db
+  it('I-3 — l’enseignant qui a créé l’élève est supprimé : un autre enseignant de l’école gère encore ses élèves', async () => {
+    // un second enseignant de la classe
+    const T2 = await teacher(c, 'suppleant-revue@exemple.org');
+    const [t2] = await c.h.db
       .select()
       .from(t.account)
-      .where(eq(t.account.email, 'famille-revue@exemple.org'));
+      .where(eq(t.account.email, 'suppleant-revue@exemple.org'));
     await c.h.db
-      .update(t.profileLogin)
-      .set({ createdByAccountId: etranger!.id })
+      .insert(t.classTeacher)
+      .values({ classId: cls.id, accountId: t2!.id, role: 'suppleant' });
+    // le créateur (T) disparaît : son compte est supprimé, les identifiants gardent leur titulaire (l’école)
+    const [t1] = await c.h.db
+      .select()
+      .from(t.account)
+      .where(eq(t.account.email, 'maitre-revue@exemple.org'));
+    await c.h.pool.query(
+      `UPDATE class_group SET teacher_account_id = $1::uuid WHERE id = $2::uuid`,
+      [t2!.id, cls.id],
+    );
+    await c.h.pool.query(`DELETE FROM account WHERE id = $1::uuid`, [t1!.id]);
+    const [lg] = await c.h.db
+      .select()
+      .from(t.profileLogin)
       .where(eq(t.profileLogin.profileId, D.profileId));
-    const r = await mdp(D.pupilId);
-    expect(r.statusCode).toBe(409);
-    expect(r.json().error.code).toBe('acces_non_gere_par_l_ecole');
-    await c.h.db
-      .update(t.profileLogin)
-      .set({
-        createdByAccountId: (
-          await c.h.db
-            .select()
-            .from(t.account)
-            .where(eq(t.account.email, 'maitre-revue@exemple.org'))
-        )[0]!.id,
-      })
-      .where(eq(t.profileLogin.profileId, D.profileId));
+    expect(lg!.createdByAccountId).toBeNull();
+    const r = await c.req('POST', `/api/v1/ecole/pupils/${D.pupilId}/mot-de-passe`, T2, {
+      password: PW,
+    });
+    expect(r.statusCode, r.body).toBe(200);
+    expect(r.json().motDePasse).toMatch(/^[a-z2-9]{8}$/);
+    D.motDePasse = r.json().motDePasse;
+    // la liste montre toujours ses identifiants
+    const g = (await c.req('GET', `/api/v1/ecole/classes/${cls.id}/eleves/acces`, T2)).json()
+      .eleves;
+    expect(g.find((x: { prenom: string }) => x.prenom === 'Demba').identifiant).toBe(D.identifiant);
+    T = T2;
   });
 
   it('point 2 — l’école ne voit que les identifiants de ses élèves (ni l’enfant d’une famille, ni l’enfant rattaché)', async () => {
@@ -126,12 +162,12 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
     const par = (n: string) => liste.find((x) => x.prenom === n)!;
     expect(par('Bintou').identifiant).toBe(B.identifiant);
     expect(par('Demba').identifiant).toBe(D.identifiant);
-    expect(par('Awa').identifiant).toBeNull(); // rattaché à un parent
+    expect(par('Awa').identifiant).toBeNull(); // rattaché à un parent (même avec un nouvel identifiant de sa famille)
     expect(par('Awa').whatsapp).toBeNull();
     expect(par('Yanis').identifiant).toBeNull(); // créé par un parent
     expect(par('Yanis').whatsapp).toBeNull();
     expect(g.body).not.toContain('yanis-742');
-    expect(g.body).not.toContain(A.identifiant);
+    expect(g.body).not.toContain('awa-parent-1');
   });
 
   it('point 2 — la fiche PDF refuse l’enfant d’un parent, même avec son mot de passe', async () => {
@@ -165,7 +201,7 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
   it('point 4 — élève parti : connexion refusée, sessions fermées ; élève rattaché à un parent : rien n’est touché', async () => {
     const dem = await connexion(c, D.identifiant, D.motDePasse);
     expect(dem.r.statusCode).toBe(200);
-    const aw = await connexion(c, A.identifiant, A.motDePasse);
+    const aw = await connexion(c, 'awa-parent-1', 'nuage-bleu-77');
     expect(aw.r.statusCode).toBe(200);
     expect((await c.req('GET', '/api/v1/auth/me', dem.E)).json().enfantSession).toBe(true);
     // l’enseignant retire Demba de la classe
@@ -182,7 +218,7 @@ describe.skipIf(!URL_)('points 1, 2 et 4 — responsabilité de l’école (awfo
     const rm2 = await c.req('DELETE', `/api/v1/ecole/pupils/${A.pupilId}`, T);
     expect(rm2.statusCode, rm2.body).toBe(200);
     expect((await c.req('GET', '/api/v1/auth/me', aw.E)).json().enfantSession).toBe(true);
-    expect((await connexion(c, A.identifiant, A.motDePasse)).r.statusCode).toBe(200);
+    expect((await connexion(c, 'awa-parent-1', 'nuage-bleu-77')).r.statusCode).toBe(200);
     // un passage de classe (sortie autre que « parti ») ne coupe pas l’accès : voir `fermerAccesEleve`
   });
 });

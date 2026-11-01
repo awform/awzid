@@ -152,6 +152,8 @@ function refus(reply: FastifyReply, e: unknown, classId: string) {
 }
 
 export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
+  /** enseignants dont un lot est en cours de création (un à la fois) */
+  const lotsEnCours = new Set<string>();
   const me = (req: FastifyRequest) => req.auth!.accountId;
   const idParams = (...keys: string[]) => ({
     params: {
@@ -195,24 +197,16 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
   };
 
   /**
-   * Comptes qui peuvent avoir créé un identifiant au nom de l'école : son personnel (membres, enseignants de ses classes).
-   * Un identifiant créé par un parent (enfant venu de la famille, rattaché à la classe) n'est JAMAIS vu ni modifié
-   * par l'école.
+   * L'école gère-t-elle cet élève ? Le jugement tient au TITULAIRE seul : le compte technique de l'école est titulaire du
+   * profil et sa responsabilité « école » est active. Peu importe qui, parmi son personnel, a créé l'identifiant (un
+   * enseignant parti ne rend pas ses élèves ingérables). Un enfant venu d'un parent, ou rattaché à un parent, n'est
+   * jamais géré par l'école : ni vu, ni imprimé, ni modifié.
    */
-  const personnelEcole = async (schoolId: string, moi: string) => {
-    const r = await db.execute<{ a: string }>(sql`
-      SELECT account_id AS a FROM school_member WHERE school_id = ${schoolId}::uuid
-      UNION SELECT ct.account_id FROM class_teacher ct JOIN class_group cg ON cg.id = ct.class_id
-        WHERE cg.school_id = ${schoolId}::uuid`);
-    return new Set<string>([moi, ...r.rows.map((x) => x.a)]);
-  };
-  /** L'école gère-t-elle cet identifiant ? Profil dont le compte technique de l'école est titulaire ET identifiant créé par son personnel. */
-  const geree = (
-    ligne: { owner: string | null; creePar: string | null },
-    compteEcole: string | null,
-    personnel: Set<string>,
-  ) =>
-    !!compteEcole && ligne.owner === compteEcole && !!ligne.creePar && personnel.has(ligne.creePar);
+  const geree = (ligne: { owner: string | null; ecole: boolean }, compteEcole: string | null) =>
+    !!compteEcole && ligne.owner === compteEcole && ligne.ecole;
+  const ecoleResponsable = (schoolId: string) =>
+    sql<boolean>`EXISTS (SELECT 1 FROM profile_custodian pc WHERE pc.profile_id = ${t.classPupil.profileId}
+      AND pc.nature = 'ecole' AND pc.status = 'actif' AND pc.school_id = ${schoolId}::uuid)`;
 
   const nomEcole = async (cls: { schoolId: string; schoolName: string | null }) =>
     cls.schoolName || (await schoolById(db, cls.schoolId))?.name || null;
@@ -262,104 +256,121 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       },
     },
     async (req, reply) => {
-      // un enseignant d'une AUTRE classe n'apprend même pas qu'elle existe
-      const cls = await teacherClass(db, me(req), req.params.id);
-      if (!cls || cls.status !== 'active') return err(reply, 404, 'introuvable');
-      if (req.body.accordParents !== true) return err(reply, 400, 'accord_ecole_requis');
-      if (!(await ressaisie(req, reply, req.body.password))) return reply;
-
-      const ecole = await schoolById(db, cls.schoolId);
-      const lignes: Array<{ ligne: number; code: string }> = [];
-      // seul le PREMIER MOT est gardé (identifiant, pseudonyme, registre) : jamais de nom de famille
-      const eleves = req.body.eleves.map((e) => ({ prenom: premierMot(e.prenom), annee: e.annee }));
-      eleves.forEach((e, i) => {
-        const age = ageFromYear(e.annee);
-        if (!prenomValide(e.prenom)) lignes.push({ ligne: i + 1, code: 'prenom_invalide' });
-        else if (age < 3) lignes.push({ ligne: i + 1, code: 'annee_naissance_invalide' });
-        // un élève de l'école est un mineur (un adulte ouvre son propre compte)
-        else if (age >= 18) lignes.push({ ligne: i + 1, code: 'adulte_compte_personnel' });
-        else if (closedForAge(ecole?.country, age))
-          lignes.push({ ligne: i + 1, code: 'ferme_moins_13' });
-      });
-      if (lignes.length) return err(reply, 400, 'lignes_invalides', { lignes });
-      // pré-contrôle (lecture) avant le calcul des empreintes ; refait sous verrou dans la transaction
+      // un lot est déjà en cours pour cet enseignant : refus AVANT tout calcul d'empreinte
+      if (lotsEnCours.has(me(req))) return err(reply, 429, 'trop_de_demandes');
+      lotsEnCours.add(me(req));
       try {
-        await verifierPlafondsLot(db, {
-          teacherAccountId: me(req),
-          classId: cls.id,
-          nombre: eleves.length,
-          cle: req.body.cle,
-        });
-      } catch (e) {
-        return refus(reply, e, cls.id);
-      }
+        return await (async () => {
+          // un enseignant d'une AUTRE classe n'apprend même pas qu'elle existe
+          const cls = await teacherClass(db, me(req), req.params.id);
+          if (!cls || cls.status !== 'active') return err(reply, 404, 'introuvable');
+          if (req.body.accordParents !== true) return err(reply, 400, 'accord_ecole_requis');
+          if (!(await ressaisie(req, reply, req.body.password))) return reply;
 
-      let res: Awaited<ReturnType<typeof creerElevesEnLot>> | null = null;
-      let mdps: string[] = [];
-      let logins: string[] = [];
-      for (let essai = 0; essai < 3 && !res; essai++) {
-        try {
-          logins = await tirerIdentifiants(
-            db,
-            eleves.map((e) => e.prenom),
-          );
-        } catch (e) {
-          if (e instanceof IdentifiantsEpuises) return err(reply, 409, 'identifiant_indisponible');
-          throw e;
-        }
-        mdps = eleves.map((e, i) => motDePasseEleve(logins[i]!, e.prenom));
-        const hashes = await empreintes(mdps);
-        try {
-          res = await creerElevesEnLot(db, {
-            classId: cls.id,
-            schoolId: cls.schoolId,
-            schoolName: ecole?.name ?? null,
-            levelCode: cls.levelCode ?? null,
-            teacherAccountId: me(req),
-            cle: req.body.cle,
-            eleves: eleves.map((e, i) => ({
+          const ecole = await schoolById(db, cls.schoolId);
+          const lignes: Array<{ ligne: number; code: string }> = [];
+          // seul le PREMIER MOT est gardé (identifiant, pseudonyme, registre) : jamais de nom de famille
+          const eleves = req.body.eleves.map((e) => ({
+            prenom: premierMot(e.prenom),
+            annee: e.annee,
+          }));
+          eleves.forEach((e, i) => {
+            const age = ageFromYear(e.annee);
+            if (!prenomValide(e.prenom)) lignes.push({ ligne: i + 1, code: 'prenom_invalide' });
+            else if (age < 3) lignes.push({ ligne: i + 1, code: 'annee_naissance_invalide' });
+            // un élève de l'école est un mineur (un adulte ouvre son propre compte)
+            else if (age >= 18) lignes.push({ ligne: i + 1, code: 'adulte_compte_personnel' });
+            else if (closedForAge(ecole?.country, age))
+              lignes.push({ ligne: i + 1, code: 'ferme_moins_13' });
+          });
+          if (lignes.length) return err(reply, 400, 'lignes_invalides', { lignes });
+          // pré-contrôle (lecture) avant le calcul des empreintes ; refait sous verrou dans la transaction
+          try {
+            await verifierPlafondsLot(db, {
+              teacherAccountId: me(req),
+              classId: cls.id,
+              nombre: eleves.length,
+              cle: req.body.cle,
+            });
+          } catch (e) {
+            return refus(reply, e, cls.id);
+          }
+
+          let res: Awaited<ReturnType<typeof creerElevesEnLot>> | null = null;
+          let mdps: string[] = [];
+          let logins: string[] = [];
+          for (let essai = 0; essai < 3 && !res; essai++) {
+            try {
+              logins = await tirerIdentifiants(
+                db,
+                eleves.map((e) => e.prenom),
+              );
+            } catch (e) {
+              if (e instanceof IdentifiantsEpuises)
+                return err(reply, 409, 'identifiant_indisponible');
+              throw e;
+            }
+            mdps = eleves.map((e, i) => motDePasseEleve(logins[i]!, e.prenom));
+            const hashes = await empreintes(mdps);
+            try {
+              res = await creerElevesEnLot(db, {
+                classId: cls.id,
+                schoolId: cls.schoolId,
+                schoolName: ecole?.name ?? null,
+                levelCode: cls.levelCode ?? null,
+                teacherAccountId: me(req),
+                cle: req.body.cle,
+                eleves: eleves.map((e, i) => ({
+                  prenom: e.prenom,
+                  annee: e.annee,
+                  login: logins[i]!,
+                  passwordHash: hashes[i]!,
+                })),
+                // niveau des profils et journal : dans la même transaction (tout ou rien)
+                apres: async (d, creation) => {
+                  if (cls.levelCode)
+                    for (const e of creation.eleves)
+                      await setProfileLevel(d, e.profileId, cls.levelCode, 'inscription', me(req));
+                  await audit(d, me(req), 'ecole.eleves.lot', cls.id, {
+                    nombre: creation.eleves.length,
+                    lot: creation.lot,
+                  });
+                },
+              });
+            } catch (e) {
+              if (e instanceof RefusCreation) return refus(reply, e, cls.id);
+              // deux créations simultanées du même identifiant : la contrainte d'unicité tranche, on recommence.
+              // Toute autre erreur est remplacée par une erreur SANS paramètres (empreinte, prénom, année) : jamais journalisés.
+              if (codePg(e) !== '23505')
+                // eslint-disable-next-line preserve-caught-error -- la cause porte les paramètres de la requête (empreinte, prénom, année) : jamais journalisés
+                throw new Error(`creation_lot_echouee:${codePg(e) ?? 'inconnue'}`);
+            }
+          }
+          if (!res) return err(reply, 409, 'identifiant_indisponible');
+          const nom = await nomEcole(cls);
+          const langue = req.body.langue ?? 'fr';
+          reply.header('cache-control', 'no-store');
+          return reply.code(201).send({
+            lot: res.lot,
+            classe: { id: cls.id, name: cls.name },
+            eleves: res.eleves.map((e, i) => ({
+              profileId: e.profileId,
+              pupilId: e.pupilId,
               prenom: e.prenom,
               annee: e.annee,
-              login: logins[i]!,
-              passwordHash: hashes[i]!,
+              identifiant: e.login,
+              motDePasse: mdps[i],
+              whatsapp: lienWhatsappParents(langue, {
+                prenom: e.prenom,
+                login: e.login,
+                ecole: nom,
+              }),
             })),
-            // niveau des profils et journal : dans la même transaction (tout ou rien)
-            apres: async (d, creation) => {
-              if (cls.levelCode)
-                for (const e of creation.eleves)
-                  await setProfileLevel(d, e.profileId, cls.levelCode, 'inscription', me(req));
-              await audit(d, me(req), 'ecole.eleves.lot', cls.id, {
-                nombre: creation.eleves.length,
-                lot: creation.lot,
-              });
-            },
           });
-        } catch (e) {
-          if (e instanceof RefusCreation) return refus(reply, e, cls.id);
-          // deux créations simultanées du même identifiant : la contrainte d'unicité tranche, on recommence.
-          // Toute autre erreur est remplacée par une erreur SANS paramètres (empreinte, prénom, année) : jamais journalisés.
-          if (codePg(e) !== '23505')
-            // eslint-disable-next-line preserve-caught-error -- la cause porte les paramètres de la requête (empreinte, prénom, année) : jamais journalisés
-            throw new Error(`creation_lot_echouee:${codePg(e) ?? 'inconnue'}`);
-        }
+        })();
+      } finally {
+        lotsEnCours.delete(me(req));
       }
-      if (!res) return err(reply, 409, 'identifiant_indisponible');
-      const nom = await nomEcole(cls);
-      const langue = req.body.langue ?? 'fr';
-      reply.header('cache-control', 'no-store');
-      return reply.code(201).send({
-        lot: res.lot,
-        classe: { id: cls.id, name: cls.name },
-        eleves: res.eleves.map((e, i) => ({
-          profileId: e.profileId,
-          pupilId: e.pupilId,
-          prenom: e.prenom,
-          annee: e.annee,
-          identifiant: e.login,
-          motDePasse: mdps[i],
-          whatsapp: lienWhatsappParents(langue, { prenom: e.prenom, login: e.login, ecole: nom }),
-        })),
-      });
     },
   );
 
@@ -408,7 +419,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           login: t.profileLogin.login,
           annee: t.profile.birthYear,
           owner: t.profile.ownerAccountId,
-          creePar: t.profileLogin.createdByAccountId,
+          ecole: ecoleResponsable(cls.schoolId),
         })
         .from(t.classPupil)
         .innerJoin(t.profileLogin, eq(t.profileLogin.profileId, t.classPupil.profileId))
@@ -424,11 +435,8 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           ),
         );
       const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
-      const personnel = await personnelEcole(cls.schoolId, me(req));
       // seuls les identifiants créés par l'école pour ses élèves s'impriment (jamais ceux d'un parent)
-      const parId = new Map(
-        rows.filter((r) => geree(r, compteEcole, personnel)).map((r) => [r.pupilId, r]),
-      );
+      const parId = new Map(rows.filter((r) => geree(r, compteEcole)).map((r) => [r.pupilId, r]));
       // un seul élève étranger à la classe (ou sans identifiant, ou géré par un parent) : rien n'est fabriqué
       if (demandes.some((d) => !parId.has(d.pupilId))) return err(reply, 404, 'introuvable');
       const etiquettes: Etiquette[] = demandes.map((d) => ({
@@ -480,7 +488,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           profileId: t.classPupil.profileId,
           login: t.profileLogin.login,
           owner: t.profile.ownerAccountId,
-          creePar: t.profileLogin.createdByAccountId,
+          ecole: ecoleResponsable(cls.schoolId),
         })
         .from(t.classPupil)
         .leftJoin(t.profileLogin, eq(t.profileLogin.profileId, t.classPupil.profileId))
@@ -490,12 +498,11 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       const nom = await nomEcole(cls);
       const langue = req.query.langue ?? 'fr';
       const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
-      const personnel = await personnelEcole(cls.schoolId, me(req));
       reply.header('cache-control', 'no-store');
       return {
         eleves: rows.map((r) => {
           // l'identifiant d'un enfant venu d'un parent n'est pas montré à l'école
-          const login = r.login && geree(r, compteEcole, personnel) ? r.login : null;
+          const login = r.login && geree(r, compteEcole) ? r.login : null;
           return {
             pupilId: r.pupilId,
             prenom: r.prenom,
@@ -552,48 +559,60 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
         .select()
         .from(t.profileLogin)
         .where(eq(t.profileLogin.profileId, pu.profileId));
+      // L'école ne touche qu'à ses élèves : le compte technique de l'école doit être TOUJOURS titulaire du profil.
+      // Rattaché à un parent, l'enfant est le sien : 409 (recréation ET déblocage ; jamais d'identifiant renvoyé).
+      const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
+      const [prof] = await db
+        .select({ owner: t.profile.ownerAccountId })
+        .from(t.profile)
+        .where(eq(t.profile.id, pu.profileId));
+      if (!compteEcole || !prof || prof.owner !== compteEcole)
+        return err(reply, 409, 'profil_rattache_a_un_parent');
       if (!lg) return err(reply, 404, 'introuvable');
       if (!(await ressaisie(req, reply, req.body.password))) return reply;
       const ek = emailKey(lg.login);
       reply.header('cache-control', 'no-store');
-      // La recréation n'est permise que pour un profil dont le compte technique de l'école est TOUJOURS titulaire et
-      // dont l'identifiant a été créé par son personnel. Rattaché à un parent, l'enfant est le sien : 409. Le
-      // déblocage (levée de la pause) reste permis tant que l'école est responsable.
-      if (!req.body.debloquer) {
-        const [prof] = await db
-          .select({ owner: t.profile.ownerAccountId })
-          .from(t.profile)
-          .where(eq(t.profile.id, pu.profileId));
-        const compteEcole = (await schoolById(db, cls.schoolId))?.accountId ?? null;
-        if (!prof || prof.owner !== compteEcole)
-          return err(reply, 409, 'profil_rattache_a_un_parent');
-        const personnel = await personnelEcole(cls.schoolId, me(req));
-        if (!geree({ owner: prof.owner, creePar: lg.createdByAccountId }, compteEcole, personnel))
-          return err(reply, 409, 'acces_non_gere_par_l_ecole');
-      }
-      if (req.body.debloquer) {
-        await db
-          .update(t.profileLogin)
-          .set({ passwordChangedAt: new Date() })
-          .where(eq(t.profileLogin.profileId, lg.profileId));
+      // contrôle du titulaire refait dans la requête d'écriture elle-même (un rattachement simultané ne passe pas)
+      const titulaireEcole = sql`EXISTS (SELECT 1 FROM profile p WHERE p.id = ${t.profileLogin.profileId}
+        AND p.owner_account_id = ${compteEcole}::uuid)`;
+      const effacerPauses = async () => {
         await clearFailures(db, cleGlobaleIdentifiant(ek));
         await db.delete(t.authThrottle).where(like(t.authThrottle.key, `login:${ek}|%`));
-        await audit(db, me(req), 'ecole.eleve.debloque', lg.profileId);
+      };
+      if (req.body.debloquer) {
+        const fait = await db.transaction(async (tx) => {
+          const maj = await tx
+            .update(t.profileLogin)
+            .set({ passwordChangedAt: new Date() })
+            .where(and(eq(t.profileLogin.profileId, lg.profileId), titulaireEcole))
+            .returning({ id: t.profileLogin.profileId });
+          if (!maj.length) return false;
+          await audit(tx as unknown as Db, me(req), 'ecole.eleve.debloque', lg.profileId);
+          return true;
+        });
+        if (!fait) return err(reply, 409, 'profil_rattache_a_un_parent');
+        await effacerPauses();
         return { ok: true, identifiant: lg.login };
       }
       const mdp = motDePasseEleve(lg.login, pu.displayName);
-      await db
-        .update(t.profileLogin)
-        .set({ passwordHash: await hashSecret(mdp), passwordChangedAt: new Date() })
-        .where(eq(t.profileLogin.profileId, lg.profileId));
-      await clearFailures(db, cleGlobaleIdentifiant(ek));
-      await db.delete(t.authThrottle).where(like(t.authThrottle.key, `login:${ek}|%`));
-      // les sessions ouvertes de l'élève sont fermées
-      await db
-        .update(t.session)
-        .set({ revokedAt: new Date() })
-        .where(and(eq(t.session.profileId, lg.profileId), isNull(t.session.revokedAt)));
-      await audit(db, me(req), 'ecole.eleve.mot_de_passe', lg.profileId);
+      const empreinte = await argonGlobal.run(() => hashSecret(mdp));
+      // mot de passe, sessions fermées et journal : une seule transaction, conditionnée par le titulaire
+      const fait = await db.transaction(async (tx) => {
+        const maj = await tx
+          .update(t.profileLogin)
+          .set({ passwordHash: empreinte, passwordChangedAt: new Date() })
+          .where(and(eq(t.profileLogin.profileId, lg.profileId), titulaireEcole))
+          .returning({ id: t.profileLogin.profileId });
+        if (!maj.length) return false;
+        await tx
+          .update(t.session)
+          .set({ revokedAt: new Date() })
+          .where(and(eq(t.session.profileId, lg.profileId), isNull(t.session.revokedAt)));
+        await audit(tx as unknown as Db, me(req), 'ecole.eleve.mot_de_passe', lg.profileId);
+        return true;
+      });
+      if (!fait) return err(reply, 409, 'profil_rattache_a_un_parent');
+      await effacerPauses();
       return {
         ok: true,
         pupilId: pu.id,

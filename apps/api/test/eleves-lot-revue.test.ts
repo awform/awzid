@@ -221,9 +221,12 @@ describe.skipIf(!URL_)('point 5 — élève de l’école, droits et plafonds (a
       creerLot(c, T5, cl.id, [{ prenom: 'Sokhna', annee: an }], { cle }),
       creerLot(c, T5, cl.id, [{ prenom: 'Sokhna', annee: an }], { cle }),
     ]);
-    expect([a.statusCode, b.statusCode].sort(), a.body + b.body).toEqual([201, 409]);
-    const refus = a.statusCode === 409 ? a : b;
-    expect(refus.json().error.code).toBe('lot_deja_cree');
+    // deux envois simultanés : un seul lot à la fois par enseignant (429), l'autre est créé
+    expect([a.statusCode, b.statusCode].sort(), a.body + b.body).toEqual([201, 429]);
+    // le même envoi répété ensuite (même clé) : « déjà créé », rien n'est dupliqué
+    const encore = await creerLot(c, T5, cl.id, [{ prenom: 'Sokhna', annee: an }], { cle });
+    expect(encore.statusCode).toBe(409);
+    expect(encore.json().error.code).toBe('lot_deja_cree');
     const g = (await c.req('GET', `/api/v1/ecole/classes/${cl.id}/eleves/acces`, T5)).json();
     expect(g.eleves).toHaveLength(1);
     // une autre clé : un nouveau lot
