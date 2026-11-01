@@ -2524,6 +2524,8 @@
   "ec.carnet_ligne": "{sourate}، الآيات {de} إلى {a}: {n, plural, one {كلمة واحدة} other {# كلمات}} للمراجعة",
   "ec.carnet_ouvrir": "راجع هذا المقطع",
   "ec.carnet_aide": "محفوظ على هذا الجهاز فقط. شيخك وحده يحكم على تلاوتك.",
+  "ec.indice": "تلميح",
+  "ec.indices": "عدد التلميحات: {n}",
   "ec.stats_titre": "ما يتكرر",
   "ec.stats_types": "في آخر {s} جلسات: {o} كلمات منسية، {r} مبدَّلة، {d} غير مرتبة، {j} زائدة، {v} في آيات متروكة.",
   "ec.stats_revient": "{sourate}، الآية {a}: للمراجعة في {n} جلسات",

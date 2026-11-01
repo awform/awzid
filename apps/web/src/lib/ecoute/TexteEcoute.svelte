@@ -15,6 +15,7 @@
     ajouts,
     sautes,
     courant = -1,
+    indice = -1,
     masque = false,
     surverset,
   }: {
@@ -24,6 +25,8 @@
     ajouts: ReadonlySet<number>;
     sautes: ReadonlySet<string>;
     courant?: number;
+    /** « Un indice » : index du mot attendu montré un instant malgré le texte caché (-1 : aucun) */
+    indice?: number;
     masque?: boolean;
     /** tarteel-egal-wip : un toucher sur un verset ouvre sa fenêtre de détail (mots manqués et ajoutés) */
     surverset?: (a: number) => void;
@@ -40,6 +43,7 @@
     )}{@const e = i === undefined ? undefined : etats[i]}<span
       class="mot {e ?? ''}"
       class:courant={i !== undefined && i === courant}
+      class:indice={i !== undefined && i === indice}
       data-etat={e}>{w}</span
     >{#if i !== undefined && ajouts.has(i)}<span class="ajout" aria-hidden="true">+</span
       >{/if}{/snippet}
@@ -175,6 +179,10 @@
   .masque .mot:not(.ok):not(.oublie):not(.remplace):not(.ordre) {
     color: transparent;
     border-bottom: 2px dotted var(--ink2);
+  }
+  /* « Un indice » : le mot attendu est montré un instant, en gris (ce n'est ni une réussite ni une erreur) */
+  .masque .mot.indice:not(.ok):not(.oublie):not(.remplace):not(.ordre) {
+    color: var(--ink2);
   }
   .ajout {
     color: var(--bad-ink);

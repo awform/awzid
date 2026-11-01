@@ -2524,6 +2524,8 @@
   "ec.carnet_ligne": "{sourate}, Verse {de} bis {a}: {n, plural, one {# Wort} other {# Wörter}} zum Wiederholen",
   "ec.carnet_ouvrir": "Diesen Abschnitt wiederholen",
   "ec.carnet_aide": "Nur auf diesem Gerät gespeichert. Nur dein Lehrer beurteilt deine Rezitation.",
+  "ec.indice": "Ein Hinweis",
+  "ec.indices": "{n, plural, one {# Hinweis genutzt} other {# Hinweise genutzt}}",
   "ec.stats_titre": "Was immer wiederkommt",
   "ec.stats_types": "In deinen letzten {s} Sitzungen: {o} vergessene Wörter, {r} geänderte, {d} in falscher Reihenfolge, {j} zu viel, {v} in übersprungenen Versen.",
   "ec.stats_revient": "{sourate}, Vers {a}: in {n} Sitzungen zu wiederholen",

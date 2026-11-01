@@ -2524,6 +2524,8 @@
   "ec.carnet_ligne": "{sourate}, verses {de} to {a}: {n, plural, one {# word} other {# words}} to review",
   "ec.carnet_ouvrir": "Review this passage",
   "ec.carnet_aide": "Kept only on this device. Only your teacher judges your recitation.",
+  "ec.indice": "A hint",
+  "ec.indices": "{n, plural, one {# hint used} other {# hints used}}",
   "ec.stats_titre": "What keeps coming back",
   "ec.stats_types": "Over your last {s} sessions: {o} forgotten words, {r} changed, {d} out of order, {j} extra, {v} in skipped verses.",
   "ec.stats_revient": "{sourate}, verse {a}: to review in {n} sessions",

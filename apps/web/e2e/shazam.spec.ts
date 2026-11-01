@@ -215,6 +215,10 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
     await suivre.click();
     expect(((await (await debut).json()) as { mode?: string }).mode).toBe('fenetre');
     await expect(page.getByTestId('ecoute-en-cours')).toBeVisible();
+    // « Un indice » : le mot attendu est montré un instant malgré le texte caché ; ce n'est pas une erreur
+    await page.getByTestId('ecoute-indice').click();
+    await expect(page.locator('[data-testid="ecoute-texte"] .mot.indice')).toHaveCount(1);
+    await expect(page.getByTestId('ecoute-indices')).toContainText('1 indice');
     // texte caché : les mots reconnus apparaissent, l'erreur arrive PENDANT la récitation
     await expect(page.locator('[data-testid="ecoute-texte"].masque')).toBeVisible();
     await expect(page.getByTestId('suivi-ecart')).toContainText('Verset 1 : mot oublié', {

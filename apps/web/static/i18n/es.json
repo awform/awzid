@@ -2524,6 +2524,8 @@
   "ec.carnet_ligne": "{sourate}, aleyas {de} a {a}: {n, plural, one {# palabra} other {# palabras}} para repasar",
   "ec.carnet_ouvrir": "Repasar este pasaje",
   "ec.carnet_aide": "Guardado solo en este dispositivo. Solo tu maestro juzga tu recitación.",
+  "ec.indice": "Una pista",
+  "ec.indices": "{n, plural, one {# pista usada} other {# pistas usadas}}",
   "ec.stats_titre": "Lo que se repite",
   "ec.stats_types": "En tus últimas {s} sesiones: {o} palabras olvidadas, {r} cambiadas, {d} en desorden, {j} de más, {v} en versículos saltados.",
   "ec.stats_revient": "{sourate}, versículo {a}: para repasar en {n} sesiones",

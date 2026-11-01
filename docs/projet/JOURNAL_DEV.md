@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 01/11/2026 — Suivi de la récitation « Tarteel titan » (branche `tarteel-titan-wip`, interrupteur `shazam_coran`) ; NON déployé
+
+- Banc reproductible (`services/ecoute-ia/eval/banc.*`, 76 séances réelles + fautes simulées + cas normaux : mot répété, reprise, retour, pause, bruit, téléphone), rejoué en temps réel.
+- Suivi par fenêtre glissante (service `mode=fenetre`, `FenetreSuivi` dans `@awform/hifz`), par défaut ; `AWFORM_ECOUTE_SUIVI_MODE=suivi` ramène l'ancien mode. Mot dévoilé : médiane 1,6 → 1,43 s, 90ᵉ centile 5,2 → 2,84 s ; erreur dite : 8,5 → 4,7 s ; fausses alertes sur 54 séances normales : 24 → 1. Calcul ≈ 3,7 × plus lourd.
+- Reprises/retours jamais signalés, mots mal lus en série = doute, historique des erreurs, « Un indice ». Détail : `TARTEEL_TITAN_2026-11.md`.
+
 ## 29/10/2026 — Égaler Tarteel (branche `tarteel-egal-wip`, interrupteur `shazam_coran`, canal bêta) ; NON déployé
 
 - **Fenêtre de détail par verset** (mots manqués / ajoutés en rouge, Écouter Ayyūb par le petit lecteur commun, réécoute de sa récitation pour l'adulte seulement, audio en mémoire sur l'appareil, rien envoyé ni gardé), **justesse par page et progression par sourate** sur l'appareil, reliées à la khatma (lecture du jour, mise à jour proposée), **vitesse 1,75×**. Détail et garanties : `ECOUTE_IA.md` § 10.4.
