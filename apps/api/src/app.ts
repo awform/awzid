@@ -49,6 +49,7 @@ import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
 import { registerEcoleEleves } from './ecole-eleves.js';
+import { erreurSure } from './log-sur.js';
 import { registerParcoursA27 } from './parcours-a27.js';
 import { registerCoranMots } from './coran-mots.js';
 import { registerSereinA39 } from './serein-a39.js';
@@ -263,7 +264,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         return reply
           .code(err.statusCode)
           .send({ error: { code: 'requete_invalide', message: err.message } });
-      req.log.error(err);
+      // jamais les paramètres d'une requête (empreinte, prénom, année, identifiant) dans les journaux
+      req.log.error(erreurSure(err));
       return reply.code(500).send({ error: { code: 'erreur_interne', message: 'erreur interne' } });
     },
   );
