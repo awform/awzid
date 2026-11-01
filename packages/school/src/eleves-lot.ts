@@ -73,7 +73,8 @@ export function premierMot(s: string): string {
 
 /**
  * Normalisation NFKC du PRÉNOM SAISI seulement (formes de présentation arabes, lettres pleine chasse…), avant la
- * translittération. Jamais appliquée à un texte du Coran ni d'un livre.
+ * translittération. Elle sert aussi à l'en-tête imprimé de la fiche PDF (nom d'école et de classe), à l'impression
+ * seulement : rien n'est enregistré sous cette forme. Jamais appliquée à un texte du Coran ni d'un livre.
  */
 export function normaliserPrenom(s: string): string {
   // eslint-disable-next-line no-restricted-syntax -- prénom saisi par l'enseignant, jamais un texte coranique
@@ -451,8 +452,8 @@ export function lireListeEleves(
   }
   for (const x of lus) {
     const mots = x.nom.split(' ');
-    // « nom puis prénom » : le prénom est le deuxième mot ; sinon le premier. Jamais le nom de famille.
-    const prenom = !sure && ordre === 'nom-prenom' ? (mots[1] ?? mots[0]!) : mots[0]!;
+    // « nom puis prénom » : le prénom est le DERNIER mot (« DE SOUZA Marie ») ; sinon le premier. Jamais le nom de famille.
+    const prenom = !sure && ordre === 'nom-prenom' ? mots[mots.length - 1]! : mots[0]!;
     if (!prenomValide(prenom)) {
       rejets.push({ ligne: x.numero, texte: x.texte, code: 'prenom_invalide' });
       continue;

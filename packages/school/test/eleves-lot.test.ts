@@ -175,6 +175,18 @@ describe('colonne « prénom » d’un tableur (cinq langues)', () => {
     // un mot seul : aucune question
     expect(lireListeEleves(`Fatou ${an}`, 2026).ambigu).toBeUndefined();
   });
+  it('nom puis prénom : le prénom est le dernier mot (« DE SOUZA Marie » donne Marie)', () => {
+    const r = lireListeEleves(
+      `DE SOUZA Marie ${an}\nDIOP Fatou ${an}`,
+      2026,
+      undefined,
+      'nom-prenom',
+    );
+    expect(r.eleves).toEqual([
+      { prenom: 'Marie', annee: an },
+      { prenom: 'Fatou', annee: an },
+    ]);
+  });
   it('un intitulé « prénom » sûr n’a pas besoin de l’ordre', () => {
     const r = lireListeEleves(`Nom\tPrénom\tAnnée\nDIOP\tFatou Bintou\t${an}`, 2026);
     expect(r.ambigu).toBeUndefined();

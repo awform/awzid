@@ -151,9 +151,28 @@ function refus(reply: FastifyReply, e: unknown, classId: string) {
   return err(reply, 400, e.code, { max: PLAFOND_CLASSE });
 }
 
+/**
+ * Un lot à la fois par enseignant. Le verrou garde l'heure de sa prise : au-delà de 5 minutes il est considéré comme
+ * libre (un traitement interrompu ne bloque pas l'enseignant jusqu'au redémarrage).
+ */
+export class VerrouLot {
+  private pris = new Map<string, number>();
+  constructor(private readonly delaiMs = 5 * 60_000) {}
+  /** vrai si le verrou est pris pour cet enseignant (et il est alors posé) ; faux s'il est déjà tenu */
+  prendre(id: string, maintenant = Date.now()): boolean {
+    const depuis = this.pris.get(id);
+    if (depuis !== undefined && maintenant - depuis < this.delaiMs) return false;
+    this.pris.set(id, maintenant);
+    return true;
+  }
+  liberer(id: string): void {
+    this.pris.delete(id);
+  }
+}
+
 export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
-  /** enseignants dont un lot est en cours de création (un à la fois) */
-  const lotsEnCours = new Set<string>();
+  /** enseignants dont un lot est en cours de création (un à la fois, 5 minutes au plus) */
+  const lotsEnCours = new VerrouLot();
   const me = (req: FastifyRequest) => req.auth!.accountId;
   const idParams = (...keys: string[]) => ({
     params: {
@@ -257,8 +276,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
     },
     async (req, reply) => {
       // un lot est déjà en cours pour cet enseignant : refus AVANT tout calcul d'empreinte
-      if (lotsEnCours.has(me(req))) return err(reply, 429, 'trop_de_demandes');
-      lotsEnCours.add(me(req));
+      if (!lotsEnCours.prendre(me(req))) return err(reply, 429, 'trop_de_demandes');
       try {
         return await (async () => {
           // un enseignant d'une AUTRE classe n'apprend même pas qu'elle existe
@@ -369,7 +387,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           });
         })();
       } finally {
-        lotsEnCours.delete(me(req));
+        lotsEnCours.liberer(me(req));
       }
     },
   );
