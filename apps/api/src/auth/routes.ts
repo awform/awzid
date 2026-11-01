@@ -234,28 +234,34 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     accountId: string,
     mfaVerified: boolean,
     tablet: { classId: string } | null = null,
+    /** session limitée d'un enfant ou d'un élève : SON profil seulement (ni les autres profils du titulaire, ni ses accords) */
+    soloProfileId: string | null = null,
   ) => {
     const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
     if (!a) return null;
     // lot F2 (revue E3, E4) : profils dont le compte est titulaire OU parent responsable (second parent) ;
     // en mode tablette : les élèves de la classe ; type enfant / ado / adulte recalculé depuis l'année
-    const profiles = (await visibleProfiles(db, accountId, tablet)).map(({ lien, ...p }) => ({
-      ...p,
-      lien,
-    }));
+    const profiles = (await visibleProfiles(db, accountId, tablet, soloProfileId)).map(
+      ({ lien, ...p }) => ({
+        ...p,
+        lien,
+      }),
+    );
     const [local = '', domain = ''] = (a.email ?? '').split('@');
     // lot F3 (revue E10) : accords nécessaires manquants (premier usage) — jamais en mode tablette
-    const accordsManquants = tablet ? [] : await missingConsents(db, accountId, a.kind);
+    const accordsManquants =
+      tablet || soloProfileId ? [] : await missingConsents(db, accountId, a.kind);
     // lot F1 puis F2 (revue E2) : rôles multiples (plateforme, écoles), en plus du type du titulaire
-    const roles = tablet ? [] : await accountRoles(db, accountId, a.kind);
-    const ecoles = tablet
-      ? []
-      : (await schoolsOf(db, accountId)).map((s) => ({
-          id: s.school.id,
-          name: s.school.name,
-          personal: s.school.personal,
-          roles: s.roles,
-        }));
+    const roles = tablet || soloProfileId ? [] : await accountRoles(db, accountId, a.kind);
+    const ecoles =
+      tablet || soloProfileId
+        ? []
+        : (await schoolsOf(db, accountId)).map((s) => ({
+            id: s.school.id,
+            name: s.school.name,
+            personal: s.school.personal,
+            roles: s.roles,
+          }));
     let tablette: { classId: string; className: string; school: string } | null = null;
     if (tablet) {
       const [c] = await db
@@ -794,7 +800,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           ttlMs: 7 * 24 * 3600_000,
         });
         reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(req)));
-        return meEnfant(await me(o.id, false), enf.profileId, await ctxEnfant(db, enf.profileId));
+        return meEnfant(
+          await me(o.id, false, null, enf.profileId),
+          enf.profileId,
+          await ctxEnfant(db, enf.profileId),
+        );
       }
       if (!a) return err(reply, 401, 'identifiants_incorrects');
       // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
@@ -889,7 +899,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     // navigateur. Sans ce paramètre, le comportement historique (401) est inchangé.
     if (!req.auth && req.query.doux === '1') return { anonyme: true };
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    const m = await me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
+    const m = await me(
+      req.auth.accountId,
+      req.auth.mfaVerified,
+      req.auth.tablet,
+      req.auth.profileId,
+    );
     return req.auth.profileId
       ? meEnfant(m, req.auth.profileId, await ctxEnfant(db, req.auth.profileId))
       : m;
@@ -1078,7 +1093,7 @@ export async function ownsProfile(
 ): Promise<boolean> {
   if (!who) return false;
   if (typeof who !== 'string') {
-    if (who.kind === 'ecole' && !who.tablet) return false;
+    if (who.kind === 'ecole' && !who.tablet && !who.eleveEcole) return false;
     // revue M2 : une session limitée n'agit que pour SON profil
     return canActForProfile(db, who.accountId, profileId, who.tablet, who.profileId);
   }

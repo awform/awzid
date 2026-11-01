@@ -17,7 +17,9 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, asc, eq, inArray, isNull, like } from 'drizzle-orm';
 import {
   creerElevesEnLot,
-  elevesAvecIdentifiant,
+  PLAFOND_CLASSE,
+  RefusCreation,
+  verifierPlafondsLot,
   loginsPris,
   schema as t,
   schoolById,
@@ -26,7 +28,6 @@ import {
   type Db,
 } from '@awform/db';
 import {
-  CLASSE_MAX,
   genererMotDePasseEleve,
   LANGUES_MESSAGE,
   LOT_MAX,
@@ -108,6 +109,19 @@ async function empreintes(mdps: readonly string[]): Promise<string[]> {
   return out;
 }
 
+/** code PostgreSQL d'une erreur (drizzle l'enveloppe : le code est dans `cause`) */
+export const codePg = (e: unknown): string | undefined =>
+  (e as { cause?: { code?: string }; code?: string })?.cause?.code ??
+  (e as { code?: string })?.code;
+
+function refus(reply: FastifyReply, e: unknown, classId: string) {
+  if (!(e instanceof RefusCreation)) throw e;
+  void classId;
+  if (e.code === 'trop_de_demandes') return err(reply, 429, e.code);
+  if (e.code === 'lot_deja_cree') return err(reply, 409, e.code);
+  return err(reply, 400, e.code, { max: PLAFOND_CLASSE });
+}
+
 export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
   const me = (req: FastifyRequest) => req.auth!.accountId;
   const idParams = (...keys: string[]) => ({
@@ -163,6 +177,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       accordParents: boolean;
       password: string;
       langue?: string;
+      cle?: string;
     };
   }>(
     '/api/v1/ecole/classes/:id/eleves/lot',
@@ -192,6 +207,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
             accordParents: { type: 'boolean' },
             password: { type: 'string', maxLength: 512 },
             langue: LANGUE,
+            cle: { type: 'string', format: 'uuid' },
           },
         },
       },
@@ -201,10 +217,6 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
       const cls = await teacherClass(db, me(req), req.params.id);
       if (!cls || cls.status !== 'active') return err(reply, 404, 'introuvable');
       if (req.body.accordParents !== true) return err(reply, 400, 'accord_ecole_requis');
-      if (!(await reserveAttempt(db, `lot:${me(req)}`, LOTS_PAR_HEURE, 60))) {
-        await audit(db, me(req), 'ecole.eleves.lot_limite', cls.id);
-        return err(reply, 429, 'trop_de_demandes');
-      }
       if (!(await ressaisie(req, reply, req.body.password))) return reply;
 
       const ecole = await schoolById(db, cls.schoolId);
@@ -220,8 +232,17 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           lignes.push({ ligne: i + 1, code: 'ferme_moins_13' });
       });
       if (lignes.length) return err(reply, 400, 'lignes_invalides', { lignes });
-      if ((await elevesAvecIdentifiant(db, cls.id)) + eleves.length > CLASSE_MAX)
-        return err(reply, 400, 'classe_pleine', { max: CLASSE_MAX });
+      // pré-contrôle (lecture) avant le calcul des empreintes ; refait sous verrou dans la transaction
+      try {
+        await verifierPlafondsLot(db, {
+          teacherAccountId: me(req),
+          classId: cls.id,
+          nombre: eleves.length,
+          cle: req.body.cle,
+        });
+      } catch (e) {
+        return refus(reply, e, cls.id);
+      }
 
       let res: Awaited<ReturnType<typeof creerElevesEnLot>> | null = null;
       let mdps: string[] = [];
@@ -240,30 +261,33 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
             schoolName: ecole?.name ?? null,
             levelCode: cls.levelCode ?? null,
             teacherAccountId: me(req),
+            cle: req.body.cle,
             eleves: eleves.map((e, i) => ({
               prenom: e.prenom,
               annee: e.annee,
               login: logins[i]!,
               passwordHash: hashes[i]!,
             })),
+            // niveau des profils et journal : dans la même transaction (tout ou rien)
+            apres: async (d, creation) => {
+              if (cls.levelCode)
+                for (const e of creation.eleves)
+                  await setProfileLevel(d, e.profileId, cls.levelCode, 'inscription', me(req));
+              await audit(d, me(req), 'ecole.eleves.lot', cls.id, {
+                nombre: creation.eleves.length,
+                lot: creation.lot,
+              });
+            },
           });
         } catch (e) {
-          // deux créations simultanées du même identifiant : la contrainte d'unicité tranche, on recommence
-          if (
-            (e as { code?: string }).code !== '23505' &&
-            !/profile_login_login_unique/.test(String(e))
-          )
-            throw e;
+          if (e instanceof RefusCreation) return refus(reply, e, cls.id);
+          // deux créations simultanées du même identifiant : la contrainte d'unicité tranche, on recommence.
+          // Toute autre erreur est remplacée par une erreur SANS paramètres (empreinte, prénom, année) : jamais journalisés.
+          if (codePg(e) !== '23505')
+            throw new Error(`creation_lot_echouee:${codePg(e) ?? 'inconnue'}`);
         }
       }
       if (!res) return err(reply, 409, 'identifiant_indisponible');
-      if (cls.levelCode)
-        for (const e of res.eleves)
-          await setProfileLevel(db, e.profileId, cls.levelCode, 'inscription', me(req));
-      await audit(db, me(req), 'ecole.eleves.lot', cls.id, {
-        nombre: res.eleves.length,
-        lot: res.lot,
-      });
       const nom = await nomEcole(cls);
       const langue = req.body.langue ?? 'fr';
       reply.header('cache-control', 'no-store');

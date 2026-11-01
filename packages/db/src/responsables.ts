@@ -100,6 +100,8 @@ export async function visibleProfiles(
   db: Db,
   accountId: string,
   tablet?: TabletScope | null,
+  /** session limitée d'un enfant ou d'un élève : ce profil seulement */
+  soloProfileId?: string | null,
 ): Promise<FamilyProfile[]> {
   const cols = {
     id: t.profile.id,
@@ -144,10 +146,13 @@ export async function visibleProfiles(
       .select(cols)
       .from(t.profile)
       .where(
-        or(
-          eq(t.profile.ownerAccountId, accountId),
-          sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = "profile"."id"
+        and(
+          or(
+            eq(t.profile.ownerAccountId, accountId),
+            sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = "profile"."id"
             AND pc."account_id" = ${accountId}::uuid AND pc."nature" = 'parent' AND pc."status" = 'actif')`,
+          ),
+          soloProfileId ? eq(t.profile.id, soloProfileId) : undefined,
         ),
       )
       .orderBy(asc(t.profile.createdAt));

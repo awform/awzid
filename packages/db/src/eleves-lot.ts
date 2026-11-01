@@ -11,6 +11,48 @@ import type { Db } from './client.js';
 import { ensureSchoolAccount } from './ecole.js';
 import * as t from './schema.js';
 
+/** Plafonds de création (glissants, ne comptent que ce qui a VRAIMENT été créé). */
+export const PLAFOND_ELEVES_HEURE = 300;
+export const PLAFOND_LOTS_HEURE = 10;
+export const PLAFOND_CLASSE = 300;
+
+/** Refus de création : `code` est le code d'erreur de l'API. */
+export class RefusCreation extends Error {
+  constructor(public readonly code: 'trop_de_demandes' | 'classe_pleine' | 'lot_deja_cree') {
+    super(code);
+    this.name = 'RefusCreation';
+  }
+}
+
+/**
+ * Plafonds d'un enseignant : 300 élèves et 10 lots par heure glissante (toutes classes confondues), 300 élèves avec
+ * identifiant par classe ; clé d'idempotence déjà utilisée. Appelée avant le calcul des empreintes (lecture) puis
+ * DANS la transaction, sous verrou (deux demandes simultanées ne dépassent pas ensemble le plafond).
+ */
+export async function verifierPlafondsLot(
+  d: Db,
+  p: { teacherAccountId: string; classId: string; nombre: number; cle?: string | null },
+): Promise<void> {
+  if (p.cle) {
+    const dejaPris = await d.execute<{ n: number }>(sql`
+      SELECT count(*)::int AS n FROM profile_custodian
+      WHERE created_by = ${p.teacherAccountId}::uuid AND nature = 'ecole' AND evidence->>'cle' = ${p.cle}`);
+    if ((dejaPris.rows[0]?.n ?? 0) > 0) throw new RefusCreation('lot_deja_cree');
+  }
+  const lots = await d.execute<{ n: number }>(sql`
+    SELECT count(DISTINCT evidence->>'lot')::int AS n FROM profile_custodian
+    WHERE created_by = ${p.teacherAccountId}::uuid AND nature = 'ecole' AND evidence->>'lot' IS NOT NULL
+      AND created_at > now() - interval '1 hour'`);
+  if ((lots.rows[0]?.n ?? 0) >= PLAFOND_LOTS_HEURE) throw new RefusCreation('trop_de_demandes');
+  const eleves = await d.execute<{ n: number }>(sql`
+    SELECT count(*)::int AS n FROM profile_login
+    WHERE created_by_account_id = ${p.teacherAccountId}::uuid AND created_at > now() - interval '1 hour'`);
+  if ((eleves.rows[0]?.n ?? 0) + p.nombre > PLAFOND_ELEVES_HEURE)
+    throw new RefusCreation('trop_de_demandes');
+  if ((await elevesAvecIdentifiant(d, p.classId)) + p.nombre > PLAFOND_CLASSE)
+    throw new RefusCreation('classe_pleine');
+}
+
 export interface EleveACreer {
   prenom: string;
   annee: number;
@@ -28,6 +70,7 @@ export interface EleveCree {
 
 /** Preuve de l'accord des parents, enregistrée sur chaque profil (école, date, enseignant). */
 export function preuveAccordEcole(p: {
+  cle?: string | null;
   schoolId: string;
   schoolName: string | null;
   teacherAccountId: string;
@@ -46,6 +89,7 @@ export function preuveAccordEcole(p: {
     saisiLe: new Date().toISOString(),
     classe: p.classId,
     lot: p.lot,
+    cle: p.cle ?? null,
   };
 }
 
@@ -82,6 +126,10 @@ export async function creerElevesEnLot(
     levelCode: string | null;
     teacherAccountId: string;
     eleves: readonly EleveACreer[];
+    /** clé d'idempotence choisie par l'appareil (un double envoi ne crée pas deux fois les comptes) */
+    cle?: string | null;
+    /** exécuté DANS la transaction (niveau des profils, journal) : tout ou rien */
+    apres?: (d: Db, creation: { lot: string; eleves: EleveCree[] }) => Promise<void>;
   },
 ): Promise<{ lot: string; eleves: EleveCree[] }> {
   const owner = await ensureSchoolAccount(db, p.schoolId);
@@ -92,6 +140,7 @@ export async function creerElevesEnLot(
     teacherAccountId: p.teacherAccountId,
     lot,
     classId: p.classId,
+    cle: p.cle,
   });
   const [cl] = await db
     .select({ year: t.classGroup.schoolYearId })
@@ -99,6 +148,16 @@ export async function creerElevesEnLot(
     .where(eq(t.classGroup.id, p.classId));
   const jour = new Date().toISOString().slice(0, 10);
   const crees = await db.transaction(async (tx) => {
+    const d = tx as unknown as Db;
+    // un enseignant à la fois, une classe à la fois : le contrôle des plafonds et la création sont indivisibles
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`lot:${p.teacherAccountId}`}))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`classe:${p.classId}`}))`);
+    await verifierPlafondsLot(d, {
+      teacherAccountId: p.teacherAccountId,
+      classId: p.classId,
+      nombre: p.eleves.length,
+      cle: p.cle,
+    });
     const out: EleveCree[] = [];
     for (const e of p.eleves) {
       const [prof] = await tx
@@ -158,6 +217,7 @@ export async function creerElevesEnLot(
         login: e.login,
       });
     }
+    await p.apres?.(d, { lot, eleves: out });
     return out;
   });
   return { lot, eleves: crees };
