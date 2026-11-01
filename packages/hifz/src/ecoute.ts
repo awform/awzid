@@ -177,7 +177,7 @@ export const SEUILS = {
   /** au-dessous : mot différent (entre les deux : doute, rien n'est signalé) */
   different: 0.45,
   /** confiance minimale de la machine pour signaler un mot remplacé ou ajouté */
-  confMot: 0.75,
+  confMot: 0.65,
   /** confiance minimale d'un écart pour être montré */
   confEcart: 0.6,
   /**
@@ -192,6 +192,19 @@ export const SEUILS = {
    * mots ; seuls comptent les voisins reconnus (pas de pénalité d'orthographe ni de mot court) et le silence à leur place
    */
   groupeLong: 3,
+  /**
+   * suivi en direct : un mot entendu parmi les derniers (cette fin de liste) n'est pas encore signalé comme « remplacé » ou
+   * « ajouté » — la suite peut montrer que l'élève reprend (un mot redit, une reprise commencée). 0 : pas d'attente.
+   */
+  queueMot: 2,
+  /** coût, dans l'alignement, d'écarter comme « mot en trop » un mot entendu qui ressemble fortement à un mot attendu */
+  coutAjFort: 1,
+  /** passage sauté : nombre minimal de mots attendus de suite sans aucun mot reconnu, entre deux ancres sûres (0 : désactivé) */
+  ancrageMin: 4,
+  /** confiance minimale des quatre mots reconnus qui encadrent un passage sauté */
+  ancrageConf: 0.8,
+  /** idem pour un oubli : le mot reconnu qui SUIT le mot oublié ne doit pas être parmi les derniers entendus */
+  queueOubli: 0,
   /** 1 : la ressemblance tolère les lettres que la machine confond (ذ ز ظ ض د, ث س ص, ط ت, ح ه) */
   tolerance: 1,
 };
@@ -226,6 +239,12 @@ export function aligner(
     }
     return v;
   };
+  // un mot entendu qui ressemble FORTEMENT (≥ 0,9, au moins 4 lettres) à un mot attendu quelque part n'est pas un « mot en
+  // trop » comme les autres : le jeter coûte `coutAjFort` (1 : comme un autre). Évite qu'un passage sauté soit pris pour
+  // des mots en trop à la fin plutôt que pour des mots attendus oubliés plus haut.
+  const fort = cles.map(
+    (k) => SEUILS.coutAjFort > 1 && k.length >= 4 && att.some((a) => ressemblance(a.cle, k) >= 0.9),
+  );
   cost[0] = 0;
   const relax = (i: number, j: number, c: number, pi: number, pj: number, k: number) => {
     const x = i * W + j;
@@ -268,7 +287,7 @@ export function aligner(
           }
         }
       }
-      if (j < m) relax(i, j + 1, c + 1, i, j, 5);
+      if (j < m) relax(i, j + 1, c + (fort[j] ? SEUILS.coutAjFort : 1), i, j, 5);
     }
   const ops: Op[] = [];
   let x = n * W + m;
@@ -603,6 +622,7 @@ export function comparer(
       const av = iav === undefined ? undefined : okEnt.get(iav);
       const ap = iap === undefined ? undefined : okEnt.get(iap);
       conf = Math.min(confDe(av), confDe(ap));
+      if (opts.enCours && ap !== undefined && ap >= ent.length - SEUILS.queueOubli) conf = 0;
       // voisin reconnu imparfaitement : la machine a pu « avaler » le mot dans son voisin (نزل بساحتهم -> نزاحتهم)
       const simVoisins = Math.min(
         iav === undefined ? 1 : (okSim.get(iav) ?? 1),
@@ -629,7 +649,10 @@ export function comparer(
     }
     if (
       c.type === 'remplace' &&
-      (c.conf < SEUILS.confMot * 0.9 || cleMot(ent[c.j!]!.w).length < 2 || serie(c.j!) >= 2)
+      (c.conf < SEUILS.confMot * 0.9 ||
+        cleMot(ent[c.j!]!.w).length < 2 ||
+        serie(c.j!) >= 2 ||
+        (!!opts.enCours && c.j! >= ent.length - SEUILS.queueMot))
     )
       conf = 0;
     if (c.type === 'remplace')
@@ -661,6 +684,10 @@ export function comparer(
       continue;
     }
     if (ad.apres < debut || ad.apres >= finR) continue;
+    if (opts.enCours && ad.j >= ent.length - SEUILS.queueMot) {
+      doutes++; // trop près de la fin entendue : la suite dira si l'élève reprend
+      continue;
+    }
     const e = ent[ad.j]!;
     const k = cleMot(e.w);
     if (k.length < 2) continue;
@@ -681,6 +708,39 @@ export function comparer(
         confiance: round(e.conf),
       });
     } else doutes++;
+  }
+
+  // ANCRAGE EN AVANT ET EN ARRIÈRE : une suite d'au moins `ancrageMin` mots attendus dont AUCUN n'a été reconnu, encadrée de
+  // chaque côté par deux mots reconnus de suite (et sûrs), est un passage sauté — même si, dans l'alignement, quelques mots
+  // entendus au hasard (restes d'une coupe, mots mal lus) ont été rattachés à ces mots comme des « remplacements ».
+  if (SEUILS.ancrageMin > 0) {
+    let x = debut;
+    while (x <= finR) {
+      if (okEnt.has(x)) {
+        x++;
+        continue;
+      }
+      let y = x;
+      while (y <= finR && !okEnt.has(y)) y++;
+      const ancres = [x - 2, x - 1, y, y + 1];
+      if (
+        y - x >= SEUILS.ancrageMin &&
+        ancres.every((m) => m >= debut && m <= finR && okEnt.has(m)) &&
+        ancres.every((m) => confDe(okEnt.get(m)) >= SEUILS.ancrageConf) &&
+        !att.slice(x, y).some((m) => m.facultatif || m.lettres)
+      ) {
+        for (let k = ecarts.length - 1; k >= 0; k--) {
+          const e = ecarts[k]!;
+          if (e.type !== 'ajoute' && e.i >= x && e.fin <= y - 1) ecarts.splice(k, 1);
+        }
+        const a = att[x]!;
+        const conf = Math.min(...ancres.map((m) => confDe(okEnt.get(m))));
+        ecarts.push({ type: 'oublie', i: x, fin: y - 1, s: a.s, a: a.a, confiance: round(conf) });
+        for (let k = x; k < y; k++) etat[k] = 'oublie';
+        opts.trace?.({ ancrage: [x, y - 1], conf: round(conf) });
+      }
+      x = y;
+    }
   }
 
   // verset entier oublié -> « verset sauté »

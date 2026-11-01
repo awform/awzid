@@ -158,6 +158,9 @@ def charger_sessions():
     if deja and os.path.exists(deja):
         ids = {x['id'] for x in json.load(open(deja, encoding='utf-8'))}
         S = [s for s in S if s['id'] not in ids]
+    ex = [x for x in os.environ.get('EXCLURE', '').split(',') if x]
+    if ex:  # types laissés de côté (calcul limité)
+        S = [s for s in S if s['type'] not in ex]
     if os.environ.get('SHUF'):  # ordre mélangé (graine fixe) : si on s'arrête avant la fin, tous les types sont représentés
         random.Random(5).shuffle(S)
     return S[:lim] if lim else S

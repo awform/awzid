@@ -19,6 +19,6 @@ exec "${VERROU[@]}" docker run --rm --cpus "$CPUS" -u "$(id -u):$(id -g)" --entr
   -v "$HOME/coran-audio-source:/src:ro" -v "$HOME/a1-rapports:/rapports:ro" \
   -v "${AWFORM_CONTENT_DIR:-$HOME/awform-content}:/content:ro" \
   -v "$M/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0:/model:ro" \
-  -v "$HOME/tajwid-donnees/everyayah:/everyayah:ro" -e TOPK="${TOPK:-}" -e SHUF="${SHUF:-}" -e PART="${PART:-}" -e DEJA="${DEJA:-}" \
+  -v "$HOME/tajwid-donnees/everyayah:/everyayah:ro" -e TOPK="${TOPK:-}" -e EXCLURE="${EXCLURE:-}" -e SHUF="${SHUF:-}" -e PART="${PART:-}" -e DEJA="${DEJA:-}" \
   -v "$R:/code:ro" -v "$B:/work" \
   "${IMAGE:-awzid/ecoute-ia:d8bc753}" -n 10 python -W ignore /code/eval/${SCRIPT:-banc.py} "$@"

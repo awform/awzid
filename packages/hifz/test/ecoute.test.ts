@@ -235,6 +235,28 @@ describe('A5 : écarts sur cas simulés', () => {
     expect(motsARevoir(r)).toBe(6);
   });
 
+  it('passage sauté repéré par ses ancres, même avec des mots mal lus à la coupure', () => {
+    const w = nus().filter((_, n) => ATT[n]!.a !== 2);
+    // restes de la coupure : deux mots entendus au hasard à la place du verset sauté
+    const brut = [...w.slice(0, 7), 'السوق', 'الحديقة', ...w.slice(7)];
+    const r = comparer(ATT, entendu(brut).ent, { voix: entendu(brut).voix });
+    expect(r.ecarts).toEqual([expect.objectContaining({ type: 'verset_saute', s: 200, a: 2 })]);
+    // sans les ancres sûres (confiance basse d’un voisin), rien n’est signalé
+    const bas = entendu(brut).ent.map((e, n) => (n === 6 ? { ...e, conf: 0.5 } : e));
+    expect(
+      comparer(ATT, bas, { voix: entendu(brut).voix }).ecarts.some(
+        (e) => e.type === 'verset_saute',
+      ),
+    ).toBe(false);
+    // un passage de trois mots seulement n'est pas assez pour l'ancrage
+    const court = nus().filter((_, n) => n < 8 || n > 10);
+    expect(
+      comparer(ATT, entendu(court).ent, { voix: entendu(court).voix }).ecarts.every(
+        (e) => e.fin - e.i < 3 || e.type === 'oublie',
+      ),
+    ).toBe(true);
+  });
+
   it('arrêt avant la fin : la suite est « non récitée », jamais une erreur', () => {
     const w = nus().slice(0, 9);
     const r = comparer(ATT, entendu(w).ent, { voix: entendu(w).voix });

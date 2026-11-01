@@ -96,7 +96,8 @@ export interface ReglagesFenetre {
   tolerance: number;
 }
 
-export const REGLAGES_FENETRE: ReglagesFenetre = { margeDroite: 1.0, forcer: 3.5, tolerance: 0.6 };
+/** Réglés sur le banc 2 (205 séances, étape 2 du 01/11/2026) : marge 0,5 s et attente d'accord 2,5 s (avant : 1 s et 3,5 s). */
+export const REGLAGES_FENETRE: ReglagesFenetre = { margeDroite: 0.5, forcer: 2.5, tolerance: 0.6 };
 
 const milieu = (w: MotEntendu) => ((w.t0 ?? 0) + (w.t1 ?? w.t0 ?? 0)) / 2;
 

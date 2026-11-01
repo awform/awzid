@@ -48,12 +48,22 @@ def aligner(ids, val, jetons, blanc):
     S = 2 * n + 1
     lab = np.full(S, blanc, dtype=np.int32)
     lab[1::2] = jetons
-    E = np.full((T, S), PLANCHER, dtype=np.float32)
-    for k in range(K):
-        eg = ids[:, k][:, None] == lab[None, :]
-        E = np.where(eg, np.maximum(E, val[:, k][:, None]), E)
+    if CODE is None:
+        E = np.full((T, S), PLANCHER, dtype=np.float32)
+        for k in range(K):
+            eg = ids[:, k][:, None] == lab[None, :]
+            E = np.where(eg, np.maximum(E, val[:, k][:, None]), E)
+        labc = lab
+    else:  # SKEL=1 : on compare les SQUELETTES des jetons (voyelles ignorées) et on somme les probabilités
+        cid = CODE[np.where(ids < 0, len(CODE) - 1, ids)]
+        labc = CODE[lab]
+        Es = np.full((T, S), -np.inf, dtype=np.float32)
+        for k in range(K):
+            eg = cid[:, k][:, None] == labc[None, :]
+            Es = np.logaddexp(Es, np.where(eg, val[:, k][:, None], -np.inf))
+        E = np.maximum(Es, PLANCHER)
     saut = np.zeros(S, dtype=bool)
-    saut[2:] = (lab[2:] != blanc) & (lab[2:] != lab[:-2])
+    saut[2:] = (lab[2:] != blanc) & (labc[2:] != labc[:-2])
     V = np.full((T, S), NEG, dtype=np.float32)
     back = np.zeros((T, S), dtype=np.int8)
     V[0, 0] = E[0, 0]
@@ -80,9 +90,18 @@ def aligner(ids, val, jetons, blanc):
     return meil
 
 
+CODE = None
+HARAKAT = re.compile('[ً-ْٰ]')
+
+
 def main():
+    global CODE
     sp = charger_tokenizer()
     blanc = sp.get_piece_size()
+    if os.environ.get('SKEL') == '1':
+        squel = [HARAKAT.sub('', sp.id_to_piece(i)) for i in range(blanc)]
+        codes = {s: n for n, s in enumerate(sorted(set(squel)))}
+        CODE = np.array([codes[s] for s in squel] + [-2, -3], dtype=np.int32)  # blanc = -2, absent (-1) = -3
     exp = json.load(open(EXPORT, encoding='utf-8'))
     out = {}
     for sid, e in exp.items():
@@ -113,18 +132,21 @@ def main():
             r = bons[0]
             lo, hi = max(0, i - 4), min(len(mots), i + 5)
             mi = [m for m in range(lo, hi) if LETTRE.search(norm(mots[m]))]
-            idj = sp.encode(' '.join(norm(mots[m]) for m in mi))
-            deb = [k for k, t in enumerate(idj) if sp.id_to_piece(t).startswith('▁')]
-            if len(deb) != len(mi):
-                continue
+            idj, deb = [], []
+            for m in mi:  # chaque mot est codé seul : ses bornes sont connues
+                deb.append(len(idj))
+                idj += sp.encode(HARAKAT.sub('', norm(mots[m])) if CODE is not None else norm(mots[m]))
             meil = aligner(ids[r, : long[r]].astype(np.int32), lp[r, : long[r]], np.array(idj, dtype=np.int32), blanc)
             j = mi.index(i)
             k0, k1 = deb[j], (deb[j + 1] if j + 1 < len(deb) else len(idj))
             sc = meil[k0:k1]
             res[i] = [float(sc.mean()), float(sc.min())]
         out[sid] = res
-        print(sid, len(res), flush=True)
         json.dump(out, open(f'{B}/gop.json', 'w'))
+    tous = np.array([v for r in out.values() for v in r.values()], dtype=np.float32)
+    if len(tous):
+        print(len(out), 'séances,', len(tous), 'mots notés ; moyenne : percentiles 1/5/25/50 =',
+              np.percentile(tous[:, 0], [1, 5, 25, 50]).round(2), '; minimum : ', np.percentile(tous[:, 1], [1, 5, 25, 50]).round(2))
 
 
 if __name__ == '__main__':
