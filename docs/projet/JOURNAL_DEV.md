@@ -9,6 +9,15 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 01/11/2026 (soir) — MISE EN LIGNE en production : écriture niveau 1 + lots V2-4/V2-5 (inscription en lot) — version `0fdac21`
+
+- **Déployé** sur awzid-beta : `main` = `0fdac21` (fusion `--no-ff` de `ecriture-fin-wip` 84a18b4 puis `inscription-v2-45-wip` e2a3c1c, sur 9823ec5 ; seul conflit : `reports/budget-web.md`, rapport régénéré). Édition `prod-141ebc0721` (778 unités, 5729 exercices, 1145 illustrations). Chaîne du déploiement : migrate, roles (droit DELETE sur `profile_login` pour le rôle de l'API), import de l'édition, redémarrage.
+- **Contenu** : 34 leçons (ad1, ado1, en1, en2) et 3 tables `ids/` (ado1, en1-ad1, en2) ; copie vérifiée par `verifier-copie.sh` (VM de dev et serveur). Livres sources du PC (`Documents\Awzid\awform` et `application\ids`) mis à jour, sauvegarde dans `awform.avant-ecriture-1-11`.
+- **Tests sur le résultat fusionné** (contenu `ecriture-fin-contenu`) : `pnpm check` complet vert, 4 341 tests réussis, 20 ignorés, 0 échec ; budget de l'appareil élève 346,2 Ko, **marge 3 864 o** (seuil 3 072 o, inchangé) ; e2e sous verrou, 58 fichiers (leçons, écriture, inscription en lot, bascule, captures, hifz-classe, non-régression) : 635 réussis, 81 ignorés, 0 échec.
+- **Sauvegardes avant** : base de prod `awform-20261101-182042.dump.gpg` (658 Mo, copie hors site ok) ; serveur `~/awform-content.avant-0fdac21`.
+- **Vérifications en prod** : santé ok, awzid.com 200, leçon `en1.l01` avec ses lignes de voyelles, `/connexion` 200, route d'élèves en lot sans session : 401, aucune erreur 500 dans les journaux de l'API, DELETE présent pour `awform_api` sur `profile_login`.
+
+---
 ## 01/11/2026 — Lots V2-4 (bascule Moi / enfants) et V2-5 (enseignant : élèves en liste) (branche `inscription-v2-45-wip`) ; NON fusionné, NON déployé
 
 - **V2-4 — bascule Moi / enfants** : un parent qui a au moins deux profils (« Moi » et un enfant, ou deux enfants) touche son prénom dans l'en-tête (`▾`) : feuille en bas de l'écran sur mobile, colonne à gauche sur ordinateur (`BasculeProfils.svelte`, un seul composant mis en forme par la largeur ; focus piégé, Échap, retour du focus). Règles inchangées : avec un code parent, quitter le profil d'un enfant ou d'un ado (donc revenir à « Moi ») demande ce code ; sans code parent, changement libre ; « Moi » apprend en adulte. Un parent sans « Moi » voit « Mon espace d'apprentissage » (vers `/profils`). **Poids** : la feuille et son module d'ouverture (`bascule-ouvrir.ts`) sont chargés au premier toucher (`PREMIER_USAGE_MODULES`) ; la coquille ne gagne que `peutBasculer` et un bouton ; marge de l'appareil élève 4,0 Ko (seuil ≥ 3,0 Ko inchangé).
