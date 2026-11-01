@@ -84,7 +84,17 @@ export interface DirectBrut {
   /** mode fenêtre (shazam_coran) : lecture des dernières secondes ; mots RNN-T et CTC, zones de voix, instants de la séance */
   fenetre?: boolean;
   mots_ctc?: MotEntendu[];
+  /** mode fenêtre avec texte attendu : écarts sûrs du décodage contraint (rang des mots attendus) */
+  ecarts_texte?: Array<{ type: 'ajoute' | 'verset_saute' | 'oublie'; i: number; fin: number }>;
 }
+/** Texte attendu envoyé au service pour le décodage contraint (mots Tanzil exacts, verset « s:a », mots facultatifs). */
+export interface TexteAttendu {
+  mots: string[];
+  versets: string[];
+  fac: number[];
+}
+/** Décodage contraint par le texte attendu (phase 3 de « Tarteel titan ») : AWFORM_ECOUTE_TEXTE=off le coupe. */
+export const texteOuvert = () => (process.env.AWFORM_ECOUTE_TEXTE ?? 'on') !== 'off';
 /** Façon de suivre la récitation en direct : `suivi` = passages relus avec contexte ; `fenetre` = fenêtre glissante */
 export type ModeSuivi = 'suivi' | 'fenetre';
 /**
@@ -115,6 +125,8 @@ export interface ClientEcoute {
   ecouter(audio: Buffer, mime: string): Promise<EcouteBrute | Echec>;
   direct(sid: string, pcm: Buffer, suivi?: boolean | ModeSuivi): Promise<DirectBrut | Echec>;
   finDirect(sid: string): Promise<void>;
+  /** mode fenêtre : texte attendu de la séance (absent : pas de décodage contraint) */
+  attendu?(sid: string, texte: TexteAttendu): Promise<void>;
   sante(): Promise<boolean>;
   /** shazam_coran : mode « retrouver » du service (absent : fonction indisponible) */
   retrouver?(audio: Buffer, mime: string): Promise<RetrouverBrut | Echec>;
@@ -157,6 +169,17 @@ export function clientEcouteHttp(base: string): ClientEcoute {
       ),
     finDirect: async (sid) => {
       await appel(`/direct/${sid}`, { method: 'DELETE' }, 5_000);
+    },
+    attendu: async (sid, texte) => {
+      await appel(
+        `/direct/${sid}/attendu`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(texte),
+        },
+        5_000,
+      );
     },
     // 15 s d'audio : quelques dixièmes de seconde de calcul au calme ; 30 s laissent passer la file d'attente
     retrouver: (audio, mime) =>
@@ -484,8 +507,8 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
       if (!directOuvert()) return err(reply, 404, 'fonction_fermee');
       if (!client) return err(reply, 503, 'ecoute_indisponible');
       if (!(await consenti(db, p.id))) return err(reply, 409, 'accord_requis');
-      if (!(await portion(req.query.s, req.query.from, req.query.to)))
-        return err(reply, 400, 'portion_invalide');
+      const att = await portion(req.query.s, req.query.from, req.query.to);
+      if (!att) return err(reply, 400, 'portion_invalide');
       if (!quota(req.auth!.accountId)) return err(reply, 429, 'trop_de_demandes');
       // une seule séance par compte : la précédente est close (son audio effacé)
       for (const [sid, s] of seances)
@@ -501,6 +524,14 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
         fin: Date.now() + (ECOUTE_MAX_S + 30) * 1000,
         suivi,
       });
+      // fenêtre : le service reçoit le texte attendu (décodage contraint : mots ajoutés, versets sautés) ; sans lui, le
+      // suivi reste celui d'avant (un échec ici n'empêche rien)
+      if (suivi === 'fenetre' && texteOuvert() && client.attendu)
+        await client.attendu(sid, {
+          mots: att.map((m) => m.texte),
+          versets: att.map((m) => `${m.s}:${m.a}`),
+          fac: att.map((m) => (m.facultatif || m.lettres ? 1 : 0)),
+        });
       return {
         sid,
         maxSecondes: ECOUTE_MAX_S,

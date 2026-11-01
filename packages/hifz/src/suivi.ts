@@ -16,6 +16,16 @@ import {
   type ResultatEcoute,
 } from './ecoute.js';
 
+/**
+ * Écart sûr vu par le DÉCODAGE CONTRAINT du service (texte attendu connu, phase 3 de « Tarteel titan ») : mot ajouté (`i` = mot
+ * après lequel), verset sauté (`i`…`fin`). Le service ne le dit qu'avec la suite entendue (jamais sur les derniers mots).
+ */
+export interface EcartTexte {
+  type: 'ajoute' | 'verset_saute' | 'oublie';
+  i: number;
+  fin: number;
+}
+
 export interface EntreeSuivi {
   /** mots validés (RNN-T) et leur seconde lecture (tête CTC) : seuls ils peuvent faire signaler un écart */
   stables: readonly MotEntendu[];
@@ -24,6 +34,8 @@ export interface EntreeSuivi {
   provisoires: readonly MotEntendu[];
   partiel: readonly MotEntendu[];
   voix: ReadonlyArray<readonly [number, number]>;
+  /** écarts du décodage contraint (service, mode fenêtre) */
+  ecartsTexte?: readonly EcartTexte[];
 }
 
 export interface EtatSuivi {
@@ -43,7 +55,12 @@ export const REGLAGES_ETAT = {
    * mots visés) ; un mot AJOUTÉ exige toujours l'accord des deux (c'est l'écart le plus exposé aux mots mal lus).
    */
   mode: 'veto' as 'accord' | 'rnnt' | 'veto',
+  /** prendre les écarts du décodage contraint du service (mesuré : voix nouvelles, 47 → 67 % d'erreurs vues, 0 fausse alerte de plus) */
+  texte: true,
 };
+
+/** Confiance donnée aux écarts du décodage contraint (le service ne les dit que sûrs). */
+const CONFIANCE_TEXTE = 0.8;
 
 export function etatSuivi(att: readonly MotAttendu[], e: EntreeSuivi): EtatSuivi {
   const opts = { voix: e.voix, enCours: true };
@@ -65,12 +82,33 @@ export function etatSuivi(att: readonly MotAttendu[], e: EntreeSuivi): EtatSuivi
       });
     }
   }
+  const texte = new Set<number>();
+  if (REGLAGES_ETAT.texte && e.ecartsTexte?.length && r.statut === 'resultat') {
+    for (const t of e.ecartsTexte) {
+      if (t.i < 0 || t.fin < t.i || t.fin >= att.length) continue;
+      // déjà dit par la comparaison des mots (même endroit, à un mot près) : on garde celui-là
+      if (ecarts.some((x) => x.fin >= t.i - 1 && x.i <= t.fin + 1)) continue;
+      const m = att[t.i]!;
+      ecarts = [
+        ...ecarts,
+        { type: t.type, i: t.i, fin: t.fin, s: m.s, a: m.a, confiance: CONFIANCE_TEXTE },
+      ];
+      if (t.type !== 'ajoute') for (let i = t.i; i <= t.fin; i++) texte.add(i);
+    }
+    ecarts.sort((x, y) => x.i - y.i || x.fin - y.fin);
+  }
   const signale = new Set<number>();
   for (const x of ecarts)
     if (x.type !== 'ajoute') for (let i = x.i; i <= x.fin; i++) signale.add(i);
   const tous = comparer(att, [...e.stables, ...e.provisoires, ...e.partiel], { enCours: true });
   const mots: EtatMot[] = r.mots.map((m, i) =>
-    signale.has(i) ? m : m === 'ok' || tous.mots[i] === 'ok' ? 'ok' : 'non_recite',
+    texte.has(i)
+      ? 'oublie'
+      : signale.has(i)
+        ? m
+        : m === 'ok' || tous.mots[i] === 'ok'
+          ? 'ok'
+          : 'non_recite',
   );
   const fin = Math.max(r.finRecitee, tous.finRecitee);
   return { resultat: { ...r, mots, ecarts }, courant: fin + 1 };
@@ -85,6 +123,8 @@ export interface LectureFenetre {
   mots: readonly MotEntendu[];
   motsCtc: readonly MotEntendu[];
   voix: ReadonlyArray<readonly [number, number]>;
+  /** écarts du décodage contraint renvoyés par le service (tous ceux de la séance) */
+  ecartsTexte?: readonly EcartTexte[];
 }
 
 export interface ReglagesFenetre {
@@ -118,12 +158,17 @@ export class FenetreSuivi {
   horizon = 0;
   /** nombre de lectures reçues */
   lectures = 0;
+  /** écarts du décodage contraint (service), sans doublon */
+  ecartsTexte: EcartTexte[] = [];
   private prec: MotEntendu[] = [];
 
   constructor(private reglages: ReglagesFenetre = REGLAGES_FENETRE) {}
 
   ajouter(l: LectureFenetre): void {
     this.lectures++;
+    for (const t of l.ecartsTexte ?? [])
+      if (!this.ecartsTexte.some((x) => x.type === t.type && x.i === t.i && x.fin === t.fin))
+        this.ecartsTexte.push({ type: t.type, i: t.i, fin: t.fin });
     const { margeDroite, forcer, tolerance } = this.reglages;
     const cur = l.mots.filter((w) => milieu(w) >= this.horizon);
     let n = 0;
@@ -164,6 +209,7 @@ export class FenetreSuivi {
       provisoires: this.provisoires,
       partiel: [],
       voix: this.voix,
+      ecartsTexte: this.ecartsTexte,
     };
   }
 }

@@ -50,6 +50,11 @@ const SESS = JSON.parse(readFileSync(join(DIR, 'sessions.json'), 'utf8'));
 const parId = new Map(SESS.map((s) => [s.id, s]));
 /** EXPORT=<fichier> : mots attendus (texte Tanzil) et instants de référence par séance, pour gop.py */
 const EXPORTE = {};
+/** EXTRA=<fichier> : écarts vus par un détecteur à part (detecteur.py), {séance: [{t, type, i, fin}]} ; ajoutés à ceux de l'appli
+ *  à la lecture de l'instant t. PARSEANCE=<fichier> : détail par séance (vue ou non, fausses alertes). */
+const EXTRA = process.env.EXTRA ? JSON.parse(readFileSync(process.env.EXTRA, 'utf8')) : {};
+const SANS_APPLI = process.env.SANS_APPLI === '1'; // n'évaluer que le détecteur à part
+const PARSEANCE = {};
 const q = (a, p) =>
   a.length ? [...a].sort((x, y) => x - y)[Math.floor((a.length - 1) * p)] : null;
 const r2 = (x) => (x === null || x === undefined ? null : Math.round(x * 100) / 100);
@@ -108,7 +113,14 @@ function analyser(methode, lect) {
     );
     const inst = instantsDesMots(att, se.ref, false);
     if (process.env.EXPORT)
-      EXPORTE[se.id] = { mots: att.map((m) => m.texte), inst, verite: se.verite, type: se.type };
+      EXPORTE[se.id] = {
+        mots: att.map((m) => m.texte),
+        va: att.map((m) => `${m.s}:${m.a}`),
+        fac: att.map((m) => (m.facultatif || m.lettres ? 1 : 0)),
+        inst,
+        verite: se.verite,
+        type: se.type,
+      };
     const plan = planifier(methode, L.reads);
     const premierOk = new Map();
     const vues = new Map(); // écart -> première heure
@@ -120,8 +132,20 @@ function analyser(methode, lect) {
     for (const { recu, r } of plan) {
       res.calculs.push(r.calcul);
       let e;
+      const extra = (EXTRA[se.id] ?? []).filter((z) => z.t <= r.t + 1e-6);
       if (fen) {
-        fen.ajouter({ t: r.t, mots: r.mots, motsCtc: r.mots_ctc, voix: r.voix });
+        fen.ajouter({
+          t: r.t,
+          mots: r.mots,
+          motsCtc: r.mots_ctc,
+          voix: r.voix,
+          // EXTRA (detecteur.py) = ce que le service renverrait (`ecarts_texte`) : passe par le code de l'appli
+          ecartsTexte: extra.map((z) => ({
+            type: z.type === 'saute' ? 'verset_saute' : z.type,
+            i: z.i,
+            fin: z.fin,
+          })),
+        });
         e = fen.entree();
       } else {
         base.stables.push(...r.stables);
@@ -136,7 +160,8 @@ function analyser(methode, lect) {
       resultat.mots.forEach((m, i) => {
         if (m === 'ok' && !premierOk.has(i)) premierOk.set(i, recu);
       });
-      for (const x of resultat.ecarts) {
+      // SANS_APPLI : le détecteur seul (ses écarts tels quels) ; sinon : l'état de l'appli (qui les a reçus ci-dessus)
+      for (const x of SANS_APPLI ? extra : resultat.ecarts) {
         const juste = v && x.fin >= v.i - 1 && x.i <= v.fin + 1;
         if (juste) {
           if (vu === null) vu = recu;
@@ -189,6 +214,13 @@ function analyser(methode, lect) {
     });
     T_.n++;
     res.seances++;
+    PARSEANCE[se.id] = {
+      type: se.type,
+      rid: se.rid,
+      vu: v ? vu !== null : null,
+      delai: v && vu !== null ? r2(vu - v.t) : null,
+      fausses: [...vues.keys()],
+    };
     T_.fausses += vues.size;
     if (vues.size) T_.seancesFausses++;
     if (v) {
@@ -259,7 +291,13 @@ for (const m of METHODES) {
   // SOUS=pair|impair : moitié des séances (réglage sur une moitié, vérification sur l'autre)
   if (process.env.SOUS === 'pair') lect = lect.filter((_, k) => k % 2 === 0);
   if (process.env.SOUS === 'impair') lect = lect.filter((_, k) => k % 2 === 1);
+  // IDS=<fichier> : liste de séances à garder (ex. les 190 séances communes du banc 2)
+  if (process.env.IDS) {
+    const ids = new Set(JSON.parse(readFileSync(process.env.IDS, 'utf8')));
+    lect = lect.filter((L) => ids.has(L.id));
+  }
   sortie[`${nom}:${f}`] = analyser(nom, lect);
 }
 if (process.env.EXPORT) writeFileSync(process.env.EXPORT, JSON.stringify(EXPORTE));
+if (process.env.PARSEANCE) writeFileSync(process.env.PARSEANCE, JSON.stringify(PARSEANCE));
 console.log(JSON.stringify({ rtt_s: RTT, sessions: SESS.length, resultat: sortie }, null, 1));

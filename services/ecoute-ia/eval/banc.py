@@ -36,7 +36,13 @@ THREADS = int(os.environ.get('THREADS', '4'))
 
 def attendre_charge(max_=float(os.environ.get('CHARGE_MAX', '7'))):
     """Pause entre deux séances tant que la charge de la machine dépasse `max_` (/proc/loadavg est celui de l'hôte)."""
-    while float(open('/proc/loadavg').read().split()[0]) > max_:
+    while True:
+        charge = float(open('/proc/loadavg').read().split()[0])
+        dispo = next((int(l.split()[1]) for l in open('/proc/meminfo') if l.startswith('MemAvailable')), 1 << 30) / 1048576
+        st = os.statvfs(W)
+        disque = 1 - st.f_bavail / max(1, st.f_blocks)
+        if charge <= max_ and dispo >= float(os.environ.get('MEM_MIN_GO', '2')) and disque < 0.875:
+            return
         time.sleep(20)
 
 
@@ -87,7 +93,7 @@ def bruit_blanc(rnd, x, snr_db=15.0):
 
 def sessions():
     os.makedirs(f'{W}/audio', exist_ok=True)
-    rnd = random.Random(int(os.environ.get('GRAINE', '31')))
+    rnd = random.Random(int(os.environ.get('GRAINE') or '31'))
     rng = np.random.default_rng(31)
     T = tanzil()
     modele = asr.charger('nemo_rnnt', THREADS)
@@ -202,7 +208,7 @@ def lire_fenetre(modele, x):
         if len(seg_) > SR // 2:
             xr = asr.rembourrer(seg_, FEN_PAD)
             if TOPK:
-                r, c, tk = modele.transcrire_double_topk(xr)
+                r, c, tk = modele.transcrire_double_topk(xr, int(os.environ.get('TOPK_K', '8')))
                 tops.append((len(res), a - FEN_PAD, tk))
             else:
                 r, c = asr.lecture_double(modele, xr)

@@ -1,4 +1,4 @@
-# Suivi de la récitation « Tarteel titan » (1er novembre 2026, phases 1 et 2)
+# Suivi de la récitation « Tarteel titan » (1er novembre 2026, phases 1 et 2, phase 3 palier 1 au § 11)
 
 Branche `tarteel-titan-2-wip` (rebasée sur `origin/main` 9823ec5 ; la phase 1 reste sur `tarteel-titan-wip`), interrupteur `shazam_coran`
 (canal bêta, inchangé). Mesures faites sur la VM `awform-dev` le 01/11/2026 : service réel (NeMo FastConformer RNN-T + tête CTC,
@@ -154,3 +154,98 @@ rien trouvé sur d'autres applis. Rien n'est copié de leur design ni de leur ma
 - Unitaires : `packages/hifz` 94 (comparaison, reprises, mots mal lus en série, ancrage, hésitations, veto, fenêtre) ; API `shazam` + `a5` 23 ;
   web `src/lib/ecoute` + i18n 61 ; service Python 17 ; lint, prettier, svelte-check propres.
 - e2e sous `flock ~/.awzid-e2e.lock` : `shazam.spec.ts` + `a5.spec.ts`, **16 réussis** (suivi par fenêtre, « Un indice », mode devant le maître, accessibilité AA).
+
+## 11. Phase 3, palier 1 (01/11/2026) : décodage contraint par le texte attendu, détecteur de verset sauté, banc neutre
+
+Branche `tarteel-titan-3-wip` (partie de 2a61e4b). Ce palier contient deux pistes et la partie neutre du banc. Les autres pistes viendront au palier suivant : treillis CTC pour les oublis, latence, autre modèle.
+
+### Banc 3 : voix jamais utilisées pour le réglage
+- Le **réglage** se fait sur le banc 2 seulement (190 séances, 11 voix).
+- Le **banc 3** a été généré avec `banc2.py`, graines 301 et 302, sur 4 voix everyayah absentes du banc 2 (lecture seule) :
+  - **vérification** : Abdullah Basfar et Muhsin al-Qasim, 147 séances ;
+  - **neutre** : Ahmed al-Ajamy et Hani ar-Rifai, 147 séances.
+- Chaque partie compte 88 erreurs (22 oublis, 22 remplacements, 22 ajouts, 22 versets sautés), 25 séances justes et 34 séances de reprise, retour ou mot répété.
+- Les séances sont lues au pas de 1 s, fenêtre de 10 s, avec le top 16 des jetons CTC gardé par lecture.
+- La partie neutre a été lue et mesurée **une seule fois**, après le gel des réglages.
+- La vérification a servi à une seule comparaison (coût de saut −9 contre −7). La valeur réglée sur le banc 2 (−9) a été gardée.
+- Husary Muallim et Abdul Basit Mujawwad sont écartés : ce sont les mêmes voix que dans le banc 2.
+
+### Ce qui a été fait
+1. **Décodage contraint** (`services/ecoute-ia/contraint.py`). Sur la tête CTC de chaque fenêtre, on cherche le meilleur chemin (Viterbi) dans un graphe construit à partir du texte attendu :
+   - les mots attendus sont écrits en jetons du modèle. Jusqu'à 6 découpages par mot, avec et sans voyelles, car le modèle écrit parfois sans voyelles selon la voix. Les jetons sont comparés par squelette, et un jeton fait de voyelles seules compte comme un blanc ;
+   - chaque mot peut être remplacé par un « bouche-trou » : un mot mal lu, ou écrit autrement par le modèle, n'est **pas** signalé par ce chemin ;
+   - un chemin **hors texte** existe entre deux mots (mot ajouté) ;
+   - les **retours en arrière** sont peu chers : reprise, retour au verset précédent, mot répété ;
+   - des **sauts de 1 ou 2 versets entiers** sont possibles ;
+   - le début et la fin sont libres.
+   Un écart n'est dit que si au moins 2 mots reconnus suivent et s'il finit au moins 1 s avant le bord de la fenêtre. La règle du référent est donc tenue : rien sur les derniers mots entendus.
+2. **Détecteur de verset sauté** : ce sont les arcs de saut du même graphe. Le saut l'emporte quand la suite entendue colle au début du verset n+2 ou n+3 et pas au verset n+1.
+3. **Intégration** :
+   - l'API envoie le texte attendu de la portion (mots Tanzil exacts, en mémoire seulement) au service, une fois, à l'ouverture d'une séance « fenêtre » : `POST /direct/{sid}/attendu` ;
+   - le service ajoute `ecarts_texte` à chaque lecture ;
+   - `FenetreSuivi` et `etatSuivi` (`@awform/hifz`) les ajoutent aux écarts, sans doublon avec la comparaison des mots ; les mots d'un verset sauté sont montrés oubliés ;
+   - interrupteurs : `AWFORM_ECOUTE_TEXTE=off` (API), `ECOUTE_TEXTE=0` (service), `REGLAGES_ETAT.texte`.
+   Le texte Tanzil n'est jamais modifié ni affiché autrement : la conversion vers l'écriture du modèle se fait en mémoire, pour le calcul seulement.
+4. **Banc** :
+   - `detecteur.py` rejoue le décodeur sur les lectures enregistrées ;
+   - `banc.mjs` (`EXTRA=`) fait passer ses écarts **par le code de l'appli**, comme `ecarts_texte` ;
+   - `banc.sh` accepte nice, mémoire, nom de conteneur, voix et graine ;
+   - les pauses tiennent compte de la charge, de la mémoire et du disque ;
+   - `fumee_texte.py` vérifie le décodeur dans le service, avec le vrai modèle : même résultat que le banc.
+
+### Avant / après sur la partie NEUTRE (88 erreurs, voix al-Ajamy et Hani ar-Rifai ; intervalles de Wilson à 95 %)
+
+| | Avant (phase 2) | **Après (palier 1)** |
+|---|---|---|
+| Erreurs vues | 39/88 (44 %) [34 ; 55] | **54/88 (61 %) [51 ; 71]** |
+| oubli / remplacement / ajout / verset sauté (sur 22 chacun) | 13 / 11 / 4 / 11 | 14 / 11 / **8** / **21** |
+| Fausses alertes, séances justes | 1/25 | 1/25 (même alerte, venue de la comparaison des mots) |
+| Fausses alertes, reprise / retour / mot répété (séances) | 3/34 | 5/34 (+2 « ajouté » sur des reprises) |
+| Fausses alertes, toutes séances normales | 4/59 (7 %) [3 ; 16] | 6/59 (10 %) [5 ; 20] |
+| Erreur dite, délai médian / 90ᵉ (pas de 1 s) | 5,0 / 7,1 s | 4,7 / 6,9 s ; verset sauté : 3,8 s |
+| Mot dévoilé, médiane | 1,18 s | 1,18 s (inchangé) |
+
+- Le gain est apparié : 15 erreurs vues en plus, 0 perdue (test de McNemar, p < 0,001).
+- **Vérification** (Basfar, Muhsin al-Qasim) :
+  - 41/88 (47 %) [37 ; 57] → **59/88 (67 %) [57 ; 76]** ;
+  - versets sautés 10 → **22/22**, ajouts 4 → 10/22 ;
+  - fausses alertes inchangées : 0/25 justes, 2/59 séances normales.
+- **Réglage** (banc 2) : 49/81 → 59/81 (73 %), fausses alertes 3/109 → 4/109.
+
+### Ce qui a marché, ce qui n'a pas marché
+- **Verset sauté : résolu sur ce banc.**
+  - Le détecteur seul trouve 20 à 21 versets sautés sur 22, sans aucune fausse alerte.
+  - Il les dit plus tôt (3,5 à 3,8 s, contre 5,5 s avant).
+- **Ajouts : progrès modeste**, de 4 à 8 ou 10 sur 22.
+  - Le mot ajouté est souvent absorbé : la tête CTC n'écrit presque rien (quelques trames de voix), ou le bouche-trou d'un mot voisin le couvre.
+  - Baisser le coût du chemin hors texte (−10 au lieu de −12) ou le nombre de trames exigé (3 au lieu de 4) fait monter les fausses alertes sur les mots répétés et les reprises.
+- **Essayés, non retenus** (mesurés sur le banc 2) :
+  - « voix sans lettre lue entre deux mots » pour les ajouts que le modèle n'écrit pas : fausses alertes sur 46 à 109 des 109 séances normales, à cause des madd et des allongements. Option `trou`, laissée à 0 ;
+  - persistance sur 2 lectures : moins d'ajouts vus, sans gain net ;
+  - signalement des oublis par l'arc « oubli d'un mot » : 0 gain ;
+  - bouche-trou moins cher : plus de fausses alertes.
+- **Coût** :
+  - environ 0,05 s de calcul Python par lecture (graphe limité à 70 mots autour de la position) ;
+  - top 16 CTC pris sur le même encodeur, sans seconde lecture ;
+  - fumée : 0,46 à 0,58 s par lecture au total, VM chargée.
+
+### Objectifs
+- **18 erreurs vues sur 22 (82 %) : NON atteint.** 61 % sur la partie neutre ; la borne haute de l'intervalle (71 %) reste sous 82 %.
+- Ce qui manque, par type, sur la partie neutre :
+  - versets sautés : 21/22, l'objectif est dépassé ;
+  - ajouts : 8/22 ;
+  - oublis : 14/22 ;
+  - remplacements : 11/22.
+- Pour atteindre 82 %, il faudrait environ 18 erreurs vues de plus sur 88. Elles ne peuvent venir que des oublis, des remplacements et des ajouts :
+  - **oublis entourés de mots mal lus, et remplacements** : un score « mot présent / absent » par treillis complet (logits entiers, pas seulement le top 16) et un test de rapport de vraisemblance mot attendu contre bouche-trou. C'est la piste 3, prévue au palier 2 ;
+  - **ajouts** : le modèle actuel n'écrit souvent pas le mot ajouté. Un détecteur acoustique (durée du mot anormale pour cette voix et ce mot) ou un modèle qui transcrit mieux les mots isolés serait nécessaire ;
+  - **données** : de vraies erreurs d'élèves. Nos erreurs sont des collages de voix professionnelles, et le chiffre peut être optimiste ou pessimiste.
+- **Erreur dite en moins de 3 s : NON atteint.** Médiane 4,4 à 4,7 s ; versets sautés 3,5 à 3,8 s. La latence est la piste 5 du palier 2.
+- Fausses alertes : 2 séances de reprise de plus sur 59 dans la partie neutre (« ajouté »). Si le référent préfère zéro, on peut monter l'exigence à `apres: 3` (mesuré sur le banc 2 : 0 fausse alerte, mais 0 ajout vu par le détecteur).
+
+### Tests
+- service : 37 tests Python (dont 6 nouveaux pour `contraint`, 1 pour `/attendu`) ;
+- `@awform/hifz` : 97 tests (dont 3 nouveaux pour `ecartsTexte`) ;
+- API `shazam` et `a5` : 23 tests (texte attendu envoyé une fois en mode fenêtre, coupé par `AWFORM_ECOUTE_TEXTE=off`) ;
+- web `src/lib/ecoute` : 25 tests ; `svelte-check`, `eslint` et `prettier` sont propres ;
+- e2e sous `flock ~/.awzid-e2e.lock` : `shazam.spec.ts` et `a5.spec.ts`, 16 réussis (bureau et mobile).

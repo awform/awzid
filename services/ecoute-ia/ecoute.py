@@ -39,6 +39,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 import asr
+import contraint
 
 MAX_S = float(os.environ.get('ECOUTE_MAX_S', '300'))
 CONCURRENCE = int(os.environ.get('ECOUTE_CONCURRENCE', '2'))
@@ -165,13 +166,22 @@ class Seance:
         self.ctx = np.zeros(0, dtype=np.float32)
         self.fenetre = False  # mode « fenêtre glissante » (voir `_fenetre`)
         self.prov0 = 0  # début (échantillons) du dernier passage fini, encore provisoire
+        # texte attendu (mode fenêtre, `/direct/{sid}/attendu`) : décodage contraint (`contraint.py`) ; écarts vus
+        self.attendu: dict | None = None
+        self.texte: dict = {}
+        self.pos = 0
+        self.graphes: dict = {}
 
     def effacer(self):
         self.buf = np.zeros(0, dtype=np.float32)
         self.ctx = np.zeros(0, dtype=np.float32)
+        self.attendu = None
+        self.graphes = {}
 
 
 _seances: dict[str, Seance] = {}
+#: textes attendus reçus avant le premier morceau de la séance : sid -> (instant, texte)
+_attendus: dict[str, tuple[float, dict]] = {}
 
 
 async def _purge():
@@ -180,6 +190,8 @@ async def _purge():
         now = time.monotonic()
         for sid in [k for k, s in _seances.items() if now - s.vu > DIRECT_INACTIF_S]:
             _seances.pop(sid).effacer()
+        for sid in [k for k, (t, _) in _attendus.items() if now - t > 60]:
+            _attendus.pop(sid, None)
 
 
 PAUSE_S = float(os.environ.get('ECOUTE_PAUSE_S', '0.6'))
@@ -329,10 +341,58 @@ def _fenetre(modele, s: Seance, morceau: np.ndarray) -> dict:
     if len(s.buf) > sr // 2:
         xr = asr.rembourrer(s.buf)
         d = debut - asr.REMBOURRAGE_S
-        r, c = asr.lecture_double(modele, xr)
+        topk = getattr(modele, 'transcrire_double_topk', None) if (s.attendu and TEXTE) else None
+        if topk is not None:
+            r, c, tk = topk(xr, TEXTE_K)
+            _texte(modele, s, tk, d, t)
+        else:
+            r, c = asr.lecture_double(modele, xr)
         mots, ctc = asr.decaler(r, d), asr.decaler(c, d)
         voix = [[round(a + d, 2), round(b + d, 2)] for a, b in asr.zones_de_voix(xr)]
-    return {'t': round(t, 2), 'fenetre': True, 'mots': mots, 'mots_ctc': ctc, 'voix': voix}
+    out = {'t': round(t, 2), 'fenetre': True, 'mots': mots, 'mots_ctc': ctc, 'voix': voix}
+    if s.attendu:
+        out['ecarts_texte'] = sorted(s.texte.values(), key=lambda e: (e['i'], e['fin'], e['type']))
+    return out
+
+
+#: décodage contraint par le texte attendu (phase 3 de « Tarteel titan ») : ECOUTE_TEXTE=0 le coupe
+TEXTE = os.environ.get('ECOUTE_TEXTE', '1') != '0'
+TEXTE_K = 16  # meilleurs jetons CTC gardés par trame
+TEXTE_AVANT, TEXTE_APRES = 30, 40  # mots attendus mis dans le graphe autour du dernier mot reconnu
+TYPES_TEXTE = {'ajoute': 'ajoute', 'saute': 'verset_saute', 'oublie': 'oublie'}
+_sp: dict = {}
+
+
+def _texte(modele, s: Seance, tk, d: float, t: float) -> None:
+    """Décodage contraint de la fenêtre lue (top-k de la tête CTC) contre le texte attendu autour de la position : ajoute
+    les écarts sûrs (mot ajouté, verset sauté) à `s.texte`. Ne lève jamais : en cas de souci, la lecture reste celle d'avant."""
+    try:
+        if 'sp' not in _sp:
+            _sp['sp'] = modele.m.tokenizer.tokenizer  # SentencePiece du modèle
+            _sp['cls'] = contraint.classes(_sp['sp'])
+        sp, cls, R = _sp['sp'], _sp['cls'], contraint.REGLAGES
+        A = s.attendu
+        W = len(A['mots'])
+        a = max(0, s.pos - TEXTE_AVANT)
+        b = min(W, s.pos + TEXTE_APRES)
+        g = s.graphes.get((a, b))
+        if g is None:
+            jetons = [contraint.variantes(sp, w, int(R['nvar']), cls) for w in A['mots'][a:b]]
+            g = s.graphes[(a, b)] = contraint.Graphe(jetons, A['versets'][a:b], sp.get_piece_size(), A['fac'][a:b])
+        ids, lp = tk[0].astype(np.int64), tk[1].astype(np.float32)
+        blanc = sp.get_piece_size()
+        E, f, f0, voix = contraint.emissions(ids, lp, blanc, blanc, R, cls)
+        chemin, entrees = contraint.viterbi(g, E, f, f0, R)
+        t_fin = min(len(chemin) - 1, int((t - d) / contraint.FRAME))
+        for typ, i, fin, _ in contraint.ecarts(g, chemin, entrees, voix, R, t_fin):
+            k = (typ, i + a, fin + a)
+            if k not in s.texte:
+                s.texte[k] = {'type': TYPES_TEXTE[typ], 'i': i + a, 'fin': fin + a}
+        lus = [c[1] for c in chemin if c[0] == 'w']
+        if lus:
+            s.pos = max(s.pos, max(lus) + a)
+    except Exception as e:  # noqa: BLE001
+        print('texte attendu : décodage impossible', type(e).__name__, flush=True)
 
 
 @app.post('/direct/{sid}')
@@ -355,6 +415,9 @@ async def direct(sid: str, req: Request):
             return _erreur(503, 'occupe')
         s = _seances[sid] = Seance(suivi=mode == 'suivi')
         s.fenetre = mode == 'fenetre'
+        a = _attendus.pop(sid, None)
+        if a and s.fenetre:
+            s.attendu = a[1]
     s.vu = time.monotonic()
     data = await req.body()
     if len(data) % 2 or len(data) > 10 * 2 * asr.SR:
@@ -375,8 +438,38 @@ async def direct(sid: str, req: Request):
     return r
 
 
+MAX_MOTS_ATTENDUS = 2000
+
+
+@app.post('/direct/{sid}/attendu')
+async def attendu(sid: str, req: Request):
+    """Texte attendu d'une séance « fenêtre » (mots Tanzil exacts, rang = rang du mot dans l'appli ; verset de chaque mot ;
+    mots facultatifs) : sert seulement au décodage contraint, en mémoire, effacé avec la séance."""
+    try:
+        uuid.UUID(sid)
+        j = await req.json()
+        mots, versets = j['mots'], j['versets']
+        fac = j.get('fac') or [0] * len(mots)
+        ok = (isinstance(mots, list) and 0 < len(mots) <= MAX_MOTS_ATTENDUS and isinstance(versets, list)
+              and len(versets) == len(mots) and len(fac) == len(mots)
+              and all(isinstance(w, str) and 0 < len(w) <= 64 for w in mots)
+              and all(isinstance(v, str) and len(v) <= 8 for v in versets))
+    except Exception:  # noqa: BLE001
+        ok = False
+    if not ok:
+        return _erreur(400, 'attendu')
+    texte = {'mots': mots, 'versets': versets, 'fac': [1 if x else 0 for x in fac]}
+    s = _seances.get(sid)
+    if s is not None and s.fenetre:
+        s.attendu, s.texte, s.pos, s.graphes = texte, {}, 0, {}
+    else:
+        _attendus[sid] = (time.monotonic(), texte)
+    return {'ok': True}
+
+
 @app.delete('/direct/{sid}')
 async def fin_direct(sid: str):
+    _attendus.pop(sid, None)
     s = _seances.pop(sid, None)
     if s:
         s.effacer()

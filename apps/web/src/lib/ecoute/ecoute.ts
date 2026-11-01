@@ -16,6 +16,7 @@ import { call } from '$lib/session';
 import type { Bilan } from './bilans';
 import {
   FenetreSuivi,
+  type EcartTexte,
   comparer,
   etatSuivi,
   motsARevoir,
@@ -269,6 +270,7 @@ export class SuiviDirect {
         stables_ctc?: MotEntendu[];
         provisoires?: MotEntendu[];
         mots_ctc?: MotEntendu[];
+        ecarts_texte?: EcartTexte[];
         fenetre?: boolean;
         error?: { code?: string };
       } | null;
@@ -282,6 +284,7 @@ export class SuiviDirect {
           t: j.t ?? this.secondes,
           mots: j.mots ?? [],
           motsCtc: j.mots_ctc ?? [],
+          ecartsTexte: j.ecarts_texte ?? [],
           voix: j.voix ?? [],
         });
         this.secondes = j.t ?? this.secondes;

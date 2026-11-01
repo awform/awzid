@@ -22,11 +22,14 @@ from evaluer import cle, condition, lire, mots, pistes, tanzil  # noqa: E402
 from suivi_sim import avec_erreur, solides  # noqa: E402
 
 EA = os.environ.get('EVERYAYAH', '/everyayah')
-RECITANTS_COMPLEXE = ['akhdar-hafs', 'ayyoub-hafs', 'huthify-hafs', 'muaiqly-hafs', 'muhanna-hafs']
+RECITANTS_COMPLEXE = [r for r in os.environ.get(
+    'RECITANTS_COMPLEXE', 'akhdar-hafs,ayyoub-hafs,huthify-hafs,muaiqly-hafs,muhanna-hafs').split(',') if r]
+PREFIXE = os.environ.get('PREFIXE') or 'c'
 RECITANTS_EA = os.environ.get(
     'RECITANTS_EA',
     'Alafasy_128kbps,Husary_128kbps,Abdul_Basit_Murattal_192kbps,Abdurrahmaan_As-Sudais_192kbps,'
     'Ali_Jaber_64kbps,Abu_Bakr_Ash-Shaatree_128kbps').split(',')
+RECITANTS_EA = [r for r in RECITANTS_EA if r]
 PORTIONS = int(os.environ.get('PORTIONS', '3'))
 QUOTAS = os.environ.get('QUOTAS', 'juste:50,oubli:20,remplacement:22,ajout:20,saut_verset:20,repete:20,reprise:20,retour:20,'
                                   'pause:10,bruit:10,telephone:10')
@@ -98,7 +101,7 @@ def portion(rnd, rid, P, depart, modele, T):
 
 def sessions2():
     os.makedirs(f'{W}/audio', exist_ok=True)
-    rnd = random.Random(int(os.environ.get('GRAINE', '77')))
+    rnd = random.Random(int(os.environ.get('GRAINE') or '77'))
     rng = np.random.default_rng(77)
     T = tanzil()
     modele = asr.charger('nemo_rnnt', THREADS)
@@ -141,7 +144,8 @@ def sessions2():
     out = []
 
     def ecrire(p, x, typ, verite, cond='propre', extra=None):
-        sid = f'c{len(out) + 1:03d}'
+        banc.attendre_charge()
+        sid = f'{PREFIXE}{len(out) + 1:03d}'
         x = x.astype(np.float32)
         x.tofile(f'{W}/audio/{sid}.f32')
         out.append({'id': sid, 'type': typ, 'cond': cond, 'rid': p['rid'], 'versets': p['versets'],

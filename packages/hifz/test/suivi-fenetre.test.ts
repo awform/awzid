@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { motsAttendus, type MotEntendu, type VersetTexte } from '../src/ecoute.js';
-import { FenetreSuivi, etatSuivi, REGLAGES_FENETRE, type LectureFenetre } from '../src/suivi.js';
+import {
+  FenetreSuivi,
+  etatSuivi,
+  REGLAGES_ETAT,
+  REGLAGES_FENETRE,
+  type EcartTexte,
+  type LectureFenetre,
+} from '../src/suivi.js';
 
 /** Phrases ORDINAIRES (aucun texte religieux retapé) : la logique du suivi ne dépend pas du texte. */
 const V: VersetTexte[] = [
@@ -147,5 +154,44 @@ describe('suivi par fenêtre : validation des mots par accord entre lectures', (
     const t0 = f.stables.map((w) => w.t0!);
     expect([...t0].sort((a, b) => a - b)).toEqual(t0);
     expect(new Set(t0).size).toBe(t0.length);
+  });
+});
+
+describe('suivi par fenêtre : écarts du décodage contraint (service, texte attendu)', () => {
+  const v2 = ATT.filter((m) => m.a === 2).map((m) => m.i);
+  /** les lectures à partir de `des` (s) portent l'écart `e` (le service renvoie tous ceux de la séance) */
+  const avec = (l: LectureFenetre[], des: number, e: EcartTexte[]) =>
+    l.map((x) => (x.t >= des ? { ...x, ecartsTexte: e } : x));
+
+  it('verset sauté dit par le service : un seul écart, ses mots montrés oubliés', () => {
+    const lus = V.filter((v) => v.a !== 2).flatMap((v) => v.text.split(' '));
+    const e: EcartTexte = { type: 'verset_saute', i: v2[0]!, fin: v2[v2.length - 1]! };
+    const { f, vus } = suivre(avec(lectures(lus), 5, [e]));
+    const fin = etatSuivi(ATT, f.entree()).resultat;
+    const couvrent = fin.ecarts.filter((x) => x.fin >= e.i - 1 && x.i <= e.fin + 1);
+    expect(couvrent).toHaveLength(1);
+    for (const i of v2) expect(fin.mots[i]).toBe('oublie');
+    expect(f.ecartsTexte).toHaveLength(1); // reçu à chaque lecture, gardé une fois
+    expect(vus.some((x) => x.t < 5 && x.ecarts.includes(`verset_saute:${e.i}`))).toBe(false);
+  });
+
+  it('mot ajouté dit par le service : écart « ajouté », les mots restent dévoilés', () => {
+    const { f } = suivre(avec(lectures(TEXTE), 6, [{ type: 'ajoute', i: 3, fin: 3 }]));
+    const r = etatSuivi(ATT, f.entree()).resultat;
+    expect(r.ecarts.map((x) => `${x.type}:${x.i}`)).toEqual(['ajoute:3']);
+    expect(r.mots.every((m) => m === 'ok')).toBe(true);
+    expect(r.ecarts[0]).toMatchObject({ s: ATT[3]!.s, a: ATT[3]!.a });
+  });
+
+  it('écart hors du texte ignoré ; REGLAGES_ETAT.texte = false : le service n’est pas écouté', () => {
+    const { f } = suivre(avec(lectures(TEXTE), 6, [{ type: 'ajoute', i: 99, fin: 99 }]));
+    expect(etatSuivi(ATT, f.entree()).resultat.ecarts).toEqual([]);
+    const g = suivre(avec(lectures(TEXTE), 6, [{ type: 'ajoute', i: 3, fin: 3 }])).f;
+    REGLAGES_ETAT.texte = false;
+    try {
+      expect(etatSuivi(ATT, g.entree()).resultat.ecarts).toEqual([]);
+    } finally {
+      REGLAGES_ETAT.texte = true;
+    }
   });
 });

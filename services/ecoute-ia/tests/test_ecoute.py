@@ -244,6 +244,30 @@ def test_fenetre_relit_les_dernieres_secondes_et_efface(client):
     assert sid not in ecoute._seances
 
 
+def test_texte_attendu_garde_en_memoire_et_efface(client):
+    """`/direct/{sid}/attendu` : texte attendu d'une séance « fenêtre » (validé), gardé en mémoire avec la séance, effacé à la fin ;
+    la réponse porte `ecarts_texte` (vide avec le modèle factice, qui n'a pas de tête CTC)."""
+    sid = str(uuid.uuid4())
+    assert client.post(f'/direct/{sid}/attendu', json={'mots': ['ذهب'], 'versets': []}).status_code == 400
+    assert client.post(f'/direct/{sid}/attendu', json={'mots': 'x', 'versets': 'x'}).status_code == 400
+    assert client.post('/direct/pas-un-uuid/attendu', json={'mots': ['ذهب'], 'versets': ['1:1']}).status_code == 400
+    corps = {'mots': MOTS, 'versets': ['1:1', '1:1', '1:2', '1:2'], 'fac': [0, 0, 0, 0]}
+    assert client.post(f'/direct/{sid}/attendu', json=corps).json() == {'ok': True}
+    assert sid in ecoute._attendus
+    x = np.frombuffer(wav(2)[44:], dtype='<i2')
+    r = client.post(f'/direct/{sid}?mode=fenetre', content=x.tobytes(), headers={'x-essai-mots': HEX}).json()
+    assert r['fenetre'] and r['ecarts_texte'] == []
+    s = ecoute._seances[sid]
+    assert s.attendu['mots'] == MOTS and sid not in ecoute._attendus
+    client.delete(f'/direct/{sid}')
+    assert sid not in ecoute._seances and s.attendu is None
+    # séance sans texte attendu : réponse inchangée
+    sid2 = str(uuid.uuid4())
+    r = client.post(f'/direct/{sid2}?mode=fenetre', content=x.tobytes(), headers={'x-essai-mots': HEX}).json()
+    assert 'ecarts_texte' not in r
+    client.delete(f'/direct/{sid2}')
+
+
 def test_une_seance_fenetre_pese_plus_lourd(client):
     """Une séance « fenêtre » relit 10 s toutes les 0,5 s : elle compte FENETRE_POIDS séances ordinaires."""
     ecoute._seances.clear()
