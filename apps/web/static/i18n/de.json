@@ -2533,7 +2533,7 @@
   "ec.ia_trompee": "Hat sich die KI geirrt?",
   "ec.merci_signalement": "Danke, notiert (ohne deine Stimme). Das hilft uns, das Zuhören genauer zu machen.",
   "ec.mode_suivi": "Meine Rezitation verfolgen",
-  "ec.suivi_aide": "Die Wörter erscheinen nach und nach. Ein vergessenes, übersprungenes oder verändertes Wort wird etwas später angezeigt (etwa zehn Sekunden danach), mit dem erwarteten Wort, nur wenn die KI sicher ist.",
+  "ec.suivi_aide": "Die Wörter erscheinen nach und nach. Ein vergessenes, übersprungenes oder verändertes Wort wird etwas später angezeigt (einige Sekunden danach), mit dem erwarteten Wort, nur wenn die KI sicher ist.",
   "ec.attendu": "{n, plural, one {Erwartetes Wort:} other {Erwartete Wörter:}}",
   "rv.titre": "Vers finden",
   "rv.intro": "Rezitiere 5 bis 15 Sekunden einer Passage des Korans: Die App findet, wo sie steht, und lässt sie dich anhören.",

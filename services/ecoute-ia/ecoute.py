@@ -311,6 +311,9 @@ def _suivi(modele, s: Seance, morceau: np.ndarray, partiel_ok: bool = True) -> d
 FENETRE_S = float(os.environ.get('ECOUTE_FENETRE_S', '10'))
 
 
+FENETRE_POIDS = int(os.environ.get('ECOUTE_FENETRE_POIDS', '3'))
+
+
 def _fenetre(modele, s: Seance, morceau: np.ndarray) -> dict:
     """SUIVI PAR FENÊTRE GLISSANTE (mode `fenetre`, shazam_coran) : à chaque envoi (≥ 0,5 s d'audio), relecture des
     FENETRE_S dernières secondes (0,5 s de silence autour, deux lectures : RNN-T et CTC, un seul encodeur). Le service
@@ -342,10 +345,14 @@ async def direct(sid: str, req: Request):
         return _erreur(400, 'seance')
     s = _seances.get(sid)
     if s is None:
-        if len(_seances) >= DIRECT_MAX:
-            return _erreur(503, 'occupe')
         # le mode est fixé à la création de la séance
         mode = req.query_params.get('mode')
+        # une séance « fenêtre » relit 10 s toutes les 0,5 s : elle pèse FENETRE_POIDS séances ordinaires (mesuré le
+        # 01/11/2026 : 1,1 s de calcul par seconde d'audio contre 0,3 s pour le mode passages)
+        poids = FENETRE_POIDS if mode == 'fenetre' else 1
+        charge = sum(FENETRE_POIDS if x.fenetre else 1 for x in _seances.values())
+        if charge + poids > DIRECT_MAX:
+            return _erreur(503, 'occupe')
         s = _seances[sid] = Seance(suivi=mode == 'suivi')
         s.fenetre = mode == 'fenetre'
     s.vu = time.monotonic()

@@ -33,6 +33,8 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
   let reponse: () => RetrouverBrut | { erreur: string; statut: number };
   const recus: Buffer[] = [];
   const directs: boolean[] = [];
+  /** mode demandé au service à chaque morceau (`false`, `true` = passages, ou `fenetre`) */
+  const modes: Array<boolean | string | undefined> = [];
   let P: Record<string, string>;
   let PIN: Record<string, string>;
   let A: Record<string, string>;
@@ -43,6 +45,7 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
     ecouter: async () => ({ erreur: 'inutile', statut: 503 }),
     direct: async (_sid, pcm, suivi) => {
       directs.push(!!suivi);
+      modes.push(suivi);
       return { mots: [], partiel: [], t: pcm.length / 32000 };
     },
     finDirect: async () => {},
@@ -217,6 +220,38 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
     expect(directs.at(-1)).toBe(false);
     shazamOuvert = true;
     ecouteOuvert = false;
+  });
+
+  it('suivi de la récitation : fenêtre glissante par défaut, AWFORM_ECOUTE_SUIVI_MODE=suivi ramène les passages', async () => {
+    ecouteOuvert = true;
+    shazamOuvert = true;
+    const Q = 's=2&from=1&to=3&suivi=1';
+    const morceau = (sid: string) =>
+      c.app.inject({
+        method: 'POST',
+        url: `/api/v1/ecoute/direct/${sid}`,
+        payload: Buffer.alloc(16000),
+        headers: { 'x-awform': '1', 'content-type': 'application/octet-stream', ...P },
+      });
+    const avant = process.env.AWFORM_ECOUTE_SUIVI_MODE;
+    try {
+      // par défaut (variable absente ou inconnue) : la fenêtre glissante
+      delete process.env.AWFORM_ECOUTE_SUIVI_MODE;
+      const f = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      expect(f.json()).toMatchObject({ suivi: true, mode: 'fenetre' });
+      expect((await morceau(f.json().sid)).statusCode).toBe(200);
+      expect(modes.at(-1)).toBe('fenetre');
+      // retour explicite aux passages relus avec contexte (comportement d'avant)
+      process.env.AWFORM_ECOUTE_SUIVI_MODE = 'suivi';
+      const p = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      expect(p.json()).toMatchObject({ suivi: true, mode: 'suivi' });
+      await morceau(p.json().sid);
+      expect(modes.at(-1)).toBe('suivi');
+    } finally {
+      if (avant === undefined) delete process.env.AWFORM_ECOUTE_SUIVI_MODE;
+      else process.env.AWFORM_ECOUTE_SUIVI_MODE = avant;
+      ecouteOuvert = false;
+    }
   });
 
   it('personnel : jamais ; retrait de l’accord : plus de recherche', async () => {

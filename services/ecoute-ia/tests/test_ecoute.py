@@ -244,6 +244,21 @@ def test_fenetre_relit_les_dernieres_secondes_et_efface(client):
     assert sid not in ecoute._seances
 
 
+def test_une_seance_fenetre_pese_plus_lourd(client):
+    """Une séance « fenêtre » relit 10 s toutes les 0,5 s : elle compte FENETRE_POIDS séances ordinaires."""
+    ecoute._seances.clear()
+    x = np.zeros(8000, dtype='<i2').tobytes()
+    sids = [str(uuid.uuid4()) for _ in range(3)]
+    codes = [client.post(f'/direct/{sid}?mode=fenetre', content=x, headers={'x-essai-mots': HEX}).status_code
+             for sid in sids]
+    assert codes == [200, 200, 503]  # DIRECT_MAX = 6 : deux fenêtres (3 + 3), la troisième est refusée
+    # une séance ordinaire ne passe pas non plus (la charge est pleine)
+    assert client.post(f'/direct/{uuid.uuid4()}', content=x).status_code == 503
+    for sid in sids:
+        client.delete(f'/direct/{sid}')
+    assert not ecoute._seances
+
+
 def test_retrouver_et_suivi_rien_sur_disque(client):
     avant, fd0 = instantane(), fds()
     assert client.post('/ecouter?mode=retrouver', content=opus(6), headers={'x-essai-mots': HEX}).status_code == 200

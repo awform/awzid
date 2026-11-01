@@ -62,7 +62,7 @@
   "ec.ia_trompee": "L'IA s'est trompée ?",
   "ec.merci_signalement": "Merci, c'est noté (sans ta voix). Cela nous aide à rendre l'écoute plus juste.",
   "ec.mode_suivi": "Suivre ma récitation",
-  "ec.suivi_aide": "Les mots apparaissent au fur et à mesure. Un mot oublié, sauté ou changé est signalé un peu plus loin (une dizaine de secondes après), avec le mot attendu, seulement quand l'IA en est sûre.",
+  "ec.suivi_aide": "Les mots apparaissent au fur et à mesure. Un mot oublié, sauté ou changé est signalé un peu plus loin (quelques secondes après), avec le mot attendu, seulement quand l'IA en est sûre.",
   "ec.attendu": "{n, plural, one {Mot attendu :} other {Mots attendus :}}",
   "rv.titre": "Retrouve ce verset",
   "rv.intro": "Récite de 5 à 15 secondes d'un passage du Coran : l'application cherche où il se trouve et te le fait écouter.",

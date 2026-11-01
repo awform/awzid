@@ -2533,7 +2533,7 @@
   "ec.ia_trompee": "¿Se ha equivocado la IA?",
   "ec.merci_signalement": "Gracias, queda anotado (sin tu voz). Nos ayuda a que la escucha sea más precisa.",
   "ec.mode_suivi": "Seguir mi recitación",
-  "ec.suivi_aide": "Las palabras aparecen a medida que recitas. Una palabra olvidada, saltada o cambiada se señala un poco más tarde (unos diez segundos después), con la palabra esperada, solo cuando la IA está segura.",
+  "ec.suivi_aide": "Las palabras aparecen a medida que recitas. Una palabra olvidada, saltada o cambiada se señala un poco más tarde (unos segundos después), con la palabra esperada, solo cuando la IA está segura.",
   "ec.attendu": "{n, plural, one {Palabra esperada:} other {Palabras esperadas:}}",
   "rv.titre": "Encuentra este versículo",
   "rv.intro": "Recita de 5 a 15 segundos de un pasaje del Corán: la aplicación busca dónde se encuentra y te lo hace escuchar.",
