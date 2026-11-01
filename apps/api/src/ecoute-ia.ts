@@ -80,7 +80,15 @@ export interface DirectBrut {
   stables_ctc?: MotEntendu[];
   /** mode suivi : mots provisoires du dernier passage fini (remplacent les précédents) */
   provisoires?: MotEntendu[];
+  /** mode fenêtre (shazam_coran) : lecture des dernières secondes ; mots RNN-T et CTC, zones de voix, instants de la séance */
+  fenetre?: boolean;
+  mots_ctc?: MotEntendu[];
 }
+/** Façon de suivre la récitation en direct : `suivi` = passages relus avec contexte ; `fenetre` = fenêtre glissante */
+export type ModeSuivi = 'suivi' | 'fenetre';
+/** Mode du suivi (AWFORM_ECOUTE_SUIVI_MODE ; `fenetre` = fenêtre glissante, par défaut `suivi` = passages) */
+export const modeSuivi = (): ModeSuivi =>
+  process.env.AWFORM_ECOUTE_SUIVI_MODE === 'fenetre' ? 'fenetre' : 'suivi';
 /** « Retrouve ce verset » : deux lectures du même extrait (RNN-T et tête CTC), voix entendue */
 export interface RetrouverBrut {
   mots: MotEntendu[];
@@ -100,7 +108,7 @@ export const lecturesDe = (r: RetrouverBrut): string[][] =>
 export type Echec = { erreur: string; statut: number };
 export interface ClientEcoute {
   ecouter(audio: Buffer, mime: string): Promise<EcouteBrute | Echec>;
-  direct(sid: string, pcm: Buffer, suivi?: boolean): Promise<DirectBrut | Echec>;
+  direct(sid: string, pcm: Buffer, suivi?: boolean | ModeSuivi): Promise<DirectBrut | Echec>;
   finDirect(sid: string): Promise<void>;
   sante(): Promise<boolean>;
   /** shazam_coran : mode « retrouver » du service (absent : fonction indisponible) */
@@ -134,7 +142,7 @@ export function clientEcouteHttp(base: string): ClientEcoute {
       ),
     direct: (sid, pcm, suivi = false) =>
       appel<DirectBrut>(
-        `/direct/${sid}${suivi ? '?mode=suivi' : ''}`,
+        `/direct/${sid}${suivi ? `?mode=${suivi === true ? 'suivi' : suivi}` : ''}`,
         {
           method: 'POST',
           headers: { 'content-type': 'application/octet-stream' },
@@ -261,7 +269,7 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
   /** séances du direct : sid -> propriétaire (en mémoire ; l'audio, lui, n'est jamais ici) */
   const seances = new Map<
     string,
-    { accountId: string; profileId: string; fin: number; suivi: boolean }
+    { accountId: string; profileId: string; fin: number; suivi: false | ModeSuivi }
   >();
 
   const profileOf = async (id: string) => {
@@ -481,14 +489,18 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
           await client.finDirect(sid);
         }
       const sid = randomUUID();
-      const suivi = req.query.suivi === 1 && (await shazam(req, p.id));
+      const suivi = req.query.suivi === 1 && (await shazam(req, p.id)) ? modeSuivi() : false;
       seances.set(sid, {
         accountId: req.auth!.accountId,
         profileId: p.id,
         fin: Date.now() + (ECOUTE_MAX_S + 30) * 1000,
         suivi,
       });
-      return { sid, maxSecondes: ECOUTE_MAX_S, ...(suivi ? { suivi: true } : {}) };
+      return {
+        sid,
+        maxSecondes: ECOUTE_MAX_S,
+        ...(suivi ? { suivi: true, mode: suivi } : {}),
+      };
     },
   );
 

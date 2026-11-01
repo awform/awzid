@@ -12,13 +12,16 @@
 //   - erreurs vues et délai : de l'instant de l'erreur au premier écart montré sur le mot visé (± 1 mot).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  FenetreSuivi,
-  REGLAGES_FENETRE,
-  etatSuivi,
-  instantsDesMots,
-  motsAttendus,
-} from '../../../packages/hifz/dist/index.js';
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
+
+// HIFZ=<dossier dist> : comparer avec un autre état du code (ex. le comparateur d'AVANT le chantier)
+const HIFZ = resolve(
+  process.env.HIFZ ?? new URL('../../../packages/hifz/dist', import.meta.url).pathname,
+);
+const { FenetreSuivi, REGLAGES_FENETRE, etatSuivi, instantsDesMots, motsAttendus } = await import(
+  pathToFileURL(join(HIFZ, 'index.js')).href
+);
 
 const [TSV, DIR, ...METHODES] = process.argv.slice(2);
 const REGL = process.env.REGLAGES
@@ -28,7 +31,7 @@ const RTT = Number(process.env.RTT ?? 0.15);
 const GRAIN = 0.128; // ScriptProcessor 4096 échantillons : l'audio arrive par paquets de 0,256 s
 const T = new Map();
 for (const l of readFileSync(TSV, 'utf8').split('\n')) {
-  const x = l.replace(/\r$/, '').replace(/﻿/g, '');
+  const x = l.replace(/\r$/, '').replace(/\uFEFF/g, '');
   const t = x.indexOf('\t');
   if (t > 0) T.set(x.slice(0, t).trim(), x.slice(t + 1));
 }

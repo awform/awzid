@@ -8,7 +8,9 @@ B=${BANC_DIR:-$HOME/tarteel2-banc}
 M=$HOME/modeles-ia
 CPUS=${CPUS:-4}
 mkdir -p "$B"
-exec flock "$HOME/.awzid-e2e.lock" docker run --rm --cpus "$CPUS" -u "$(id -u):$(id -g)" --entrypoint nice \
+VERROU=(flock "$HOME/.awzid-e2e.lock")
+[ -n "${DEJA_SOUS_VERROU:-}" ] && VERROU=()   # appelé depuis un script qui tient déjà le verrou commun
+exec "${VERROU[@]}" docker run --rm --cpus "$CPUS" -u "$(id -u):$(id -g)" --entrypoint nice \
   -e THREADS="$CPUS" -e OMP_NUM_THREADS="$CPUS" -e MKL_NUM_THREADS="$CPUS" -e OMP_WAIT_POLICY=PASSIVE \
   -e BANC=/work -e TAG="${TAG:-}" -e LIMITE="${LIMITE:-0}" -e PAS="${PAS:-1}" -e PORTIONS="${PORTIONS:-3}" \
   -e QUOTAS="${QUOTAS:-juste:15,oubli:6,remplacement:6,ajout:5,saut_verset:5,repete:6,reprise:6,retour:5,pause:6,bruit:8,telephone:8}" \

@@ -323,6 +323,33 @@ function voixEntre(voix: ReadonlyArray<readonly [number, number]>, a: number, b:
   return s;
 }
 
+/**
+ * Mots ENTENDUS qui font partie d'une RÉPÉTITION de l'élève (il reprend, se corrige, revient en arrière, répète un
+ * mot) : un mot, ou une suite de mots, redit à moins de 40 mots d'écart. Un mot isolé n'est une répétition que
+ * collé à son semblable (bégaiement) ; au-delà, il faut au moins deux mots de suite pareils. Sert à ne JAMAIS signaler
+ * « mot ajouté » sur une reprise (reprendre quelques mots, revenir au verset précédent, redire un mot) : la reprise est
+ * normale en récitation, et le mot en trop de l'alignement n'est pas une faute. Silence dans le doute.
+ */
+export function motsRepetes(ent: readonly MotEntendu[]): boolean[] {
+  const cles = ent.map((e) => cleMot(e.w));
+  const rep = ent.map(() => false);
+  const pareil = (a: number, b: number) =>
+    cles[a]!.length >= 2 && cles[b]!.length >= 2 && ressemblance(cles[a]!, cles[b]!) >= 0.8;
+  for (let j = 1; j < ent.length; j++) {
+    for (let i = Math.max(0, j - 40); i < j; i++) {
+      if (!pareil(i, j)) continue;
+      const colle = i === j - 1;
+      const suite = i + 1 < j && j + 1 < ent.length && pareil(i + 1, j + 1);
+      const avant = i > 0 && i - 1 !== j && pareil(i - 1, j - 1) && i < j - 1;
+      if (colle || suite || avant) {
+        rep[i] = true;
+        rep[j] = true;
+      }
+    }
+  }
+  return rep;
+}
+
 export interface OptionsComparaison {
   /** zones de voix (secondes) détectées dans l'audio */
   voix?: ReadonlyArray<readonly [number, number]>;
@@ -493,8 +520,10 @@ export function comparer(
   }
 
   // ajouts : sûrs, hors répétition (l'élève reprend), hors formules permises, dans la partie récitée
+  const repetes = motsRepetes(ent);
   for (const ad of ajouts) {
     if (pris.has(ad.j)) continue;
+    if (repetes[ad.j]) continue; // reprise, retour en arrière, mot redit : normal en récitation
     if (ad.apres < debut || ad.apres >= finR) continue;
     const e = ent[ad.j]!;
     const k = cleMot(e.w);
