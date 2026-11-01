@@ -280,6 +280,8 @@ export async function ressaisieParent(
 
 /** disponibilité d'un identifiant : 20 demandes par heure et par compte (revue I2 : pas d'énumération) */
 export const DISPONIBILITE_PAR_HEURE = 20;
+/** disponibilité d'un identifiant : 60 demandes par heure et par adresse (plusieurs comptes derrière la même) */
+export const DISPONIBILITE_PAR_ADRESSE = 60;
 
 export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
   const { db, needParent } = kit;
@@ -300,6 +302,11 @@ export function registerEnfantLogin(app: FastifyInstance, kit: AuthKit): void {
     },
     async (req, reply) => {
       const parent = req.auth!.accountId;
+      // plafond par ADRESSE (tous comptes confondus) : 60 demandes par heure, puis pause d'une heure
+      if (!(await reserveAttempt(db, `ld-ip:${req.ip}`, DISPONIBILITE_PAR_ADRESSE, 60))) {
+        await audit(db, parent, 'profil.login_disponible_limite_adresse');
+        return err(reply, 429, 'trop_de_demandes');
+      }
       // limite stricte par compte (réservation atomique ; au-delà, pause d'une heure) et trace dans le journal
       if (!(await reserveAttempt(db, `ld:${parent}`, DISPONIBILITE_PAR_HEURE, 60))) {
         await audit(db, parent, 'profil.login_disponible_limite');

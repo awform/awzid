@@ -112,12 +112,30 @@ export function motDePasseEleve(login: string, prenom: string): string {
   throw new Error('mot_de_passe_impossible');
 }
 
-/** empreintes calculées par petits groupes (Argon2id est coûteux) */
+/** au plus N tâches à la fois (file d'attente) : Argon2id est coûteux en mémoire et en temps */
+export class Semaphore {
+  private libres: number;
+  private file: Array<() => void> = [];
+  constructor(n: number) {
+    this.libres = n;
+  }
+  async run<T>(tache: () => Promise<T>): Promise<T> {
+    if (this.libres > 0) this.libres--;
+    else await new Promise<void>((ok) => this.file.push(ok));
+    try {
+      return await tache();
+    } finally {
+      const suivant = this.file.shift();
+      if (suivant) suivant();
+      else this.libres++;
+    }
+  }
+}
+/** empreintes de TOUS les lots en cours : 2 à la fois au plus, quel que soit le nombre d'enseignants qui créent */
+export const argonGlobal = new Semaphore(2);
+
 async function empreintes(mdps: readonly string[]): Promise<string[]> {
-  const out: string[] = [];
-  for (let i = 0; i < mdps.length; i += 8)
-    out.push(...(await Promise.all(mdps.slice(i, i + 8).map((m) => hashSecret(m)))));
-  return out;
+  return Promise.all(mdps.map((m) => argonGlobal.run(() => hashSecret(m))));
 }
 
 /** code PostgreSQL d'une erreur (drizzle l'enveloppe : le code est dans `cause`) */
@@ -321,6 +339,7 @@ export function registerEcoleEleves(app: FastifyInstance, db: Db): void {
           // deux créations simultanées du même identifiant : la contrainte d'unicité tranche, on recommence.
           // Toute autre erreur est remplacée par une erreur SANS paramètres (empreinte, prénom, année) : jamais journalisés.
           if (codePg(e) !== '23505')
+            // eslint-disable-next-line preserve-caught-error -- la cause porte les paramètres de la requête (empreinte, prénom, année) : jamais journalisés
             throw new Error(`creation_lot_echouee:${codePg(e) ?? 'inconnue'}`);
         }
       }
