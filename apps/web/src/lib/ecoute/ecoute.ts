@@ -62,6 +62,8 @@ export interface Verification {
   positions: Array<[number, number, number]>;
   /** instants (s) du mot reconnu pour chaque mot attendu ; profil ADULTE seulement (« Réécouter ma récitation ») */
   instants?: Array<[number, number] | null>;
+  /** reprises et longues pauses (nombres) : comptées à part dans le mode « devant le maître », jamais des erreurs */
+  hesitations?: { reprises: number; pauses: number };
   duree: number;
   calcul: number;
 }
@@ -353,7 +355,12 @@ export class SuiviDirect {
 
 // ------------------------------------------------------------------ bilan de séance
 
-export function bilanDe(p: Portion, att: MotAttendu[], r: ResultatEcoute): Bilan {
+export function bilanDe(
+  p: Portion,
+  att: MotAttendu[],
+  r: ResultatEcoute,
+  maitre?: { hesitations: number; aide: number },
+): Bilan {
   const mots: Bilan['mots'] = [];
   for (const e of r.ecarts)
     for (let i = e.i; i <= (e.type === 'ajoute' ? e.i : e.fin); i++) {
@@ -371,5 +378,7 @@ export function bilanDe(p: Portion, att: MotAttendu[], r: ResultatEcoute): Bilan
     aRevoir: motsARevoir(r),
     mots,
     pasCompris: r.statut === 'pas_compris',
+    // « devant le maître » : hésitations et aide reçue, comptées À PART (ne sont jamais des erreurs ni des mots à revoir)
+    ...(maitre ? { maitre: true, hesitations: maitre.hesitations, aide: maitre.aide } : {}),
   };
 }

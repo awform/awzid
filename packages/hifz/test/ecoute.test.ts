@@ -4,6 +4,7 @@ import {
   comparer,
   motsARevoir,
   motsAttendus,
+  hesitations,
   motsRepetes,
   ressemblance,
   type MotEntendu,
@@ -181,6 +182,31 @@ describe('A5 : écarts sur cas simulés', () => {
     expect(comparer(ATT, entendu(un).ent, { voix: entendu(un).voix }).ecarts).toEqual([
       expect.objectContaining({ type: 'remplace', i: 3 }),
     ]);
+  });
+
+  it('hésitations : reprises et longues pauses comptées à part, jamais des erreurs', () => {
+    const m = (w: string[], t0 = (n: number) => n * 0.6) =>
+      w.map((x, n) => ({ w: x, conf: 0.9, t0: t0(n), t1: t0(n) + 0.4 }));
+    // récitation sans hésitation
+    expect(hesitations(m(['ذهب', 'الولد', 'الى', 'المدرسة']))).toEqual({ reprises: 0, pauses: 0 });
+    // une reprise de deux mots + un mot redit = 2 reprises
+    const r = hesitations(m(['ذهب', 'الولد', 'الى', 'الولد', 'الى', 'المدرسة', 'صباحا', 'صباحا']));
+    expect(r.reprises).toBe(2);
+    // une pause de 6 s au milieu : une longue hésitation (seuil 4 s)
+    const p = hesitations(
+      m(['ذهب', 'الولد', 'الى', 'المدرسة'], (n) => (n >= 2 ? n * 0.6 + 6 : n * 0.6)),
+    );
+    expect(p).toEqual({ reprises: 0, pauses: 1 });
+    // et ni l'une ni l'autre ne produit d'écart dans la comparaison
+    const w = nus();
+    w.splice(10, 0, ...w.slice(5, 10));
+    const ent = entendu(w).ent.map((e, n) =>
+      n >= 10 ? { ...e, t0: e.t0! + 6, t1: e.t1! + 6 } : e,
+    );
+    expect(
+      comparer(ATT, ent, { voix: ent.map((e) => [e.t0!, e.t1!] as [number, number]) }).ecarts,
+    ).toEqual([]);
+    expect(hesitations(ent)).toEqual({ reprises: 1, pauses: 1 });
   });
 
   it('motsRepetes : un mot seul n’est une répétition que collé à son semblable', () => {

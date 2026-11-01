@@ -350,6 +350,51 @@ export function motsRepetes(ent: readonly MotEntendu[]): boolean[] {
   return rep;
 }
 
+/** Silence entre deux mots entendus (secondes) à partir duquel on compte une « longue hésitation ». */
+export const PAUSE_LONGUE_S = 4;
+
+export interface Hesitations {
+  /** reprises : le candidat redit un mot ou une suite de mots (se corrige, revient en arrière) ; un événement par reprise */
+  reprises: number;
+  /** longues hésitations : silence de plus de `PAUSE_LONGUE_S` entre deux mots entendus */
+  pauses: number;
+}
+
+/**
+ * HÉSITATIONS d'une récitation (mode « devant le maître », décision du référent du 01/11/2026) : reprises et longues pauses,
+ * comptées À PART, jamais comme des erreurs. Entraînement : rien de tout cela n'est montré comme une faute. Des nombres seulement
+ * (jamais les mots entendus). Un arrêt (waqf) n'est pas évalué ici : aucune règle sur la pause elle-même.
+ */
+export function hesitations(ent: readonly MotEntendu[], pauseLongue = PAUSE_LONGUE_S): Hesitations {
+  const rep = motsRepetes(ent);
+  // un événement = une suite de mots répétés qui se TERMINE (la seconde copie), comptée une fois
+  let reprises = 0;
+  const cles = ent.map((e) => cleMot(e.w));
+  const copies = ent.map(() => false);
+  for (let j = 1; j < ent.length; j++) {
+    if (!rep[j]) continue;
+    for (let i = Math.max(0, j - 40); i < j; i++) {
+      if (
+        rep[i] &&
+        cles[i]!.length >= 2 &&
+        cles[j]!.length >= 2 &&
+        ressemblance(cles[i]!, cles[j]!) >= 0.8
+      ) {
+        copies[j] = true; // j est une seconde copie d'un mot déjà dit
+        break;
+      }
+    }
+  }
+  for (let j = 0; j < ent.length; j++) if (copies[j] && !copies[j - 1]) reprises++;
+  let pauses = 0;
+  for (let j = 1; j < ent.length; j++) {
+    const a = ent[j - 1]!.t1;
+    const b = ent[j]!.t0;
+    if (a !== undefined && b !== undefined && b - a > pauseLongue) pauses++;
+  }
+  return { reprises, pauses };
+}
+
 export interface OptionsComparaison {
   /** zones de voix (secondes) détectées dans l'audio */
   voix?: ReadonlyArray<readonly [number, number]>;

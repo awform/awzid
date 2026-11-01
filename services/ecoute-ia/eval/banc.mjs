@@ -10,7 +10,7 @@
 //   - mots suivis : part des mots récités (retrouvés dans la lecture complète) dévoilés à la fin ;
 //   - fausses alertes : tout écart montré qui ne correspond pas à l'erreur simulée (séances normales : tout écart) ;
 //   - erreurs vues et délai : de l'instant de l'erreur au premier écart montré sur le mot visé (± 1 mot).
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
@@ -37,6 +37,8 @@ for (const l of readFileSync(TSV, 'utf8').split('\n')) {
 }
 const SESS = JSON.parse(readFileSync(join(DIR, 'sessions.json'), 'utf8'));
 const parId = new Map(SESS.map((s) => [s.id, s]));
+/** EXPORT=<fichier> : mots attendus (texte Tanzil) et instants de référence par séance, pour gop.py */
+const EXPORTE = {};
 const q = (a, p) =>
   a.length ? [...a].sort((x, y) => x - y)[Math.floor((a.length - 1) * p)] : null;
 const r2 = (x) => (x === null || x === undefined ? null : Math.round(x * 100) / 100);
@@ -94,11 +96,14 @@ function analyser(methode, lect) {
       T.get('1:1'),
     );
     const inst = instantsDesMots(att, se.ref, false);
+    if (process.env.EXPORT)
+      EXPORTE[se.id] = { mots: att.map((m) => m.texte), inst, verite: se.verite, type: se.type };
     const plan = planifier(methode, L.reads);
     const premierOk = new Map();
     const vues = new Map(); // écart -> première heure
     const v = se.verite;
     let vu = null;
+    let dernier = null;
     const fen = methode === 'fen' ? new FenetreSuivi(REGL) : null;
     const base = { stables: [], stablesCtc: [], provisoires: [], partiel: [], voix: [] };
     for (const { recu, r } of plan) {
@@ -116,6 +121,7 @@ function analyser(methode, lect) {
         e = base;
       }
       const { resultat } = etatSuivi(att, e);
+      dernier = { resultat, e };
       resultat.mots.forEach((m, i) => {
         if (m === 'ok' && !premierOk.has(i)) premierOk.set(i, recu);
       });
@@ -140,6 +146,22 @@ function analyser(methode, lect) {
             );
         }
       }
+    }
+    if (process.env.DIAGMISS && v && vu === null && dernier) {
+      const { resultat, e } = dernier;
+      const a = Math.max(0, v.i - 3);
+      const b = v.fin + 4;
+      console.error(
+        `[MISS ${methode}] ${se.id} ${se.type} ${se.rid} t=${v.t} i=${v.i}-${v.fin}\n  attendu : ${att
+          .slice(a, b)
+          .map((z, k) => `${z.cle}(${resultat.mots[a + k]})`)
+          .join(' ')}\n  entendu : ${e.stables
+          .filter((w) => (w.t0 ?? 0) > v.t - 5 && (w.t0 ?? 0) < v.t + 7)
+          .map((w) => `${w.w}[${w.conf}]`)
+          .join(
+            ' ',
+          )}\n  écarts finaux : ${JSON.stringify(resultat.ecarts.map((z) => `${z.type}:${z.i}-${z.fin}`))} doutes=${resultat.doutes} statut=${resultat.statut}`,
+      );
     }
     const T_ = (res.types[se.type] ??= {
       n: 0,
@@ -211,4 +233,5 @@ for (const m of METHODES) {
   const lect = JSON.parse(readFileSync(join(DIR, f), 'utf8'));
   sortie[`${nom}:${f}`] = analyser(nom, lect);
 }
+if (process.env.EXPORT) writeFileSync(process.env.EXPORT, JSON.stringify(EXPORTE));
 console.log(JSON.stringify({ rtt_s: RTT, sessions: SESS.length, resultat: sortie }, null, 1));

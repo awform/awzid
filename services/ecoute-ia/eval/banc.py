@@ -34,6 +34,12 @@ QUOTAS = os.environ.get('QUOTAS', 'juste:15,oubli:6,remplacement:6,ajout:5,saut_
 THREADS = int(os.environ.get('THREADS', '4'))
 
 
+def attendre_charge(max_=float(os.environ.get('CHARGE_MAX', '7'))):
+    """Pause entre deux séances tant que la charge de la machine dépasse `max_` (/proc/loadavg est celui de l'hôte)."""
+    while float(open('/proc/loadavg').read().split()[0]) > max_:
+        time.sleep(20)
+
+
 def silence(rnd, s):
     return (np.random.default_rng(rnd.randint(0, 2 ** 31)).standard_normal(int(s * SR)) * 1e-4).astype(np.float32)
 
@@ -167,20 +173,25 @@ def lire_base(modele, x):
 FEN_W = float(os.environ.get('FEN_W', '10'))
 FEN_HOP = float(os.environ.get('FEN_HOP', '0.5'))
 FEN_PAD = float(os.environ.get('FEN_PAD', '0.5'))
+TOPK = os.environ.get('TOPK') == '1'
 
 
 def lire_fenetre(modele, x):
     """Lecture du dernier FEN_W s toutes les FEN_HOP s (deux lectures : RNN-T et CTC, un seul encodeur)."""
     queue = np.zeros(int(3 * SR), dtype=np.float32)
     x = np.concatenate([x, queue])
-    res, t = [], FEN_HOP
+    res, t, tops = [], FEN_HOP, []
     while t <= len(x) / SR + 1e-6:
         a = max(0.0, t - FEN_W)
         seg_ = x[int(a * SR): int(t * SR)]
         t0 = time.perf_counter()
         if len(seg_) > SR // 2:
             xr = asr.rembourrer(seg_, FEN_PAD)
-            r, c = asr.lecture_double(modele, xr)
+            if TOPK:
+                r, c, tk = modele.transcrire_double_topk(xr)
+                tops.append((len(res), a - FEN_PAD, tk))
+            else:
+                r, c = asr.lecture_double(modele, xr)
             off = a - FEN_PAD
             r, c = asr.decaler(r, off), asr.decaler(c, off)
             voix = [[round(p + off, 2), round(q + off, 2)] for p, q in asr.zones_de_voix(xr)]
@@ -190,7 +201,25 @@ def lire_fenetre(modele, x):
         res.append({'t': round(t, 2), 't0': round(a, 2), 'calcul': round(dt, 3), 'mots': r, 'mots_ctc': c,
                     'voix': voix})
         t += FEN_HOP
+    lire_fenetre.tops = tops
     return res
+
+
+def sauver_topk(sid, tops):
+    """Top-k CTC de chaque lecture de la fenêtre : ids [R,T,K] int16, lp [R,T,K] float16, index de lecture, décalage (s) de la
+    trame 0 de chaque lecture (la trame f commence à décalage + 0,08 f)."""
+    if not tops:
+        return
+    T_ = max(tk[0].shape[0] for _, _, tk in tops)
+    K = tops[0][2][0].shape[1]
+    ids = np.full((len(tops), T_, K), -1, dtype=np.int16)
+    lp = np.full((len(tops), T_, K), -30, dtype=np.float16)
+    for n, (_, _, tk) in enumerate(tops):
+        ids[n, : tk[0].shape[0]] = tk[0]
+        lp[n, : tk[1].shape[0]] = tk[1]
+    os.makedirs(f'{W}/topk', exist_ok=True)
+    np.savez_compressed(f'{W}/topk/{sid}.npz', ids=ids, lp=lp, lecture=np.array([n for n, _, _ in tops]),
+                        decalage=np.array([d for _, d, _ in tops], dtype=np.float32))
 
 
 def lire(methode):
@@ -201,7 +230,10 @@ def lire(methode):
     fn = {'base': lire_base, 'fen': lire_fenetre}[methode]
     out, debut = [], time.perf_counter()
     for k, s in enumerate(S):
+        attendre_charge()
         out.append({'id': s['id'], 'reads': fn(modele, audio_de(s))})
+        if TOPK and methode == 'fen':
+            sauver_topk(s['id'], lire_fenetre.tops)
         print(k, s['id'], s['type'], round(s['duree']), 's', round(time.perf_counter() - debut), 's écoulées',
               flush=True)
         json.dump(out, open(nom, 'w', encoding='utf-8'), ensure_ascii=False)

@@ -243,6 +243,29 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
     );
   });
 
+  test('récitation devant le maître : erreurs, hésitations et aide reçue comptées à part', async ({
+    page,
+  }) => {
+    await page.goto('/coran/lecteur?s=112&a=1&memo=1');
+    await page.getByTestId('reciter-verifier').click();
+    await page.getByTestId('ecoute-accepter').click();
+    await page.getByTestId('ecoute-maitre').check();
+    await expect(page.getByTestId('ecoute-maitre-aide')).toContainText('jamais comme des erreurs');
+    await page.getByTestId('ecoute-direct').click();
+    await expect(page.getByTestId('ecoute-en-cours')).toBeVisible();
+    // « Un indice » devient une aide reçue
+    await page.getByTestId('ecoute-indice').click();
+    await expect(page.getByTestId('ecoute-indices')).toContainText('1 aide reçue');
+    await expect(page.getByTestId('suivi-ecart')).toContainText('mot oublié', { timeout: 20_000 });
+    await page.getByTestId('ecoute-terminer').click();
+    const bloc = page.getByTestId('ecoute-maitre-resultat');
+    await expect(bloc).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('maitre-erreurs')).toContainText('1 erreur signalée');
+    await expect(page.getByTestId('maitre-hesitations')).toContainText('Aucune hésitation');
+    await expect(page.getByTestId('maitre-aide')).toContainText('1 aide reçue');
+    await expect(bloc).not.toContainText(/\/20|parfait|excellent|valid/i);
+  });
+
   test('accessibilité AA : accord, écran prêt, résultat', async ({ page }) => {
     await page.goto('/coran/retrouver');
     await expect(page.getByTestId('rv-accord')).toBeVisible();

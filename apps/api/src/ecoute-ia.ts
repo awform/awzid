@@ -33,6 +33,7 @@ import {
   chercherDouble,
   comparer,
   decisionRetrouver,
+  hesitations,
   IndexCoran,
   instantsDesMots,
   motsARevoir,
@@ -577,6 +578,8 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
         return {
           resultat: res,
           aRevoir: motsARevoir(res),
+          // hésitations (reprises, longues pauses) : des NOMBRES, comptés à part, jamais des erreurs (mode « devant le maître »)
+          hesitations: hesitations(r.mots),
           // position de chaque mot attendu dans le texte affiché (sourate, verset, rang du mot)
           positions: att.map((m) => [m.s, m.a, m.k]),
           // tarteel-egal-wip : instants (secondes) de chaque mot reconnu, pour « Réécouter ma récitation » d'un verset.

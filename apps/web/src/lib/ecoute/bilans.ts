@@ -16,6 +16,10 @@ export interface Bilan {
   /** mots à revoir : sourate, verset, rang du mot dans le verset, type d'écart */
   mots: Array<[number, number, number, string]>;
   pasCompris: boolean;
+  /** mode « devant le maître » : hésitations (reprises, longues pauses) et aide reçue (indices) — comptées à part, jamais des erreurs */
+  maitre?: boolean;
+  hesitations?: number;
+  aide?: number;
 }
 
 const CLE = (profileId: string) => `ecoute.bilans:${profileId}`;
