@@ -170,6 +170,11 @@ test.describe('lot 5', () => {
     await page.getByTestId('piste-nouveau').scrollIntoViewIfNeeded();
     await shot('27-hifz-reciter-de-memoire');
     await loginTeacher(page);
+    // V2-2 : un enseignant sans classe voit « Créer ma classe » (un champ) ; la préparation du test lui en crée une
+    await page.request.post('/api/v1/teacher/classes', {
+      headers: { 'x-awform': '1' },
+      data: { name: `Préparation ${dev}` },
+    });
     await page.goto('/enseignant');
     await page.locator('#cname').fill(`Hifẓ — groupe ${dev}`);
     await page.getByRole('button', { name: 'Créer la classe' }).click();
@@ -292,6 +297,10 @@ test.describe('lot 9', () => {
     );
     const tp = await tctx.newPage();
     await loginTeacher(tp);
+    await tp.request.post('/api/v1/teacher/classes', {
+      headers: { 'x-awform': '1' },
+      data: { name: `Préparation ${dev}` },
+    });
     await tp.goto('/enseignant');
     await tp.locator('#cname').fill(`Adultes ${dev}`);
     await tp.getByRole('button', { name: 'Créer la classe' }).click();
