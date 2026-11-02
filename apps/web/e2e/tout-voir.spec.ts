@@ -194,8 +194,11 @@ test('un AUTRE administrateur avec second facteur validé n’a pas « tout voir
   expect((await adm.request.get(FICHIER_TOUT)).status()).toBe(403);
   expect((await adm.request.get('/mutun/risala-p3.json')).status()).toBe(200);
   await adm.goto('/madjaliss/risala');
-  await expect(adm.locator('[data-testid="mj-sommaire"] li')).toHaveCount(261);
+  // sans profil adulte (sans « tout voir »), les séances « adulte » restent masquées : jamais plus que le sommaire public
+  await expect(adm.getByTestId('mj-sommaire')).toBeVisible();
+  expect(await adm.locator('[data-testid="mj-sommaire"] li').count()).toBeLessThan(262);
   await expect(adm.locator('li[data-seance="134"]')).toHaveCount(0);
+  expect(await adm.locator('main').innerText()).not.toMatch(SENSIBLE);
   await adm.goto('/admin/explorer');
   await expect(adm.getByTestId('tv-reserve')).toBeVisible();
 });
