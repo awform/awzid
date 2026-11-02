@@ -11,6 +11,7 @@ export const TOUS_LES_TEXTES: string[];
 export const TAILLE_PARTIE: number;
 export const DIFFERE_CYCLE: Record<string, { cycle_min: number; consigne: RegExp }>;
 export const SEANCES_SENSIBLES: Record<string, Set<string>>;
+export const PHRASES_SENSIBLES: Record<string, Set<string>>;
 export const DIFFERE: Record<string, { seances: string[]; consigne: RegExp }>;
 export function departager(
   eleve: {

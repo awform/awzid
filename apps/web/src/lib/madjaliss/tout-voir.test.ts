@@ -137,7 +137,11 @@ describe('Risāla : séances sensibles (chapitre du jihād)', () => {
     // phrases des séances sensibles : ni dans les parties publiques, ni dans les parties gardées ordinaires, ni dans les
     // notes de l'enseignant (personnel) — seulement dans le fichier « tout voir »
     const ids = toutFichier.phrases.map((p) => p.id);
-    expect(ids).toHaveLength(25);
+    expect(ids).toHaveLength(29);
+    // phrases sensibles ISOLÉES (séances qui restent ouvertes) : RIS-1392 et 1393 (jihād, ribāṭ), RIS-1224 et 1225 (butin)
+    for (const id of ['RIS-1392', 'RIS-1393', 'RIS-1224', 'RIS-1225'])
+      expect(ids, id).toContain(id);
+    expect(Object.keys(toutFichier.ordre ?? {}).sort()).toEqual(['207', '230', '231']);
     for (const f of readdirSync(SORTIE_PROTEGEE).filter(
       (x) => /^risala-/.test(x) && x !== 'risala-tout.json',
     )) {
@@ -159,6 +163,35 @@ describe('Risāla : séances sensibles (chapitre du jihād)', () => {
       expect(ens.comite.map((c) => c.n)).not.toContain(n);
     }
     expect(ens.phrases.map((p) => p.id).filter((id) => ids.includes(id))).toEqual([]);
+  });
+
+  it('phrases isolées (RIS-1224, 1225, 1392, 1393) : absentes de tout fichier hors « tout », séances ouvertes amputées, restituées par « tout voir »', async () => {
+    const isolees = ['RIS-1224', 'RIS-1225', 'RIS-1392', 'RIS-1393'];
+    const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'risala-enseignant.json'), 'utf8');
+    for (const id of isolees) {
+      expect(readFileSync(join(SORTIE, 'risala.json'), 'utf8'), id).not.toContain(id);
+      expect(brutEns, `${id} dans les notes (variantes comprises)`).not.toContain(id);
+    }
+    // ids de TOUTES les phrases sensibles : aucune mention dans les notes de l'enseignant (M3 : variantes[].phrase)
+    for (const p of toutFichier.phrases) expect(brutEns, p.id).not.toContain(p.id);
+    const publique = (n: number) => risala.seances.find((x) => x.n === n)!;
+    expect(publique(230).phrases).not.toContain('RIS-1392');
+    expect(publique(231).phrases).not.toContain('RIS-1393');
+    expect(publique(207).phrases).toEqual([
+      'RIS-1220',
+      'RIS-1221',
+      'RIS-1222',
+      'RIS-1223',
+      'RIS-1226',
+    ]);
+    const serveur = async (u: string) =>
+      u === '/mutun/risala-tout.json' ? reponse(toutFichier) : reponse(risala);
+    const m = (await chargerMatn('risala', serveur, true, true))!;
+    expect(m.seances.find((x) => x.n === 230)!.phrases).toContain('RIS-1392');
+    expect(m.seances.find((x) => x.n === 207)!.phrases).toHaveLength(7);
+    // un compte avec le différé mais sans le mode ne voit jamais ces phrases
+    const sans = (await chargerMatn('risala', serveur, true, false))!;
+    expect(sans.seances.find((x) => x.n === 207)!.phrases).toHaveLength(5);
   });
 
   it('le fichier « tout voir » porte les 4 séances avec leurs titres, leurs phrases et leurs notes', () => {

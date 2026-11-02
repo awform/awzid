@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { SORTIE_PROTEGEE } from '../../../scripts/madjaliss.mjs';
 import { voitDiffere as voitDiffereClient } from '../madjaliss/donnees';
 import { isStaff, type Me } from '../session';
+import { COMPTE_TOUT_VOIR } from '@awform/school/tout-voir';
 import {
   decider,
   deciderAudio,
@@ -25,10 +26,12 @@ const demoParent: CompteMutun = {
 };
 const enseignant: CompteMutun = { account: { kind: 'enseignant', email: 'prof@ecole.sn' } };
 // l'API annonce toujours l'exigence du second facteur d'un administrateur (requiresMfa)
+// le compte du CLIENT : seul à recevoir `toutVoir` (identifiant partagé avec l'API, `@awform/school/tout-voir`)
 const admin: CompteMutun = {
-  account: { kind: 'admin', email: 'admin@awzid.org' },
+  account: { id: COMPTE_TOUT_VOIR, kind: 'admin', email: 'admin@awzid.org', totpEnabled: true },
   mfaRequired: true,
   mfaVerified: true,
+  toutVoir: true,
 };
 const direction: CompteMutun = {
   account: { kind: 'parent', email: 'directrice@ecole.sn' },
@@ -219,7 +222,54 @@ describe('mode « tout voir » (2/11/2026) : administrateur avec second facteur 
     'lamiyya-differe.json',
   ];
 
-  it('estToutVoir : administrateur ET second facteur validé (strictement vrai), jamais un autre compte', () => {
+  it('un AUTRE administrateur avec second facteur validé n’a PAS « tout voir » (même avec un drapeau forgé) ; le différé ordinaire, oui', () => {
+    const autre: CompteMutun = {
+      ...admin,
+      account: { ...admin.account, id: '00000000-0000-7000-8000-000000000001' },
+      toutVoir: false,
+    };
+    const forge: CompteMutun = { ...autre, toutVoir: true };
+    for (const me of [autre, forge]) {
+      expect(estToutVoir(me)).toBe(false);
+      expect(decider('risala-tout.json', me)).toBe(403);
+      expect(deciderAudio('tout', me)).toBe(403);
+      expect(decider('risala-p3.json', me)).toBe(200); // personnel : inchangé
+    }
+  });
+
+  it('administrateur DE DÉMONSTRATION (session de démo : second facteur validé d’office) : jamais « tout voir »', () => {
+    const demoAdmin: CompteMutun = {
+      ...admin,
+      account: { ...admin.account, email: 'admin-x7k@demo.awform.test' },
+    };
+    const demoAutreId: CompteMutun = {
+      ...demoAdmin,
+      account: { ...demoAdmin.account, id: '00000000-0000-7000-8000-0000000000d1' },
+    };
+    for (const me of [demoAdmin, demoAutreId]) {
+      expect(estToutVoir(me)).toBe(false);
+      expect(decider('risala-tout.json', me)).toBe(403);
+      expect(deciderAudio('tout', me)).toBe(403);
+    }
+  });
+
+  it('les deux contrôles doivent s’accorder : sans toutVoir de l’API, sans second facteur activé, en tablette ou session d’enfant : non', () => {
+    for (const me of [
+      { ...admin, toutVoir: undefined },
+      { ...admin, toutVoir: false },
+      { ...admin, account: { ...admin.account, totpEnabled: false } },
+      { ...admin, account: { ...admin.account, totpEnabled: undefined } },
+      { ...admin, tablette: { classId: 'c' } },
+      { ...admin, enfantSession: true },
+      { ...admin, account: { ...admin.account, id: undefined } },
+    ] as CompteMutun[]) {
+      expect(estToutVoir(me), JSON.stringify(me)).toBe(false);
+      expect(decider('risala-tout.json', me)).toBe(403);
+    }
+    expect(estToutVoir(admin)).toBe(true);
+  });
+
+  it('estToutVoir : le compte du client, avec second facteur validé (strictement vrai), jamais un autre compte', () => {
     expect(estToutVoir(admin)).toBe(true);
     expect(estToutVoir(adminSans2)).toBe(false);
     expect(estToutVoir(adminSansIndication)).toBe(false);

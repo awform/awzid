@@ -53,7 +53,8 @@ export const GET: RequestHandler = async ({ params, request }) => {
     'accept-ranges': 'bytes',
     etag,
     // nom = phrase, contenu remplaçable (voix humaine plus tard) : une semaine, puis revalidation par ETag
-    'cache-control': 'private, max-age=604800',
+    // droit « tout » (séances sensibles) : jamais gardé en cache, ni sur l'appareil ni par un relais
+    'cache-control': f.d === 'tout' ? 'private, no-store' : 'private, max-age=604800',
     vary: 'Cookie',
   };
   if (request.headers.get('if-none-match') === etag)

@@ -5,7 +5,7 @@
  * sont acceptées par le serveur que pour les profils du compte connecté (lot 4).
  */
 import { kvGet, kvSet } from './idb';
-import { cachedMe, fetchMe, type ProfileInfo } from './session';
+import { cachedMe, fetchMe, toutVoirEnLigne, type ProfileInfo } from './session';
 import { flushQueue, pendingCount, queueEvent, type AttemptEvent } from './sync-core';
 
 export { pendingCount, reportSetAside, retrySetAside, setAside, uuidv7 } from './sync-core';
@@ -129,7 +129,7 @@ export async function accountProfiles(): Promise<ProfileInfo[]> {
 export async function demoProfileFor(_level: string): Promise<ProfileInfo | null> {
   // 2/11/2026, mode « tout voir » (administrateur, second facteur validé) : exploration SANS profil, donc sans verrou de
   // niveau et sans rien enregistrer (ni progression, ni tentative, ni statistique). Le serveur ne s'y fie pas.
-  if ((await cachedMe().catch(() => null))?.toutVoir === true) return null;
+  if (toutVoirEnLigne()) return null;
   const active = await activeProfile();
   if (active) return active;
   const me = (await cachedMe()) ?? (await fetchMe());

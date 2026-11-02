@@ -5,8 +5,8 @@
  *  - `<texte>-differe.json` : séances en publication différée (Ibn ʿĀshir, séances de croyance ; vers non confirmés de la
  *    Lāmiyya) → PERSONNEL, DÉMONSTRATION et GROUPE « BÊTA FERMÉE » (lot 6) ;
  *  - `risala-p<k>.json` : phrases des séances différées de la Risāla → mêmes droits ;
- *  - `risala-tout.json` (2/11/2026) : séances SENSIBLES de la Risāla (chapitre du jihād) → l'administrateur avec second
- *    facteur SEUL (mode « tout voir » : ni le personnel, ni la démonstration, ni le groupe « bêta fermée »).
+ *  - `risala-tout.json` (2/11/2026) : séances SENSIBLES de la Risāla (chapitre du jihād) → le compte du CLIENT
+ *    seul (mode « tout voir » : ni les autres administrateurs, ni le personnel, ni la démonstration, ni la bêta fermée).
  * Un compte ordinaire (ni personnel, ni démonstration, ni membre du groupe « bêta fermée » quand l'interrupteur
  * `beta_contenu_differe_visible` est allumé) et un visiteur sans session n'en reçoivent AUCUN, même par adresse
  * directe. Le droit est lu à CHAQUE requête dans la session (retrait du groupe = perte immédiate) et contrôlé avant
@@ -14,9 +14,16 @@
  * MÊMES règles que l'interface (`isStaff` de session.ts, `voitDiffere` de madjaliss/donnees.ts).
  */
 
+import { voitTout } from '@awform/school/tout-voir';
+
 /** Ce que la route lit du compte (réponse de `GET /api/v1/auth/me`). */
 export interface CompteMutun {
-  account?: { kind?: string; email?: string | null };
+  account?: { id?: string; kind?: string; email?: string | null; totpEnabled?: boolean };
+  /** session de tablette de classe, ou d'un enfant / élève (session limitée) : jamais « tout voir » */
+  tablette?: unknown;
+  enfantSession?: boolean;
+  /** mode « tout voir » calculé par l'API (relu ici ET revérifié : les deux doivent s'accorder) */
+  toutVoir?: boolean;
   roles?: string[];
   mfaRequired?: boolean;
   mfaVerified?: boolean;
@@ -69,12 +76,21 @@ export function estMembreBeta(me: CompteMutun | null): boolean {
 }
 
 /**
- * Mode « tout voir » (2/11/2026) : compte de type `admin` ET second facteur VALIDÉ dans la session (`mfaVerified`
- * strictement vrai, jamais déduit de l'absence d'exigence). Décidé ICI, par le serveur, à partir de ce que l'API dit
- * du compte de la session : le drapeau `toutVoir` envoyé au navigateur n'est jamais relu et n'ouvre rien.
+ * Mode « tout voir » (2/11/2026) : le compte du CLIENT seul (identifiant, voir `@awform/school/tout-voir`), de type `admin`, second
+ * facteur activé et VALIDÉ dans la session, hors démonstration, tablette et session limitée. Décidé ICI, par le serveur, à partir de ce que l'API dit
+ * du compte de la session : le drapeau `toutVoir` calculé par l'API (serveur à serveur) doit s'accorder avec ce contrôle ; celui que le navigateur
+ * pourrait envoyer n'est jamais relu et n'ouvre rien.
  */
 export function estToutVoir(me: CompteMutun | null): boolean {
-  return me?.account?.kind === 'admin' && me.mfaVerified === true;
+  if (!me?.account || me.toutVoir !== true) return false;
+  return voitTout({
+    id: me.account.id,
+    kind: me.account.kind,
+    email: me.account.email,
+    mfaVerified: me.mfaVerified,
+    totpEnabled: me.account.totpEnabled,
+    limitee: !!me.tablette || me.enfantSession === true,
+  });
 }
 
 /** Voit la publication différée : le personnel, le mode « tout voir », les comptes de démonstration et le groupe « bêta fermée ». */

@@ -293,10 +293,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         f.regles.filter((r) => r.cle === 'beta_contenu_differe_visible'),
       );
     }
-    // 2/11/2026 : mode « tout voir » du client — compte dmin ET second facteur validé dans CETTE session, jamais en
-    // tablette ni en session limitée d'un élève. Calculé ici seulement ; les routes gardées revérifient côté serveur.
+    // 2/11/2026 : mode « tout voir » du client SEUL (voir `tout-voir.ts`). Calculé ici ; les routes gardées revérifient.
     const toutVoir = voitTout({
+      id: a.id,
       kind: a.kind,
+      email: a.email,
       mfaVerified,
       totpEnabled: a.totpEnabled,
       limitee: !!tablet || !!soloProfileId,

@@ -195,6 +195,8 @@ export interface PartieDifferee {
   statut: string;
   seances: Seance[];
   phrases: Phrase[];
+  /** fichier « tout voir » seulement : liste COMPLÈTE et ordonnée des phrases des séances ouvertes qui en perdent (phrases sensibles) */
+  ordre?: Record<string, string[]>;
   /** fichier « tout voir » seulement : notes de l'enseignant sur les séances sensibles (formes de `NotesEnseignant`) */
   notes?: {
     differe?: number[];
@@ -324,7 +326,9 @@ export function fusionnerDifferee(m: Matn, d: PartieDifferee): Matn {
       ...m.phrases.map((x) => (x.masque ? (completes.get(x.id) ?? x) : x)),
       ...d.phrases.filter((x) => !connues.has(x.id)),
     ],
-    seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))].sort((a, b) => a.n - b.n),
+    seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))]
+      .map((s) => (d.ordre?.[s.n] ? { ...s, phrases: d.ordre[s.n]! } : s))
+      .sort((a, b) => a.n - b.n),
   };
 }
 

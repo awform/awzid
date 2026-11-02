@@ -137,6 +137,16 @@ export const DIFFERE_CYCLE = {
 export const SEANCES_SENSIBLES = {
   risala: new Set(['RIS-S133', 'RIS-S134', 'RIS-S135', 'RIS-S256']),
 };
+/**
+ * PHRASES SENSIBLES isolées dans une séance qui, elle, reste ouverte (décision du référent, 2/11/2026) : même traitement,
+ * AU NIVEAU DE LA PHRASE. RIS-1392 (obligation du jihād, S229) et RIS-1393 (garde des frontières, ribāṭ, S230) ;
+ * RIS-1224 (vol du butin et du trésor public) et RIS-1225 (vol du butin, S206). La séance garde ses autres phrases ;
+ * pour « tout voir », le fichier gardé redonne la liste COMPLÈTE et ordonnée de ses phrases (`ordre`).
+ * Laissés tels quels : la jizya du chapitre de la zakāt (S103b, S109), la prière de la peur (S075).
+ */
+export const PHRASES_SENSIBLES = {
+  risala: new Set(['RIS-1392', 'RIS-1393', 'RIS-1224', 'RIS-1225']),
+};
 /** Dossier des sources quand il diffère de l'identifiant du texte (« Les Quarante hadiths » : `nawawi40`). */
 const DOSSIER = { nawawi: 'nawawi40' };
 export const dossier = (texte) => join(SOURCES, DOSSIER[texte] ?? texte);
@@ -1274,9 +1284,38 @@ function construireTexte(texte, lignes) {
   const numerosTout = new Set(
     seancesSrc.filter((s) => sensibles.has(s.id)).map((s) => numeroDe.get(s.id)),
   );
-  const seances = seancesToutes.filter((s) => !numerosTout.has(s.n));
   const seancesTout = seancesToutes.filter((s) => numerosTout.has(s.n));
-  const idsTout = new Set(seancesTout.flatMap((s) => s.phrases));
+  const phrasesSensibles = PHRASES_SENSIBLES[texte] ?? new Set();
+  for (const id of phrasesSensibles)
+    if (!phrases.some((p) => p.id === id))
+      throw new Error(`${texte} : phrase sensible ${id} absente`);
+  const idsTout = new Set([...seancesTout.flatMap((s) => s.phrases), ...phrasesSensibles]);
+  // séances ouvertes qui perdent des phrases sensibles : leur liste complète est gardée pour « tout voir »
+  const ordre = {};
+  const seances = seancesToutes
+    .filter((s) => !numerosTout.has(s.n))
+    .map((s) => {
+      if (!s.phrases.some((id) => idsTout.has(id))) return s;
+      ordre[s.n] = s.phrases;
+      return { ...s, phrases: s.phrases.filter((id) => !idsTout.has(id)) };
+    });
+  const sansSensibles = (x) =>
+    x.variantes?.length
+      ? {
+          ...x,
+          variantes: x.variantes.map((v) =>
+            typeof v.phrase === 'string'
+              ? {
+                  ...v,
+                  phrase: v.phrase
+                    .split(/,\s*/)
+                    .filter((id) => !idsTout.has(id))
+                    .join(', '),
+                }
+              : v,
+          ),
+        }
+      : x;
   const corps = {
     ...(texte === 'ajurrumiyya' ? { code: codeVisuel(texte) } : {}),
     phrases: phrases.filter((p) => !idsTout.has(p.id)),
@@ -1301,16 +1340,18 @@ function construireTexte(texte, lignes) {
     comite: seancesSrc
       .filter((s) => s.relecture_comite === true && !numerosTout.has(numeroDe.get(s.id)))
       .map((s) => ({ n: numeroDe.get(s.id), id: s.id, motif: s.motif_relecture ?? '' })),
-    phrases: [...enseignantPhrases.values()].filter(
-      (x) =>
-        !idsTout.has(x.id) &&
-        (x.a_verifier.length ||
-          x.variantes.length ||
-          x.traduction ||
-          x.decision ||
-          x.notes_internes ||
-          x.info?.length),
-    ),
+    phrases: [...enseignantPhrases.values()]
+      .filter(
+        (x) =>
+          !idsTout.has(x.id) &&
+          (x.a_verifier.length ||
+            x.variantes.length ||
+            x.traduction ||
+            x.decision ||
+            x.notes_internes ||
+            x.info?.length),
+      )
+      .map(sansSensibles),
     mots: seancesSrc
       .filter((s) => !numerosTout.has(numeroDe.get(s.id)))
       .flatMap((s) =>
@@ -1327,11 +1368,12 @@ function construireTexte(texte, lignes) {
   // fichier « tout voir » (droit : administrateur avec second facteur) : les séances sensibles avec leurs phrases, la
   // raison de leur publication différée et les notes de l'enseignant qui les concernent
   let tout = null;
-  if (numerosTout.size) {
+  if (numerosTout.size || idsTout.size) {
     const tPhrases = phrases.filter((p) => idsTout.has(p.id));
     const corpsTout = {
       seances: seancesTout.map((s) => (raisons.has(s.n) ? { ...s, rd: raisons.get(s.n) } : s)),
       phrases: tPhrases,
+      ...(Object.keys(ordre).length ? { ordre } : {}),
       notes: {
         differe: seancesTout.filter((s) => s.differe).map((s) => s.n),
         comite: seancesSrc

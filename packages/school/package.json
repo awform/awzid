@@ -21,6 +21,10 @@
       "types": "./dist/eleves-lot.d.ts",
       "default": "./dist/eleves-lot.js"
     },
+    "./tout-voir": {
+      "types": "./dist/tout-voir.d.ts",
+      "default": "./dist/tout-voir.js"
+    },
     "./telephone": {
       "types": "./dist/telephone.d.ts",
       "default": "./dist/telephone.js"

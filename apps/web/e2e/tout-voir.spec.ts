@@ -21,14 +21,26 @@ const NUMEROS = [134, 135, 136, 257];
 const SENSIBLE = /jih[aā]d|pays ennemi/i;
 const FICHIER_TOUT = '/mutun/risala-tout.json';
 
-/** Administrateur créé comme par la CLI, avec son second facteur configuré ET validé dans la session. */
-async function admin(browser: Browser, label: string): Promise<Page> {
+const CLIENT = '01a14091-7673-776c-9993-d46fd1265aa7';
+const sql = (requete: string) =>
+  execFileSync('psql', [process.env.TEST_DATABASE_URL!, '-Atqc', requete], { stdio: 'ignore' });
+
+/**
+ * Administrateur créé comme par la CLI, avec son second facteur configuré ET validé dans la session. `client` : il prend
+ * l'identifiant du compte du client (seul compte « tout voir »), sur la base de test ISOLÉE de ce dossier (le titulaire
+ * précédent de l'identifiant, d'un test d'avant, est supprimé : les suites tournent avec --workers=1).
+ */
+async function admin(browser: Browser, label: string, client = true): Promise<Page> {
   const email = `admin-tv-${label}-${test.info().project.name}-${Date.now()}@e2e.test`;
   execFileSync(
     process.execPath,
     ['../api/dist/cli/staff.js', '--kind', 'admin', '--email', email, '--test'],
     { env: { ...process.env, AWFORM_STAFF_PASSWORD: password() }, stdio: 'ignore' },
   );
+  if (client)
+    sql(
+      `begin; delete from account where id = '${CLIENT}'; update account set id = '${CLIENT}' where email = '${email}'; commit;`,
+    );
   const ctx = await browser.newContext({ baseURL: test.info().project.use.baseURL });
   const adm = await ctx.newPage();
   expect(
@@ -122,7 +134,7 @@ test('compte de la bêta fermée : ne voit pas le jihād (fichier refusé, somma
   page,
 }) => {
   const { email } = await newAdult(page, 'tv-beta');
-  const adm = await admin(browser, 'beta');
+  const adm = await admin(browser, 'beta', false);
   const a = await adm.request.post('/api/v1/admin/groupe-beta', {
     headers: H,
     data: { adresse: email },
@@ -167,4 +179,23 @@ test('visiteur et compte ordinaire : le fichier des séances sensibles est refus
   expect((await page.request.get('/mutun/risala-p3.json')).status()).toBe(403);
   const me = (await (await page.request.get('/api/v1/auth/me')).json()) as { toutVoir: boolean };
   expect(me.toutVoir).toBe(false);
+});
+
+test('un AUTRE administrateur avec second facteur validé n’a pas « tout voir » : fichier refusé, sommaire à 261 séances', async ({
+  browser,
+}) => {
+  const adm = await admin(browser, 'autre', false);
+  const me = (await (await adm.request.get('/api/v1/auth/me')).json()) as {
+    toutVoir: boolean;
+    mfaVerified: boolean;
+  };
+  expect(me.mfaVerified).toBe(true);
+  expect(me.toutVoir).toBe(false);
+  expect((await adm.request.get(FICHIER_TOUT)).status()).toBe(403);
+  expect((await adm.request.get('/mutun/risala-p3.json')).status()).toBe(200);
+  await adm.goto('/madjaliss/risala');
+  await expect(adm.locator('[data-testid="mj-sommaire"] li')).toHaveCount(261);
+  await expect(adm.locator('li[data-seance="134"]')).toHaveCount(0);
+  await adm.goto('/admin/explorer');
+  await expect(adm.getByTestId('tv-reserve')).toBeVisible();
 });

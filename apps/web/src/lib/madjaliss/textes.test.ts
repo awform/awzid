@@ -1145,7 +1145,7 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
     expect(total.some((p) => idsOuverts.has(p.id))).toBe(false);
     // 2/11/2026 : les phrases des séances sensibles (chapitre du jihād) sont dans le seul fichier « tout voir »
     const tout = lire<{ phrases: Phrase[] }>(join(SORTIE_PROTEGEE, 'risala-tout.json')).phrases;
-    expect(tout).toHaveLength(25);
+    expect(tout).toHaveLength(29); // 25 des 4 séances sensibles + 4 phrases isolées (1224, 1225, 1392, 1393)
     expect(tout.some((p) => idsOuverts.has(p.id) || total.some((q) => q.id === p.id))).toBe(false);
     expect(total.length + pubParts.length + tout.length).toBe(1769);
   });

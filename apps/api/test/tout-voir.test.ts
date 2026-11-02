@@ -8,7 +8,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { schema as t, setFlagState } from '@awform/db';
-import { voitTout } from '../src/auth/tout-voir.js';
+import { COMPTE_TOUT_VOIR, voitTout } from '../src/auth/tout-voir.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
 import { creerLot, connexion } from './eleves-aide.js';
 import {
@@ -34,7 +34,24 @@ type Moi = {
 };
 
 describe('critère « tout voir » (sans base)', () => {
-  const base = { kind: 'admin', mfaVerified: true, totpEnabled: true, limitee: false };
+  const base = {
+    id: COMPTE_TOUT_VOIR,
+    kind: 'admin',
+    email: 'client@exemple.org',
+    mfaVerified: true,
+    totpEnabled: true,
+    limitee: false,
+  };
+  it('le client SEUL : un autre identifiant (même administrateur avec second facteur) n’a pas « tout voir »', () => {
+    expect(COMPTE_TOUT_VOIR).toBe('01a14091-7673-776c-9993-d46fd1265aa7');
+    for (const id of ['00000000-0000-7000-8000-000000000001', '', null, undefined])
+      expect(voitTout({ ...base, id }), String(id)).toBe(false);
+  });
+  it('administrateur de démonstration : jamais, même avec le bon identifiant', () => {
+    for (const email of ['admin-x7k@demo.awform.test', 'A@DEMO.AWFORM.TEST'])
+      expect(voitTout({ ...base, email }), email).toBe(false);
+    expect(voitTout({ ...base, email: null })).toBe(true);
+  });
   it('administrateur + second facteur activé et validé + session non limitée : oui, rien d’autre', () => {
     expect(voitTout(base)).toBe(true);
     expect(voitTout({ ...base, mfaVerified: false })).toBe(false);
@@ -62,8 +79,9 @@ describe.skipIf(!URL)('mode « tout voir » : /auth/me et données des élèves 
   const me = async (h: H) => (await c.req('GET', '/api/v1/auth/me', h)).json() as Moi;
 
   /** compte administrateur créé en base (comme la CLI), éventuellement avec le second facteur activé et validé */
-  async function admin(email: string, avecTotp: boolean) {
+  async function admin(email: string, avecTotp: boolean, id?: string) {
     await c.h.db.insert(t.account).values({
+      ...(id ? { id } : {}),
       kind: 'admin',
       email,
       passwordHash: await hashSecret(PW),
@@ -84,7 +102,7 @@ describe.skipIf(!URL)('mode « tout voir » : /auth/me et données des élèves 
 
   beforeAll(async () => {
     c = await setup(URL!);
-    A = (await admin('tout.voir@exemple.org', true)).H;
+    A = (await admin('tout.voir@exemple.org', true, COMPTE_TOUT_VOIR)).H;
   }, 60_000);
   afterAll(async () => {
     await c?.app.close();
@@ -100,6 +118,22 @@ describe.skipIf(!URL)('mode « tout voir » : /auth/me et données des élèves 
     expect(brut).not.toContain('tout.voir@exemple.org');
   });
 
+  it('un AUTRE administrateur avec second facteur validé : jamais « tout voir »', async () => {
+    const { H } = await admin('autre.admin@exemple.org', true);
+    const m = await me(H);
+    expect(m.mfaVerified).toBe(true);
+    expect(m.toutVoir).toBe(false);
+    const ov = await c.req('GET', '/api/v1/admin/overview', H);
+    expect(ov.statusCode).toBe(200); // l'administration ordinaire reste ouverte
+  });
+
+  it('administrateur de démonstration (adresse @demo.awform.test, session de démo) : jamais', async () => {
+    const { H } = await admin('admin-t9k@demo.awform.test', true);
+    const m = await me(H);
+    expect(m.mfaVerified).toBe(true);
+    expect(m.toutVoir).toBe(false);
+  });
+
   it('administrateur SANS second facteur : jamais', async () => {
     const { H } = await admin('sans.totp@exemple.org', false);
     const m = await me(H);
@@ -110,7 +144,7 @@ describe.skipIf(!URL)('mode « tout voir » : /auth/me et données des élèves 
   it('administrateur dont le second facteur est activé mais PAS validé dans cette session : jamais', async () => {
     const e = 'totp.attente@exemple.org';
     const { H } = await admin(e, true);
-    expect((await me(H)).toutVoir).toBe(true);
+    expect((await me(H)).mfaVerified).toBe(true);
     // session à moitié ouverte (ouverte par un autre moyen que le mot de passe + code, ou second facteur non rejoué) :
     // le second facteur est activé sur le compte mais n'est pas validé dans CETTE session
     await c.h.pool.query(

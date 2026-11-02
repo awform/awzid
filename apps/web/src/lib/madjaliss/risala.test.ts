@@ -93,12 +93,16 @@ const toutFichier = JSON.parse(brutTout) as {
   version: string;
   seances: Matn['seances'];
   phrases: Matn['phrases'];
+  ordre?: Record<string, string[]>;
   notes: { differe: number[]; phrases: NotesEnseignant['phrases'] };
 };
 /** Le sommaire entier tel que le voit l'administrateur « tout voir » (public + séances sensibles, dans l'ordre). */
 const index: Matn = {
   ...indexPublic,
-  seances: [...indexPublic.seances, ...toutFichier.seances].sort((a, b) => a.n - b.n),
+  // séances sensibles ajoutées, et séances ouvertes qui retrouvent leurs phrases sensibles isolées (`ordre`)
+  seances: [...indexPublic.seances, ...toutFichier.seances]
+    .map((s) => (toutFichier.ordre?.[s.n] ? { ...s, phrases: toutFichier.ordre[s.n]! } : s))
+    .sort((a, b) => a.n - b.n),
 };
 // lot 5 : notes de l'enseignant et parties de phrases sont des fichiers GARDÉS (servis après authentification)
 const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'risala-enseignant.json'), 'utf8');
