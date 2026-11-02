@@ -95,6 +95,23 @@ const LATIN_ETENDU: Record<string, string> = {
   Ɲ: 'Ny',
 };
 
+/**
+ * Lettre latine à signes hors Latin-1 (ū, ī, ā, ḥ, ṣ, ḍ, ṭ, ẓ…) → sa lettre de base (NFKD, signes combinants retirés) ;
+ * ʿ ʾ ʻ ʼ (ayn, hamza) sont supprimés. Les lettres de Latin-1 (é, ï…) et tout le reste restent tels quels.
+ */
+/** NFKD puis suppression des signes combinants (« Ḥafṣa » → « Hafsa », « é » → « e ») ; jamais pour un texte coranique */
+export function sansSignes(s: string): string {
+  // eslint-disable-next-line no-restricted-syntax -- prénom saisi par l'enseignant, jamais un texte coranique
+  return s.normalize('NFKD').replace(/\p{M}/gu, '');
+}
+
+function repliLatin(c: string): string {
+  if (/^[ʾʿʻʼ]$/u.test(c)) return '';
+  if (c.charCodeAt(0) <= 0xff || /[؀-ۿ]/u.test(c)) return c;
+  const base = sansSignes(c);
+  return /^[A-Za-z]+$/.test(base) ? base : c;
+}
+
 const AR: Record<string, string> = {
   ا: 'a',
   أ: 'a',
@@ -166,7 +183,7 @@ const VOYELLES = /[aeiou]/;
  */
 export function translitterer(s: string): string {
   const mots = [...sansMarques(s ?? '')]
-    .map((c) => LATIN_ETENDU[c] ?? c)
+    .map((c) => LATIN_ETENDU[c] ?? repliLatin(c))
     .join('')
     .split(/(\s+)/u);
   return mots
