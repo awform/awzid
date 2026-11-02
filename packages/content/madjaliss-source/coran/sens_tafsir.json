@@ -1,0 +1,313 @@
+{
+  "v": 1,
+  "source": "Tafsīr Awzid validé (application/tafsir : bloc*_*.json et juz_amma.json) : champ « sens » du verset, copié sans changement ; pour un verset cité en partie, la portion citée est une sous-chaîne exacte de ce sens (« … » marque la coupure)",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "versets": {
+    "2:172": {
+      "fichier": "bloc5_2-2.json",
+      "sens": "Ô vous qui avez cru, mangez des bonnes choses que Nous vous avons attribuées, et soyez reconnaissants envers Allah, si c'est Lui seul que vous adorez."
+    },
+    "2:187": {
+      "fichier": "bloc5_2-2.json",
+      "sens": "Il vous a été rendu licite, pendant la nuit du jeûne, d'avoir des rapports avec vos femmes : elles sont un vêtement pour vous, et vous êtes un vêtement pour elles. Allah a su que vous vous trahissiez vous-mêmes ; Il a accueilli votre repentir et vous a pardonné. Maintenant donc, unissez-vous à elles et recherchez ce qu'Allah vous a prescrit. Mangez et buvez jusqu'à ce que se distingue pour vous le fil blanc du fil noir, de l'aube ; puis achevez le jeûne jusqu'à la nuit. Et ne vous unissez pas à elles pendant que vous êtes en retraite dans les mosquées. Voilà les limites d'Allah : ne vous en approchez pas. Ainsi Allah expose Ses signes aux gens, afin qu'ils soient pieux."
+    },
+    "2:196": {
+      "fichier": "bloc5_2-2.json",
+      "sens": "Achevez le pèlerinage et le petit pèlerinage pour Allah. Si vous êtes empêchés, [offrez] ce qui est facile comme offrande, et ne vous rasez pas la tête avant que l'offrande ait atteint son lieu [d'immolation]. Quiconque d'entre vous est malade ou souffre d'une gêne à la tête [doit] une compensation : un jeûne, une aumône ou un sacrifice. Quand vous êtes en sécurité, quiconque a profité du petit pèlerinage jusqu'au pèlerinage [doit] ce qui est facile comme offrande ; quiconque n'en trouve pas [doit] un jeûne de trois jours pendant le pèlerinage et de sept quand vous serez rentrés : cela fait dix [jours] complets. Cela [vaut] pour celui dont la famille ne réside pas auprès de la Mosquée sacrée. Craignez Allah, et sachez qu'Allah est dur en punition."
+    },
+    "4:22": {
+      "fichier": "bloc5_4-4.json",
+      "sens": "N'épousez pas les femmes qu'ont épousées vos pères, sauf ce qui est déjà passé : c'était une turpitude, une abomination, et quel mauvais chemin !"
+    },
+    "4:23": {
+      "fichier": "bloc5_4-4.json",
+      "sens": "Vous sont interdites [en mariage] : vos mères, vos filles, vos sœurs, vos tantes paternelles et maternelles, les filles du frère et les filles de la sœur, vos mères qui vous ont allaités et vos sœurs de lait, les mères de vos épouses, vos belles-filles qui sont dans vos foyers, nées de vos épouses avec qui vous avez consommé le mariage — si vous n'avez pas consommé le mariage avec elles, il n'y a pas de grief contre vous —, les épouses de vos fils issus de vos reins, et de réunir deux sœurs, sauf ce qui est déjà passé. Allah est Pardonneur et Très Miséricordieux."
+    },
+    "7:43": {
+      "fichier": "bloc5_8-7.json",
+      "sens": "Nous aurons ôté la rancune de leurs poitrines. Sous eux couleront les rivières, et ils diront : « Louange à Allah, qui nous a guidés à ceci ! Nous n'aurions pas été guidés si Allah ne nous avait pas guidés. Les messagers de notre Seigneur sont venus avec la vérité. » Et on leur criera : « Voilà le Jardin dont vous avez hérité pour ce que vous faisiez. »"
+    },
+    "7:206": {
+      "fichier": "bloc5_8-7.json",
+      "sens": "Ceux qui sont auprès de ton Seigneur ne dédaignent pas par orgueil de L'adorer ; ils Le glorifient et se prosternent devant Lui."
+    },
+    "13:15": {
+      "fichier": "bloc4_15-12.json",
+      "sens": "Devant Allah se prosternent, de gré ou de force, ceux qui sont dans les cieux et sur la terre, ainsi que leurs ombres, le matin et en fin d'après-midi."
+    },
+    "16:8": {
+      "fichier": "bloc4_18-16.json",
+      "sens": "Et [Il a créé] les chevaux, les mulets et les ânes, pour que vous les montiez, et comme parure. Et Il crée ce que vous ne savez pas."
+    },
+    "16:50": {
+      "fichier": "bloc4_18-16.json",
+      "sens": "ils craignent leur Seigneur, au-dessus d'eux, et font ce qui leur est ordonné."
+    },
+    "17:109": {
+      "fichier": "bloc4_18-16.json",
+      "sens": "Ils tombent sur leurs mentons en pleurant, et cela accroît leur humilité. »"
+    },
+    "19:58": {
+      "fichier": "bloc3_21-19.json",
+      "sens": "Ceux-là sont ceux qu'Allah a comblés de bienfaits parmi les prophètes, de la descendance d'Adam, de ceux que Nous avons portés avec Noé, de la descendance d'Abraham et d'Israël, et de ceux que Nous avons guidés et choisis. Quand les versets du Tout-Miséricordieux leur étaient récités, ils tombaient prosternés, en pleurant."
+    },
+    "22:18": {
+      "fichier": "bloc3_24-22.json",
+      "sens": "N'as-tu pas vu que se prosternent devant Allah ceux qui sont dans les cieux et ceux qui sont sur la terre, le soleil, la lune, les étoiles, les montagnes, les arbres, les bêtes, et beaucoup parmi les gens ? Et pour beaucoup, le châtiment est dû. Celui qu'Allah humilie, nul ne l'honore. Allah fait ce qu'Il veut."
+    },
+    "23:5": {
+      "fichier": "bloc3_24-22.json",
+      "sens": "qui préservent leurs parties intimes,"
+    },
+    "23:7": {
+      "fichier": "bloc3_24-22.json",
+      "sens": "quiconque recherche [autre chose] au-delà de cela, ceux-là sont les transgresseurs ;"
+    },
+    "23:51": {
+      "fichier": "bloc3_24-22.json",
+      "sens": "Ô messagers, mangez des bonnes choses et faites le bien : Je sais parfaitement ce que vous faites."
+    },
+    "24:59": {
+      "fichier": "bloc3_24-22.json",
+      "sens": "Et quand les enfants parmi vous atteignent la puberté, qu'ils demandent la permission comme l'ont demandée ceux d'avant eux. Ainsi Allah vous expose clairement Ses versets. Allah est Omniscient, Sage."
+    },
+    "25:60": {
+      "fichier": "bloc3_26-25.json",
+      "sens": "Et quand on leur dit : « Prosternez-vous devant le Tout-Miséricordieux », ils disent : « Et qu'est-ce que le Tout-Miséricordieux ? Allons-nous nous prosterner devant ce que tu nous ordonnes ? » Et cela accroît leur aversion."
+    },
+    "27:26": {
+      "fichier": "bloc3_29-27.json",
+      "sens": "Allah ! Il n'y a de dieu que Lui, le Seigneur du Trône immense. »"
+    },
+    "29:45": {
+      "fichier": "bloc3_29-27.json",
+      "sens": "Récite ce qui t'a été révélé du Livre et accomplis la prière : la prière interdit la turpitude et le blâmable. Et le rappel d'Allah est certes plus grand. Allah sait ce que vous faites."
+    },
+    "32:15": {
+      "fichier": "bloc3_35-30.json",
+      "sens": "Seuls croient en Nos versets ceux qui, lorsqu'on les leur rappelle, tombent prosternés, glorifient leur Seigneur par Sa louange et ne s'enflent pas d'orgueil."
+    },
+    "32:16": {
+      "fichier": "bloc3_35-30.json",
+      "sens": "Leurs flancs s'écartent de leurs couches ; ils invoquent leur Seigneur, par crainte et par espoir, et ils dépensent de ce que Nous leur avons attribué."
+    },
+    "32:17": {
+      "fichier": "bloc3_35-30.json",
+      "sens": "Nulle âme ne sait ce qui leur a été caché de joie pour les yeux, en rétribution de ce qu'ils faisaient."
+    },
+    "38:24": {
+      "fichier": "bloc2_38-36.json",
+      "sens": "Il dit : « Il a été injuste envers toi en demandant ta brebis [pour l'ajouter] à ses brebis. Beaucoup d'associés commettent des injustices les uns envers les autres, sauf ceux qui croient et font les bonnes œuvres — et ils sont bien peu nombreux. » David comprit que Nous l'avions mis à l'épreuve : il demanda pardon à son Seigneur, tomba incliné [en prosternation] et revint [à Lui] repentant."
+    },
+    "38:25": {
+      "fichier": "bloc2_38-36.json",
+      "sens": "Nous lui avons pardonné cela. Il a auprès de Nous une proximité et un beau retour."
+    },
+    "41:37": {
+      "fichier": "bloc2_42-39.json",
+      "sens": "Parmi Ses signes sont la nuit et le jour, le soleil et la lune. Ne vous prosternez ni devant le soleil ni devant la lune, mais prosternez-vous devant Allah, qui les a créés, si c'est Lui que vous adorez."
+    },
+    "43:13": {
+      "fichier": "bloc2_49-43.json",
+      "sens": "pour que vous vous installiez sur leur dos, puis que vous rappeliez le bienfait de votre Seigneur une fois installés dessus, et que vous disiez : « Gloire à Celui qui nous a soumis ceci, alors que nous n'étions pas capables de le maîtriser,"
+    },
+    "43:14": {
+      "fichier": "bloc2_49-43.json",
+      "sens": "et c'est vers notre Seigneur que nous retournerons ! »"
+    }
+  },
+  "phrases": {
+    "AKH-0132": [
+      {
+        "ref": "29:45",
+        "texte": "… interdit la turpitude et le blâmable.",
+        "extrait": true
+      }
+    ],
+    "NAW-H10": [
+      {
+        "ref": "23:51",
+        "texte": "Ô messagers, mangez des bonnes choses et faites le bien …",
+        "extrait": true
+      },
+      {
+        "ref": "2:172",
+        "texte": "Ô vous qui avez cru, mangez des bonnes choses que Nous vous avons attribuées …",
+        "extrait": true
+      }
+    ],
+    "NAW-H29": [
+      {
+        "ref": "32:16",
+        "texte": "Leurs flancs s'écartent de leurs couches ; ils invoquent leur Seigneur, par crainte et par espoir, et ils dépensent de ce que Nous leur avons attribué."
+      },
+      {
+        "ref": "32:17",
+        "texte": "Nulle âme ne sait ce qui leur a été caché de joie pour les yeux, en rétribution de ce qu'ils faisaient."
+      }
+    ],
+    "RIS-0392": [
+      {
+        "ref": "24:59",
+        "texte": "Et quand les enfants parmi vous atteignent la puberté, qu'ils demandent la permission …",
+        "extrait": true
+      }
+    ],
+    "RIS-0418": [
+      {
+        "ref": "2:187",
+        "texte": "… pendant que vous êtes en retraite dans les mosquées.",
+        "extrait": true
+      }
+    ],
+    "RIS-0545": [
+      {
+        "ref": "2:196",
+        "texte": "… [doit] un jeûne de trois jours pendant le pèlerinage …",
+        "extrait": true
+      }
+    ],
+    "RIS-0672": [
+      {
+        "ref": "7:206",
+        "texte": "… ils Le glorifient et se prosternent devant Lui.",
+        "extrait": true
+      }
+    ],
+    "RIS-0674": [
+      {
+        "ref": "13:15",
+        "texte": "… ainsi que leurs ombres, le matin et en fin d'après-midi.",
+        "extrait": true
+      }
+    ],
+    "RIS-0675": [
+      {
+        "ref": "16:50",
+        "texte": "ils craignent leur Seigneur, au-dessus d'eux, et font ce qui leur est ordonné."
+      }
+    ],
+    "RIS-0676": [
+      {
+        "ref": "17:109",
+        "texte": "Ils tombent sur leurs mentons en pleurant, et cela accroît leur humilité. »"
+      }
+    ],
+    "RIS-0677": [
+      {
+        "ref": "19:58",
+        "texte": "… Quand les versets du Tout-Miséricordieux leur étaient récités, ils tombaient prosternés, en pleurant.",
+        "extrait": true
+      }
+    ],
+    "RIS-0678": [
+      {
+        "ref": "22:18",
+        "texte": "… Celui qu'Allah humilie, nul ne l'honore. Allah fait ce qu'Il veut.",
+        "extrait": true
+      }
+    ],
+    "RIS-0679": [
+      {
+        "ref": "25:60",
+        "texte": "… Allons-nous nous prosterner devant ce que tu nous ordonnes ? » Et cela accroît leur aversion.",
+        "extrait": true
+      }
+    ],
+    "RIS-0680": [
+      {
+        "ref": "27:26",
+        "texte": "Allah ! Il n'y a de dieu que Lui, le Seigneur du Trône immense. »"
+      }
+    ],
+    "RIS-0681": [
+      {
+        "ref": "32:15",
+        "texte": "… glorifient leur Seigneur par Sa louange et ne s'enflent pas d'orgueil.",
+        "extrait": true
+      }
+    ],
+    "RIS-0682": [
+      {
+        "ref": "38:24",
+        "texte": "… il demanda pardon à son Seigneur, tomba incliné [en prosternation] et revint [à Lui] repentant.",
+        "extrait": true
+      }
+    ],
+    "RIS-0683": [
+      {
+        "ref": "38:25",
+        "texte": "… une proximité et un beau retour.",
+        "extrait": true
+      }
+    ],
+    "RIS-0684": [
+      {
+        "ref": "41:37",
+        "texte": "… mais prosternez-vous devant Allah, qui les a créés, si c'est Lui que vous adorez.",
+        "extrait": true
+      }
+    ],
+    "RIS-0780": [
+      {
+        "ref": "4:23",
+        "texte": "Vous sont interdites [en mariage] : vos mères, vos filles, vos sœurs, vos tantes paternelles et maternelles, les filles du frère et les filles de la sœur …",
+        "extrait": true
+      }
+    ],
+    "RIS-0782": [
+      {
+        "ref": "4:23",
+        "texte": "… vos mères qui vous ont allaités et vos sœurs de lait, les mères de vos épouses, vos belles-filles qui sont dans vos foyers, nées de vos épouses avec qui vous avez consommé le mariage — si vous n'avez pas consommé le mariage avec elles, il n'y a pas de grief contre vous —, les épouses de vos fils issus de vos reins, et de réunir deux sœurs, sauf ce qui est déjà passé.",
+        "extrait": true
+      }
+    ],
+    "RIS-0783": [
+      {
+        "ref": "4:22",
+        "texte": "N'épousez pas les femmes qu'ont épousées vos pères …",
+        "extrait": true
+      }
+    ],
+    "RIS-1425": [
+      {
+        "ref": "23:5",
+        "texte": "qui préservent leurs parties intimes,"
+      }
+    ],
+    "RIS-1426": [
+      {
+        "ref": "23:7",
+        "texte": "… ceux-là sont les transgresseurs ;",
+        "extrait": true
+      }
+    ],
+    "RIS-1447": [
+      {
+        "ref": "16:8",
+        "texte": "… pour que vous les montiez, et comme parure.",
+        "extrait": true
+      }
+    ],
+    "RIS-1585": [
+      {
+        "ref": "43:13",
+        "texte": "… Gloire à Celui qui nous a soumis ceci, alors que nous n'étions pas capables de le maîtriser,",
+        "extrait": true
+      }
+    ],
+    "RIS-1586": [
+      {
+        "ref": "43:14",
+        "texte": "et c'est vers notre Seigneur que nous retournerons ! »"
+      }
+    ],
+    "RIS-1640": [
+      {
+        "ref": "7:43",
+        "texte": "… Louange à Allah, qui nous a guidés à ceci ! Nous n'aurions pas été guidés si Allah ne nous avait pas guidés.",
+        "extrait": true
+      }
+    ]
+  }
+}

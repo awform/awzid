@@ -21,6 +21,8 @@ export interface Sens {
   ref: string;
   texte: string;
   source: string;
+  /** verset cité en partie : `texte` est la portion citée du sens (coupures marquées « … »), libellé « passage cité » */
+  extrait?: true;
 }
 
 /**
