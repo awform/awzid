@@ -9,6 +9,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 02/11/2026 — MISE EN LIGNE en production : mode « tout voir » réservé au compte du client (`bdb0c06`)
+
+- **Déployé** sur awzid-beta : `main` = `bdb0c06` (fusion `--no-ff` de `tout-voir-wip` 5418eb3 sur 5dc810a ; arbre identique à la branche, `pnpm-lock.yaml` intact). Édition `prod-22cd9c52cb`. Version précédente : `bce138c`.
+- **Revue de sécurité refaite** (cd71d63..9edfa11, hors fusion de main) : concluante. B1 (démo exclue : `EMAIL_DEMO`, `packages/school/src/tout-voir.ts:29`), I1 (identifiant du client seul, `:24`), I2 (RIS-1224, 1225, 1392, 1393 isolées, `apps/web/scripts/madjaliss.mjs:147`), M1 (`cachedMe` ne donne jamais le mode, `session.ts:173`), M2 (copie `:tout` effacée sans le mode, `session.ts:139-147`, Sommaire et SeancePage), M3 (identifiants retirés des `variantes`, `madjaliss.mjs:1302`), M4 (audio « tout » `no-store`). Le serveur web exige le drapeau de l'API ET revérifie le critère partagé (`mutun-acces.ts:84-93`). Les 29 phrases, les 4 titres et les textes : absents de `static/`, du build client et des autres fichiers gardés.
+- **Tests** : B1 « objet géant » (< 50 ms) échoue aussi sur `main` propre (60-71 ms, charge 2,8-3,7) : environnement. E2e sous `flock` (`madjaliss-*`, `admin-*`, `tout-voir`) : 103 réussis, 1 ignoré, 0 échec ; unitaires web liés 314/314 ; API `tout-voir` 12/12. Budget élève régénéré : marge 3 792 o.
+- **Sauvegarde avant** : `awform-20261102-093343.dump.gpg` (696 Mo, copie hors site ok).
+- **Vérifications en prod** : santé ok, awzid.com 200 ; `/mutun/risala.json` public identique au dépôt, sans identifiant, titre ni texte sensible ; `/mutun/risala-tout.json` sans session et avec un cookie bidon : 401 ; aucune erreur 5xx (web, API, Caddy) dans les 5 minutes suivantes.
+
 ## 02/11/2026 — MISE EN LIGNE en production : « Tarteel titan » (phases 2 et 3), réservé au compte d'essai
 
 - **Déployé** sur awzid-beta : `main` = `bce138c` (fusion `--no-ff` de `tarteel-titan-3-wip` f1f7a88 sur d0b6a57, plus 2 commits de garde). Sauvegarde avant : `awform-20261102-062646.dump.gpg` (677 Mo, copie dans le bucket, service en succès). Service `ecoute-ia` : image `bce138c` = image 0fdac21 + les 6 fichiers Python (construite localement, poussée en une couche).
