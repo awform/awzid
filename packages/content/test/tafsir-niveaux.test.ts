@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   niveauDeCode,
+  souratesProposees,
   niveauDeSourate,
   NIVEAUX_TAFSIR,
   proposerTafsir,
@@ -93,10 +94,36 @@ describe('ce que le parcours propose', () => {
     expect([...p.niveaux].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   });
 
-  it('sans niveau choisi ou niveau inconnu : N1 conseillé ; ado : comme l’adulte', () => {
+  it('sans niveau choisi ou niveau inconnu : N1 conseillé', () => {
     expect(proposerTafsir({ kind: 'adulte', levelCode: null }).recommande).toBe(1);
     expect(proposerTafsir({ kind: 'adulte', levelCode: 'zz9' }).recommande).toBe(1);
     expect(proposerTafsir({ kind: 'ado', levelCode: 'ado3' }).niveaux[0]).toBe(3);
+  });
+
+  it('un ADO : le parcours va de Tabārak (67) à an-Nās (114), avec al-Fātiḥa ; ses autres niveaux ne sont pas proposés', () => {
+    const p = proposerTafsir({ kind: 'ado', levelCode: 'ado2' });
+    expect(p.niveaux).toEqual([2, 1, 3]);
+    const toutes = p.niveaux.flatMap((n) => [...souratesProposees('ado', n)]);
+    expect(Math.min(...toutes.filter((s) => s !== 1))).toBe(67);
+    expect(Math.max(...toutes)).toBe(114);
+    expect(toutes).toContain(1);
+    expect(new Set(toutes).size).toBe(toutes.length);
+    // 67 à 114 = 48 sourates, plus al-Fātiḥa
+    expect(toutes).toHaveLength(49);
+    for (const s of [58, 66, 57, 42, 2]) expect(toutes).not.toContain(s);
+    // N3 est coupé à Tabārak (67 à 71) ; N4 à N12 ne sont pas proposés
+    expect([...souratesProposees('ado', 3)].sort((a, b) => a - b)).toEqual([67, 68, 69, 70, 71]);
+    expect(souratesProposees('ado', 4)).toEqual([]);
+    // un ado de niveau 4 ou plus retombe sur la dernière portion proposée
+    expect(proposerTafsir({ kind: 'ado', levelCode: 'ado4' }).recommande).toBe(3);
+    expect(proposerTafsir({ kind: 'ado', levelCode: null }).recommande).toBe(1);
+  });
+
+  it('un ADULTE : toutes les sourates proposées, les 12 portions', () => {
+    const toutes = proposerTafsir({ kind: 'adulte', levelCode: 'ad5' }).niveaux.flatMap((n) => [
+      ...souratesProposees('adulte', n),
+    ]);
+    expect(new Set(toutes).size).toBe(114);
   });
 
   it('un ENFANT : le juzʾ ʿAmma seulement (portion N1), quel que soit son niveau', () => {

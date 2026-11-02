@@ -4,7 +4,7 @@
   import { suraName } from '@awform/hifz';
   import {
     proposerTafsir,
-    souratesDuNiveau,
+    souratesProposees,
     type ProposeTafsir,
   } from '@awform/content/tafsir-niveaux';
   import Bidi from '$lib/Bidi.svelte';
@@ -35,8 +35,9 @@
     proposerTafsir({ kind: profil?.kind ?? 'adulte', levelCode: profil?.levelCode ?? null }),
   );
   const enfant = $derived(profil?.kind === 'enfant');
-  const faites = (n: number) => souratesDuNiveau(n).filter((s) => lues.includes(s)).length;
-  const bilan = (n: number) => t('tf.lues', { x: faites(n), y: souratesDuNiveau(n).length });
+  const proposees = (n: number) => souratesProposees(profil?.kind ?? 'adulte', n);
+  const faites = (n: number) => proposees(n).filter((s) => lues.includes(s)).length;
+  const bilan = (n: number) => t('tf.lues', { x: faites(n), y: proposees(n).length });
   const lecteur = resolve('/coran/lecteur');
 
   async function basculer(s: number) {
@@ -56,7 +57,7 @@
   </header>
 
   {#snippet portion(n: number)}
-    {@const liste = souratesDuNiveau(n)}
+    {@const liste = proposees(n)}
     <ol class="sourates" data-testid="tf-liste-{n}">
       {#each liste as s (s)}
         <li data-sourate={s} class:lue={lues.includes(s)}>
@@ -89,7 +90,7 @@
     </h2>
     <p class="progres" data-testid="tf-progres">
       <progress
-        max={souratesDuNiveau(propose.recommande).length}
+        max={proposees(propose.recommande).length}
         value={faites(propose.recommande)}
         aria-label={bilan(propose.recommande)}
       ></progress>

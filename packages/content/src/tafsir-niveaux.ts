@@ -56,23 +56,40 @@ export function niveauDeCode(code: string | null | undefined): number | null {
   return n >= 1 && n <= NIVEAUX_TAFSIR.length ? n : null;
 }
 
+/** Première sourate du parcours des ADOS : Tabārak (67) ; ils vont jusqu'à an-Nās (114), avec al-Fātiḥa (juzʾ 29 et 30). */
+export const PREMIERE_SOURATE_ADO = 67;
+
+/** Sourates d'une portion que le parcours propose à ce public : enfant = juzʾ ʿAmma (N1) ; ado = 67 à 114 et al-Fātiḥa ; adulte = tout. */
+export function souratesProposees(kind: string, n: number): readonly number[] {
+  const toutes = souratesDuNiveau(n);
+  if (kind === 'enfant') return n === 1 ? toutes : [];
+  if (kind === 'ado') return toutes.filter((s) => s === 1 || s >= PREMIERE_SOURATE_ADO);
+  return toutes;
+}
+
 export interface ProposeTafsir {
   /** portion conseillée (sa propre portion), proposée EN PREMIER ; jamais obligatoire */
   recommande: number;
-  /** tous les niveaux ouvrables, la portion conseillée d'abord, puis les autres par numéro */
+  /** tous les niveaux proposés, la portion conseillée d'abord, puis les autres par numéro */
   niveaux: number[];
 }
 
 /**
- * Ce que le parcours propose à un profil : un ENFANT ne voit que la portion N1 (juzʾ ʿAmma) ; ados et adultes voient les 12 portions,
- * la leur d'abord (N1 sans niveau choisi). Aucune portion n'est fermée à un adulte ou un ado : on ne fait que proposer.
+ * Ce que le parcours propose à un profil : un ENFANT ne voit que la portion N1 (juzʾ ʿAmma) ; un ADO les sourates 67 à 114 et al-Fātiḥa
+ * (N1, N2 et la fin de N3), les autres niveaux ne lui sont pas proposés ; un ADULTE les 12 portions. Pour chacun, la sienne d'abord (N1 sans
+ * niveau choisi). Rien n'est bloquant : la consultation d'un verset reste libre dans le lecteur, avec les filtres habituels.
  */
 export function proposerTafsir(profil: {
   kind: string;
   levelCode: string | null | undefined;
 }): ProposeTafsir {
-  if (profil.kind === 'enfant') return { recommande: 1, niveaux: [1] };
-  const recommande = niveauDeCode(profil.levelCode) ?? 1;
-  const autres = NIVEAUX_TAFSIR.map((x) => x.n).filter((n) => n !== recommande);
-  return { recommande, niveaux: [recommande, ...autres] };
+  const ouvrables = NIVEAUX_TAFSIR.map((x) => x.n).filter(
+    (n) => souratesProposees(profil.kind, n).length > 0,
+  );
+  const voulu = niveauDeCode(profil.levelCode) ?? 1;
+  // niveau hors de ce qui est proposé (ado de niveau 4, enfant de niveau 3…) : le plus proche proposé
+  const recommande = ouvrables.includes(voulu)
+    ? voulu
+    : Math.max(...ouvrables.filter((n) => n <= voulu), ouvrables[0]!);
+  return { recommande, niveaux: [recommande, ...ouvrables.filter((n) => n !== recommande)] };
 }

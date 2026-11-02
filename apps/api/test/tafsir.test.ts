@@ -14,7 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { schema as t, setFlagState, setProfileLevel } from '@awform/db';
-import { sourateJson, type SourateTafsir } from '@awform/content/tafsir';
+import { filtrerSourate, sourateJson, type SourateTafsir } from '@awform/content/tafsir';
 import { COMPTE_TOUT_VOIR } from '../src/auth/tout-voir.js';
 import { tafsirDir } from '../src/tafsir.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
@@ -215,7 +215,7 @@ describe.skipIf(!URL)('route du tafsīr (awform_test)', () => {
     else expect([401, 403]).toContain(r.statusCode);
   });
 
-  it('les fichiers livrés (sans dossier de remplacement) sont servis tels quels, 114 sourates', async () => {
+  it('les fichiers livrés (sans dossier de remplacement) sont servis filtrés, sans identifiant interne des sources', async () => {
     const reel = await setup(URL!, [], {});
     try {
       const { A, profileId } = await adult(reel, 'tf-reel@e2e.test');
@@ -231,9 +231,12 @@ describe.skipIf(!URL)('route du tafsīr (awform_test)', () => {
           'x-profil': profileId,
         });
         expect(r.statusCode, `${s}`).toBe(200);
-        expect(r.body).toBe(
+        // profil adulte : le fichier livré, filtré, identifiants internes des sources remplacés par le nom de l'ouvrage
+        const fichier = JSON.parse(
           readFileSync(join(tafsirDir(), `${String(s).padStart(3, '0')}.json`), 'utf8'),
-        );
+        ) as SourateTafsir;
+        expect(JSON.parse(r.body)).toEqual(filtrerSourate(fichier, 'adulte'));
+        expect(r.body).not.toMatch(/\b[A-Z]{2,4}-\d/);
       }
     } finally {
       await reel.app.close();

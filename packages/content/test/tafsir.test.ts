@@ -14,6 +14,7 @@ import {
   construireSourate,
   filtrerSourate,
   lirePlage,
+  masquerIdentifiants,
   MARQUEURS_INTERDITS,
   motsDuVerset,
   publicDe,
@@ -234,6 +235,59 @@ describe('construction (refus au moindre écart)', () => {
   });
 });
 
+describe('identifiants internes des sources', () => {
+  const MOTIF = /\b[A-Z]{2,4}-\d/;
+  it('remplacés par le nom de l’ouvrage, ou retirés quand l’ouvrage vient d’être nommé', () => {
+    const cas: Array<[string, string]> = [
+      ['(ar-Risāla, RIS-0150)', '(ar-Risāla)'],
+      ['(RIS-1598)', '(ar-Risāla)'],
+      ['(RIS-INT-0099). Ici', '(ar-Risāla). Ici'],
+      [
+        'al-Akhḍarī AKH-0125 ; Khalīl KHL-0199 ; ar-Risāla RIS-0150',
+        'al-Akhḍarī ; Khalīl ; ar-Risāla',
+      ],
+      [
+        '(al-Akhdarī, AKH-0132 ; aussi AKH-0126, AKH-0130 ; Ibn ʿĀshir, IBA-0139 ; Khalīl, KHL-0202 à 0204)',
+        '(al-Akhdarī ; Ibn ʿĀshir ; Khalīl)',
+      ],
+      ['Khalīl, al-Mukhtaṣar, KHL-0159, KHL-0160', 'Khalīl, al-Mukhtaṣar'],
+      ['(extraits joints à RIS-0723 et RIS-1378)', '(extraits joints à ar-Risāla)'],
+      ['(IZZ-0416)', '(al-Muqaddima al-ʿIzziyya)'],
+      ['Sans identifiant.', 'Sans identifiant.'],
+    ];
+    for (const [avant, apres] of cas) expect(masquerIdentifiants(avant), avant).toBe(apres);
+  });
+
+  it('un identifiant de forme inattendue est retiré quand même', () => {
+    expect(MOTIF.test(masquerIdentifiants('voir XYZ-12345 ici'))).toBe(false);
+  });
+
+  it('AUCUN motif [A-Z]{2,4}-\\d dans le texte servi à un élève, à un ado ou à un adulte, pour les 114 sourates', () => {
+    let ids = 0;
+    for (let s = 1; s <= 114; s++) {
+      const x = sourate(s);
+      if (MOTIF.test(JSON.stringify(x))) ids++;
+      for (const pub of ['eleve', 'adulte'] as const)
+        expect(MOTIF.test(JSON.stringify(filtrerSourate(x, pub))), `${s} ${pub}`).toBe(false);
+    }
+    // les fichiers, eux, gardent les identifiants (le compte « tout voir » les voit)
+    expect(ids).toBeGreaterThan(50);
+    expect(MOTIF.test(JSON.stringify(filtrerSourate(sourate(1), 'tout')))).toBe(true);
+  });
+
+  it('seuls les identifiants changent : les versets, le mot à mot et l’arabe restent identiques', () => {
+    for (let s = 1; s <= 114; s++) {
+      const x = sourate(s);
+      const y = filtrerSourate(x, 'eleve');
+      expect(y.versets.map((v) => v.ar)).toEqual(x.versets.map((v) => v.ar));
+      expect(y.versets.map((v) => v.mots.map((m) => m[0]))).toEqual(
+        x.versets.map((v) => v.mots.map((m) => m[0])),
+      );
+      expect(y.points.length).toBe(x.points.length);
+    }
+  });
+});
+
 describe('plages des points', () => {
   it.each([
     ['Titre (v. 4)', [[4, 4]]],
@@ -356,6 +410,6 @@ describe('filtrage par public (D-TF-445, D-TF-498)', () => {
     filtrerSourate(x, 'eleve');
     expect(JSON.stringify(x)).toBe(avant);
     const sans = sourate(112);
-    expect(filtrerSourate(sans, 'eleve')).toBe(sans);
+    expect(filtrerSourate(sans, 'tout')).toBe(sans);
   });
 });

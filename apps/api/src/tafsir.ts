@@ -32,6 +32,8 @@ export function tafsirDir(): string {
 export function registerTafsir(app: FastifyInstance, db: Db, dossier: string = tafsirDir()): void {
   /** sourates lues une fois (corps brut et objet) */
   const lues = new Map<number, { corps: string; sourate: SourateTafsir }>();
+  /** réponses déjà construites, par sourate et par public (le filtrage ne dépend de rien d'autre) */
+  const servis = new Map<string, string>();
   const lire = async (n: number) => {
     let x = lues.get(n);
     if (!x) {
@@ -81,9 +83,14 @@ export function registerTafsir(app: FastifyInstance, db: Db, dossier: string = t
       } catch {
         return err(reply, 404, 'introuvable');
       }
-      const filtree = filtrerSourate(x.sourate, pub);
-      // rien de retiré : les octets du fichier tels quels
-      const corps = filtree === x.sourate ? x.corps : JSON.stringify(filtree);
+      // le compte « tout voir » sans segment retiré : les octets du fichier tels quels ; les autres : filtré, identifiants masqués (gardé en mémoire)
+      const cle = `${req.params.n}:${pub}`;
+      let corps = servis.get(cle);
+      if (corps === undefined) {
+        const filtree = filtrerSourate(x.sourate, pub);
+        corps = filtree === x.sourate ? x.corps : JSON.stringify(filtree);
+        servis.set(cle, corps);
+      }
       return reply
         .header('Cache-Control', 'private, no-store')
         .header('Vary', 'Cookie, X-Profil')

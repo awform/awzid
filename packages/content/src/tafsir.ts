@@ -241,14 +241,95 @@ export function publicDe(i: { toutVoir: boolean; age: string | null | undefined 
   return i.age === 'adulte' ? 'adulte' : 'eleve';
 }
 
-/** La sourate telle que ce public la voit : les segments refusés disparaissent SANS laisser de trace (ni compte, ni identifiant). */
-export function filtrerSourate(x: SourateTafsir, pub: PublicTafsir): SourateTafsir {
-  if (x.points.every((p) => voit(p.acces, pub))) return x;
-  const gardes = x.points.filter((p) => voit(p.acces, pub));
-  const ids = new Set(gardes.map((p) => p.id));
-  return {
+/** Nom lisible de l'ouvrage derrière un identifiant de passage des Madjaliss (RIS-0150, KHL-0199…). */
+export const OUVRAGES: Readonly<Record<string, string>> = {
+  'RIS-INT': 'ar-Risāla',
+  RIS: 'ar-Risāla',
+  KHL: 'Khalīl',
+  AKH: 'al-Akhḍarī',
+  IBA: 'Ibn ʿĀshir',
+  IZZ: 'al-Muqaddima al-ʿIzziyya',
+};
+
+/** Comparaison seulement (jamais pour l'affichage, aucune normalisation Unicode) : sans casse ni points diacritiques des transcriptions. */
+const plie = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[āīūḍḥṣṭẓ]/g, (c) => 'aiudhstz'['āīūḍḥṣṭẓ'.indexOf(c)]!)
+    .replace(/[ʿʾ]/g, '');
+
+const IDENTIFIANT =
+  /(\s*[;,]\s*|\s+et\s+|\s+)?(?:(?:aussi|voir|cf\.)\s+)?\b(RIS-INT|RIS|KHL|AKH|IBA|IZZ)-\d{3,4}(?:\s*(?:à|et|-)\s*\d{3,4})*/g;
+
+/**
+ * Texte servi à un ÉLÈVE : chaque identifiant interne (RIS-0150, KHL-0199, RIS-INT-0042…) est remplacé par le nom lisible de l'ouvrage
+ * (ar-Risāla, Khalīl…), ou retiré quand l'ouvrage vient d'être nommé juste avant dans la même parenthèse ou la même phrase
+ * (« ar-Risāla, RIS-0150 » devient « ar-Risāla »). Le texte des fichiers n'est jamais modifié : seul le compte « tout voir » garde les identifiants.
+ */
+export function masquerIdentifiants(s: string): string {
+  let out = '';
+  let fin = 0;
+  for (const m of s.matchAll(IDENTIFIANT)) {
+    out += s.slice(fin, m.index);
+    fin = m.index + m[0].length;
+    const nom = OUVRAGES[m[2]!]!;
+    const debut = Math.max(out.lastIndexOf('('), out.lastIndexOf('. ') + 1, 0);
+    if (plie(out.slice(debut)).includes(plie(nom))) continue;
+    out += (m[1] ?? '') + nom;
+  }
+  out += s.slice(fin);
+  // un identifiant d'une forme inattendue ne passe jamais : retiré
+  return out
+    .replace(/\s*\(\s*\)/g, '')
+    .replace(/\b[A-Z]{2,5}(?:-[A-Z]+)*-\d+[A-Za-z0-9-]*/g, '')
+    .replace(/ {2,}/g, ' ');
+}
+
+function sansIdentifiants(x: SourateTafsir): SourateTafsir {
+  const m = masquerIdentifiants;
+  const opt = (v: string | undefined) => (v === undefined ? undefined : m(v));
+  const y: SourateTafsir = {
     ...x,
-    points: gardes,
-    versets: x.versets.map((v) => ({ ...v, p: v.p.filter((i) => ids.has(i)) })),
+    points: x.points.map((p) => {
+      const q: PointTafsir = {
+        ...p,
+        titre: m(p.titre),
+        texte: m(p.texte),
+        sources: p.sources.map(m),
+      };
+      if (p.note_contexte !== undefined) q.note_contexte = m(p.note_contexte);
+      return q;
+    }),
+    versets: x.versets.map((v) => {
+      const w: VersetTafsir = {
+        ...v,
+        sens: m(v.sens),
+        mots: v.mots.map(([ar, fr]) => [ar, m(fr)]),
+      };
+      if (v.note !== undefined) w.note = m(v.note);
+      return w;
+    }),
   };
+  if (x.sens_general !== undefined) y.sens_general = opt(x.sens_general)!;
+  if (x.contexte !== undefined) y.contexte = opt(x.contexte)!;
+  if (x.traduction !== undefined) y.traduction = opt(x.traduction)!;
+  return y;
+}
+
+/**
+ * La sourate telle que ce public la voit : les segments refusés disparaissent SANS laisser de trace (ni compte, ni identifiant), et, sauf
+ * pour le compte « tout voir », les identifiants internes des sources sont remplacés par le nom de l'ouvrage (`masquerIdentifiants`).
+ */
+export function filtrerSourate(x: SourateTafsir, pub: PublicTafsir): SourateTafsir {
+  let y = x;
+  if (!x.points.every((p) => voit(p.acces, pub))) {
+    const gardes = x.points.filter((p) => voit(p.acces, pub));
+    const ids = new Set(gardes.map((p) => p.id));
+    y = {
+      ...x,
+      points: gardes,
+      versets: x.versets.map((v) => ({ ...v, p: v.p.filter((i) => ids.has(i)) })),
+    };
+  }
+  return pub === 'tout' ? y : sansIdentifiants(y);
 }
