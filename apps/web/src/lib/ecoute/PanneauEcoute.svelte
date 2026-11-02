@@ -516,7 +516,9 @@
             >{t('ec.indice')}</button
           >
           {#if indices}<span class="muted" data-testid="ecoute-indices"
-              >{t(devantMaitre ? 'ec.aide_recue_n' : 'ec.indices', { n: indices })}</span
+              ><Bidi
+                text={t(devantMaitre ? 'ec.aide_recue_n' : 'ec.indices', { n: indices })}
+              /></span
             >{/if}
         </p>
       {/if}
