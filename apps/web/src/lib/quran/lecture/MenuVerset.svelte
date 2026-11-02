@@ -10,7 +10,7 @@
 
   /**
    * Coran épuré — PETIT MENU d'un verset (toucher un verset) : Écouter d'ici · Répéter ce verset · Traduction ·
-   * Signet · Écrire de mémoire (« J'écris le Coran », A27, si ce verset est au programme de l'élève) · Partager
+   * Sens et explication (interrupteur tafsir_sens) · Signet · Écrire de mémoire (« J'écris le Coran », A27, si ce verset est au programme de l'élève) · Partager
    * (verset en image, A12). Mémoriser : « Voir / masquer ce verset ». Popover près du verset sur grand écran,
    * feuille du bas sur téléphone. Rien ne joue sans ce geste.
    */
@@ -23,12 +23,14 @@
     revealed,
     marked,
     ecrire,
+    sens,
     tradKey,
     loadTrad,
     onlisten,
     onrepeat,
     onmark,
     onreveal,
+    onsens,
   }: {
     /** verset ouvert (null : menu fermé) */
     at?: { s: number; a: number } | null;
@@ -41,12 +43,15 @@
     marked: boolean;
     /** lien « Écrire de mémoire » si le verset est au programme d'écriture de l'élève */
     ecrire: string | null;
+    /** « Sens et explication » proposé (interrupteur tafsir_sens, muṣḥaf Ḥafṣ) */
+    sens: boolean;
     tradKey: string;
     loadTrad: (s: number, a: number) => Promise<TranslatedVerse | null>;
     onlisten: (s: number, a: number) => void;
     onrepeat: (s: number, a: number) => void;
     onmark: (s: number, a: number) => void;
     onreveal: (s: number, a: number) => void;
+    onsens: (s: number, a: number) => void;
   } = $props();
 
   let dlg: HTMLDialogElement | undefined = $state();
@@ -181,6 +186,13 @@
               </p>
             </div>
           {/if}
+        </li>
+      {/if}
+      {#if sens && hafs && !bsm}
+        <li>
+          <button type="button" onclick={() => act(onsens)} data-testid="menu-sens"
+            ><Icon name="livres" size={20} /><Bidi text={t('cl.menu_sens')} /></button
+          >
         </li>
       {/if}
       {#if !bsm}<li>

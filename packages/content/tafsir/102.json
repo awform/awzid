@@ -1,0 +1,15 @@
+{"v":1,"s":102,"nom_ar":"التكاثر","nom_fr":"at-Takāthur (La Course aux richesses)","sens_general":"La rivalité dans les biens, les enfants et le prestige occupe l'homme jusqu'à sa mort ; puis il verra la vérité de ses yeux, et il sera interrogé sur chaque bienfait reçu.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"« Jusqu'à ce que vous visitiez les tombes »","texte":"Selon al-Qurṭubī : jusqu'à ce que la mort vous atteigne et que vous entriez dans les tombes comme des visiteurs, qui en repartiront vers le Paradis ou le Feu. Il rapporte aussi un autre avis : jusqu'à compter même vos morts, par fierté.","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 102:2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]},
+{"id":1,"titre":"« Les bienfaits »","texte":"Les commentateurs y comptent tous les bienfaits : la santé, la sécurité, la nourriture, l'eau fraîche (Ibn Kathīr, qui cite des hadiths à ce sujet).","sources":["Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 102:8"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"أَلْهَىٰكُمُ ٱلتَّكَاثُرُ","mots":[["أَلْهَىٰكُمُ","vous a distraits"],["ٱلتَّكَاثُرُ","la course à avoir toujours plus"]],"sens":"La course aux richesses vous a distraits,","p":[]},
+{"a":2,"ar":"حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ","mots":[["حَتَّىٰ","jusqu'à ce que"],["زُرْتُمُ","vous avez visité"],["ٱلْمَقَابِرَ","les tombes"]],"sens":"jusqu'à ce que vous visitiez les tombes.","p":[]},
+{"a":3,"ar":"كَلَّا سَوْفَ تَعْلَمُونَ","mots":[["كَلَّا","non, prenez garde"],["سَوْفَ","bientôt"],["تَعْلَمُونَ","vous saurez"]],"sens":"Mais non ! Vous saurez bientôt !","p":[]},
+{"a":4,"ar":"ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ","mots":[["ثُمَّ","puis"],["كَلَّا","non, prenez garde"],["سَوْفَ","bientôt"],["تَعْلَمُونَ","vous saurez"]],"sens":"Puis, mais non ! Vous saurez bientôt !","p":[]},
+{"a":5,"ar":"كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ","mots":[["كَلَّا","non, prenez garde"],["لَوْ","si"],["تَعْلَمُونَ","vous saviez"],["عِلْمَ","d'une science"],["ٱلْيَقِينِ","de certitude"]],"sens":"Mais non ! Si vous saviez d'une science certaine…","p":[]},
+{"a":6,"ar":"لَتَرَوُنَّ ٱلْجَحِيمَ","mots":[["لَتَرَوُنَّ","vous verrez certes"],["ٱلْجَحِيمَ","la Fournaise"]],"sens":"Vous verrez certes la Fournaise !","p":[]},
+{"a":7,"ar":"ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ","mots":[["ثُمَّ","puis"],["لَتَرَوُنَّهَا","vous la verrez certes"],["عَيْنَ","de l'œil"],["ٱلْيَقِينِ","de la certitude"]],"sens":"Puis vous la verrez certes de vos yeux, avec certitude.","p":[]},
+{"a":8,"ar":"ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ","mots":[["ثُمَّ","puis"],["لَتُسْـَٔلُنَّ","vous serez certes interrogés"],["يَوْمَئِذٍ","ce jour-là"],["عَنِ","sur"],["ٱلنَّعِيمِ","les bienfaits"]],"sens":"Puis, ce jour-là, vous serez interrogés sur les bienfaits.","p":[]}
+]}

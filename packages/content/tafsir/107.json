@@ -1,0 +1,14 @@
+{"v":1,"s":107,"nom_ar":"الماعون","nom_fr":"al-Māʿūn (L'Aide courante)","sens_general":"Portrait de celui qui ne croit pas vraiment à la Rétribution : dur avec l'orphelin et le pauvre, négligent dans sa prière, priant pour être vu, et refusant même un petit service.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"« Négligents de leur prière »","texte":"Al-Qurṭubī rapporte d'Ibn ʿAbbās : celui qui prie sans en espérer de récompense et la délaisse sans en craindre de châtiment, ou qui la retarde au-delà de son temps ; d'autres : celui qui la retarde, ou qui ne fait pas correctement l'inclinaison et la prosternation (Abū l-ʿĀliya).","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 107:5 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]},
+{"id":1,"titre":"« Al-māʿūn »","texte":"Al-Qurṭubī cite douze avis. Le premier qu'il cite : la zakāt (d'après Ibn ʿAbbās, ʿAlī, et Mālik). Selon Ibn Masʿūd : les objets d'usage qu'on se prête entre voisins (hache, marmite, seau…). Le mot à mot et le sens du verset 7 suivent l'avis d'Ibn Masʿūd.","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 107:7 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"أَرَءَيْتَ ٱلَّذِى يُكَذِّبُ بِٱلدِّينِ","mots":[["أَرَءَيْتَ","as-tu vu"],["ٱلَّذِى","celui qui"],["يُكَذِّبُ","traite de mensonge"],["بِٱلدِّينِ","la Rétribution (la religion)"]],"sens":"As-tu vu celui qui traite de mensonge la Rétribution ?","p":[]},
+{"a":2,"ar":"فَذَٰلِكَ ٱلَّذِى يَدُعُّ ٱلْيَتِيمَ","mots":[["فَذَٰلِكَ","c'est lui"],["ٱلَّذِى","qui"],["يَدُعُّ","repousse brutalement"],["ٱلْيَتِيمَ","l'orphelin"]],"sens":"C'est lui qui repousse l'orphelin,","p":[]},
+{"a":3,"ar":"وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ","mots":[["وَلَا","et n'"],["يَحُضُّ","encourage pas"],["عَلَىٰ","à"],["طَعَامِ","nourrir"],["ٱلْمِسْكِينِ","le pauvre"]],"sens":"et n'encourage pas à nourrir le pauvre.","p":[]},
+{"a":4,"ar":"فَوَيْلٌۭ لِّلْمُصَلِّينَ","mots":[["فَوَيْلٌۭ","malheur donc"],["لِّلْمُصَلِّينَ","à ceux qui prient"]],"sens":"Malheur donc à ceux qui prient,","p":[]},
+{"a":5,"ar":"ٱلَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ","mots":[["ٱلَّذِينَ","qui"],["هُمْ","eux"],["عَن","de"],["صَلَاتِهِمْ","leur prière"],["سَاهُونَ","sont négligents"]],"sens":"qui négligent leur prière,","p":[]},
+{"a":6,"ar":"ٱلَّذِينَ هُمْ يُرَآءُونَ","mots":[["ٱلَّذِينَ","qui"],["هُمْ","eux"],["يُرَآءُونَ","font étalage (pour être vus)"]],"sens":"qui font étalage [de leurs œuvres],","p":[]},
+{"a":7,"ar":"وَيَمْنَعُونَ ٱلْمَاعُونَ","mots":[["وَيَمْنَعُونَ","et refusent"],["ٱلْمَاعُونَ","l'aide courante (les petits objets qu'on se prête)"]],"sens":"et refusent l'aide la plus simple.","p":[]}
+]}

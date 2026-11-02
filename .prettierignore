@@ -34,6 +34,9 @@ docs/projet/douas/
 # A26b : scénarios « Je parle » générés (pnpm --filter @awform/content conversation), contrôlés par test
 packages/content/conversation/
 
+# Tafsīr abrégé et mot à mot (2/11/2026) : fichiers par sourate générés (pnpm --filter @awform/content tafsir), arabe de Tanzil recopié tel quel, contrôlés par test
+packages/content/tafsir/
+
 # Madjaliss : sources du référent recopiées VERBATIM, et textes générés (node apps/web/scripts/madjaliss.mjs), contrôlés par test
 packages/content/madjaliss-source/
 apps/web/static/mutun/

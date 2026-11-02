@@ -52,6 +52,7 @@ import { registerEcoleEleves } from './ecole-eleves.js';
 import { erreurSure } from './log-sur.js';
 import { registerParcoursA27 } from './parcours-a27.js';
 import { registerCoranMots } from './coran-mots.js';
+import { registerTafsir } from './tafsir.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
@@ -108,6 +109,8 @@ export interface AppOptions {
   qcfFontsDir?: string | null;
   /** mots du Coran (interrupteur coran_mots, tests) : dossier des données dérivées ; sinon @awform/coran-mots-data */
   coranMotsDir?: string;
+  /** dossier des fichiers du tafsīr (essais) ; par défaut ceux du paquet `@awform/content` */
+  tafsirDir?: string;
   /** audio des leçons (A3, tests) ; sinon AWFORM_LECONS_AUDIO_DIR ; null : non servi */
   leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
@@ -380,6 +383,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerParcoursA27(app, db, edition);
   // mots du Coran : « Je reconnais X % des mots », recherche par mot et par racine, fiche racine (interrupteur coran_mots)
   registerCoranMots(app, db, edition, opts.coranMotsDir);
+  // 2/11/2026 : « Sens et explication » d'un verset (tafsīr abrégé et mot à mot), filtré par public côté serveur (interrupteur `tafsir_sens`)
+  registerTafsir(app, db, opts.tafsirDir);
   // A39 : mode serein (mode d'évaluation, récapitulatif, niveau suivant sans épreuve, notions fragiles)
   registerSereinA39(app, db, edition);
   // A39 (D-A39 4) : certificat individuel de l'adulte autonome (même modèle, même vérification)

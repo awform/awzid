@@ -73,6 +73,8 @@ const FIXED = new Set([
   'AWFORM_MAIL_JOURNAL_DIR',
   // A26b : dossier des sc?narios ? Je parle ?, livr? avec @awform/content (surcharge de test seulement)
   'AWFORM_CONVERSATION_DIR',
+  // 2/11/2026 : dossier des fichiers du tafsīr, livré avec @awform/content (surcharge de test seulement)
+  'AWFORM_TAFSIR_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

@@ -1,0 +1,23 @@
+{
+  "tf.titre": "Sens et explication · {sourate}, verset {a}",
+  "tf.sens": "Sens du verset",
+  "tf.mot_a_mot": "Mot à mot",
+  "tf.note": "Remarque",
+  "tf.explication": "Explication abrégée (tafsīr)",
+  "tf.sourate": "À propos de la sourate {sourate}",
+  "tf.contexte": "Note de contexte",
+  "tf.sources": "Sources : {liste}",
+  "tf.prudence": "Résumé d’étude fait d’après les commentaires classiques. Pour une question précise, demande à un enseignant.",
+  "tf.hors_ligne": "Cette explication n’est pas encore sur cet appareil. Connecte-toi une fois pour la garder.",
+  "tf.ferme": "Cette fonction n’est pas ouverte pour ce profil.",
+  "tf.indisponible": "L’explication de ce verset n’est pas disponible pour le moment.",
+  "tf.parcours_titre": "Tafsīr du niveau",
+  "tf.libre": "Tu peux aussi lire le sens et l’explication de n’importe quel verset, dans le lecteur du Coran.",
+  "tf.enfant": "Pour l’instant, le parcours des enfants est celui du juzʾ ʿAmma.",
+  "tf.reco": "Conseillé pour ton niveau",
+  "tf.autres": "Autres niveaux",
+  "tf.niveau": "Niveau {n}",
+  "tf.lues": "{x} sourates lues sur {y}",
+  "tf.marquer": "Marquer comme lue",
+  "tf.lue": "Lue"
+}

@@ -195,6 +195,9 @@
   let tradSheet = $state(false);
   let infoOpen = $state(false);
   let menuAt = $state<{ s: number; a: number } | null>(null);
+  // « Sens et explication » (interrupteur tafsir_sens) : feuille du verset choisi dans le petit menu ; module chargé à la demande
+  let sensAt = $state<{ s: number; a: number } | null>(null);
+  let tf = $state<typeof import('$lib/tafsir') | null>(null);
   let menuAnchor = $state<HTMLElement | null>(null);
   let marks = $state(readMarks());
   let ecritureRefs = $state<Set<string> | null>(null);
@@ -213,6 +216,15 @@
     if (fn('coran_mots') && !cm)
       void chargerModule(() => import('$lib/coran-mots')).then(
         (m) => (cm = m),
+        () => undefined,
+      );
+  });
+
+  // le module « Sens et explication » n'est chargé qu'à l'ouverture du petit menu d'un verset (jamais préchargé)
+  $effect(() => {
+    if (fn('tafsir_sens') && (menuAt || sensAt) && !tf)
+      void chargerModule(() => import('$lib/tafsir')).then(
+        (m) => (tf = m),
         () => undefined,
       );
   });
@@ -1234,7 +1246,7 @@
   let chromeTimer: ReturnType<typeof setTimeout> | null = null;
   /** « Lire » : à la fermeture du panneau, les commandes s'effacent tout de suite */
   let quiet = false;
-  const sheetOpen = $derived(selOpen || regOpen || tradSheet || infoOpen || !!menuAt);
+  const sheetOpen = $derived(selOpen || regOpen || tradSheet || infoOpen || !!menuAt || !!sensAt);
   const hidden = $derived.by(() => prefs.epure && ready && !chrome && !sheetOpen && !guiding);
   const CHROME = '.cbar, header.top, nav.tabs, .turn, .montrer';
   /**
@@ -2380,13 +2392,16 @@
     revealed={!!menuAt && revealed.has(`${menuAt.s}:${menuAt.a}`)}
     marked={!!menuAt && isMarked(marks, menuAt.s, menuAt.a)}
     ecrire={ecrireHref}
+    sens={fn('tafsir_sens') && !isRw}
     tradKey={prefs.translation}
     loadTrad={async (s, a) => (await loadTranslation(prefs.translation, s))?.verses.get(a) ?? null}
     onlisten={(s, a) => playFrom({ s, from: a, to: suraLen(s) })}
     onrepeat={repeat}
     onmark={(s, a) => (marks = toggleMark({ s, a, p: starts ? pageOf(starts, s, a) : p }))}
     onreveal={reveal}
+    onsens={(s, a) => (sensAt = { s, a })}
   />
+  {#if tf && sensAt}<tf.SensVerset bind:at={sensAt} profil={profileId} />{/if}
 {/if}
 
 <style>

@@ -1,0 +1,13 @@
+{"v":1,"s":114,"nom_ar":"الناس","nom_fr":"an-Nās (Les Hommes)","sens_general":"On cherche refuge auprès d'Allah, désigné par trois attributs (Seigneur, Roi, Dieu des hommes), contre le mal qui vient de l'intérieur : le murmure qui pousse à la faute.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"« Le tentateur furtif »","texte":"Al-Qurṭubī explique : celui qui murmure, et qui se retire et se cache ; Satan recule quand on invoque Allah, et revient quand on L'oublie (avis de Qatāda, et un hadith d'Anas cité dans ce sens).","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 114:4 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]},
+{"id":1,"titre":"« Des djinns et des hommes »","texte":"Selon un avis rapporté par Ibn Kathīr, le tentateur peut être un djinn ou un homme qui pousse au mal ; il cite aussi une autre lecture du verset.","sources":["Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 114:6"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ","mots":[["قُلْ","dis"],["أَعُوذُ","je cherche refuge"],["بِرَبِّ","auprès du Seigneur"],["ٱلنَّاسِ","des hommes"]],"sens":"Dis : « Je cherche refuge auprès du Seigneur des hommes,","p":[]},
+{"a":2,"ar":"مَلِكِ ٱلنَّاسِ","mots":[["مَلِكِ","le Roi"],["ٱلنَّاسِ","des hommes"]],"sens":"le Roi des hommes,","p":[]},
+{"a":3,"ar":"إِلَٰهِ ٱلنَّاسِ","mots":[["إِلَٰهِ","le Dieu"],["ٱلنَّاسِ","des hommes"]],"sens":"le Dieu des hommes,","p":[]},
+{"a":4,"ar":"مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ","mots":[["مِن","contre"],["شَرِّ","le mal"],["ٱلْوَسْوَاسِ","du tentateur (qui murmure)"],["ٱلْخَنَّاسِ","qui se retire (dès qu'on évoque Allah)"]],"sens":"contre le mal du tentateur furtif,","p":[]},
+{"a":5,"ar":"ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ","mots":[["ٱلَّذِى","qui"],["يُوَسْوِسُ","murmure (le mal)"],["فِى","dans"],["صُدُورِ","les poitrines"],["ٱلنَّاسِ","des hommes"]],"sens":"qui murmure dans les poitrines des hommes,","p":[]},
+{"a":6,"ar":"مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ","mots":[["مِنَ","parmi"],["ٱلْجِنَّةِ","les djinns"],["وَٱلنَّاسِ","et les hommes"]],"sens":"qu'il soit des djinns ou des hommes. »","p":[]}
+]}

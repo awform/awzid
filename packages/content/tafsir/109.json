@@ -1,0 +1,12 @@
+{"v":1,"s":109,"nom_ar":"الكافرون","nom_fr":"al-Kāfirūn (Les Négateurs)","sens_general":"Déclaration nette : pas de mélange dans l'adoration. Le croyant n'adore qu'Allah ; il ne fait aucun compromis sur son culte. Ibn Kathīr rapporte plusieurs explications de la répétition, dont le renforcement de ce désaveu et la distinction entre le passé et l'avenir.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"Le sens","texte":"Ibn Kathīr explique que c'est une déclaration de désaveu envers ce qu'adoraient les polythéistes ; aṭ-Ṭabarī rapporte que des notables de Quraysh avaient proposé au Prophète ﷺ d'adorer leurs divinités une année et Allah une année, et que la sourate fut la réponse.","sources":["Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 109","aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 109"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ","mots":[["قُلْ","dis"],["يَٰٓأَيُّهَا","ô"],["ٱلْكَٰفِرُونَ","les mécréants (qui rejettent la foi)"]],"sens":"Dis : « Ô vous les mécréants !","p":[]},
+{"a":2,"ar":"لَآ أَعْبُدُ مَا تَعْبُدُونَ","mots":[["لَآ","je n'"],["أَعْبُدُ","adore pas"],["مَا","ce que"],["تَعْبُدُونَ","vous adorez"]],"sens":"Je n'adore pas ce que vous adorez,","p":[]},
+{"a":3,"ar":"وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ","mots":[["وَلَآ","et ne… pas"],["أَنتُمْ","vous"],["عَٰبِدُونَ","adorateurs"],["مَآ","de ce que"],["أَعْبُدُ","j'adore"]],"sens":"et vous n'adorez pas ce que j'adore ;","p":[]},
+{"a":4,"ar":"وَلَآ أَنَا۠ عَابِدٌۭ مَّا عَبَدتُّمْ","mots":[["وَلَآ","et ne… pas"],["أَنَا۠","moi"],["عَابِدٌۭ","adorateur"],["مَّا","de ce que"],["عَبَدتُّمْ","vous avez adoré"]],"sens":"je ne suis pas adorateur de ce que vous avez adoré,","p":[]},
+{"a":5,"ar":"وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ","mots":[["وَلَآ","et ne… pas"],["أَنتُمْ","vous"],["عَٰبِدُونَ","adorateurs"],["مَآ","de ce que"],["أَعْبُدُ","j'adore"]],"sens":"et vous n'êtes pas adorateurs de ce que j'adore.","p":[]},
+{"a":6,"ar":"لَكُمْ دِينُكُمْ وَلِىَ دِينِ","mots":[["لَكُمْ","à vous"],["دِينُكُمْ","votre religion"],["وَلِىَ","et à moi"],["دِينِ","ma religion"]],"sens":"À vous votre religion, et à moi ma religion. »","p":[]}
+]}
