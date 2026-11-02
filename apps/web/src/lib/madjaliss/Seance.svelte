@@ -35,6 +35,7 @@
     suivante = null,
     progres,
     kind = null,
+    tout = false,
   }: {
     matn: Matn;
     seance: Seance;
@@ -44,6 +45,8 @@
     progres: Progres;
     /** profil : l'audio d'une phrase « adulte » n'est proposé qu'à un adulte */
     kind?: Public | null;
+    /** mode « tout voir » de l'administrateur : exploration, rien n'est enregistré (ni séance ouverte, ni séance faite) */
+    tout?: boolean;
   } = $props();
 
   const ETAPES = ['lire', 'mots', 'memo', 'quiz', 'fin'] as const;
@@ -87,13 +90,13 @@
   );
 
   $effect(() => {
-    void ouvrir(pid, matn.id, seance.n);
+    if (!tout) void ouvrir(pid, matn.id, seance.n);
   });
 
   async function basculerEns() {
     modeEns = !modeEns;
     if (modeEns && !notes) {
-      notes = await chargerNotes(matn.id);
+      notes = await chargerNotes(matn.id, undefined, tout && !!matn.tout);
       notesErreur = !notes;
     }
   }
@@ -105,10 +108,11 @@
 
   async function terminer() {
     envoi = true;
-    await marquerFaite(pid, matn.id, seance.n, {
-      quiz: quizFini?.bonnes ?? 0,
-      sur: quizFini?.total ?? questions.length,
-    });
+    if (!tout)
+      await marquerFaite(pid, matn.id, seance.n, {
+        quiz: quizFini?.bonnes ?? 0,
+        sur: quizFini?.total ?? questions.length,
+      });
     faite = true;
     envoi = false;
   }

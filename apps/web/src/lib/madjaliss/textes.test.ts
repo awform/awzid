@@ -1092,7 +1092,9 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
     const nParties = gardes.filter((f) => /^risala-p\d+\.json$/.test(f)).length;
     expect(nParties).toBeGreaterThanOrEqual(8);
     // rien d'autre : aucun fichier perdu d'une construction précédente
-    expect(gardes).toHaveLength(textes.length + 2 + nParties);
+    // 2/11/2026 : + le fichier « tout voir » (`risala-tout.json`, séances sensibles de la Risāla)
+    expect(gardes).toContain('risala-tout.json');
+    expect(gardes).toHaveLength(textes.length + 2 + 1 + nParties);
     for (const f of gardes) expect(NOM_PROTEGE.test(f), f).toBe(true);
   });
 
@@ -1141,7 +1143,11 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
     const idsOuverts = new Set(r.seances.filter((s) => !s.differe).flatMap((s) => s.phrases));
     expect(new Set(pubParts.map((p) => p.id))).toEqual(idsOuverts);
     expect(total.some((p) => idsOuverts.has(p.id))).toBe(false);
-    expect(total.length + pubParts.length).toBe(1769);
+    // 2/11/2026 : les phrases des séances sensibles (chapitre du jihād) sont dans le seul fichier « tout voir »
+    const tout = lire<{ phrases: Phrase[] }>(join(SORTIE_PROTEGEE, 'risala-tout.json')).phrases;
+    expect(tout).toHaveLength(25);
+    expect(tout.some((p) => idsOuverts.has(p.id) || total.some((q) => q.id === p.id))).toBe(false);
+    expect(total.length + pubParts.length + tout.length).toBe(1769);
   });
 
   it('notes de l’enseignant : jamais dans un fichier public', () => {

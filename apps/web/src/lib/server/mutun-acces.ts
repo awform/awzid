@@ -4,7 +4,9 @@
  *  - `<texte>-enseignant.json` : notes de l'enseignant (décisions du référent, vocalisations à vérifier…) → PERSONNEL ;
  *  - `<texte>-differe.json` : séances en publication différée (Ibn ʿĀshir, séances de croyance ; vers non confirmés de la
  *    Lāmiyya) → PERSONNEL, DÉMONSTRATION et GROUPE « BÊTA FERMÉE » (lot 6) ;
- *  - `risala-p<k>.json` : phrases des séances différées de la Risāla → mêmes droits.
+ *  - `risala-p<k>.json` : phrases des séances différées de la Risāla → mêmes droits ;
+ *  - `risala-tout.json` (2/11/2026) : séances SENSIBLES de la Risāla (chapitre du jihād) → l'administrateur avec second
+ *    facteur SEUL (mode « tout voir » : ni le personnel, ni la démonstration, ni le groupe « bêta fermée »).
  * Un compte ordinaire (ni personnel, ni démonstration, ni membre du groupe « bêta fermée » quand l'interrupteur
  * `beta_contenu_differe_visible` est allumé) et un visiteur sans session n'en reçoivent AUCUN, même par adresse
  * directe. Le droit est lu à CHAQUE requête dans la session (retrait du groupe = perte immédiate) et contrôlé avant
@@ -31,15 +33,16 @@ export const ROLE_BETA = 'beta_fermee';
 /** Comptes de démonstration (`<rôle>-<tag>@demo.awform.test`, créés par `deploy.sh --demo` seulement). */
 export const COMPTE_DEMO = /@demo\.awform\.test$/i;
 /** Nom d'un fichier gardé : jamais autre chose (la route ne sert que ces noms, pas de chemin). */
-export const NOM_GARDE = /^([a-z][a-z-]*)-(enseignant|differe|p\d+)\.json$/;
+export const NOM_GARDE = /^([a-z][a-z-]*)-(enseignant|differe|tout|p\d+)\.json$/;
 
-export type Droit = 'personnel' | 'differe';
+/** `tout` : fichier du mode « tout voir » (séances sensibles), réservé à l'administrateur avec second facteur (`estToutVoir`). */
+export type Droit = 'personnel' | 'differe' | 'tout';
 
 /** Droit exigé pour un nom de fichier ; null : ce n'est pas un fichier gardé. */
 export function droitExige(nom: string): Droit | null {
   const m = NOM_GARDE.exec(nom);
   if (!m) return null;
-  return m[2] === 'enseignant' ? 'personnel' : 'differe';
+  return m[2] === 'enseignant' ? 'personnel' : m[2] === 'tout' ? 'tout' : 'differe';
 }
 
 /** Personnel : compte enseignant ou administrateur, ou rôle d'enseignant, de direction ou de secrétariat. */
@@ -47,7 +50,9 @@ export function estPersonnel(me: CompteMutun | null): boolean {
   if (!me?.account) return false;
   // session à moitié ouverte (second facteur exigé et pas encore validé) : aucun droit
   if (me.mfaRequired && !me.mfaVerified) return false;
-  if (me.account.kind === 'enseignant' || me.account.kind === 'admin') return true;
+  // 2/11/2026 : l'administrateur n'a jamais de droit sans second facteur VALIDÉ, même si la réponse n'annonçait pas l'exigence
+  if (me.account.kind === 'admin') return me.mfaVerified === true;
+  if (me.account.kind === 'enseignant') return true;
   return (me.roles ?? []).some(
     (r) => r === 'enseignant' || r === 'direction' || r === 'secretariat',
   );
@@ -63,10 +68,20 @@ export function estMembreBeta(me: CompteMutun | null): boolean {
   return me.betaDiffere === true && (me.roles ?? []).includes(ROLE_BETA);
 }
 
-/** Voit la publication différée : le personnel, les comptes de démonstration et le groupe « bêta fermée ». */
+/**
+ * Mode « tout voir » (2/11/2026) : compte de type `admin` ET second facteur VALIDÉ dans la session (`mfaVerified`
+ * strictement vrai, jamais déduit de l'absence d'exigence). Décidé ICI, par le serveur, à partir de ce que l'API dit
+ * du compte de la session : le drapeau `toutVoir` envoyé au navigateur n'est jamais relu et n'ouvre rien.
+ */
+export function estToutVoir(me: CompteMutun | null): boolean {
+  return me?.account?.kind === 'admin' && me.mfaVerified === true;
+}
+
+/** Voit la publication différée : le personnel, le mode « tout voir », les comptes de démonstration et le groupe « bêta fermée ». */
 export function voitDiffere(me: CompteMutun | null): boolean {
   return (
     estPersonnel(me) ||
+    estToutVoir(me) ||
     (!!me?.account && COMPTE_DEMO.test(me.account.email ?? '')) ||
     estMembreBeta(me)
   );
@@ -80,7 +95,9 @@ export function decider(nom: string, me: CompteMutun | null): 200 | 401 | 403 | 
   const droit = droitExige(nom);
   if (!droit) return 404;
   if (!me?.account) return 401;
-  return (droit === 'personnel' ? estPersonnel(me) : voitDiffere(me)) ? 200 : 403;
+  const ok =
+    droit === 'personnel' ? estPersonnel(me) : droit === 'tout' ? estToutVoir(me) : voitDiffere(me);
+  return ok ? 200 : 403;
 }
 
 /**
@@ -91,5 +108,6 @@ export function decider(nom: string, me: CompteMutun | null): 200 | 401 | 403 | 
 export function deciderAudio(droit: string, me: CompteMutun | null): 200 | 401 | 403 {
   if (!me?.account || (me.mfaRequired && !me.mfaVerified)) return 401;
   if (droit === 'public') return 200;
+  if (droit === 'tout') return estToutVoir(me) ? 200 : 403;
   return droit === 'differe' && voitDiffere(me) ? 200 : 403;
 }

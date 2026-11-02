@@ -127,6 +127,9 @@ export async function accountProfiles(): Promise<ProfileInfo[]> {
  * Sans profil, les réponses ne sont pas enregistrées (la leçon reste utilisable).
  */
 export async function demoProfileFor(_level: string): Promise<ProfileInfo | null> {
+  // 2/11/2026, mode « tout voir » (administrateur, second facteur validé) : exploration SANS profil, donc sans verrou de
+  // niveau et sans rien enregistrer (ni progression, ni tentative, ni statistique). Le serveur ne s'y fie pas.
+  if ((await cachedMe().catch(() => null))?.toutVoir === true) return null;
   const active = await activeProfile();
   if (active) return active;
   const me = (await cachedMe()) ?? (await fetchMe());

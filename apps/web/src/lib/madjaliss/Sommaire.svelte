@@ -18,6 +18,8 @@
     matnPour,
     membreBeta,
     oublierDiffere,
+    oublierTout,
+    toutVoir,
     voitDiffere,
     type Matn,
   } from './donnees';
@@ -43,11 +45,13 @@
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
   // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
   let differe = $state(false);
+  // mode « tout voir » de l'administrateur (second facteur validé) : rien n'est caché, aucun profil requis
+  let tout = $state(false);
   // groupe "bêta fermée" : bandeau "Contenu en relecture : ne pas diffuser"
   let groupe = $state(false);
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
-  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe) : null);
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe, tout) : null);
   const seances = $derived(vue?.seances ?? []);
   const numeros = $derived(seances.map((s) => s.n));
   const enCours = $derived(seanceEnCours(progres, numeros));
@@ -69,11 +73,13 @@
     profil = await demoProfileFor('').catch(() => null);
     const me = await compteActuel();
     differe = voitDiffere(me, isStaff(me));
+    tout = toutVoir(me);
     groupe = membreBeta(me);
     if (!differe) void oublierDiffere();
     const pid = profil?.id ?? null;
     progres = await lireProgres(pid, id);
-    matn = await chargerMatn(id, undefined, differe);
+    matn = await chargerMatn(id, undefined, differe, tout);
+    if (!tout) void oublierTout();
     etat = matn ? 'pret' : 'absent';
     progres = await fusionnerServeur(pid, id).catch(() => progres);
   });

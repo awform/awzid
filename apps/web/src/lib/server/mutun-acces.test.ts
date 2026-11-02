@@ -6,9 +6,11 @@ import { voitDiffere as voitDiffereClient } from '../madjaliss/donnees';
 import { isStaff, type Me } from '../session';
 import {
   decider,
+  deciderAudio,
   droitExige,
   estMembreBeta,
   estPersonnel,
+  estToutVoir,
   ROLE_BETA,
   voitDiffere,
   type CompteMutun,
@@ -22,7 +24,12 @@ const demoParent: CompteMutun = {
   account: { kind: 'parent', email: 'parent-x7k@demo.awform.test' },
 };
 const enseignant: CompteMutun = { account: { kind: 'enseignant', email: 'prof@ecole.sn' } };
-const admin: CompteMutun = { account: { kind: 'admin', email: 'admin@awzid.org' } };
+// l'API annonce toujours l'exigence du second facteur d'un administrateur (requiresMfa)
+const admin: CompteMutun = {
+  account: { kind: 'admin', email: 'admin@awzid.org' },
+  mfaRequired: true,
+  mfaVerified: true,
+};
 const direction: CompteMutun = {
   account: { kind: 'parent', email: 'directrice@ecole.sn' },
   roles: ['direction'],
@@ -190,6 +197,103 @@ describe('lot 6 : groupe « bêta fermée » (interrupteur beta_contenu_differe_
     for (const c of [membre, { ...membre, betaDiffere: false }, { ...membre, roles: [] }, invite]) {
       const me = { ...c, profiles: [] } as unknown as Me;
       expect(voitDiffere(c)).toBe(voitDiffereClient(me, isStaff(me)));
+    }
+  });
+});
+
+describe('mode « tout voir » (2/11/2026) : administrateur avec second facteur validé, rien d’autre', () => {
+  const adminSans2: CompteMutun = { ...admin, mfaVerified: false };
+  const adminSansIndication: CompteMutun = { account: { kind: 'admin', email: 'a@awzid.org' } };
+  const beta: CompteMutun = {
+    account: { kind: 'adulte', email: 'ami@exemple.org' },
+    roles: [ROLE_BETA],
+    betaDiffere: true,
+    mfaRequired: false,
+    mfaVerified: true,
+  };
+  // les séances sensibles (chapitre du jihād) et les séances différées : risala-p2, risala-p3, <texte>-differe, risala-tout
+  const differes = [
+    'risala-p2.json',
+    'risala-p3.json',
+    'ibn-ashir-differe.json',
+    'lamiyya-differe.json',
+  ];
+
+  it('estToutVoir : administrateur ET second facteur validé (strictement vrai), jamais un autre compte', () => {
+    expect(estToutVoir(admin)).toBe(true);
+    expect(estToutVoir(adminSans2)).toBe(false);
+    expect(estToutVoir(adminSansIndication)).toBe(false);
+    for (const me of [null, invite, adulte, demo, enseignant, direction, beta, mfaValide])
+      expect(estToutVoir(me), String(me?.account?.email)).toBe(false);
+    // un enseignant ou un parent dont le second facteur est validé n'est pas « tout voir » pour autant
+    expect(estToutVoir({ ...enseignant, mfaRequired: true, mfaVerified: true })).toBe(false);
+    expect(estToutVoir({ account: { kind: 'parent' }, mfaVerified: true })).toBe(false);
+  });
+
+  it('séances différées : 403 pour la bêta fermée (interrupteur éteint), un parent, un adulte ; 200 pour l’administrateur', () => {
+    const betaEteinte: CompteMutun = { ...beta, betaDiffere: false };
+    for (const f of differes) {
+      for (const me of [betaEteinte, invite, adulte]) expect(decider(f, me), f).toBe(403);
+      expect(decider(f, admin), f).toBe(200);
+      expect(decider(f, adminSans2), f).toBe(403);
+      expect(decider(f, adminSansIndication), f).toBe(403);
+      expect(decider(f, null), f).toBe(401);
+    }
+  });
+
+  it('séances sensibles (risala-tout.json) : 200 pour le SEUL administrateur avec second facteur', () => {
+    expect(droitExige('risala-tout.json')).toBe('tout');
+    expect(decider('risala-tout.json', admin)).toBe(200);
+    for (const me of [
+      invite,
+      adulte,
+      demo,
+      demoParent,
+      beta,
+      enseignant,
+      mfaValide,
+      direction,
+      adminSans2,
+      adminSansIndication,
+    ])
+      expect(decider('risala-tout.json', me), String(me.account?.email)).toBe(403);
+    expect(decider('risala-tout.json', null)).toBe(401);
+    expect(decider('risala-tout.json', {})).toBe(401);
+  });
+
+  it('notes du référent (personnel) : l’administrateur avec second facteur y a droit, pas sans', () => {
+    expect(decider('risala-enseignant.json', admin)).toBe(200);
+    expect(decider('risala-enseignant.json', adminSans2)).toBe(403);
+    expect(decider('risala-enseignant.json', beta)).toBe(403);
+  });
+
+  it('audio : le droit « tout » est réservé à l’administrateur avec second facteur ; une session à moitié ouverte : 401', () => {
+    expect(deciderAudio('tout', admin)).toBe(200);
+    for (const me of [invite, adulte, demo, beta, enseignant, mfaValide, adminSans2])
+      expect(deciderAudio('tout', me)).not.toBe(200);
+    expect(deciderAudio('tout', adminSans2)).toBe(401);
+    expect(deciderAudio('tout', null)).toBe(401);
+    // aucun droit inventé : un droit inconnu reste refusé, même pour l'administrateur
+    expect(deciderAudio('autre', admin)).toBe(403);
+  });
+
+  it('le drapeau `toutVoir` envoyé par le navigateur n’ouvre rien : seule la session (type + second facteur) compte', () => {
+    const faux = { ...invite, toutVoir: true } as unknown as CompteMutun;
+    const fauxBeta = { ...adulte, toutVoir: true, mfaVerified: true } as unknown as CompteMutun;
+    for (const me of [faux, fauxBeta]) {
+      expect(estToutVoir(me)).toBe(false);
+      expect(decider('risala-tout.json', me)).toBe(403);
+      expect(decider('risala-p3.json', me)).toBe(403);
+    }
+  });
+
+  it('le dossier gardé porte les fichiers du mode : chacun est refusé sans le droit (401 / 403)', () => {
+    const fichiers = readdirSync(SORTIE_PROTEGEE).filter((f) => /-tout\.json$/.test(f));
+    expect(fichiers).toContain('risala-tout.json');
+    for (const f of fichiers) {
+      expect(decider(f, null), f).toBe(401);
+      expect(decider(f, enseignant), f).toBe(403);
+      expect(decider(f, beta), f).toBe(403);
     }
   });
 });

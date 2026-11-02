@@ -24,6 +24,11 @@ export interface Me {
   roles?: string[];
   /** lot 6 : membre du groupe « bêta fermée » avec le droit de voir le contenu différé de Madjaliss (calculé par l'API) */
   betaDiffere?: boolean;
+  /**
+   * 2/11/2026 : mode « tout voir » — compte dmin avec second facteur validé dans la session (calculé par l'API, jamais
+   * par le navigateur). Le serveur revérifie à chaque fichier gardé : ce drapeau n'ouvre rien à lui seul.
+   */
+  toutVoir?: boolean;
   ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
   /** V2-3 : session d'un enfant connecté par identifiant (limitée à son profil, apprentissage seulement) */
   enfantSession?: boolean;

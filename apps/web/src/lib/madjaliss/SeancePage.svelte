@@ -16,6 +16,8 @@
     matnPour,
     membreBeta,
     oublierDiffere,
+    oublierTout,
+    toutVoir,
     voitDiffere,
     type Matn,
   } from './donnees';
@@ -31,12 +33,14 @@
   let staff = $state(false);
   // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
   let differe = $state(false);
+  // mode « tout voir » de l'administrateur (second facteur validé)
+  let tout = $state(false);
   // groupe "bêta fermée" : bandeau "Contenu en relecture : ne pas diffuser"
   let groupe = $state(false);
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
-  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe) : null);
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe, tout) : null);
   const seances = $derived(vue?.seances ?? []);
   const seance = $derived(seances.find((s) => s.n === n) ?? null);
   const suivante = $derived(seances.find((s) => s.n > n)?.n ?? null);
@@ -50,13 +54,15 @@
     const me = await compteActuel();
     staff = isStaff(me);
     differe = voitDiffere(me, staff);
+    tout = toutVoir(me);
     groupe = membreBeta(me);
     if (!differe) void oublierDiffere();
     progres = await lireProgres(profil?.id ?? null, id);
-    matn = await chargerMatn(id, undefined, differe);
+    matn = await chargerMatn(id, undefined, differe, tout);
+    if (!tout) void oublierTout();
     // grand texte (ar-Risāla) : seules les phrases de la partie de cette séance sont chargées
     // (seulement si la séance est visible pour ce profil : un invité de la bêta ne télécharge rien)
-    if (matn && matnPour(matn, profil?.kind ?? null, differe).seances.some((s) => s.n === n))
+    if (matn && matnPour(matn, profil?.kind ?? null, differe, tout).seances.some((s) => s.n === n))
       matn = await chargerPartie(matn, n);
     etat = matn ? 'pret' : 'absent';
   });
@@ -80,7 +86,8 @@
     enseignant={staff}
     {suivante}
     {progres}
-    kind={profil?.kind ?? null}
+    kind={tout ? 'adulte' : (profil?.kind ?? null)}
+    {tout}
   />
   <p class="statut" data-testid="mj-statut"><Bidi text={t('mj.statut')} /></p>
 {:else}

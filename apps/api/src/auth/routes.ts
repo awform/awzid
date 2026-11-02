@@ -111,6 +111,7 @@ import {
   registerEnfantLogin,
 } from './enfant-login.js';
 import { registerRecovery } from './recuperation.js';
+import { voitTout } from './tout-voir.js';
 import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
 import {
@@ -292,9 +293,18 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         f.regles.filter((r) => r.cle === 'beta_contenu_differe_visible'),
       );
     }
+    // 2/11/2026 : mode « tout voir » du client — compte dmin ET second facteur validé dans CETTE session, jamais en
+    // tablette ni en session limitée d'un élève. Calculé ici seulement ; les routes gardées revérifient côté serveur.
+    const toutVoir = voitTout({
+      kind: a.kind,
+      mfaVerified,
+      totpEnabled: a.totpEnabled,
+      limitee: !!tablet || !!soloProfileId,
+    });
     return {
       roles,
       betaDiffere,
+      toutVoir,
       ecoles,
       tablette,
       account: {

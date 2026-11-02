@@ -9,6 +9,13 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 02/11/2026 — Mode « tout voir » du compte administrateur (branche `tout-voir-wip`) ; NON fusionné, NON déployé
+
+- **Critère** (aucune variable d'environnement) : compte `admin` ET second facteur validé dans la session (`apps/api/src/auth/tout-voir.ts`) ; `GET /auth/me` renvoie `toutVoir`. Jamais pour la tablette de classe ni une session limitée (enfant, élève d'école). Le serveur reste l'autorité : `estToutVoir` (`mutun-acces.ts`) relit la session à chaque fichier gardé ; le drapeau n'ouvre rien. `estPersonnel` exige désormais `mfaVerified === true` pour un administrateur.
+- **Interface** : `matnPour(…, tout)` (adulte, différé, pudeur levée), `voitDiffere`, entrée « Tout voir » dans la barre de l'administrateur (`/admin/explorer`, 5 langues) : tous les niveaux de toutes les pistes (`lib/explorer.ts`), sans verrou. Exploration SANS profil (`demoProfileFor` renvoie null) : aucune progression, tentative ni statistique écrite.
+- **Séances sensibles de la Risāla** (S133 à S135, jihād ; S256, commerce en pays ennemi) : retirées du sommaire public, des parties gardées ordinaires et des notes de l'enseignant ; dans le seul fichier gardé `risala-tout.json` (droit « tout » : administrateur avec second facteur). Le sommaire public passe à 261 séances. Les autres séances différées gardent leur titre public.
+
+---
 ## 01/11/2026 (soir) — MISE EN LIGNE en production : écriture niveau 1 + lots V2-4/V2-5 (inscription en lot) — version `0fdac21`
 
 - **Déployé** sur awzid-beta : `main` = `0fdac21` (fusion `--no-ff` de `ecriture-fin-wip` 84a18b4 puis `inscription-v2-45-wip` e2a3c1c, sur 9823ec5 ; seul conflit : `reports/budget-web.md`, rapport régénéré). Édition `prod-141ebc0721` (778 unités, 5729 exercices, 1145 illustrations). Chaîne du déploiement : migrate, roles (droit DELETE sur `profile_login` pour le rôle de l'API), import de l'édition, redémarrage.

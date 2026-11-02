@@ -106,14 +106,14 @@ test('invité de la bêta : la Risāla montre ses 72 séances ouvertes ; une sé
   expect(vus.filter((p) => /\/mutun\/.+(-differe|-p\d+|-enseignant)\.json$/.test(p))).toEqual([]);
 });
 
-test('démonstration : 265 séances au sommaire ; deux séances s’ouvrent, une seule partie téléchargée chacune', async ({
+test('démonstration : 261 séances au sommaire (le chapitre du jihād est réservé à « tout voir ») ; deux séances s’ouvrent, une seule partie téléchargée chacune', async ({
   page,
 }) => {
   await compteDemo(page);
   const vus: string[] = [];
   page.on('request', (r) => vus.push(new URL(r.url()).pathname));
   await page.goto('/madjaliss/risala');
-  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(265);
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(261);
   await expect(page.getByTestId('mj-statut')).toHaveText(STATUT_FR);
   await expect(page.locator('li[data-seance="1"] [data-testid="mj-differe"]')).toBeVisible();
   // le sommaire seul ne télécharge aucune phrase
