@@ -9,6 +9,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 02/11/2026 — MISE EN LIGNE en production : « Tarteel titan » (phases 2 et 3), réservé au compte d'essai
+
+- **Déployé** sur awzid-beta : `main` = `bce138c` (fusion `--no-ff` de `tarteel-titan-3-wip` f1f7a88 sur d0b6a57, plus 2 commits de garde). Sauvegarde avant : `awform-20261102-062646.dump.gpg` (677 Mo, copie dans le bucket, service en succès). Service `ecoute-ia` : image `bce138c` = image 0fdac21 + les 6 fichiers Python (construite localement, poussée en une couche).
+- **Garde** : nouvelle fonction du registre F5 `tarteel_fenetre` (COUPÉE par défaut). Le mode (fenêtre glissante, décodage contraint par le texte attendu) est décidé par le serveur ; sinon le suivi d'avant. La case « devant le maître » n'est montrée que si la fonction est ouverte. `AWFORM_ECOUTE_SUIVI_MODE=suivi` ramène tout le monde (variables ajoutées à `env-scopes.conf`). État en prod : `tarteel_fenetre` = `beta`, et le seul membre du canal bêta est le compte awzid21 (profil « Momo »).
+- **Tests** : `pnpm check` vert sauf B1 (chronométrage sous charge, 58-87 ms pour 50) ; budget élève marge 3871 o ; pytest ecoute-ia 37 ; e2e 219 passés / 19 ignorés (shazam, a5, tarteel, hifz*, récitation, madd, f5, lecteur, coran-lecture, eleves-lot, a27, priere).
+- **Revue de sécurité** : texte attendu ≤ 1500 mots côté API (2000 mots, 64 car. par mot côté service), texte venant de la base Tanzil, jamais de l'appareil ; en mémoire, effacé avec la séance (purge à 60 s pour les non réclamés) ; aucun eval, regex fixes ; service non publié ; fenêtre = 3 séances dans `ECOUTE_DIRECT_MAX` ; le mode ne vient pas de la requête. Aucun défaut sérieux.
+- **À surveiller** : la prod borne l'écoute à 1,5 CPU et 1 fil ; la fenêtre coûte ~3,7× : latence possible pour le testeur.
+
 ## 01/11/2026 (soir) — MISE EN LIGNE en production : écriture niveau 1 + lots V2-4/V2-5 (inscription en lot) — version `0fdac21`
 
 - **Déployé** sur awzid-beta : `main` = `0fdac21` (fusion `--no-ff` de `ecriture-fin-wip` 84a18b4 puis `inscription-v2-45-wip` e2a3c1c, sur 9823ec5 ; seul conflit : `reports/budget-web.md`, rapport régénéré). Édition `prod-141ebc0721` (778 unités, 5729 exercices, 1145 illustrations). Chaîne du déploiement : migrate, roles (droit DELETE sur `profile_login` pour le rôle de l'API), import de l'édition, redémarrage.
