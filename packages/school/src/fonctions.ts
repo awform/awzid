@@ -39,6 +39,7 @@ export const FONCTION_CLES = [
   'coran_mots',
   'tajwid_madd',
   'shazam_coran',
+  'tarteel_fenetre',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -155,6 +156,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // `ecoute-ia`) : bouton du lecteur, écran `/coran/retrouver` (en ligne), mode « suivi » du panneau « Réciter et
   // vérifier ». COUPÉ par défaut partout ; accord « analyse vocale par IA » (enfant : code parent), voix jamais gardée.
   shazam_coran: { defaut: 'off' },
+  // « Tarteel titan » (11/2026) : suivi de la récitation par FENÊTRE GLISSANTE avec décodage contraint par le texte attendu (mots
+  // ajoutés, versets sautés, oublis) et mode « devant le maître » (hésitations et aide comptées à part). COUPÉ par défaut partout ;
+  // l'administrateur l'ouvre au « canal bêta » et ne marque dans le canal bêta que les comptes d'essai. Coupé, le suivi reste
+  // celui d'avant (passages relus avec contexte). Coûte environ 3,7 fois plus de calcul : compte pour 3 dans ECOUTE_DIRECT_MAX.
+  tarteel_fenetre: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

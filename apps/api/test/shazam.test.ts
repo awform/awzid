@@ -30,9 +30,14 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
   let c: Ctx;
   let ecouteOuvert = false;
   let shazamOuvert = false;
+  let tarteelOuvert = false;
   let reponse: () => RetrouverBrut | { erreur: string; statut: number };
   const recus: Buffer[] = [];
   const directs: boolean[] = [];
+  /** mode demandé au service à chaque morceau (`false`, `true` = passages, ou `fenetre`) */
+  const modes: Array<boolean | string | undefined> = [];
+  /** textes attendus envoyés au service (mode fenêtre) */
+  const attendus: Array<{ sid: string; mots: string[]; versets: string[]; fac: number[] }> = [];
   let P: Record<string, string>;
   let PIN: Record<string, string>;
   let A: Record<string, string>;
@@ -43,9 +48,13 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
     ecouter: async () => ({ erreur: 'inutile', statut: 503 }),
     direct: async (_sid, pcm, suivi) => {
       directs.push(!!suivi);
+      modes.push(suivi);
       return { mots: [], partiel: [], t: pcm.length / 32000 };
     },
     finDirect: async () => {},
+    attendu: async (sid, t) => {
+      attendus.push({ sid, ...t });
+    },
     sante: async () => true,
     retrouver: async (audio) => {
       recus.push(audio);
@@ -62,7 +71,12 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
 
   beforeAll(async () => {
     c = await setup(URL_!, [], {
-      ecoute: { client, decision: () => ecouteOuvert, shazam: () => shazamOuvert },
+      ecoute: {
+        client,
+        decision: () => ecouteOuvert,
+        shazam: () => shazamOuvert,
+        tarteel: () => tarteelOuvert,
+      },
     });
     await c.h.db.insert(t.quranVerse).values(VERSETS);
     ({ P, pin: PIN } = await parent(c, 'parent-shazam@exemple.org'));
@@ -217,6 +231,59 @@ describe.skipIf(!URL_)('shazam_coran : Retrouve ce verset et suivi (awform_test)
     expect(directs.at(-1)).toBe(false);
     shazamOuvert = true;
     ecouteOuvert = false;
+  });
+
+  it('suivi de la récitation : passages relus pour tous, fenêtre glissante SEULEMENT si tarteel_fenetre est ouvert, AWFORM_ECOUTE_SUIVI_MODE=suivi ramène tout le monde', async () => {
+    ecouteOuvert = true;
+    shazamOuvert = true;
+    const Q = 's=2&from=1&to=3&suivi=1';
+    const morceau = (sid: string) =>
+      c.app.inject({
+        method: 'POST',
+        url: `/api/v1/ecoute/direct/${sid}`,
+        payload: Buffer.alloc(16000),
+        headers: { 'x-awform': '1', 'content-type': 'application/octet-stream', ...P },
+      });
+    const avant = process.env.AWFORM_ECOUTE_SUIVI_MODE;
+    try {
+      delete process.env.AWFORM_ECOUTE_SUIVI_MODE;
+      // interrupteur « tarteel_fenetre » coupé (défaut) : le mode d'avant, aucun texte attendu envoyé au service
+      tarteelOuvert = false;
+      const a = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      expect(a.json()).toMatchObject({ suivi: true, mode: 'suivi' });
+      expect((await morceau(a.json().sid)).statusCode).toBe(200);
+      expect(modes.at(-1)).toBe('suivi');
+      expect(attendus.some((x) => x.sid === a.json().sid)).toBe(false);
+      // ouvert pour ce compte : la fenêtre glissante
+      tarteelOuvert = true;
+      const f = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      expect(f.json()).toMatchObject({ suivi: true, mode: 'fenetre' });
+      expect((await morceau(f.json().sid)).statusCode).toBe(200);
+      expect(modes.at(-1)).toBe('fenetre');
+      // le texte attendu de la portion (mots Tanzil exacts, versets) est envoyé au service, une fois
+      const t = attendus.filter((x) => x.sid === f.json().sid);
+      expect(t).toHaveLength(1);
+      expect(t[0]!.mots.length).toBeGreaterThan(3);
+      expect(t[0]!.versets.length).toBe(t[0]!.mots.length);
+      expect(new Set(t[0]!.versets)).toEqual(new Set(['2:1', '2:2', '2:3']));
+      // AWFORM_ECOUTE_TEXTE=off : rien n'est envoyé
+      process.env.AWFORM_ECOUTE_TEXTE = 'off';
+      const o = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      delete process.env.AWFORM_ECOUTE_TEXTE;
+      expect(attendus.some((x) => x.sid === o.json().sid)).toBe(false);
+      // retour explicite aux passages relus avec contexte (comportement d'avant)
+      process.env.AWFORM_ECOUTE_SUIVI_MODE = 'suivi';
+      const p = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
+      expect(p.json()).toMatchObject({ suivi: true, mode: 'suivi' });
+      expect(attendus.some((x) => x.sid === p.json().sid)).toBe(false);
+      await morceau(p.json().sid);
+      expect(modes.at(-1)).toBe('suivi');
+    } finally {
+      if (avant === undefined) delete process.env.AWFORM_ECOUTE_SUIVI_MODE;
+      else process.env.AWFORM_ECOUTE_SUIVI_MODE = avant;
+      tarteelOuvert = false;
+      ecouteOuvert = false;
+    }
   });
 
   it('personnel : jamais ; retrait de l’accord : plus de recherche', async () => {

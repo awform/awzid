@@ -34,6 +34,7 @@ export const FERMEES_ENFANT: readonly FonctionCle[] = [
   'cahier_parler',
   'khatma_wird',
   'shazam_coran',
+  'tarteel_fenetre',
   'hifz_classe',
 ];
 

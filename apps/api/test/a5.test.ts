@@ -132,6 +132,8 @@ describe.skipIf(!URL_)('A5 : écoute de la récitation (awform_test)', () => {
     const enf = (await verifier(P)).json();
     expect(enf.resultat.statut).toBe('resultat');
     expect(enf.instants).toBeUndefined();
+    // hésitations : des nombres seulement (jamais les mots entendus), pour tous les profils
+    expect(enf.hesitations).toEqual({ reprises: 0, pauses: 0 });
     expect(JSON.stringify(enf)).not.toContain('instants');
     const ad = (await verifier(A, adulteP)).json();
     expect(ad.instants).toHaveLength(ad.positions.length);

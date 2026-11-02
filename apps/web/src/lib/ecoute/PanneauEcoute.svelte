@@ -75,6 +75,14 @@
   let versets = $state<Array<{ s: number; a: number; text: string }>>([]);
   let att = $state<MotAttendu[]>([]);
   let masque = $state(untrack(() => memoriser));
+  /**
+   * « Récitation devant le maître » (test de hifẓ) : les reprises et longues pauses sont comptées À PART comme « hésitations »
+   * (jamais des erreurs) et chaque « Un indice » comme « aide reçue » ; le résultat les distingue des erreurs. Entraînement
+   * (case décochée) : reprise, retour en arrière et pause ne sont jamais des erreurs, l'indice est permis sans être compté.
+   */
+  let devantMaitre = $state(false);
+  let hesitations = $state<{ reprises: number; pauses: number } | null>(null);
+  let aideRecue = $state(0);
   let modeDirect = $state(false);
   let secondes = $state(0);
   let resultat = $state<ResultatEcoute | null>(null);
@@ -182,7 +190,23 @@
     etape = 'accord';
   }
 
+  /**
+   * « Un indice » (texte caché) : montre quelques secondes le mot attendu ensuite, comme le « coup d'œil » des applis de
+   * mémorisation. Ce n'est pas une erreur : le nombre d'indices demandés est seulement affiché.
+   */
+  let indice = $state(-1);
+  let indices = $state(0);
+  let finIndice: ReturnType<typeof setTimeout> | null = null;
+  function demanderIndice() {
+    indice = direct?.courant ?? 0;
+    indices++;
+    if (finIndice) clearTimeout(finIndice);
+    finIndice = setTimeout(() => (indice = -1), 2500);
+  }
+
   async function commencer(enDirect: boolean) {
+    indice = -1;
+    indices = 0;
     erreur = '';
     signale = false;
     resultat = null;
@@ -253,9 +277,21 @@
     const r: ResultatEcoute = v.v.resultat;
     resultat = r;
     instants = v.v.instants ?? null;
+    hesitations = devantMaitre ? (v.v.hesitations ?? null) : null;
+    aideRecue = devantMaitre ? indices : 0;
     etape = 'resultat';
     // bilan de séance (positions des mots à revoir, jamais l'audio) : repris par le carnet
-    await garderBilan(profileId, bilanDe(portion, att, r));
+    await garderBilan(
+      profileId,
+      bilanDe(
+        portion,
+        att,
+        r,
+        hesitations
+          ? { hesitations: hesitations.reprises + hesitations.pauses, aide: aideRecue }
+          : undefined,
+      ),
+    );
     if (etat.shazam) await majProgres(r);
   }
 
@@ -398,6 +434,15 @@
               ><input type="checkbox" bind:checked={masque} data-testid="ecoute-masque" />
               {t('ec.masquer')}</label
             >
+            {#if etat.shazam && fn('tarteel_fenetre')}
+              <label class="small"
+                ><input type="checkbox" bind:checked={devantMaitre} data-testid="ecoute-maitre" />
+                {t('ec.devant_maitre')}</label
+              >
+              {#if devantMaitre}<p class="small muted" data-testid="ecoute-maitre-aide">
+                  <Bidi text={t('ec.devant_maitre_aide')} />
+                </p>{/if}
+            {/if}
           {/if}
         </div>
       {:else if etape === 'ecoute' || etape === 'direct'}
@@ -465,6 +510,46 @@
         </div>
       {/if}
 
+      {#if etape === 'direct' && masque}
+        <p class="small">
+          <button type="button" onclick={demanderIndice} data-testid="ecoute-indice"
+            >{t('ec.indice')}</button
+          >
+          {#if indices}<span class="muted" data-testid="ecoute-indices"
+              ><Bidi
+                text={t(devantMaitre ? 'ec.aide_recue_n' : 'ec.indices', { n: indices })}
+              /></span
+            >{/if}
+        </p>
+      {/if}
+
+      {#if etape === 'resultat' && hesitations && resultat?.statut === 'resultat'}
+        <!-- devant le maître : trois comptes DISTINCTS (jamais une note) — erreurs, hésitations, aide reçue -->
+        <section
+          class="maitre"
+          aria-labelledby="ec-maitre-titre"
+          data-testid="ecoute-maitre-resultat"
+        >
+          <h3 id="ec-maitre-titre">{t('ec.maitre_titre')}</h3>
+          <ul class="small">
+            <li data-testid="maitre-erreurs">
+              <Bidi text={t('ec.maitre_erreurs', { n: resultat.ecarts.length })} />
+            </li>
+            <li data-testid="maitre-hesitations">
+              <Bidi
+                text={t('ec.maitre_hesitations', {
+                  n: hesitations.reprises + hesitations.pauses,
+                  r: hesitations.reprises,
+                  p: hesitations.pauses,
+                })}
+              />
+            </li>
+            <li data-testid="maitre-aide"><Bidi text={t('ec.maitre_aide', { n: aideRecue })} /></li>
+          </ul>
+          <p class="small muted"><Bidi text={t('ec.maitre_note')} /></p>
+        </section>
+      {/if}
+
       {#if versets.length}
         <TexteEcoute
           {versets}
@@ -472,6 +557,7 @@
           {etats}
           {ajouts}
           {sautes}
+          {indice}
           courant={direct?.courant ?? -1}
           masque={masque && etape === 'direct'}
           surverset={etape === 'resultat' && etat.shazam && resultat?.statut === 'resultat'

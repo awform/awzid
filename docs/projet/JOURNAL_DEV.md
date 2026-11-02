@@ -9,6 +9,15 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 02/11/2026 — MISE EN LIGNE en production : « Tarteel titan » (phases 2 et 3), réservé au compte d'essai
+
+- **Déployé** sur awzid-beta : `main` = `bce138c` (fusion `--no-ff` de `tarteel-titan-3-wip` f1f7a88 sur d0b6a57, plus 2 commits de garde). Sauvegarde avant : `awform-20261102-062646.dump.gpg` (677 Mo, copie dans le bucket, service en succès). Service `ecoute-ia` : image `bce138c` = image 0fdac21 + les 6 fichiers Python (construite localement, poussée en une couche).
+- **Garde** : nouvelle fonction du registre F5 `tarteel_fenetre` (COUPÉE par défaut). Le mode (fenêtre glissante, décodage contraint par le texte attendu) est décidé par le serveur ; sinon le suivi d'avant. La case « devant le maître » n'est montrée que si la fonction est ouverte. `AWFORM_ECOUTE_SUIVI_MODE=suivi` ramène tout le monde (variables ajoutées à `env-scopes.conf`). État en prod : `tarteel_fenetre` = `beta`, et le seul membre du canal bêta est le compte awzid21 (profil « Momo »).
+- **Tests** : `pnpm check` vert sauf B1 (chronométrage sous charge, 58-87 ms pour 50) ; budget élève marge 3871 o ; pytest ecoute-ia 37 ; e2e 219 passés / 19 ignorés (shazam, a5, tarteel, hifz*, récitation, madd, f5, lecteur, coran-lecture, eleves-lot, a27, priere).
+- **Revue de sécurité** : texte attendu ≤ 1500 mots côté API (2000 mots, 64 car. par mot côté service), texte venant de la base Tanzil, jamais de l'appareil ; en mémoire, effacé avec la séance (purge à 60 s pour les non réclamés) ; aucun eval, regex fixes ; service non publié ; fenêtre = 3 séances dans `ECOUTE_DIRECT_MAX` ; le mode ne vient pas de la requête. Aucun défaut sérieux.
+- **À surveiller** : la prod borne l'écoute à 1,5 CPU et 1 fil ; la fenêtre coûte ~3,7× : latence possible pour le testeur.
+
+
 ## 02/11/2026 — Mode « tout voir » du compte administrateur (branche `tout-voir-wip`) ; NON fusionné, NON déployé
 
 - **Critère** (aucune variable d'environnement) : le compte du CLIENT SEUL (identifiant `01a14091-…`, constante partagée `@awform/school/tout-voir`), de type `admin`, second facteur activé et validé dans la session, hors démonstration, tablette et session limitée (`apps/api/src/auth/tout-voir.ts`) ; `GET /auth/me` renvoie `toutVoir`. Jamais pour la tablette de classe ni une session limitée (enfant, élève d'école). Le serveur reste l'autorité : `estToutVoir` (`mutun-acces.ts`) relit la session à chaque fichier gardé ; le drapeau n'ouvre rien. `estPersonnel` exige désormais `mfaVerified === true` pour un administrateur.
@@ -39,6 +48,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 01/11/2026 (phase 2) — « Tarteel titan » : banc élargi, veto de la tête CTC, mode « devant le maître » (branche `tarteel-titan-2-wip`) ; NON déployé
+
+- Banc 2 : 190 séances (50 justes, 81 avec erreur, 59 reprises/retours/mots répétés), 44 passages dont 11 à versets très proches, 11 récitateurs (everyayah en lecture seule). Erreurs vues : avant 9/81, phase 1 22/81, phase 2 **49/81 (60 %) ; moitié de vérification 18/40 (45 %, IC 31-60 %)** ; 0 fausse alerte sur 50 justes, 3/59 reprises-retours. 18/22 et « erreur < 3 s » NON atteints (erreur dite 5,0 s) ; le mot dévoilé n'est pas plus rapide qu'avant à charge égale (1,47 s contre 1,24 s).
+- Mode « Récitation devant le maître » : hésitations (reprises, pauses > 4 s) et aide reçue (indices) comptées à part. Détail, WebSocket (non codé) et reste à faire : `TARTEEL_TITAN_2026-11.md`.
+
+## 01/11/2026 — Suivi de la récitation « Tarteel titan » (branche `tarteel-titan-wip`, interrupteur `shazam_coran`) ; NON déployé
+
+- Banc reproductible (`services/ecoute-ia/eval/banc.*`, 76 séances réelles + fautes simulées + cas normaux : mot répété, reprise, retour, pause, bruit, téléphone), rejoué en temps réel.
+- Suivi par fenêtre glissante (service `mode=fenetre`, `FenetreSuivi` dans `@awform/hifz`), par défaut ; `AWFORM_ECOUTE_SUIVI_MODE=suivi` ramène l'ancien mode. Mot dévoilé : médiane 1,6 → 1,43 s, 90ᵉ centile 5,2 → 2,84 s ; erreur dite : 8,5 → 4,7 s ; fausses alertes sur 54 séances normales : 24 → 1. Calcul ≈ 3,7 × plus lourd.
+- Reprises/retours jamais signalés, mots mal lus en série = doute, historique des erreurs, « Un indice ». Détail : `TARTEEL_TITAN_2026-11.md`.
 ## 31/10/2026 — Tri de la passe 3 (gpt-6.1-sol, 29 au 31/10) reporté dans l'application (branche `livres-passe3-wip`) ; NON fusionné, NON déployé
 
 - **Livres** : copie `~/awform-content.tri31` (`infra/sync-content.ps1 -Dest awform-content.tri31`, 1 182 fichiers ; différences avec `~/awform-content` : 85 fichiers de livres corrigés + `registre/coran.json`) ; 31 livres, **3 825 versets contrôlés octet par octet, 0 erreur**, 0 erreur bloquante ; `controle-corriges -Ordre` (27 livres) : rien ; `gel-ids` : 5 220 exercices, 0 ajouté. À faire à la mise en ligne : échanger `~/awform-content` et `~/awform-content.tri31`, puis importer l'édition. Aucun cahier modifié (aucune des 7 phrases n'y figure).

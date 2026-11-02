@@ -345,3 +345,5 @@ Suite proposée, dans l'ordre : (1) FastConformer « cache-aware streaming » (c
 alignement sur la lecture précédente (un mot déjà validé n'est jamais revu) ; (2) WebSocket (§ 4) ; (3) remesurer avec `suivi_continu_sim.py`, objectif ≤ 1 fausse alerte sur 40 séances
 justes et délai médian < 3 s avec calcul ; (4) mesure au calme (verrou commun tenu) ; (5) vraies voix d'adultes avant d'ouvrir.
 Pour ouvrir plus tôt sans rien changer : dire l'écart dès la pause suivante (aide actuelle « une dizaine de secondes après »).
+
+**Suite (01/11/2026) :** le suivi par fenêtre glissante avec validation par accord entre lectures successives, mesuré sur un banc de 76 séances, remplace les passages par défaut ; voir `TARTEEL_TITAN_2026-11.md`.

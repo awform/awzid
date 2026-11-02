@@ -33,6 +33,7 @@ import {
   chercherDouble,
   comparer,
   decisionRetrouver,
+  hesitations,
   IndexCoran,
   instantsDesMots,
   motsARevoir,
@@ -80,7 +81,31 @@ export interface DirectBrut {
   stables_ctc?: MotEntendu[];
   /** mode suivi : mots provisoires du dernier passage fini (remplacent les précédents) */
   provisoires?: MotEntendu[];
+  /** mode fenêtre (shazam_coran) : lecture des dernières secondes ; mots RNN-T et CTC, zones de voix, instants de la séance */
+  fenetre?: boolean;
+  mots_ctc?: MotEntendu[];
+  /** mode fenêtre avec texte attendu : écarts sûrs du décodage contraint (rang des mots attendus) */
+  ecarts_texte?: Array<{ type: 'ajoute' | 'verset_saute' | 'oublie'; i: number; fin: number }>;
 }
+/** Texte attendu envoyé au service pour le décodage contraint (mots Tanzil exacts, verset « s:a », mots facultatifs). */
+export interface TexteAttendu {
+  mots: string[];
+  versets: string[];
+  fac: number[];
+}
+/** Décodage contraint par le texte attendu (phase 3 de « Tarteel titan ») : AWFORM_ECOUTE_TEXTE=off le coupe. */
+export const texteOuvert = () => (process.env.AWFORM_ECOUTE_TEXTE ?? 'on') !== 'off';
+/** Façon de suivre la récitation en direct : `suivi` = passages relus avec contexte ; `fenetre` = fenêtre glissante */
+export type ModeSuivi = 'suivi' | 'fenetre';
+/**
+ * Mode du suivi : `fenetre` (fenêtre glissante, chantier « Tarteel titan » du 01/11/2026 : mots dévoilés plus vite, erreurs
+ * dites ~2× plus tôt, moins de fausses alertes sur reprises) SEULEMENT pour les comptes pour qui l'interrupteur
+ * « tarteel_fenetre » est ouvert (registre F5, COUPÉ par défaut, canal bêta) ; `suivi` = les passages relus avec contexte (le
+ * mode d'avant) pour tous les autres. AWFORM_ECOUTE_SUIVI_MODE=suivi ramène tout le monde à `suivi` sans toucher à la base
+ * (la fenêtre coûte environ 3,7× plus de calcul). Le mode ne vient JAMAIS de la requête de l'appareil.
+ */
+export const modeSuivi = (tarteel: boolean): ModeSuivi =>
+  tarteel && process.env.AWFORM_ECOUTE_SUIVI_MODE !== 'suivi' ? 'fenetre' : 'suivi';
 /** « Retrouve ce verset » : deux lectures du même extrait (RNN-T et tête CTC), voix entendue */
 export interface RetrouverBrut {
   mots: MotEntendu[];
@@ -100,8 +125,10 @@ export const lecturesDe = (r: RetrouverBrut): string[][] =>
 export type Echec = { erreur: string; statut: number };
 export interface ClientEcoute {
   ecouter(audio: Buffer, mime: string): Promise<EcouteBrute | Echec>;
-  direct(sid: string, pcm: Buffer, suivi?: boolean): Promise<DirectBrut | Echec>;
+  direct(sid: string, pcm: Buffer, suivi?: boolean | ModeSuivi): Promise<DirectBrut | Echec>;
   finDirect(sid: string): Promise<void>;
+  /** mode fenêtre : texte attendu de la séance (absent : pas de décodage contraint) */
+  attendu?(sid: string, texte: TexteAttendu): Promise<void>;
   sante(): Promise<boolean>;
   /** shazam_coran : mode « retrouver » du service (absent : fonction indisponible) */
   retrouver?(audio: Buffer, mime: string): Promise<RetrouverBrut | Echec>;
@@ -134,7 +161,7 @@ export function clientEcouteHttp(base: string): ClientEcoute {
       ),
     direct: (sid, pcm, suivi = false) =>
       appel<DirectBrut>(
-        `/direct/${sid}${suivi ? '?mode=suivi' : ''}`,
+        `/direct/${sid}${suivi ? `?mode=${suivi === true ? 'suivi' : suivi}` : ''}`,
         {
           method: 'POST',
           headers: { 'content-type': 'application/octet-stream' },
@@ -144,6 +171,17 @@ export function clientEcouteHttp(base: string): ClientEcoute {
       ),
     finDirect: async (sid) => {
       await appel(`/direct/${sid}`, { method: 'DELETE' }, 5_000);
+    },
+    attendu: async (sid, texte) => {
+      await appel(
+        `/direct/${sid}/attendu`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(texte),
+        },
+        5_000,
+      );
     },
     // 15 s d'audio : quelques dixièmes de seconde de calcul au calme ; 30 s laissent passer la file d'attente
     retrouver: (audio, mime) =>
@@ -204,6 +242,12 @@ export const decisionShazamParDefaut =
   async (req, profileId) =>
     !coutsCoupes() && (await fonctionsDe(db, req, profileId)).fonctions.shazam_coran === true;
 
+/** INTERRUPTEUR « tarteel_fenetre » (registre F5, COUPÉ par défaut, canal bêta) : mode fenêtre, décodage contraint, « devant le maître ». */
+export const decisionTarteelParDefaut =
+  (db: Db): DecisionShazam =>
+  async (req, profileId) =>
+    !coutsCoupes() && (await fonctionsDe(db, req, profileId)).fonctions.tarteel_fenetre === true;
+
 /** Durée maximale d'un extrait de « Retrouve ce verset » (l'appareil s'arrête à 15 s) */
 export const RETROUVER_MAX_S = 20;
 /** 15 s d'Opus ≈ 60 Ko ; marge pour le mp4 de Safari */
@@ -248,6 +292,8 @@ export interface OptionsEcoute {
   consentement?: (db: Db, profileId: string) => Promise<boolean>;
   /** interrupteur shazam_coran (défaut : registre F5 et disjoncteur de coût) */
   shazam?: DecisionShazam;
+  /** interrupteur tarteel_fenetre (défaut : registre F5 et disjoncteur de coût) */
+  tarteel?: DecisionShazam;
 }
 
 // ------------------------------------------------------------------ routes
@@ -257,11 +303,12 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
   const decision = opts.decision ?? decisionEcouteIaParDefaut;
   const consenti = opts.consentement ?? consentementAnalyseVocale;
   const shazam = opts.shazam ?? decisionShazamParDefaut(db);
+  const tarteel = opts.tarteel ?? decisionTarteelParDefaut(db);
   const compteur = new Map<string, number[]>();
   /** séances du direct : sid -> propriétaire (en mémoire ; l'audio, lui, n'est jamais ici) */
   const seances = new Map<
     string,
-    { accountId: string; profileId: string; fin: number; suivi: boolean }
+    { accountId: string; profileId: string; fin: number; suivi: false | ModeSuivi }
   >();
 
   const profileOf = async (id: string) => {
@@ -471,8 +518,8 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
       if (!directOuvert()) return err(reply, 404, 'fonction_fermee');
       if (!client) return err(reply, 503, 'ecoute_indisponible');
       if (!(await consenti(db, p.id))) return err(reply, 409, 'accord_requis');
-      if (!(await portion(req.query.s, req.query.from, req.query.to)))
-        return err(reply, 400, 'portion_invalide');
+      const att = await portion(req.query.s, req.query.from, req.query.to);
+      if (!att) return err(reply, 400, 'portion_invalide');
       if (!quota(req.auth!.accountId)) return err(reply, 429, 'trop_de_demandes');
       // une seule séance par compte : la précédente est close (son audio effacé)
       for (const [sid, s] of seances)
@@ -481,14 +528,29 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
           await client.finDirect(sid);
         }
       const sid = randomUUID();
-      const suivi = req.query.suivi === 1 && (await shazam(req, p.id));
+      const suivi =
+        req.query.suivi === 1 && (await shazam(req, p.id))
+          ? modeSuivi(await tarteel(req, p.id))
+          : false;
       seances.set(sid, {
         accountId: req.auth!.accountId,
         profileId: p.id,
         fin: Date.now() + (ECOUTE_MAX_S + 30) * 1000,
         suivi,
       });
-      return { sid, maxSecondes: ECOUTE_MAX_S, ...(suivi ? { suivi: true } : {}) };
+      // fenêtre : le service reçoit le texte attendu (décodage contraint : mots ajoutés, versets sautés) ; sans lui, le
+      // suivi reste celui d'avant (un échec ici n'empêche rien)
+      if (suivi === 'fenetre' && texteOuvert() && client.attendu)
+        await client.attendu(sid, {
+          mots: att.map((m) => m.texte),
+          versets: att.map((m) => `${m.s}:${m.a}`),
+          fac: att.map((m) => (m.facultatif || m.lettres ? 1 : 0)),
+        });
+      return {
+        sid,
+        maxSecondes: ECOUTE_MAX_S,
+        ...(suivi ? { suivi: true, mode: suivi } : {}),
+      };
     },
   );
 
@@ -561,6 +623,8 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
         return {
           resultat: res,
           aRevoir: motsARevoir(res),
+          // hésitations (reprises, longues pauses) : des NOMBRES, comptés à part, jamais des erreurs (mode « devant le maître »)
+          hesitations: hesitations(r.mots),
           // position de chaque mot attendu dans le texte affiché (sourate, verset, rang du mot)
           positions: att.map((m) => [m.s, m.a, m.k]),
           // tarteel-egal-wip : instants (secondes) de chaque mot reconnu, pour « Réécouter ma récitation » d'un verset.

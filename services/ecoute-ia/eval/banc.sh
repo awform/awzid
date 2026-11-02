@@ -1,0 +1,25 @@
+#!/bin/bash
+# Banc du suivi de la récitation (voir banc.py). Sous le verrou commun des calculs lourds de la VM.
+# Usage : bash banc.sh sessions | lire base | lire fen
+# Variables : CPUS (4), MEMOIRE (6g), NICE (10), NOM_CONTENEUR, CHARGE_MAX, TOPK_K, GRAINE, PREFIXE, RECITANTS_*, TAG, LIMITE, PAS, QUOTAS, PORTIONS, FEN_W, FEN_HOP, FEN_PAD, IMAGE, BANC_DIR
+set -e
+R=$(cd "$(dirname "$0")/.." && pwd)
+B=${BANC_DIR:-$HOME/tarteel2-banc}
+M=$HOME/modeles-ia
+CPUS=${CPUS:-4}
+mkdir -p "$B"
+VERROU=(flock "$HOME/.awzid-e2e.lock")
+[ -n "${DEJA_SOUS_VERROU:-}" ] && VERROU=()   # appelé depuis un script qui tient déjà le verrou commun
+NOM=(); [ -n "${NOM_CONTENEUR:-}" ] && NOM=(--name "$NOM_CONTENEUR")
+exec "${VERROU[@]}" docker run --rm "${NOM[@]}" --cpus "$CPUS" --memory "${MEMOIRE:-6g}" -u "$(id -u):$(id -g)" --entrypoint nice \
+  -e THREADS="$CPUS" -e OMP_NUM_THREADS="$CPUS" -e MKL_NUM_THREADS="$CPUS" -e OMP_WAIT_POLICY=PASSIVE \
+  -e BANC=/work -e TAG="${TAG:-}" -e LIMITE="${LIMITE:-0}" -e PAS="${PAS:-1}" -e PORTIONS="${PORTIONS:-3}" \
+  -e QUOTAS="${QUOTAS:-juste:15,oubli:6,remplacement:6,ajout:5,saut_verset:5,repete:6,reprise:6,retour:5,pause:6,bruit:8,telephone:8}" \
+  -e FEN_W="${FEN_W:-10}" -e FEN_HOP="${FEN_HOP:-0.5}" -e FEN_PAD="${FEN_PAD:-0.5}" \
+  -e HOME=/tmp -e NUMBA_CACHE_DIR=/tmp -e MPLCONFIGDIR=/tmp -e HF_HOME=/tmp/hf -e HF_HUB_OFFLINE=1 \
+  -v "$HOME/coran-audio-source:/src:ro" -v "$HOME/a1-rapports:/rapports:ro" \
+  -v "${AWFORM_CONTENT_DIR:-$HOME/awform-content}:/content:ro" \
+  -v "$M/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0:/model:ro" \
+  -v "$HOME/tajwid-donnees/everyayah:/everyayah:ro" -e TOPK="${TOPK:-}" -e TOPK_K="${TOPK_K:-8}" -e GRAINE="${GRAINE:-}" -e PREFIXE="${PREFIXE:-}" -e RECITANTS_COMPLEXE="${RECITANTS_COMPLEXE-akhdar-hafs,ayyoub-hafs,huthify-hafs,muaiqly-hafs,muhanna-hafs}" -e RECITANTS_EA="${RECITANTS_EA:-Alafasy_128kbps,Husary_128kbps,Abdul_Basit_Murattal_192kbps,Abdurrahmaan_As-Sudais_192kbps,Ali_Jaber_64kbps,Abu_Bakr_Ash-Shaatree_128kbps}" -e CHARGE_MAX="${CHARGE_MAX:-7}" -e EXCLURE="${EXCLURE:-}" -e SHUF="${SHUF:-}" -e PART="${PART:-}" -e DEJA="${DEJA:-}" \
+  -v "$R:/code:ro" -v "$B:/work" \
+  "${IMAGE:-awzid/ecoute-ia:d8bc753}" -n "${NICE:-10}" python -W ignore /code/eval/${SCRIPT:-banc.py} "$@"

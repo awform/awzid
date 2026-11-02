@@ -67,6 +67,30 @@ export function ressemblance(cleA: string, cleB: string): number {
   return Math.max(ratio(cleA, cleB), s);
 }
 
+/**
+ * Lettres que la machine CONFOND souvent entre elles (ذ ز ظ ض د ; ث س ص ; ط ت ; ح ه) : classées ensemble pour la ressemblance
+ * TOLÉRANTE. Une différence sur ces seules lettres est une mauvaise lecture de la machine bien plus souvent qu'un autre mot ;
+ * et la différence de prononciation entre elles est du tajwīd, hors de ce que la machine juge (règles A5).
+ */
+const CLASSES_CONFUSES: Record<string, string> = {
+  ذ: 'ز',
+  ظ: 'ز',
+  ض: 'ز',
+  د: 'ز',
+  ث: 'س',
+  ص: 'س',
+  ط: 'ت',
+  ح: 'ه',
+};
+const classes = (c: string) => c.replace(/[ذظضدثصطح]/g, (x) => CLASSES_CONFUSES[x]!);
+
+/** Ressemblance tolérante : celle d'avant, ou celle des clés aux lettres confondues classées ensemble (plafonnée à 0,95). */
+export function ressemblanceTolerante(cleA: string, cleB: string): number {
+  const r = ressemblance(cleA, cleB);
+  if (r >= 0.95 || !SEUILS.tolerance) return r;
+  return Math.max(r, 0.95 * ressemblance(classes(cleA), classes(cleB)));
+}
+
 // ------------------------------------------------------------------ texte attendu
 
 /** Lettres isolées (al-muqaṭṭaʿāt) : prononcées en noms de lettres (« alif lām mīm ») — jamais signalées. */
@@ -153,7 +177,7 @@ export const SEUILS = {
   /** au-dessous : mot différent (entre les deux : doute, rien n'est signalé) */
   different: 0.45,
   /** confiance minimale de la machine pour signaler un mot remplacé ou ajouté */
-  confMot: 0.75,
+  confMot: 0.65,
   /** confiance minimale d'un écart pour être montré */
   confEcart: 0.6,
   /**
@@ -163,6 +187,26 @@ export const SEUILS = {
   voixDoute: 1.5,
   /** part minimale des mots attendus reconnus pour donner un résultat */
   couvertureMin: 0.5,
+  /**
+   * oubli d'au moins ce nombre de mots de suite (un verset sauté, une phrase) : la machine n'« avale » pas une suite de
+   * mots ; seuls comptent les voisins reconnus (pas de pénalité d'orthographe ni de mot court) et le silence à leur place
+   */
+  groupeLong: 3,
+  /**
+   * suivi en direct : un mot entendu parmi les derniers (cette fin de liste) n'est pas encore signalé comme « remplacé » ou
+   * « ajouté » — la suite peut montrer que l'élève reprend (un mot redit, une reprise commencée). 0 : pas d'attente.
+   */
+  queueMot: 2,
+  /** coût, dans l'alignement, d'écarter comme « mot en trop » un mot entendu qui ressemble fortement à un mot attendu */
+  coutAjFort: 1,
+  /** passage sauté : nombre minimal de mots attendus de suite sans aucun mot reconnu, entre deux ancres sûres (0 : désactivé) */
+  ancrageMin: 4,
+  /** confiance minimale des quatre mots reconnus qui encadrent un passage sauté */
+  ancrageConf: 0.8,
+  /** idem pour un oubli : le mot reconnu qui SUIT le mot oublié ne doit pas être parmi les derniers entendus */
+  queueOubli: 0,
+  /** 1 : la ressemblance tolère les lettres que la machine confond (ذ ز ظ ض د, ث س ص, ط ت, ح ه) */
+  tolerance: 1,
 };
 
 const costEg = (sim: number) => (sim >= SEUILS.meme ? (1 - sim) * 0.5 : 1.2 - sim);
@@ -190,11 +234,17 @@ export function aligner(
     const key = i * W + j;
     let v = simMemo.get(key);
     if (v === undefined) {
-      v = ressemblance(att[i]!.cle, cles[j]!);
+      v = ressemblanceTolerante(att[i]!.cle, cles[j]!);
       simMemo.set(key, v);
     }
     return v;
   };
+  // un mot entendu qui ressemble FORTEMENT (≥ 0,9, au moins 4 lettres) à un mot attendu quelque part n'est pas un « mot en
+  // trop » comme les autres : le jeter coûte `coutAjFort` (1 : comme un autre). Évite qu'un passage sauté soit pris pour
+  // des mots en trop à la fin plutôt que pour des mots attendus oubliés plus haut.
+  const fort = cles.map(
+    (k) => SEUILS.coutAjFort > 1 && k.length >= 4 && att.some((a) => ressemblance(a.cle, k) >= 0.9),
+  );
   cost[0] = 0;
   const relax = (i: number, j: number, c: number, pi: number, pj: number, k: number) => {
     const x = i * W + j;
@@ -237,7 +287,7 @@ export function aligner(
           }
         }
       }
-      if (j < m) relax(i, j + 1, c + 1, i, j, 5);
+      if (j < m) relax(i, j + 1, c + (fort[j] ? SEUILS.coutAjFort : 1), i, j, 5);
     }
   const ops: Op[] = [];
   let x = n * W + m;
@@ -323,11 +373,87 @@ function voixEntre(voix: ReadonlyArray<readonly [number, number]>, a: number, b:
   return s;
 }
 
+/**
+ * Mots ENTENDUS qui font partie d'une RÉPÉTITION de l'élève (il reprend, se corrige, revient en arrière, répète un
+ * mot) : un mot, ou une suite de mots, redit à moins de 40 mots d'écart. Un mot isolé n'est une répétition que
+ * collé à son semblable (bégaiement) ; au-delà, il faut au moins deux mots de suite pareils. Sert à ne JAMAIS signaler
+ * « mot ajouté » sur une reprise (reprendre quelques mots, revenir au verset précédent, redire un mot) : la reprise est
+ * normale en récitation, et le mot en trop de l'alignement n'est pas une faute. Silence dans le doute.
+ */
+export function motsRepetes(ent: readonly MotEntendu[]): boolean[] {
+  const cles = ent.map((e) => cleMot(e.w));
+  const rep = ent.map(() => false);
+  const pareil = (a: number, b: number) =>
+    cles[a]!.length >= 2 && cles[b]!.length >= 2 && ressemblance(cles[a]!, cles[b]!) >= 0.8;
+  for (let j = 1; j < ent.length; j++) {
+    for (let i = Math.max(0, j - 40); i < j; i++) {
+      if (!pareil(i, j)) continue;
+      const colle = i === j - 1;
+      const suite = i + 1 < j && j + 1 < ent.length && pareil(i + 1, j + 1);
+      const avant = i > 0 && i - 1 !== j && pareil(i - 1, j - 1) && i < j - 1;
+      if (colle || suite || avant) {
+        rep[i] = true;
+        rep[j] = true;
+      }
+    }
+  }
+  return rep;
+}
+
+/** Silence entre deux mots entendus (secondes) à partir duquel on compte une « longue hésitation ». */
+export const PAUSE_LONGUE_S = 4;
+
+export interface Hesitations {
+  /** reprises : le candidat redit un mot ou une suite de mots (se corrige, revient en arrière) ; un événement par reprise */
+  reprises: number;
+  /** longues hésitations : silence de plus de `PAUSE_LONGUE_S` entre deux mots entendus */
+  pauses: number;
+}
+
+/**
+ * HÉSITATIONS d'une récitation (mode « devant le maître », décision du référent du 01/11/2026) : reprises et longues pauses,
+ * comptées À PART, jamais comme des erreurs. Entraînement : rien de tout cela n'est montré comme une faute. Des nombres seulement
+ * (jamais les mots entendus). Un arrêt (waqf) n'est pas évalué ici : aucune règle sur la pause elle-même.
+ */
+export function hesitations(ent: readonly MotEntendu[], pauseLongue = PAUSE_LONGUE_S): Hesitations {
+  const rep = motsRepetes(ent);
+  // un événement = une suite de mots répétés qui se TERMINE (la seconde copie), comptée une fois
+  let reprises = 0;
+  const cles = ent.map((e) => cleMot(e.w));
+  const copies = ent.map(() => false);
+  for (let j = 1; j < ent.length; j++) {
+    if (!rep[j]) continue;
+    for (let i = Math.max(0, j - 40); i < j; i++) {
+      if (
+        rep[i] &&
+        cles[i]!.length >= 2 &&
+        cles[j]!.length >= 2 &&
+        ressemblance(cles[i]!, cles[j]!) >= 0.8
+      ) {
+        copies[j] = true; // j est une seconde copie d'un mot déjà dit
+        break;
+      }
+    }
+  }
+  for (let j = 0; j < ent.length; j++) if (copies[j] && !copies[j - 1]) reprises++;
+  let pauses = 0;
+  for (let j = 1; j < ent.length; j++) {
+    const a = ent[j - 1]!.t1;
+    const b = ent[j]!.t0;
+    if (a !== undefined && b !== undefined && b - a > pauseLongue) pauses++;
+  }
+  return { reprises, pauses };
+}
+
 export interface OptionsComparaison {
   /** zones de voix (secondes) détectées dans l'audio */
   voix?: ReadonlyArray<readonly [number, number]>;
   /** suivi en direct : la fin est encore en cours (rien n'est signalé après le dernier mot reconnu) */
   enCours?: boolean;
+  /** interne : les reprises ont déjà été retirées de ce qui a été entendu */
+  sansReprises?: boolean;
+  /** diagnostic (banc de mesure) : reçoit les décisions prises sur les oublis, remplacements et ajouts */
+  trace?: (info: Record<string, unknown>) => void;
 }
 
 /**
@@ -340,6 +466,39 @@ export function comparer(
   opts: OptionsComparaison = {},
 ): ResultatEcoute {
   const ops = aligner(att, ent, !!opts.enCours);
+  // REPRISES : un mot entendu qui répète un mot ou une suite de mots déjà dits et qui ne correspond à aucun mot attendu
+  // (retour au verset précédent pris pour des « mots remplacés » ou « ajoutés ») est retiré, puis on recompare. Un mot
+  // répété qui correspond bien au texte (refrain du Coran redit à chaque verset) reste : il est apparié, donc jamais retiré.
+  if (!opts.sansReprises) {
+    const rep = motsRepetes(ent);
+    if (rep.some(Boolean)) {
+      const retires = new Set<number>();
+      for (const o of ops) {
+        if (o.t === 'aj' && rep[o.j]) retires.add(o.j);
+        else if (o.t === 'eg' && o.sim < SEUILS.meme && rep[o.j]) retires.add(o.j);
+      }
+      if (retires.size)
+        return comparer(
+          att,
+          ent.filter((_, j) => !retires.has(j)),
+          { ...opts, sansReprises: true },
+        );
+    }
+  }
+  // MOTS ENTENDUS SANS CORRESPONDANT : si au moins deux se suivent, la machine a sans doute mal lu (un mot lu en deux, un
+  // passage « halluciné » comme « لفضيلة الدكتور » à la place d'un mot) : aucun remplacement ni ajout n'est signalé à cet
+  // endroit (doute). Un seul mot entendu en trop ou à la place d'un autre reste signalé s'il est sûr.
+  const inexpliques = ent.map(() => false);
+  for (const o of ops) {
+    if (o.t === 'aj') inexpliques[o.j] = true;
+    else if (o.t === 'eg' && o.sim < SEUILS.meme) inexpliques[o.j] = true;
+  }
+  const serie = (j: number) => {
+    let n = 1;
+    for (let x = j - 1; x >= 0 && inexpliques[x]; x--) n++;
+    for (let x = j + 1; x < ent.length && inexpliques[x]; x++) n++;
+    return n;
+  };
   const etat: EtatMot[] = att.map(() => 'non_recite');
   const okEnt = new Map<number, number>(); // mot attendu -> mot entendu reconnu
   const okSim = new Map<number, number>(); // mot attendu -> ressemblance avec le mot entendu
@@ -463,12 +622,14 @@ export function comparer(
       const av = iav === undefined ? undefined : okEnt.get(iav);
       const ap = iap === undefined ? undefined : okEnt.get(iap);
       conf = Math.min(confDe(av), confDe(ap));
+      if (opts.enCours && ap !== undefined && ap >= ent.length - SEUILS.queueOubli) conf = 0;
       // voisin reconnu imparfaitement : la machine a pu « avaler » le mot dans son voisin (نزل بساحتهم -> نزاحتهم)
       const simVoisins = Math.min(
         iav === undefined ? 1 : (okSim.get(iav) ?? 1),
         iap === undefined ? 1 : (okSim.get(iap) ?? 1),
       );
-      if (simVoisins < 0.9) conf *= 0.5;
+      const long = c.fin - c.i + 1 >= SEUILS.groupeLong;
+      if (simVoisins < 0.9 && !long) conf *= 0.5;
       // mot COURT oublié seul (هو، فهم) : souvent avalé par la machine — il faut des voisins très sûrs
       if (c.fin === c.i && att[c.i]!.cle.length <= 3 && conf < 0.92) conf *= 0.5;
       const e0 = av !== undefined ? ent[av] : undefined;
@@ -477,10 +638,31 @@ export function comparer(
         const v = voixEntre(voix, e0.t1 + 0.08, e1.t0 - 0.08);
         // des mots entendus non reconnus dans le trou : ils expliquent cette voix (remplacement, répétition)
         if (v > SEUILS.voixDoute) conf *= 0.3;
-      }
+        opts.trace?.({
+          oublie: [c.i, c.fin],
+          voix: round(v),
+          conf: round(conf),
+          simVoisins: round(simVoisins),
+        });
+      } else
+        opts.trace?.({ oublie: [c.i, c.fin], sansVoisinTemps: true, conf: round(conf), iav, iap });
     }
-    if (c.type === 'remplace' && (c.conf < SEUILS.confMot * 0.9 || cleMot(ent[c.j!]!.w).length < 2))
+    if (
+      c.type === 'remplace' &&
+      (c.conf < SEUILS.confMot * 0.9 ||
+        cleMot(ent[c.j!]!.w).length < 2 ||
+        serie(c.j!) >= 2 ||
+        (!!opts.enCours && c.j! >= ent.length - SEUILS.queueMot))
+    )
       conf = 0;
+    if (c.type === 'remplace')
+      opts.trace?.({
+        remplace: [c.i, c.fin],
+        entendu: ent[c.j!]?.w,
+        confMachine: round(c.conf),
+        serie: serie(c.j!),
+        conf,
+      });
     if (conf >= SEUILS.confEcart) {
       const a = att[c.i]!;
       ecarts.push({ type: c.type, i: c.i, fin: c.fin, s: a.s, a: a.a, confiance: round(conf) });
@@ -493,9 +675,19 @@ export function comparer(
   }
 
   // ajouts : sûrs, hors répétition (l'élève reprend), hors formules permises, dans la partie récitée
+  const repetes = motsRepetes(ent);
   for (const ad of ajouts) {
     if (pris.has(ad.j)) continue;
+    if (repetes[ad.j]) continue; // reprise, retour en arrière, mot redit : normal en récitation
+    if (serie(ad.j) >= 2) {
+      doutes++; // plusieurs mots entendus de suite sans correspondant : mal lu, pas une faute
+      continue;
+    }
     if (ad.apres < debut || ad.apres >= finR) continue;
+    if (opts.enCours && ad.j >= ent.length - SEUILS.queueMot) {
+      doutes++; // trop près de la fin entendue : la suite dira si l'élève reprend
+      continue;
+    }
     const e = ent[ad.j]!;
     const k = cleMot(e.w);
     if (k.length < 2) continue;
@@ -516,6 +708,39 @@ export function comparer(
         confiance: round(e.conf),
       });
     } else doutes++;
+  }
+
+  // ANCRAGE EN AVANT ET EN ARRIÈRE : une suite d'au moins `ancrageMin` mots attendus dont AUCUN n'a été reconnu, encadrée de
+  // chaque côté par deux mots reconnus de suite (et sûrs), est un passage sauté — même si, dans l'alignement, quelques mots
+  // entendus au hasard (restes d'une coupe, mots mal lus) ont été rattachés à ces mots comme des « remplacements ».
+  if (SEUILS.ancrageMin > 0) {
+    let x = debut;
+    while (x <= finR) {
+      if (okEnt.has(x)) {
+        x++;
+        continue;
+      }
+      let y = x;
+      while (y <= finR && !okEnt.has(y)) y++;
+      const ancres = [x - 2, x - 1, y, y + 1];
+      if (
+        y - x >= SEUILS.ancrageMin &&
+        ancres.every((m) => m >= debut && m <= finR && okEnt.has(m)) &&
+        ancres.every((m) => confDe(okEnt.get(m)) >= SEUILS.ancrageConf) &&
+        !att.slice(x, y).some((m) => m.facultatif || m.lettres)
+      ) {
+        for (let k = ecarts.length - 1; k >= 0; k--) {
+          const e = ecarts[k]!;
+          if (e.type !== 'ajoute' && e.i >= x && e.fin <= y - 1) ecarts.splice(k, 1);
+        }
+        const a = att[x]!;
+        const conf = Math.min(...ancres.map((m) => confDe(okEnt.get(m))));
+        ecarts.push({ type: 'oublie', i: x, fin: y - 1, s: a.s, a: a.a, confiance: round(conf) });
+        for (let k = x; k < y; k++) etat[k] = 'oublie';
+        opts.trace?.({ ancrage: [x, y - 1], conf: round(conf) });
+      }
+      x = y;
+    }
   }
 
   // verset entier oublié -> « verset sauté »
