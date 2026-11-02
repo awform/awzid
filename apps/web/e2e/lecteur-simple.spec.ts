@@ -76,6 +76,8 @@ async function adulte(page: Page, label: string, n: number) {
   return a;
 }
 async function axe(page: Page, selecteur: string) {
+  // la feuille glisse et apparaît en fondu : on attend la fin du mouvement (sinon le contraste est mesuré à demi transparent)
+  await page.waitForTimeout(600);
   const r = await new AxeBuilder({ page })
     .include(selecteur)
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
