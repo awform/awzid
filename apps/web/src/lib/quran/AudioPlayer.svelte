@@ -30,6 +30,7 @@
     status = '',
     basmala = null,
     silence = 0,
+    court,
     onaya,
     onindex,
     onend,
@@ -59,6 +60,8 @@
     onvolume?: (v: number) => void;
     /** hifẓ : silence après chaque verset (facteur de sa durée, 0 : sans) pour le répéter après le récitateur */
     silence?: number;
+    /** lecteur simple : écrit l'état court (« v. 3/7 ») à la place du texte habituel */
+    court?: (aya: number) => string;
   } = $props();
   /** silence « à vous » en cours après un verset ; reprise au verset suivant après une pause pendant le silence */
   let gap = $state(false);
@@ -250,7 +253,7 @@
     }
   }
   /** Reculer / avancer de quelques secondes dans le verset en cours (même geste que le lecteur des phrases). */
-  function saut(s: number) {
+  export function saut(s: number) {
     if (!audio || !started) return;
     const fin = Number.isFinite(audio.duration) ? audio.duration : Infinity;
     audio.currentTime = Math.max(0, Math.min(audio.currentTime + s, fin));
@@ -397,18 +400,24 @@
     </div>
     <p class="where" aria-live="polite" data-testid="position">
       {#if started && aya === BASMALA}<Bidi
-          text={t('ca.position_basmala')}
+          text={court ? court(1) : t('ca.position_basmala')}
         />{:else if started && aya}<Bidi
-          text={t('ca.position', {
-            aya: fmtNumber(aya),
-            n: fmtNumber(idx + 1 - lead),
-            total: fmtNumber(total),
-          })}
+          text={court
+            ? court(aya)
+            : t('ca.position', {
+                aya: fmtNumber(aya),
+                n: fmtNumber(idx + 1 - lead),
+                total: fmtNumber(total),
+              })}
         />{#if status}<span class="st" data-testid="etape">
             · <Bidi text={status} /></span
           >{/if}{#if gap}<span class="st" data-testid="a-vous">
             · {t('cl.a_vous')}</span
-          >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(total) })} />{/if}
+          >{/if}{:else}<Bidi
+          text={court
+            ? court(queue.find((a) => a > 0) ?? 1)
+            : t('ca.pret', { total: fmtNumber(total) })}
+        />{/if}
     </p>
   </div>
   <label class="vol" title={t('cl.volume')}

@@ -220,6 +220,21 @@
       );
   });
 
+  // « Lecteur simple » (interrupteur lecteur_simple) : une ligne en haut + « Outils », pastille « X % », barre audio compacte ; module à la demande
+  let ls = $state<typeof import('$lib/quran/lecteur-simple') | null>(null);
+  $effect(() => {
+    if (fn('lecteur_simple') && !ls)
+      void chargerModule(() => import('$lib/quran/lecteur-simple')).then(
+        (m) => (ls = m),
+        () => undefined,
+      );
+  });
+  const simple = $derived(narrow && !!ls && fn('lecteur_simple'));
+  /** panneaux du lecteur simple ouverts : « Outils », menu « ⋯ » de l'audio, détail de la pastille « X % » (les commandes ne s'effacent pas dessous) */
+  let outilsOpen = $state(false);
+  let audioMenu = $state(false);
+  let cmDetail = $state(false);
+
   // le module « Sens et explication » n'est chargé qu'à l'ouverture du petit menu d'un verset (jamais préchargé)
   $effect(() => {
     if (fn('tafsir_sens') && (menuAt || sensAt) && !tf)
@@ -263,6 +278,8 @@
   const memo = $derived(prefs.memo > 0);
   const reciters = $derived(memo ? allReciters.filter(canMemorize) : allReciters);
   const reciter = $derived(reciters.find((r) => r.id === reciterId) ?? null);
+  /** pistes de la sourate ÉCOUTÉE seulement : celles d'une autre sourate (encore en mémoire un instant) ne comptent ni dans la file ni dans le surlignage */
+  const packOk = $derived(pack && pack.sura === range.s ? pack : null);
   const settings = $derived({
     repeatVerse: prefs.repeatVerse,
     repeatRange: prefs.repeatRange,
@@ -276,19 +293,19 @@
    * Le fichier « verset n » du récitateur est-il le verset n du texte affiché ? (même riwāya, même découpage).
    * Sert au surlignage ET à la lecture : jamais un verset choisi lu dans une autre numérotation.
    */
-  const highlight = $derived(highlightOn(reciter, rw, pack, suraLen(range.s)));
+  const highlight = $derived(highlightOn(reciter, rw, packOk, suraLen(range.s)));
   /** basmala à lire avant le verset 1 (début de sourate, sauf at-Tawba ; Fātiḥa selon la riwāya) */
   const wantBasmala = $derived(
     !!reciter &&
       needsBasmala(range, reciter.riwaya, {
         chain: prefs.chain,
         repeatVerse: prefs.repeatVerse,
-        wholeFile: pack?.mode === 'sourate',
+        wholeFile: packOk?.mode === 'sourate',
       }),
   );
   const bsmUrl = $derived(bsm && bsm.reciter === reciter?.id ? bsm.url : null);
   const queue = $derived(
-    withBasmala(listenFiles(pack, highlight, plan.queue), wantBasmala, !!bsmUrl),
+    withBasmala(listenFiles(packOk, highlight, plan.queue), wantBasmala, !!bsmUrl),
   );
   /** basmala voulue mais sans fichier de la même riwāya : rien n'est lu, c'est dit en petit */
   const basmalaMissing = $derived(wantBasmala && !!bsm && bsm.reciter === reciter?.id && !bsm.url);
@@ -303,19 +320,23 @@
       total: fmtNumber(604, { useGrouping: false }),
     }),
   );
+  /** page du verset choisi : en vue « versets » `p` ne suit pas seul (audio qui passe à la sourate suivante, verset touché plus bas) */
+  const pageNow = $derived(
+    vue === 'versets' && cur && starts ? pageOf(starts, cur.s, Math.max(1, cur.a)) : p,
+  );
   const chip = $derived(
     t('cl.puce', {
       sourate: suraName(activeSura),
       a: fmtNumber(posA),
-      p: fmtNumber(p, { useGrouping: false }),
-      juz: fmtNumber(juzOf(p)),
+      p: fmtNumber(pageNow, { useGrouping: false }),
+      juz: fmtNumber(juzOf(pageNow)),
     }),
   );
   const chipDetail = $derived(
     t('cl.puce_detail', {
       a: fmtNumber(posA),
-      p: fmtNumber(p, { useGrouping: false }),
-      juz: fmtNumber(juzOf(p)),
+      p: fmtNumber(pageNow, { useGrouping: false }),
+      juz: fmtNumber(juzOf(pageNow)),
     }),
   );
   const trackMsg = $derived(
@@ -411,7 +432,7 @@
   $effect(() => appliquerFond(prefs.fond));
   // dernière lecture (accueil : « Reprendre où j'en étais »), gardée sur l'appareil
   $effect(() => {
-    if (ready) writeLast({ s: activeSura, a: posA, p });
+    if (ready) writeLast({ s: activeSura, a: posA, p: pageNow });
   });
   // texte, tajwid et traduction des sourates affichées (à la demande)
   $effect(() => {
@@ -619,7 +640,7 @@
   /** proposition « Écouter ici » (et « Reprendre où j'étais » si la lecture a été mise en pause) */
   let prop = $state<{ s: number; a: number; resume: boolean } | null>(null);
   /** verset écouté au moment de la pause (« Reprendre où j'étais ») */
-  let resumeAt: { s: number; a: number } | null = null;
+  let resumeAt = $state<{ s: number; a: number } | null>(null);
   let propTimer: ReturnType<typeof setTimeout> | null = null;
   let propEl = $state<HTMLElement | undefined>();
   function hideProp() {
@@ -647,6 +668,13 @@
     }
     // reprise possible tant que la lecture est en pause (même après plusieurs pages feuilletées)
     if (!wasPlaying && !(playing && !audioPlaying)) resumeAt = null;
+    // lecture (en cours ou en pause) dans une AUTRE sourate : la barre audio suit le nouvel emplacement (sinon « écoute 1 sur 286 », le compte
+    // d'al-Baqara, sous al-Fātiḥa) ; « Reprendre où j'étais » repart du verset entendu
+    if (playing && f.s !== range.s) {
+      resumeAt ??= heard ? { ...heard } : { s: range.s, a: range.from };
+      player?.stop();
+      follow();
+    }
     prop = { s: sel.s, a: sel.a, resume: !!resumeAt };
     if (propTimer) clearTimeout(propTimer);
     propTimer = setTimeout(hideProp, 6000);
@@ -663,6 +691,22 @@
     resumeAt = null;
     if (x) void playFrom(rangeAt(x.s, x.a));
   }
+  /** Menu d'un verset ouvert par un BOUTON (« + » de la proposition, « ⋯ » de la barre audio) : tout de suite, sans attente d'un double-toucher de zoom. */
+  function actions(at: { s: number; a: number }, repli: HTMLElement) {
+    const el =
+      document.querySelector<HTMLElement>(
+        vue === 'versets'
+          ? `[data-testid="texte-coran"] [data-aya="${at.a}"]`
+          : `[data-testid="mushaf-livre"] [data-aya="${at.s}:${at.a}"]`,
+      ) ?? repli;
+    hideProp();
+    openPick(at.s, at.a, el);
+  }
+  /** « Écouter d'ici » depuis le verset choisi (menu « ⋯ » de la barre audio du lecteur simple) */
+  const ici = () => {
+    const x = cur ?? { s: activeSura, a: posA };
+    void playFrom(rangeAt(x.s, x.a));
+  };
   async function resumeWhere() {
     const w = resumeAt;
     hideProp();
@@ -670,7 +714,8 @@
     if (!w) return;
     await goVerse(w.s, Math.max(1, w.a), false);
     if (w.a === 0) cur = { s: w.s, a: 0 };
-    await player?.resume();
+    if (playing && range.s === w.s) await player?.resume();
+    else await playFrom(rangeAt(w.s, w.a));
   }
   // premier geste ailleurs : la proposition disparaît
   $effect(() => {
@@ -884,6 +929,7 @@
     // pendant que l'audio avance de lui-même, la vue suit la récitation (sans changer la plage écoutée)
     if (vue === 'versets' && range.s !== activeSura) {
       cur = { s: range.s, a: Math.max(1, heard.a) };
+      if (starts) p = pageOf(starts, cur.s, cur.a);
       void ensure();
     }
     if (vue === 'page' && starts) {
@@ -1246,7 +1292,17 @@
   let chromeTimer: ReturnType<typeof setTimeout> | null = null;
   /** « Lire » : à la fermeture du panneau, les commandes s'effacent tout de suite */
   let quiet = false;
-  const sheetOpen = $derived(selOpen || regOpen || tradSheet || infoOpen || !!menuAt || !!sensAt);
+  const sheetOpen = $derived(
+    selOpen ||
+      regOpen ||
+      tradSheet ||
+      infoOpen ||
+      !!menuAt ||
+      !!sensAt ||
+      outilsOpen ||
+      audioMenu ||
+      cmDetail,
+  );
   const hidden = $derived.by(() => prefs.epure && ready && !chrome && !sheetOpen && !guiding);
   const CHROME = '.cbar, header.top, nav.tabs, .turn, .montrer';
   /**
@@ -1792,7 +1848,7 @@
 {/snippet}
 
 {#snippet bandeaux()}
-  {#if cm && !isRw}<cm.Bande sura={activeSura} />{/if}
+  {#if cm && !isRw}<cm.Bande sura={activeSura} compact={simple} bind:detail={cmDetail} />{/if}
   {#if notice}
     <p class="avis" role="status" data-testid="avis-lecteur">
       <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
@@ -1843,6 +1899,7 @@
     class:audio-on={audioOn}
     class:epure={prefs.epure}
     class:surcouche
+    class:simple
     style:--qz={TEXT_SCALE[prefs.size] ?? 1}
     style:--bas={`${tabsH}px`}
     style:--haut={`${hautH}px`}
@@ -1895,25 +1952,25 @@
             ><small>{t('mp.verset')}</small>{fmtNumber(posA)}</button
           >
           <button type="button" onclick={() => openSel('page')} data-testid="barre-page"
-            ><small>{t('mp.page')}</small>{fmtNumber(p, { useGrouping: false })}</button
+            ><small>{t('mp.page')}</small>{fmtNumber(pageNow, { useGrouping: false })}</button
           >
           <button type="button" onclick={() => openSel('juz')} data-testid="barre-juz"
-            ><small>{t('mp.juz')}</small>{fmtNumber(juzOf(p))}</button
+            ><small>{t('mp.juz')}</small>{fmtNumber(juzOf(pageNow))}</button
           >
         </div>
         {#if isRw}<span class="rwbadge" data-testid="mp-riwaya-affichee"
             ><RiwayaBadge riwaya={rw} label={mushafChoice(rw).fr} /></span
           >{/if}
         <!-- « Sources » (crédits du texte, de la mise en page, du tajwid) : seulement derrière ⓘ, à côté de la puce -->
-        <button
-          type="button"
-          class="tool info"
-          onclick={() => (infoOpen = true)}
-          aria-label={t('cl.sources')}
-          title={t('cl.sources')}
-          aria-haspopup="dialog"
-          data-testid="infos-texte"><Icon name="info" size={20} /></button
-        >
+        {#if !simple}<button
+            type="button"
+            class="tool info"
+            onclick={() => (infoOpen = true)}
+            aria-label={t('cl.sources')}
+            title={t('cl.sources')}
+            aria-haspopup="dialog"
+            data-testid="infos-texte"><Icon name="info" size={20} /></button
+          >{/if}
       </div>
       <div class="tools">
         {#if !audioOn}
@@ -1923,49 +1980,65 @@
             onclick={() => playFrom(null)}
             disabled={!ready}
             data-testid="ouvrir-ecoute"
+            aria-label={t('ecoute.ecouter')}
             ><Icon name="casque" size={22} /><span>{t('ecoute.ecouter')}</span></button
           >
         {/if}
-        <!-- recherche : par la puce ou les sélecteurs dorés (même sélecteur ; plus de loupe en double) -->
-        {#if !isRw}
+        {#if simple && ls}
+          <!-- lecteur simple : tout le reste (Traduction, Grand texte, Retrouve ce verset, Réglages, sources) est derrière « Outils » -->
+          <ls.Outils
+            bind:open={outilsOpen}
+            trad={isRw ? null : narrow && vue === 'page' ? tradSheet : tradShown}
+            grand={vue === 'versets'}
+            {profileId}
+            {profKind}
+            {cm}
+            ontrad={toggleTrad}
+            ongrand={toggleGrand}
+            onreglages={() => openReg()}
+            oninfos={() => (infoOpen = true)}
+          />
+        {:else}
+          <!-- recherche : par la puce ou les sélecteurs dorés (même sélecteur ; plus de loupe en double) -->
+          {#if !isRw}
+            <button
+              type="button"
+              class="tool"
+              aria-pressed={narrow && vue === 'page' ? tradSheet : tradShown}
+              onclick={toggleTrad}
+              aria-label={t('mp.traduction_court')}
+              title={t('mp.traduction_court')}
+              data-testid="mp-trad"
+              ><Icon name="traduction" size={22} /><span class="trad-lbl"
+                >{t('mp.traduction_court')}</span
+              ></button
+            >
+          {/if}
+          <!-- lot lecteur 4 : « Grand texte » toujours à portée, d'un toucher (mémorisé dans les réglages) -->
           <button
             type="button"
-            class="tool"
-            aria-pressed={narrow && vue === 'page' ? tradSheet : tradShown}
-            onclick={toggleTrad}
-            aria-label={t('mp.traduction_court')}
-            title={t('mp.traduction_court')}
-            data-testid="mp-trad"
-            ><Icon name="traduction" size={22} /><span class="trad-lbl"
-              >{t('mp.traduction_court')}</span
-            ></button
+            class="tool grand-btn"
+            aria-pressed={vue === 'versets'}
+            onclick={toggleGrand}
+            data-testid="barre-grand-texte"
+            ><Icon name="taille" size={22} /><span>{t('cl.grand_texte')}</span></button
           >
-        {/if}
-        <!-- lot lecteur 4 : « Grand texte » toujours à portée, d'un toucher (mémorisé dans les réglages) -->
-        <button
-          type="button"
-          class="tool grand-btn"
-          aria-pressed={vue === 'versets'}
-          onclick={toggleGrand}
-          data-testid="barre-grand-texte"
-          ><Icon name="taille" size={22} /><span>{t('cl.grand_texte')}</span></button
-        >
-        <!-- « Retrouve ce verset » (interrupteur shazam_coran, coupé par défaut) : bouton chargé à la demande -->
-        {#if profileId && fn('shazam_coran')}<BoutonEcoute
-            {profileId}
-            kind={profKind}
-            portion={null}
-            retrouver
-          />{/if}
-        <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
-        <button
-          type="button"
-          class="tool reg-btn"
-          onclick={() => openReg()}
-          aria-haspopup="dialog"
-          data-testid="ouvrir-reglages-lecteur"
-          ><Icon name="reglages" size={22} /><span>{t('cl.reglages')}</span></button
-        >
+          <!-- « Retrouve ce verset » (interrupteur shazam_coran, coupé par défaut) : bouton chargé à la demande -->
+          {#if profileId && fn('shazam_coran')}<BoutonEcoute
+              {profileId}
+              kind={profKind}
+              portion={null}
+              retrouver
+            />{/if}
+          <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
+          <button
+            type="button"
+            class="tool reg-btn"
+            onclick={() => openReg()}
+            aria-haspopup="dialog"
+            data-testid="ouvrir-reglages-lecteur"
+            ><Icon name="reglages" size={22} /><span>{t('cl.reglages')}</span></button
+          >{/if}
       </div>
       <div class="ecoute" class:on={audioOn} data-testid="mini-barre" bind:this={ecouteEl}>
         {#if basmalaMissing && audioOn}<p class="hint bsm-hint" data-testid="basmala-absente">
@@ -1975,10 +2048,11 @@
           <AudioPlayer
             bind:this={player}
             {reciter}
-            {pack}
+            pack={packOk}
             {queue}
             rate={prefs.rate}
             silence={prefs.silence}
+            court={simple && ls ? (a) => ls!.libelles.position(a, suraLen(range.s)) : undefined}
             sleepMin={prefs.sleepMin}
             volume={prefs.volume}
             status={step
@@ -2000,6 +2074,20 @@
             onsettings={(sec) => openReg(sec ?? 'ecoute')}
             onvolume={(v) => (prefs.volume = v)}
           />
+          {#if simple && ls}
+            <ls.MenuAudio
+              bind:open={audioMenu}
+              reprendre={!!resumeAt}
+              recitateur={reciter.nameFr}
+              {ici}
+              onreprendre={resumeWhere}
+              onverset={() => actions({ s: activeSura, a: posA }, ecouteEl!)}
+              onsaut={(s) => player?.saut(s)}
+              onrecitateur={() => openReg('recitateur')}
+              onecoute={() => openReg('ecoute')}
+              onarreter={() => player?.stop()}
+            />
+          {/if}
         {:else}
           <button
             type="button"
@@ -2015,7 +2103,7 @@
     </nav>
     <!-- proposition après un changement d'emplacement : non bloquante, annoncée, disparaît d'elle-même -->
     <div class="prop-zone" role="status" aria-live="polite">
-      {#if prop}
+      {#if prop && !simple}
         <div class="prop" bind:this={propEl} data-testid="proposition" data-relais>
           <button
             type="button"
@@ -2038,19 +2126,7 @@
             <button
               type="button"
               class="prop-alt"
-              onclick={(e) => {
-                if (!prop) return;
-                const at = { s: prop.s, a: prop.a };
-                const el =
-                  document.querySelector<HTMLElement>(
-                    vue === 'versets'
-                      ? `[data-testid="texte-coran"] [data-aya="${at.a}"]`
-                      : `[data-testid="mushaf-livre"] [data-aya="${at.s}:${at.a}"]`,
-                  ) ?? e.currentTarget;
-                hideProp();
-                // un BOUTON : le menu s'ouvre tout de suite (pas d'attente d'un double-toucher de zoom)
-                openPick(at.s, at.a, el);
-              }}
+              onclick={(e) => prop && actions(prop, e.currentTarget)}
               aria-label={t('cl.autres_actions')}
               title={t('cl.autres_actions')}
               data-testid="ici-actions"><Icon name="ajouter" size={20} /></button
@@ -2224,7 +2300,7 @@
   <Selecteur
     bind:open={selOpen}
     bind:tab={selTab}
-    pos={{ s: activeSura, a: posA, p, juz: juzOf(p) }}
+    pos={{ s: activeSura, a: posA, p: pageNow, juz: juzOf(pageNow) }}
     {lengths}
     hizb={!isRw}
     onverse={(s, a) => jumpVerse(s, a)}

@@ -48,6 +48,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
       'design_v4',
       'hifz_classe',
       'khatma_wird',
+      'lecteur_simple',
       'mutashabihat',
       'parcours_priere',
       'shazam_coran',

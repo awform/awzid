@@ -649,6 +649,7 @@
   "fn.shazam_coran": "« Retrouve ce verset » et suivi de la récitation (IA)",
   "fn.tarteel_fenetre": "« Tarteel titan » : suivi par fenêtre glissante et mode « devant le maître » (essai réservé)",
   "fn.tafsir_sens": "Sens et explication d’un verset : mot à mot et tafsīr abrégé (essai réservé)",
+  "fn.lecteur_simple": "Lecteur simple : une seule ligne en haut, panneau « Outils », une seule barre audio compacte (essai réservé)",
   "adm.blocage_titre": "Bloquer ou débloquer un compte",
   "adm.blocage_aide": "Saisis l'adresse e-mail ou le numéro de téléphone du compte. Un compte bloqué ne peut plus se connecter et ses sessions sont fermées tout de suite ; rien n'est effacé. L'action est notée au journal d'audit.",
   "adm.blocage_champ": "E-mail ou numéro",

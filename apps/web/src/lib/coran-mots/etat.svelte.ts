@@ -55,6 +55,24 @@ export function ecrireSouligne(on: boolean): void {
   }
 }
 
+let souligne = $state(lireSouligne());
+/**
+ * Réglage « Souligner les mots que je reconnais », PARTAGÉ : la bande du lecteur et le panneau « Outils » du lecteur simple le lisent et
+ * l'écrivent au même endroit (`pret` : les données de l'élève sont chargées, donc la fonction est ouverte pour lui).
+ */
+export const reglage = {
+  get on() {
+    return souligne;
+  },
+  get pret() {
+    return connus !== null && rangs !== null;
+  },
+  regler(on: boolean): void {
+    souligne = on;
+    ecrireSouligne(on);
+  },
+};
+
 let initialisation: Promise<boolean> | null = null;
 let initialiseA = 0;
 /**
@@ -114,6 +132,7 @@ export function _reinitialiser(): void {
   profil = null;
   niveau = null;
   actif = false;
+  souligne = lireSouligne();
   initialisation = null;
   initialiseA = 0;
   demandees.clear();

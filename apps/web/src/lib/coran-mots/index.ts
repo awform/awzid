@@ -14,3 +14,5 @@ export { default as Bande } from './Bande.svelte';
 export { default as Recherche } from './Recherche.svelte';
 /** donnée au texte coranique du lecteur (`connus`) : les mots reconnus d'un verset, tant que le soulignement est actif */
 export { connusFn as connus, type ConnusFn } from './etat.svelte';
+/** réglage « Souligner les mots que je reconnais » (panneau « Outils » du lecteur simple) */
+export { reglage } from './etat.svelte';

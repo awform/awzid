@@ -1,0 +1,51 @@
+/*
+ * « Lecteur simple » (interrupteur `lecteur_simple`) : mise en forme du lecteur du Coran sur téléphone, posée seulement quand la page porte
+ * la classe `simple` (module chargé à la demande). Une ligne en haut (sourate et verset, écoute, Outils) ; la barre audio réduite à
+ * lecture, précédent, suivant, une ligne d'état courte (« v. 1/7 ») et « ⋯ » (le reste est dans son menu). Rien de tout cela n'existe
+ * sans l'interrupteur : l'ancien affichage garde ses propres règles.
+ */
+/* la sourate et le verset prennent la place laissée par « Écouter » et « Outils » : tout tient sur UNE ligne */
+.lecture.simple .cbar .nav-zone {
+  flex: 1 1 0%;
+  min-inline-size: 0;
+}
+.lecture.simple .cbar .tools {
+  flex: none;
+}
+.lecture.simple .cbar .tool {
+  padding-inline: 10px;
+}
+/* « Écouter » : l'icône seule (son nom reste dit aux lecteurs d'écran) */
+.lecture.simple .cbar .ecouter-btn span {
+  display: none;
+}
+/* barre audio : lecture, précédent, suivant, état, « ⋯ » ; récitateur, ±5 s, arrêt et réglages sont dans le menu « ⋯ » */
+.lecture.simple .ecoute.on {
+  padding-inline-end: 48px;
+}
+.lecture.simple .ecoute .mplus {
+  position: absolute;
+  inset-inline-end: 2px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+}
+.lecture.simple .ecoute .player {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: 'controls track';
+}
+.lecture.simple .ecoute .player .who,
+.lecture.simple .ecoute .player .saut,
+.lecture.simple .ecoute .player .stop,
+.lecture.simple .ecoute .player .rep,
+.lecture.simple .ecoute .player .vol {
+  display: none;
+}
+.lecture.simple .ecoute .player .where {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Grand texte : le premier verset commence sous la barre du haut (une ligne et la pastille), pas dessous */
+.lecture.simple .versets {
+  padding-top: 40px;
+}

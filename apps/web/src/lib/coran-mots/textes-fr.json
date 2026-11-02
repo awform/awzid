@@ -47,5 +47,8 @@
   "cm.sources_gpl": "Les données de « Mots du Coran » sont séparées du code de l’application et publiées sous la même licence, avec leur source.",
   "cm.lien_corpus": "corpus.quran.com",
   "cm.lien_tanzil": "tanzil.net",
-  "cm.lien_gpl": "Texte de la licence GNU GPL v3"
+  "cm.lien_gpl": "Texte de la licence GNU GPL v3",
+  "cm.pastille": "{pct} % des mots connus",
+  "cm.pastille_aria": "Mots que je connais dans cette sourate : {pct} %. Ouvrir le détail",
+  "cm.detail_titre": "Mots que je connais"
 }
