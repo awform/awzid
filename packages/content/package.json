@@ -93,6 +93,14 @@
       "types": "./dist/video-cahier-types.d.ts",
       "default": "./dist/video-cahier-types.js"
     },
+    "./tafsir": {
+      "types": "./dist/tafsir.d.ts",
+      "default": "./dist/tafsir.js"
+    },
+    "./tafsir-niveaux": {
+      "types": "./dist/tafsir-niveaux.d.ts",
+      "default": "./dist/tafsir-niveaux.js"
+    },
     "./dhikr": {
       "types": "./dist/dhikr.d.ts",
       "default": "./dist/dhikr.js"
@@ -103,7 +111,8 @@
   },
   "files": [
     "dist",
-    "conversation"
+    "conversation",
+    "tafsir"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -113,7 +122,8 @@
     "tajwid": "node dist/cli-tajwid.js",
     "traductions": "node --no-warnings dist/cli-traductions.js",
     "riwayat": "node --no-warnings dist/cli-riwayat.js",
-    "conversation": "node dist/cli-conversation.js"
+    "conversation": "node dist/cli-conversation.js",
+    "tafsir": "node dist/cli-tafsir.js"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",

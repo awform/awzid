@@ -1,0 +1,11 @@
+{"v":1,"s":106,"nom_ar":"قريش","nom_fr":"Quraysh","sens_general":"Allah rappelle à Quraysh Ses bienfaits : la sécurité de leurs caravanes, la nourriture, la paix autour de la Kaʿba. La conséquence : L'adorer, Lui seul.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"Le lien avec la sourate précédente","texte":"Al-Qurṭubī rapporte que la préposition du début (« pour ») se rattache à la sourate al-Fīl (Allah a détruit l'armée de l'éléphant pour que Quraysh garde sa sécurité), selon al-Farrāʾ, Mujāhid et Ibn ʿAbbās ; pour al-Khalīl, il se rattache à « qu'ils adorent donc ».","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 106:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]},
+{"id":1,"titre":"Les deux voyages","texte":"Ibn Kathīr explique : le voyage d'hiver vers le Yémen et celui d'été vers le Shām. Al-Qurṭubī rapporte aussi, d'après Ibn ʿAbbās, qu'ils passaient l'hiver à La Mecque et l'été à aṭ-Ṭāʾif.","sources":["Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 106:2","al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 106:1-2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"لِإِيلَٰفِ قُرَيْشٍ","mots":[["لِإِيلَٰفِ","pour l'habitude (la sécurité) qui unit"],["قُرَيْشٍ","Quraysh"]],"sens":"Pour la sécurité habituelle de Quraysh,","p":[]},
+{"a":2,"ar":"إِۦلَٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ","mots":[["إِۦلَٰفِهِمْ","leur habitude (leur sécurité)"],["رِحْلَةَ","du voyage"],["ٱلشِّتَآءِ","d'hiver"],["وَٱلصَّيْفِ","et d'été"]],"sens":"leur sécurité dans le voyage d'hiver et d'été,","p":[]},
+{"a":3,"ar":"فَلْيَعْبُدُوا۟ رَبَّ هَٰذَا ٱلْبَيْتِ","mots":[["فَلْيَعْبُدُوا۟","qu'ils adorent donc"],["رَبَّ","le Seigneur"],["هَٰذَا","de cette"],["ٱلْبَيْتِ","Maison"]],"sens":"qu'ils adorent donc le Seigneur de cette Maison,","p":[]},
+{"a":4,"ar":"ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍۢ وَءَامَنَهُم مِّنْ خَوْفٍۭ","mots":[["ٱلَّذِىٓ","qui"],["أَطْعَمَهُم","les a nourris"],["مِّن","contre"],["جُوعٍۢ","la faim"],["وَءَامَنَهُم","et les a mis en sécurité"],["مِّنْ","contre"],["خَوْفٍۭ","la peur"]],"sens":"qui les a nourris contre la faim et rassurés contre la peur.","p":[]}
+]}

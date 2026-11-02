@@ -38,6 +38,8 @@ const EMBARQUES = [
   join(SRC, 'lib', 'hifz-classe', 'textes-fr.json'),
   // « Mots du Coran » (25/10/2026) : bande du lecteur, recherche, fiche racine
   join(SRC, 'lib', 'coran-mots', 'textes-fr.json'),
+  // « Sens et explication » (2/11/2026) : feuille du verset (tafsīr abrégé et mot à mot)
+  join(SRC, 'lib', 'tafsir', 'textes-fr.json'),
   // indication des madd (25/10/2026)
   join(SRC, 'lib', 'tajwid-madd', 'textes-fr.json'),
 ];

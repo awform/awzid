@@ -50,6 +50,8 @@ export const PREMIER_USAGE_ROUTES = [
   '/cahier-parler',
   '/vivre/priere',
   '/coran/mots',
+  // 2/11/2026 : « Tafsīr du niveau » (parcours des sourates de la portion du niveau ; interrupteur `tafsir_sens`)
+  '/coran/tafsir',
 ];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
@@ -65,6 +67,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/conversation\/JeParle\.svelte$/,
   // 25/10/2026 : « Mots du Coran » (bande « Je reconnais X % des mots » du lecteur, importée à la demande quand `coran_mots` est ouvert)
   /src\/lib\/coran-mots\/index\.ts$/,
+  // 2/11/2026 : « Sens et explication » d'un verset (tafsīr abrégé et mot à mot ; interrupteur `tafsir_sens`), importé à la demande à l'ouverture du petit menu
+  /src\/lib\/tafsir\/index\.ts$/,
   // V2-4 : feuille de bascule Moi / enfants (chargée au premier toucher sur le prénom du profil actif)
   /src\/lib\/(BasculeProfils\.svelte|bascule-ouvrir\.ts)$/,
 ];

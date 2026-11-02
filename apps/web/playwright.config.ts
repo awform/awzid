@@ -60,6 +60,8 @@ const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`)
 // A3 : audio des leçons d'en1 (fichiers réels des livres) importé depuis ~/lecons-audio s'il est là
 const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
 const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
+// 2/11/2026 : fichiers du tafsīr de l'API de test = fichiers livrés + deux segments FICTIFS à la sourate 112 (e2e/tafsir-essai.mjs)
+const TAFSIR_DIR = join(tmpdir(), `awform-e2e-tafsir${ISOLE ? `-${SUFFIX}` : ''}`);
 // niveaux dont l'audio des leçons est importé (MP4 d'essai des vidéos vivantes : E2E_LECONS_NIVEAUX=en1,ad1)
 const LECONS_NIVEAUX = process.env.E2E_LECONS_NIVEAUX ?? 'en1,lect-ad1-01';
 // lot F3 : boîte de DÉMONSTRATION des e-mails (aucun envoi réel), lue par les tests (f3.spec.ts)
@@ -139,7 +141,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux ${LECONS_NIVEAUX} --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux ${LECONS_NIVEAUX} --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node e2e/tafsir-essai.mjs ${TAFSIR_DIR} && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
@@ -178,6 +180,7 @@ export default defineConfig({
         AWFORM_AKHLAQ_ESSAI: 'on',
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
+        AWFORM_TAFSIR_DIR: TAFSIR_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
         // A5 : « Réciter et vérifier » ouvert pour les e2e, service d'écoute factice
         AWFORM_ECOUTE_IA: 'on',

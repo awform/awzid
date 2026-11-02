@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fonctionsEtat } from '$lib/fonctions.svelte';
+  import { fn, fonctionsEtat } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
@@ -218,6 +218,13 @@
       {/each}
     </div>
   {/if}
+
+  <!-- « Tafsīr du niveau » (interrupteur tafsir_sens) : recommandé, jamais bloquant ; un simple lien, la page se charge à la demande -->
+  {#if matiere === 'arabe' && fn('tafsir_sens')}<a
+      class="card"
+      href={resolve('/coran/tafsir')}
+      data-testid="tafsir-niveau">{t('tf.entree')}</a
+    >{/if}
 
   <section role="tabpanel" data-panel={tab}>
     {#if e.unites.length === 0}

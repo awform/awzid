@@ -40,6 +40,7 @@ export const FONCTION_CLES = [
   'tajwid_madd',
   'shazam_coran',
   'tarteel_fenetre',
+  'tafsir_sens',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -161,6 +162,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // l'administrateur l'ouvre au « canal bêta » et ne marque dans le canal bêta que les comptes d'essai. Coupé, le suivi reste
   // celui d'avant (passages relus avec contexte). Coûte environ 3,7 fois plus de calcul : compte pour 3 dans ECOUTE_DIRECT_MAX.
   tarteel_fenetre: { defaut: 'off' },
+  // « Sens et explication » d'un verset (2/11/2026) : mot à mot et tafsīr abrégé des 114 sourates (contenu du référent, en attente de la
+  // seconde lecture), dans le menu du verset du lecteur ; une sourate à la fois, filtrée par public côté serveur (D-TF-445 : rien de réservé
+  // pour l'élève, les segments « niveau adulte » aux seuls profils adultes avec leur note de contexte). COUPÉ par défaut partout
+  // (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le lecteur entier, sans l'accès.
+  tafsir_sens: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

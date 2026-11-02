@@ -1,0 +1,18 @@
+{"v":1,"s":101,"nom_ar":"القارعة","nom_fr":"al-Qāriʿa (Le Fracas)","sens_general":"La sourate décrit le Jour de la Résurrection, qui frappe les cœurs d'effroi : les gens dispersés, les montagnes défaites, puis la pesée des œuvres. Tout se joue sur le poids des bonnes actions.","traduction":"Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+"points":[
+{"id":0,"titre":"« Al-Qāriʿa »","texte":"C'est un des noms du Jour de la Résurrection, appelé ainsi parce qu'il frappe les cœurs par sa terreur (aṭ-Ṭabarī) ; Ibn Kathīr la compte aussi parmi les noms du Jour de la Résurrection.","sources":["aṭ-Ṭabarī, Jāmiʿ al-bayān, sur 101:1","Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 101:1"],"plage":[]},
+{"id":1,"titre":"« Sa mère sera un abîme »","texte":"Al-Qurṭubī rapporte : pour Ibn Zayd, la « mère » est la Géhenne, où le damné se réfugie comme un enfant auprès de sa mère ; pour Qatāda, c'est sa destination ; ʿIkrima dit qu'il y tombe la tête la première. Le Feu est appelé « al-Hāwiya » parce qu'on y tombe de très haut.","sources":["al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 101:9 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"],"plage":[]}
+],
+"versets":[
+{"a":1,"ar":"ٱلْقَارِعَةُ","mots":[["ٱلْقَارِعَةُ","le Fracas (celle qui frappe les cœurs)"]],"sens":"Le Fracas !","p":[]},
+{"a":2,"ar":"مَا ٱلْقَارِعَةُ","mots":[["مَا","qu'est-ce que"],["ٱلْقَارِعَةُ","le Fracas"]],"sens":"Qu'est-ce que le Fracas ?","p":[]},
+{"a":3,"ar":"وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ","mots":[["وَمَآ","et qu'est-ce qui"],["أَدْرَىٰكَ","te fera savoir"],["مَا","ce qu'est"],["ٱلْقَارِعَةُ","le Fracas"]],"sens":"Et qui te fera savoir ce qu'est le Fracas ?","p":[]},
+{"a":4,"ar":"يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ","mots":[["يَوْمَ","le jour où"],["يَكُونُ","seront"],["ٱلنَّاسُ","les gens"],["كَٱلْفَرَاشِ","comme les papillons"],["ٱلْمَبْثُوثِ","dispersés"]],"sens":"Le jour où les gens seront comme des papillons dispersés,","p":[]},
+{"a":5,"ar":"وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ","mots":[["وَتَكُونُ","et seront"],["ٱلْجِبَالُ","les montagnes"],["كَٱلْعِهْنِ","comme la laine (teinte)"],["ٱلْمَنفُوشِ","cardée"]],"sens":"et les montagnes comme de la laine cardée.","p":[]},
+{"a":6,"ar":"فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ","mots":[["فَأَمَّا","quant à"],["مَن","celui dont"],["ثَقُلَتْ","seront lourdes"],["مَوَٰزِينُهُۥ","ses balances (le poids de ses bonnes œuvres)"]],"sens":"Quant à celui dont la balance sera lourde,","p":[]},
+{"a":7,"ar":"فَهُوَ فِى عِيشَةٍۢ رَّاضِيَةٍۢ","mots":[["فَهُوَ","il sera"],["فِى","dans"],["عِيشَةٍۢ","une vie"],["رَّاضِيَةٍۢ","agréable (qui le satisfait)"]],"sens":"il connaîtra une vie agréable ;","p":[]},
+{"a":8,"ar":"وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ","mots":[["وَأَمَّا","et quant à"],["مَنْ","celui dont"],["خَفَّتْ","seront légères"],["مَوَٰزِينُهُۥ","ses balances"]],"sens":"et quant à celui dont la balance sera légère,","p":[]},
+{"a":9,"ar":"فَأُمُّهُۥ هَاوِيَةٌۭ","mots":[["فَأُمُّهُۥ","sa mère (son refuge)"],["هَاوِيَةٌۭ","un abîme (al-Hāwiya)"]],"sens":"son refuge sera un abîme.","p":[]},
+{"a":10,"ar":"وَمَآ أَدْرَىٰكَ مَا هِيَهْ","mots":[["وَمَآ","et qu'est-ce qui"],["أَدْرَىٰكَ","te fera savoir"],["مَا","ce que"],["هِيَهْ","c'est"]],"sens":"Et qui te fera savoir ce que c'est ?","p":[]},
+{"a":11,"ar":"نَارٌ حَامِيَةٌۢ","mots":[["نَارٌ","un Feu"],["حَامِيَةٌۢ","ardent"]],"sens":"Un Feu ardent.","p":[]}
+]}
