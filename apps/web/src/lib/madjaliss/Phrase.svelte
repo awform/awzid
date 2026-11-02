@@ -178,7 +178,9 @@
     {/each}
     {#each traduction ? (p.sens ?? []) : [] as s (s.ref)}
       <div class="sens" data-sens={s.ref}>
-        <p class="sens-titre"><Bidi text={`${t('mj.sens_verset')} (${s.ref})`} /></p>
+        <p class="sens-titre">
+          <Bidi text={`${t(s.extrait ? 'mj.sens_extrait' : 'mj.sens_verset')} (${s.ref})`} />
+        </p>
         <p class="sens-texte"><Bidi text={s.texte} /></p>
       </div>
     {/each}

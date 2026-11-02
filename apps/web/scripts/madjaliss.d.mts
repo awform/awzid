@@ -4,6 +4,18 @@ export const SORTIE: string;
 export const STATUT: 'EN_ATTENTE_SECONDE_LECTURE';
 export const STATUTS_ACCEPTES: Set<string>;
 export const TEXTES: string[];
+export const SENS_TAFSIR: string;
+/** Portion citée d'un sens : le texte sans les « … » de coupure (sous-chaîne exacte du sens validé du tafsīr). */
+export function portionDuSens(texte: string): string;
+/** Sens (tafsīr Awzid validé) des versets cités par une phrase, ou null ; échoue si une entrée ne correspond pas. */
+export function sensTafsirDe(
+  id: string,
+  phrase: { ar?: unknown; q?: Array<{ ref: string }>; sens?: unknown[] },
+  source?: {
+    versets?: Record<string, { sens: string }>;
+    phrases?: Record<string, Array<{ ref: string; texte: string; extrait?: true }>>;
+  },
+): Array<{ ref: string; texte: string; source: string; extrait?: true }> | null;
 export const PHRASE_INTERNE_RISALA: RegExp;
 export const LIEN_NUMERISATION: RegExp;
 export const TEXTES_LOT4: string[];

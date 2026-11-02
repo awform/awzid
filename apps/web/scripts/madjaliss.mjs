@@ -5,6 +5,8 @@
 //    destinée à l'élève de `alignement_tuhfa.json` ;
 //  - texte coranique cité : `coran/tanzil-uthmani.tsv` (copie figée de Tanzil, octet par octet, jamais retapé), sens du
 //    verset : traduction de référence de l'application (static/traductions/french_rashid).
+// Sens des versets cités : `traduction_fr.json` (emplacement) → traduction de référence de l'application ; sinon
+// `coran/sens_tafsir.json` (2/11/2026, F3) → champ « sens » du tafsīr Awzid validé, portion citée comprise.
 // Écrit static/mutun/<texte>.json (élève, PUBLIC, chargé à la demande et gardé au premier usage) et, depuis le lot 5,
 // dans src/lib/server/mutun/ (fichiers GARDÉS, servis par la route /mutun/[fichier] seulement après authentification avec
 // le droit adapté — jamais dans static/) : <texte>-enseignant.json (variantes, vocalisations « à vérifier », choix de
@@ -367,6 +369,42 @@ export function sensVerset(s, a) {
   const row = j.t.find((r) => r[0] === a);
   if (!row) throw new Error(`sens introuvable ${s}:${a}`);
   return { texte: row[1], cle: j.key, version: j.version };
+}
+
+/** Sens des versets cités d'après le tafsīr validé (`coran/sens_tafsir.json`, 2/11/2026) : voir `sensTafsirDe`. */
+export const SENS_TAFSIR = join(SOURCES, 'coran', 'sens_tafsir.json');
+let sensTafsirCache = null;
+const sensTafsir = () => (sensTafsirCache ??= lire(SENS_TAFSIR));
+/** Portion citée = sous-chaîne EXACTE du sens validé du verset (« … » marque la coupure, au début ou à la fin). */
+export const portionDuSens = (texte) => texte.replace(/^… /, '').replace(/ …$/, '');
+/**
+ * Sens des versets que cite une phrase, tiré du tafsīr Awzid validé (champ « sens » du verset, copie sans changement ;
+ * la portion citée quand le verset n'est cité qu'en partie), sans rien inventer : chaque entrée doit viser un verset
+ * réellement cité par la phrase, et son texte doit être le sens validé (entier) ou une sous-chaîne exacte de ce sens.
+ * Retourne null pour une phrase absente du fichier ; la construction échoue si la phrase a déjà un sens (traduction de
+ * référence) ou si une entrée ne correspond pas.
+ */
+export function sensTafsirDe(id, phrase, source = sensTafsir()) {
+  const entrees = source.phrases?.[id];
+  if (!entrees) return null;
+  if (phrase.sens?.length) throw new Error(`sens ${id} : déjà un sens (traduction de référence)`);
+  const cites = new Set([
+    ...(Array.isArray(phrase.ar) ? phrase.ar : []).filter((x) => x?.ref).map((x) => x.ref),
+    ...(phrase.q ?? []).map((x) => x.ref),
+  ]);
+  return entrees.map((e) => {
+    const v = source.versets?.[e.ref];
+    if (!cites.has(e.ref) || !v)
+      throw new Error(`sens ${id} : verset ${e.ref} non cité par la phrase`);
+    const ok = e.extrait ? v.sens.includes(portionDuSens(e.texte)) : e.texte === v.sens;
+    if (!ok) throw new Error(`sens ${id} (${e.ref}) : différent du sens validé du tafsīr`);
+    return {
+      ref: e.ref,
+      texte: e.texte,
+      source: 'tafsir_awzid',
+      ...(e.extrait ? { extrait: true } : {}),
+    };
+  });
 }
 
 /**
@@ -1098,6 +1136,9 @@ function construireTexte(texte, lignes) {
       ...ajout,
       ...(notes.length ? { notes } : {}),
     };
+    // 2/11/2026 (F3) : sens des versets cités sans sens jusqu'ici, tiré du tafsīr validé
+    const sensT = sensTafsirDe(p.id, complete);
+    if (sensT) complete.sens = sensT;
     if (masque) {
       phrases.push({ id: p.id, t, masque: true, ...(adulte(p.id) ? { adulte: true } : {}) });
       versNonConfirmes.push({ ...complete, nc: true });

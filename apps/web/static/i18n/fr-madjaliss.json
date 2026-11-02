@@ -56,6 +56,7 @@
   "mj.explication_bientot": "Passage présenté avec son explication par l'enseignant — bientôt",
   "mj.vers_masque": "Vers en cours de vérification (une voyelle reste à confirmer) — bientôt",
   "mj.sens_verset": "Sens du verset entier :",
+  "mj.sens_extrait": "Sens du passage cité :",
   "mj.mots_vide": "Pas de mot difficile dans cette séance.",
   "mj.memo_aide": "Lis la phrase, puis masque-la peu à peu et récite-la. Touche un mot caché pour le voir.",
   "mj.memo_phrase": "Phrase {i} sur {n}",

@@ -3170,6 +3170,7 @@
   "mj.explication_bientot": "Pasaje presentado con su explicación por el profesor — próximamente",
   "mj.vers_masque": "Verso en revisión (queda por confirmar una vocal) — próximamente",
   "mj.sens_verset": "Sentido de la aleya completa:",
+  "mj.sens_extrait": "Sentido del pasaje citado:",
   "mj.mots_vide": "No hay palabras difíciles en esta sesión.",
   "mj.memo_aide": "Lee la frase, luego ocúltala poco a poco y recítala. Toca una palabra oculta para verla.",
   "mj.memo_phrase": "Frase {i} de {n}",

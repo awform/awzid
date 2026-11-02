@@ -7,6 +7,15 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 02/11/2026 — Corrections de contenu des Madjaliss et de l'évaluation (branche `fiqh-corr-wip`) ; NON fusionné, NON déployé
+
+- **F3, sens des versets cités** : 27 phrases citaient un verset sans son sens (RIS-0392, RIS-0672 à 0684, AKH-0132, NAW-H10, NAW-H29, RIS-0418, 0545, 0780 à 0783, 1425 à 1447, 1585, 1586, 1640). Source nouvelle `packages/content/madjaliss-source/coran/sens_tafsir.json` : champ « sens » du tafsīr Awzid validé (`bloc*_*.json`, `juz_amma.json`), copié sans changement ; verset cité en partie = portion exacte du sens (coupures « … », libellé « Sens du passage cité », clé `mj.sens_extrait` en 5 langues). Le bâtisseur (`sensTafsirDe`) échoue si le verset n'est pas cité ou si le texte n'est pas une sous-chaîne du sens validé. L'arabe reste Tanzil octet pour octet.
+- **F2, an-Nawawī** : 117 « عليه و سلم » → « عليه وسلم » dans `nawawi40/texte_ar.json` (les 2 traces d'audit `avant_*` gardent l'ancienne forme) ; diff caractère par caractère : 117 espaces supprimées, rien d'autre.
+- **F4** : le libellé `VALIDATION_HUMAINE_REQUISE` n'existe plus dans le dépôt ; le registre des livres (hors dépôt) a été corrigé à la source (`mutun.json` 201, `fiqh.json` 2 champs `statut`).
+- **Ibn ʿĀshir** : mécanisme `differe` contrôlé (aucune fuite) et verrouillé par des tests ; aucun changement de code.
+- Tests : `apps/web/src/lib/madjaliss/corrections-fiqh.test.ts`.
+
+
 
 
 ## 02/11/2026 — MISE EN LIGNE en production : mode « tout voir » réservé au compte du client (`bdb0c06`)
