@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { fmtNumber, t } from '$lib/i18n';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
 
@@ -76,17 +77,17 @@
     </li>
     <li>
       <button type="button" onclick={() => onsaut(-SAUT_S)} data-testid="am-recul"
-        >{t('ca.recul', { s: fmtNumber(SAUT_S) })}</button
+        ><Bidi text={t('ca.recul', { s: fmtNumber(SAUT_S) })} /></button
       >
     </li>
     <li>
       <button type="button" onclick={() => onsaut(SAUT_S)} data-testid="am-avance"
-        >{t('ca.avance', { s: fmtNumber(SAUT_S) })}</button
+        ><Bidi text={t('ca.avance', { s: fmtNumber(SAUT_S) })} /></button
       >
     </li>
     <li>
       <button type="button" onclick={agir(onrecitateur)} data-testid="am-recitateur"
-        >{t('cl.reglages_de', { nom: recitateur })}</button
+        ><Bidi text={t('cl.reglages_de', { nom: recitateur })} /></button
       >
     </li>
     <li>
