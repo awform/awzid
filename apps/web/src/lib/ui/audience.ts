@@ -66,6 +66,7 @@ export type NavId =
   | 'ecole'
   | 'questions'
   | 'admin'
+  | 'toutvoir'
   | 'livres'
   | 'connexion'
   | 'aide';
@@ -93,6 +94,8 @@ const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
   ecole: { href: '/enseignant/ecole', icon: 'ecole' },
   questions: { href: '/enseignant/questions', icon: 'question' },
   admin: { href: '/admin', icon: 'bouclier' },
+  // 2/11/2026 : mode « tout voir » du client (administrateur avec second facteur) : liste de tous les niveaux et livres
+  toutvoir: { href: '/admin/explorer', icon: 'loupe' },
   livres: { href: '/', icon: 'alif' },
   connexion: { href: '/connexion', icon: 'cle' },
   aide: { href: '/aide', icon: 'question' },
@@ -109,7 +112,7 @@ const NAV: Record<Audience, NavId[]> = {
   adulte: ['aujourdhui', 'arabe', 'coran', 'vivre', 'plus'],
   parent: ['famille', 'suivi', 'messages', 'vivre', 'compte'],
   enseignant: ['classes', 'ecole', 'questions', 'compte'],
-  admin: ['admin', 'compte', 'aide'],
+  admin: ['admin', 'toutvoir', 'compte', 'aide'],
   visiteur: ['livres', 'vivre', 'connexion', 'aide'],
 };
 

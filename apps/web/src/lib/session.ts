@@ -24,6 +24,11 @@ export interface Me {
   roles?: string[];
   /** lot 6 : membre du groupe « bêta fermée » avec le droit de voir le contenu différé de Madjaliss (calculé par l'API) */
   betaDiffere?: boolean;
+  /**
+   * 2/11/2026 : mode « tout voir » — compte dmin avec second facteur validé dans la session (calculé par l'API, jamais
+   * par le navigateur). Le serveur revérifie à chaque fichier gardé : ce drapeau n'ouvre rien à lui seul.
+   */
+  toutVoir?: boolean;
   ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
   /** V2-3 : session d'un enfant connecté par identifiant (limitée à son profil, apprentissage seulement) */
   enfantSession?: boolean;
@@ -127,26 +132,45 @@ export function fetchMe(): Promise<Me | null> {
   return meEnCours;
 }
 
+/** `toutVoir` vu sur le RÉSEAU (jamais déduit de la copie de l'appareil : la copie hors ligne ne donne jamais le mode). */
+let toutVoirReseau = false;
+export const toutVoirEnLigne = (): boolean => toutVoirReseau;
+
+/** Sans le mode « tout voir » : la copie gardée du fichier des séances sensibles est effacée de l'appareil. */
+async function oublierToutSiBesoin(me: Me | null): Promise<void> {
+  toutVoirReseau = me?.toutVoir === true;
+  if (toutVoirReseau) return;
+  const cles = (await kvKeys().catch(() => [] as string[])).filter(
+    (k) => k.startsWith('madjaliss-differe:') && k.endsWith(':tout'),
+  );
+  if (cles.length) await delMany('kv', cles).catch(() => {});
+}
+
 async function fetchMeOnce(): Promise<Me | null> {
   // `doux=1` : visiteur sans session = réponse 200 « anonyme » (et non 401 rouge dans la console)
   const r = await call<Me & { anonyme?: true }>('GET', '/auth/me?doux=1');
   if (r.ok && r.data?.anonyme) {
     await kvSet('me', null).catch(() => {});
+    await oublierToutSiBesoin(null);
     return null;
   }
   if (r.ok && r.data) {
     await kvSet('me', r.data).catch(() => {});
+    await oublierToutSiBesoin(r.data);
     return r.data;
   }
   if (r.status === 401) {
     await kvSet('me', null).catch(() => {});
+    await oublierToutSiBesoin(null);
     return null;
   }
-  return (await kvGet<Me | null>('me').catch(() => null)) ?? null;
+  return cachedMe();
 }
 
+/** Copie de l'appareil (hors ligne) : JAMAIS le mode « tout voir », même si la dernière réponse du réseau le disait. */
 export async function cachedMe(): Promise<Me | null> {
-  return (await kvGet<Me | null>('me').catch(() => null)) ?? null;
+  const me = (await kvGet<Me | null>('me').catch(() => null)) ?? null;
+  return me?.toutVoir ? { ...me, toutVoir: false } : me;
 }
 
 /** Données PERSONNELLES laissées sur l'appareil par le compte : effacées à la déconnexion (audit OFF-3). */

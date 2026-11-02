@@ -10,6 +10,8 @@ export const TEXTES_LOT4: string[];
 export const TOUS_LES_TEXTES: string[];
 export const TAILLE_PARTIE: number;
 export const DIFFERE_CYCLE: Record<string, { cycle_min: number; consigne: RegExp }>;
+export const SEANCES_SENSIBLES: Record<string, Set<string>>;
+export const PHRASES_SENSIBLES: Record<string, Set<string>>;
 export const DIFFERE: Record<string, { seances: string[]; consigne: RegExp }>;
 export function departager(
   eleve: {
@@ -19,11 +21,14 @@ export function departager(
   },
   taille?: number,
   raisons?: Map<number, string>,
+  tout?: { version: string } | null,
 ): {
   index: {
     phrases: unknown[];
-    seances: Array<{ n: number; p: number }>;
+    seances: Array<{ n: number; p: number; titre: string }>;
     parts: Array<{ n: number; version: string; o?: true }>;
+    /** fichier gardé « tout voir » (`<texte>-tout.json`, administrateur avec second facteur) */
+    tout?: { version: string };
   };
   fichiers: Array<{
     v: number;
@@ -85,6 +90,16 @@ export function construire(
   raisons: Map<number, string>;
   /** versions complètes des vers masqués (marquées `nc`), pour le complément gardé */
   versNonConfirmes: Array<{ id: string; nc?: true; [k: string]: unknown }>;
+  /** fichier gardé « tout voir » (`<texte>-tout.json`) : séances sensibles, phrases et notes (null : aucune) */
+  tout: {
+    v: number;
+    id: string;
+    version: string;
+    statut: string;
+    seances: unknown[];
+    phrases: Array<{ id: string }>;
+    notes: { differe: number[]; [k: string]: unknown };
+  } | null;
 };
 /** Lot 5 : dossier des fichiers GARDÉS (servis après authentification, jamais dans static/). */
 export const SORTIE_PROTEGEE: string;

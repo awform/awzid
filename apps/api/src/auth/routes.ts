@@ -111,6 +111,7 @@ import {
   registerEnfantLogin,
 } from './enfant-login.js';
 import { registerRecovery } from './recuperation.js';
+import { voitTout } from './tout-voir.js';
 import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
 import {
@@ -292,9 +293,19 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         f.regles.filter((r) => r.cle === 'beta_contenu_differe_visible'),
       );
     }
+    // 2/11/2026 : mode « tout voir » du client SEUL (voir `tout-voir.ts`). Calculé ici ; les routes gardées revérifient.
+    const toutVoir = voitTout({
+      id: a.id,
+      kind: a.kind,
+      email: a.email,
+      mfaVerified,
+      totpEnabled: a.totpEnabled,
+      limitee: !!tablet || !!soloProfileId,
+    });
     return {
       roles,
       betaDiffere,
+      toutVoir,
       ecoles,
       tablette,
       account: {

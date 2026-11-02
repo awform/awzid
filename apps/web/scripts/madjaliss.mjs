@@ -125,6 +125,28 @@ export const TOUS_LES_TEXTES = [...TEXTES, ...TEXTES_LOT4];
 export const DIFFERE_CYCLE = {
   risala: { cycle_min: 3, consigne: /Publication différée de toute la Risāla/ },
 };
+/**
+ * SÉANCES SENSIBLES DE LA RISĀLA (mode « tout voir », 2/11/2026) : le chapitre du jihād (S133 à S135) et le commerce en
+ * pays ennemi (S256). Ce contenu n'est visible que du compte administrateur avec second facteur (« tout voir ») :
+ * ni le sommaire PUBLIC (`static/mutun/risala.json`, servi sans session), ni les parties gardées `risala-p<k>.json`
+ * (personnel, démonstration, groupe « bêta fermée »), ni les notes de l'enseignant ne les contiennent. Séances, phrases,
+ * raisons et notes sont dans UN fichier gardé `risala-tout.json` (droit « tout » : `estToutVoir` de mutun-acces.ts),
+ * fusionné par l'application seulement quand l'API dit `toutVoir`. Les autres séances différées, non sensibles, restent
+ * où elles étaient (leurs titres figurent toujours dans le sommaire public : voir le rapport du 2/11/2026).
+ */
+export const SEANCES_SENSIBLES = {
+  risala: new Set(['RIS-S133', 'RIS-S134', 'RIS-S135', 'RIS-S256']),
+};
+/**
+ * PHRASES SENSIBLES isolées dans une séance qui, elle, reste ouverte (décision du référent, 2/11/2026) : même traitement,
+ * AU NIVEAU DE LA PHRASE. RIS-1392 (obligation du jihād, S229) et RIS-1393 (garde des frontières, ribāṭ, S230) ;
+ * RIS-1224 (vol du butin et du trésor public) et RIS-1225 (vol du butin, S206). La séance garde ses autres phrases ;
+ * pour « tout voir », le fichier gardé redonne la liste COMPLÈTE et ordonnée de ses phrases (`ordre`).
+ * Laissés tels quels : la jizya du chapitre de la zakāt (S103b, S109), la prière de la peur (S075).
+ */
+export const PHRASES_SENSIBLES = {
+  risala: new Set(['RIS-1392', 'RIS-1393', 'RIS-1224', 'RIS-1225']),
+};
 /** Dossier des sources quand il diffère de l'identifiant du texte (« Les Quarante hadiths » : `nawawi40`). */
 const DOSSIER = { nawawi: 'nawawi40' };
 export const dossier = (texte) => join(SOURCES, DOSSIER[texte] ?? texte);
@@ -1225,7 +1247,14 @@ function construireTexte(texte, lignes) {
       .filter((s) => differe.has(s.id) && typeof s.raison_differe === 'string' && s.raison_differe)
       .map((s) => [numeroDe.get(s.id), s.raison_differe]),
   );
-  const seances = seancesSrc.map((s) => {
+  // séances sensibles (voir SEANCES_SENSIBLES) : différées, et mises à part dans le fichier « tout voir »
+  const sensibles = SEANCES_SENSIBLES[texte] ?? new Set();
+  for (const id of sensibles) {
+    if (!seancesSrc.some((s) => s.id === id))
+      throw new Error(`${texte} : séance sensible ${id} absente`);
+    if (!differe.has(id)) throw new Error(`${texte} : séance sensible ${id} non différée`);
+  }
+  const seancesToutes = seancesSrc.map((s) => {
     const ids = idsSeance(s);
     const mots = s.mots_difficiles.filter((m) => !reserve(s, m));
     const renvois = renvoisDe(s);
@@ -1251,9 +1280,45 @@ function construireTexte(texte, lignes) {
       ...(renvois.length ? { renvois } : {}),
     };
   });
+  // séances sensibles : retirées de TOUT ce qui est servi à un autre compte que l'administrateur « tout voir »
+  const numerosTout = new Set(
+    seancesSrc.filter((s) => sensibles.has(s.id)).map((s) => numeroDe.get(s.id)),
+  );
+  const seancesTout = seancesToutes.filter((s) => numerosTout.has(s.n));
+  const phrasesSensibles = PHRASES_SENSIBLES[texte] ?? new Set();
+  for (const id of phrasesSensibles)
+    if (!phrases.some((p) => p.id === id))
+      throw new Error(`${texte} : phrase sensible ${id} absente`);
+  const idsTout = new Set([...seancesTout.flatMap((s) => s.phrases), ...phrasesSensibles]);
+  // séances ouvertes qui perdent des phrases sensibles : leur liste complète est gardée pour « tout voir »
+  const ordre = {};
+  const seances = seancesToutes
+    .filter((s) => !numerosTout.has(s.n))
+    .map((s) => {
+      if (!s.phrases.some((id) => idsTout.has(id))) return s;
+      ordre[s.n] = s.phrases;
+      return { ...s, phrases: s.phrases.filter((id) => !idsTout.has(id)) };
+    });
+  const sansSensibles = (x) =>
+    x.variantes?.length
+      ? {
+          ...x,
+          variantes: x.variantes.map((v) =>
+            typeof v.phrase === 'string'
+              ? {
+                  ...v,
+                  phrase: v.phrase
+                    .split(/,\s*/)
+                    .filter((id) => !idsTout.has(id))
+                    .join(', '),
+                }
+              : v,
+          ),
+        }
+      : x;
   const corps = {
     ...(texte === 'ajurrumiyya' ? { code: codeVisuel(texte) } : {}),
-    phrases,
+    phrases: phrases.filter((p) => !idsTout.has(p.id)),
     seances,
   };
   const version = createHash('sha256').update(JSON.stringify(corps)).digest('hex').slice(0, 12);
@@ -1273,29 +1338,80 @@ function construireTexte(texte, lignes) {
         }
       : {}),
     comite: seancesSrc
-      .filter((s) => s.relecture_comite === true)
+      .filter((s) => s.relecture_comite === true && !numerosTout.has(numeroDe.get(s.id)))
       .map((s) => ({ n: numeroDe.get(s.id), id: s.id, motif: s.motif_relecture ?? '' })),
-    phrases: [...enseignantPhrases.values()].filter(
-      (x) =>
-        x.a_verifier.length ||
-        x.variantes.length ||
-        x.traduction ||
-        x.decision ||
-        x.notes_internes ||
-        x.info?.length,
-    ),
-    mots: seancesSrc.flatMap((s) =>
-      s.mots_difficiles
-        .filter((m) => reserve(s, m))
-        .map((m) => ({
-          n: numeroDe.get(s.id),
-          ar: m.ar,
-          fr: m.sens,
-          motif: SENS_A_VERIFIER.test(m.sens) ? 'sens' : 'explication',
-        })),
-    ),
+    phrases: [...enseignantPhrases.values()]
+      .filter(
+        (x) =>
+          !idsTout.has(x.id) &&
+          (x.a_verifier.length ||
+            x.variantes.length ||
+            x.traduction ||
+            x.decision ||
+            x.notes_internes ||
+            x.info?.length),
+      )
+      .map(sansSensibles),
+    mots: seancesSrc
+      .filter((s) => !numerosTout.has(numeroDe.get(s.id)))
+      .flatMap((s) =>
+        s.mots_difficiles
+          .filter((m) => reserve(s, m))
+          .map((m) => ({
+            n: numeroDe.get(s.id),
+            ar: m.ar,
+            fr: m.sens,
+            motif: SENS_A_VERIFIER.test(m.sens) ? 'sens' : 'explication',
+          })),
+      ),
   };
-  return { eleve, enseignant, raisons, versNonConfirmes };
+  // fichier « tout voir » (droit : administrateur avec second facteur) : les séances sensibles avec leurs phrases, la
+  // raison de leur publication différée et les notes de l'enseignant qui les concernent
+  let tout = null;
+  if (numerosTout.size || idsTout.size) {
+    const tPhrases = phrases.filter((p) => idsTout.has(p.id));
+    const corpsTout = {
+      seances: seancesTout.map((s) => (raisons.has(s.n) ? { ...s, rd: raisons.get(s.n) } : s)),
+      phrases: tPhrases,
+      ...(Object.keys(ordre).length ? { ordre } : {}),
+      notes: {
+        differe: seancesTout.filter((s) => s.differe).map((s) => s.n),
+        comite: seancesSrc
+          .filter((s) => s.relecture_comite === true && numerosTout.has(numeroDe.get(s.id)))
+          .map((s) => ({ n: numeroDe.get(s.id), id: s.id, motif: s.motif_relecture ?? '' })),
+        phrases: [...enseignantPhrases.values()].filter(
+          (x) =>
+            idsTout.has(x.id) &&
+            (x.a_verifier.length ||
+              x.variantes.length ||
+              x.traduction ||
+              x.decision ||
+              x.notes_internes ||
+              x.info?.length),
+        ),
+        mots: seancesSrc
+          .filter((s) => numerosTout.has(numeroDe.get(s.id)))
+          .flatMap((s) =>
+            s.mots_difficiles
+              .filter((m) => reserve(s, m))
+              .map((m) => ({
+                n: numeroDe.get(s.id),
+                ar: m.ar,
+                fr: m.sens,
+                motif: SENS_A_VERIFIER.test(m.sens) ? 'sens' : 'explication',
+              })),
+          ),
+      },
+    };
+    tout = {
+      v: 2,
+      id: texte,
+      version: createHash('sha256').update(JSON.stringify(corpsTout)).digest('hex').slice(0, 12),
+      statut: STATUT,
+      ...corpsTout,
+    };
+  }
+  return { eleve, enseignant, raisons, versNonConfirmes, tout };
 }
 
 /** Construit les données de l'élève et de l'enseignant d'un texte (les filtres propres à la Risāla ne vivent que pendant l'appel). */
@@ -1317,7 +1433,7 @@ export const TAILLE_PARTIE = 280_000;
  * à l'ouverture d'une séance. Les séances se suivent : une partie = des séances consécutives, jamais coupée au milieu
  * d'une séance. Le texte et le contenu des phrases sont ceux de `construire`, inchangés.
  */
-export function departager(eleve, taille = TAILLE_PARTIE, raisons = new Map()) {
+export function departager(eleve, taille = TAILLE_PARTIE, raisons = new Map(), tout = null) {
   const de = new Map(eleve.phrases.map((p) => [p.id, p]));
   // lot 6 : DEUX suites de parties. Les séances ouvertes (non différées) ont leurs phrases dans des parties PUBLIQUES
   // (`<texte>-o<k>.json`, dans `static/mutun`, lisibles par tous) ; les séances différées dans des parties GARDÉES
@@ -1356,6 +1472,8 @@ export function departager(eleve, taille = TAILLE_PARTIE, raisons = new Map()) {
     phrases: [],
     seances: eleve.seances.map((s) => ({ ...s, p: partieDe.get(s.n) })),
     parts: fichiers.map((f) => ({ n: f.part, version: f.version, ...(f.pub ? { o: true } : {}) })),
+    // séances sensibles (SEANCES_SENSIBLES) : le sommaire public dit seulement qu'un fichier gardé « tout voir » existe
+    ...(tout ? { tout: { version: tout.version } } : {}),
   };
   return { index, fichiers };
 }
@@ -1369,7 +1487,7 @@ export function departager(eleve, taille = TAILLE_PARTIE, raisons = new Map()) {
  */
 export const SORTIE_PROTEGEE = join(web, 'src', 'lib', 'server', 'mutun');
 /** Noms de fichiers gardés (jamais dans `static/mutun`). */
-export const NOM_PROTEGE = /^[a-z-]+-(?:enseignant|differe|p\d+)\.json$/;
+export const NOM_PROTEGE = /^[a-z-]+-(?:enseignant|differe|tout|p\d+)\.json$/;
 
 const empreinte = (x) => createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 12);
 
@@ -1407,13 +1525,17 @@ export function separerDiffere(eleve, nonConfirmes = []) {
 
 /** Écrit tous les fichiers d'un texte : publics dans `static/mutun`, gardés dans `SORTIE_PROTEGEE` (voir plus haut). */
 export function ecrireTexte(texte, lignes = tanzil(), sortie = SORTIE, protegee = SORTIE_PROTEGEE) {
-  const { eleve, enseignant, raisons, versNonConfirmes } = construire(texte, lignes);
+  const { eleve, enseignant, raisons, versNonConfirmes, tout } = construire(texte, lignes);
   const ecrire = (dir, nom, x) => writeFileSync(join(dir, nom), `${JSON.stringify(x)}\n`);
   let publique;
   const audio = [];
   if (TEXTES_LOT4.includes(texte)) {
-    const { index, fichiers } = departager(eleve, TAILLE_PARTIE, raisons);
+    const { index, fichiers } = departager(eleve, TAILLE_PARTIE, raisons, tout);
     publique = index;
+    if (tout) {
+      ecrire(protegee, `${texte}-tout.json`, tout);
+      audio.push(...avecAudio(tout.phrases, 'tout'));
+    }
     for (const { pub, ...f } of fichiers) {
       if (pub) ecrire(sortie, `${texte}-o${f.part}.json`, f);
       else ecrire(protegee, `${texte}-p${f.part}.json`, f);

@@ -737,5 +737,19 @@
   "elv.pdf_non_imprimable": "Un prénom ne peut pas être imprimé dans cette fiche (écriture non prise en charge). Les comptes sont créés ; notez les identifiants à la main ou envoyez-les par WhatsApp.",
   "elv.ordre_titre": "Dans chaque ligne, quel mot est le prénom ?",
   "elv.ordre_nom_prenom": "Le nom de famille d’abord, puis le prénom (DIOP Fatou)",
-  "elv.ordre_prenom_nom": "Le prénom d’abord, puis le nom de famille (Fatou DIOP)"
+  "elv.ordre_prenom_nom": "Le prénom d’abord, puis le nom de famille (Fatou DIOP)",
+  "tv.titre": "Tout voir",
+  "tv.intro": "Votre compte administrateur voit tout le contenu de l'appli, sans rien de caché : tous les niveaux et tous les livres des enfants, des ados et des adultes, la religion, le Coran, les Madjaliss, l'écriture et les cahiers, y compris le contenu « adulte », « pudeur », différé et en attente de relecture. Les autres comptes ne le voient pas. Aucune donnée personnelle d'utilisateur n'est affichée ici et rien n'est enregistré dans une progression.",
+  "tv.reserve": "Cet espace est réservé au compte administrateur connecté avec son second facteur.",
+  "tv.niveaux": "Niveaux et livres",
+  "tv.livres": "{n, plural, =0 {aucun livre} one {# livre} other {# livres}}",
+  "tv.lecons": "{n, plural, one {# leçon} other {# leçons}}",
+  "tv.apercu": "aperçu",
+  "tv.autres": "Autres espaces",
+  "tv.autres_pistes": "Autres livres",
+  "tv.coran": "Le Coran",
+  "tv.ecriture": "L'écriture",
+  "tv.cahiers": "Cahiers",
+  "tv.madjaliss": "Madjaliss",
+  "tv.parler": "Je parle"
 }

@@ -4554,5 +4554,20 @@
   "fam.identifiant_retire": "Das von der Schule ausgegebene Passwort funktioniert nicht mehr. Legen Sie einen neuen Benutzernamen für Ihr Kind an: Öffnen Sie „Wer lernt?“ und dann den Zugang Ihres Kindes.",
   "elv.ordre_titre": "Welches Wort ist in jeder Zeile der Vorname?",
   "elv.ordre_nom_prenom": "Zuerst der Familienname, dann der Vorname (DIOP Fatou)",
-  "elv.ordre_prenom_nom": "Zuerst der Vorname, dann der Familienname (Fatou DIOP)"
+  "elv.ordre_prenom_nom": "Zuerst der Vorname, dann der Familienname (Fatou DIOP)",
+  "tv.titre": "Alles ansehen",
+  "tv.intro": "Ihr Administratorkonto sieht alle Inhalte der App, ohne dass etwas verborgen ist: alle Stufen und Bücher für Kinder, Jugendliche und Erwachsene, Religion, Koran, Madjaliss, Schreiben und Hefte, einschließlich „Erwachsenen“-, „Schamhaftigkeits“-, zurückgestellter und noch zu prüfender Inhalte. Andere Konten sehen sie nicht. Hier werden keine personenbezogenen Daten von Nutzern angezeigt, und es wird kein Lernfortschritt gespeichert.",
+  "tv.reserve": "Dieser Bereich ist dem Administratorkonto vorbehalten, das mit seinem zweiten Faktor angemeldet ist.",
+  "tv.niveaux": "Stufen und Bücher",
+  "tv.livres": "{n, plural, =0 {keine Bücher} one {# Buch} other {# Bücher}}",
+  "tv.lecons": "{n, plural, one {# Lektion} other {# Lektionen}}",
+  "tv.apercu": "Vorschau",
+  "tv.autres": "Weitere Bereiche",
+  "tv.autres_pistes": "Weitere Bücher",
+  "tv.coran": "Der Koran",
+  "tv.ecriture": "Das Schreiben",
+  "tv.cahiers": "Hefte",
+  "nav.toutvoir": "Alles ansehen",
+  "tv.madjaliss": "Madjaliss",
+  "tv.parler": "Ich spreche"
 }

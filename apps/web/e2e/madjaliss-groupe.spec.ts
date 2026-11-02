@@ -116,7 +116,7 @@ test('membre du groupe : tout le contenu différé avec le bandeau ; notes du r�
   await expect(page.getByTestId('mj-bandeau-relecture')).toBeVisible();
   await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(58);
   await page.goto('/madjaliss/risala');
-  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(265);
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(261);
   // une séance différée de la Risāla (croyance, niveau adulte) : lue, avec la raison de la publication différée
   // (15/10 : la séance 20 est ouverte, ses voyelles ont été levées ; la séance 1, croyance, reste différée)
   await page.goto('/madjaliss/risala/1');

@@ -4554,5 +4554,20 @@
   "fam.identifiant_retire": "The password given by the school no longer works. Create a new username for your child: open “Who is learning?”, then your child’s access.",
   "elv.ordre_titre": "In each row, which word is the first name?",
   "elv.ordre_nom_prenom": "Family name first, then first name (DIOP Fatou)",
-  "elv.ordre_prenom_nom": "First name first, then family name (Fatou DIOP)"
+  "elv.ordre_prenom_nom": "First name first, then family name (Fatou DIOP)",
+  "tv.titre": "See everything",
+  "tv.intro": "Your administrator account sees all the content of the app, with nothing hidden: every level and book for children, teens and adults, religion, the Quran, the Madjaliss, writing and notebooks, including “adult”, “modesty”, deferred and awaiting-review content. Other accounts do not see it. No personal data of users is shown here and nothing is saved to any progress.",
+  "tv.reserve": "This area is reserved for the administrator account signed in with its second factor.",
+  "tv.niveaux": "Levels and books",
+  "tv.livres": "{n, plural, =0 {no books} one {# book} other {# books}}",
+  "tv.lecons": "{n, plural, one {# lesson} other {# lessons}}",
+  "tv.apercu": "preview",
+  "tv.autres": "Other areas",
+  "tv.autres_pistes": "Other books",
+  "tv.coran": "The Quran",
+  "tv.ecriture": "Writing",
+  "tv.cahiers": "Notebooks",
+  "nav.toutvoir": "See everything",
+  "tv.madjaliss": "Madjaliss",
+  "tv.parler": "I speak"
 }

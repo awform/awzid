@@ -86,7 +86,24 @@ const srcSe = lire<{
 }>(join(dir, 'seances.json'));
 
 const brutIndex = readFileSync(join(SORTIE, 'risala.json'), 'utf8');
-const index = JSON.parse(brutIndex) as Matn;
+const indexPublic = JSON.parse(brutIndex) as Matn;
+// 2/11/2026 : séances SENSIBLES (chapitre du jihād) : absentes du sommaire public, dans le seul fichier gardé « tout voir »
+const brutTout = readFileSync(join(SORTIE_PROTEGEE, 'risala-tout.json'), 'utf8');
+const toutFichier = JSON.parse(brutTout) as {
+  version: string;
+  seances: Matn['seances'];
+  phrases: Matn['phrases'];
+  ordre?: Record<string, string[]>;
+  notes: { differe: number[]; phrases: NotesEnseignant['phrases'] };
+};
+/** Le sommaire entier tel que le voit l'administrateur « tout voir » (public + séances sensibles, dans l'ordre). */
+const index: Matn = {
+  ...indexPublic,
+  // séances sensibles ajoutées, et séances ouvertes qui retrouvent leurs phrases sensibles isolées (`ordre`)
+  seances: [...indexPublic.seances, ...toutFichier.seances]
+    .map((s) => (toutFichier.ordre?.[s.n] ? { ...s, phrases: toutFichier.ordre[s.n]! } : s))
+    .sort((a, b) => a.n - b.n),
+};
 // lot 5 : notes de l'enseignant et parties de phrases sont des fichiers GARDÉS (servis après authentification)
 const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'risala-enseignant.json'), 'utf8');
 const ens = JSON.parse(brutEns) as NotesEnseignant;
@@ -100,14 +117,18 @@ const parties = (index.parts ?? []).map((p) => {
   return JSON.parse(readFileSync(join(dir, nom), 'utf8')) as PartieMatn;
 });
 /** Le texte entier (index + toutes les parties), tel que le reconstitue l'application séance après séance. */
-const complet: Matn = { ...index, phrases: parties.flatMap((p) => p.phrases) };
+const complet: Matn = {
+  ...index,
+  phrases: [...parties.flatMap((p) => p.phrases), ...toutFichier.phrases],
+};
 const de = new Map(complet.phrases.map((p) => [p.id, p]));
 
 describe('ar-Risāla : données construites', () => {
   it('à jour avec les sources (node scripts/madjaliss.mjs) : sommaire, parties et notes de l’enseignant', () => {
-    const { eleve, enseignant, raisons } = construire('risala', lignes);
-    const d = departager(eleve as Parameters<typeof departager>[0], TAILLE_PARTIE, raisons);
+    const { eleve, enseignant, raisons, tout } = construire('risala', lignes);
+    const d = departager(eleve as Parameters<typeof departager>[0], TAILLE_PARTIE, raisons, tout);
     expect(`${JSON.stringify(d.index)}\n`).toBe(brutIndex);
+    expect(`${JSON.stringify(tout)}\n`).toBe(brutTout);
     expect(d.fichiers).toHaveLength(parties.length);
     d.fichiers.forEach(({ pub, ...f }, i) => {
       const { dir, nom } = fichierPartie({ n: i + 1, ...(pub ? { o: true as const } : {}) });
@@ -117,6 +138,10 @@ describe('ar-Risāla : données construites', () => {
     // aucun fichier de partie en trop : les parties GARDÉES dans le dossier gardé, les parties PUBLIQUES dans static/mutun
     const gardees = (index.parts ?? []).filter((p) => !p.o).length;
     const publiques = (index.parts ?? []).filter((p) => p.o).length;
+    // le fichier « tout voir » est le seul fichier gardé de la Risāla qui n'est ni une partie ni les notes
+    expect(readdirSync(SORTIE_PROTEGEE).filter((f) => /^risala-tout\.json$/.test(f))).toHaveLength(
+      1,
+    );
     expect(publiques).toBeGreaterThanOrEqual(1);
     expect(readdirSync(SORTIE_PROTEGEE).filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(
       gardees,
@@ -164,14 +189,16 @@ describe('ar-Risāla : données construites', () => {
 
   it('parties : chaque séance dans une seule partie, phrases de la séance toutes dans sa partie, poids bornés', () => {
     expect(parties.length).toBeGreaterThanOrEqual(8);
-    for (const s of index.seances) {
+    for (const s of indexPublic.seances) {
       const part = parties.find((p) => p.part === s.p);
       expect(part, `séance ${s.n}`).toBeDefined();
       const ids = new Set(part!.phrases.map((p) => p.id));
       for (const id of s.phrases) expect(ids.has(id), `${s.id} ${id}`).toBe(true);
     }
     // aucune phrase dans deux parties
-    expect(new Set(parties.flatMap((p) => p.phrases.map((x) => x.id))).size).toBe(1769);
+    expect(
+      new Set([...parties.flatMap((p) => p.phrases), ...toutFichier.phrases].map((x) => x.id)).size,
+    ).toBe(1769);
     for (const [i, p] of parties.entries()) {
       expect(p.part).toBe(i + 1);
       expect(index.parts![i]).toMatchObject({ n: i + 1, version: p.version });
@@ -355,7 +382,9 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
     // la zakāt de base (RIS-S104) est ouverte (décision du référent du 14/10, 0433 déplacée) : trois phrases sûres, ni incertaines ni adultes
     expect(index.seances.find((s) => s.id === 'RIS-S104')!.differe).toBeUndefined();
     expect(index.seances.find((s) => s.id === 'RIS-S104')!.adulte).toBeUndefined();
-    expect(ens.differe).toHaveLength(193);
+    // 189 dans les notes de l'enseignant + 4 séances sensibles, dont les notes sont dans le fichier « tout voir »
+    expect([...ens.differe!, ...toutFichier.notes.differe]).toHaveLength(193);
+    expect(toutFichier.notes.differe).toEqual([134, 135, 136, 257]);
     expect(ens.consigne_differe).toMatch(/masquées aux invités de la bêta/);
     expect(ens.publication).toMatch(/Publication différée de toute la Risāla/);
     // risala est au cycle 3 du plan directeur et ouvert ; plus « bientôt » pour tous (séances ouvertes)
@@ -458,7 +487,7 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
         'RIS-0755',
       ]),
     );
-    const notesEns = new Map(ens.phrases.map((x) => [x.id, x]));
+    const notesEns = new Map([...ens.phrases, ...toutFichier.notes.phrases].map((x) => [x.id, x]));
     for (const s of avecInfo) {
       const x = notesEns.get(s.id)!;
       expect(x.info, s.id).toEqual(s.note_info);

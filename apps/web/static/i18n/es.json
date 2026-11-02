@@ -4554,5 +4554,20 @@
   "fam.identifiant_retire": "La contraseña entregada por la escuela ya no funciona. Cree un nuevo identificador para su hijo: abra «¿Quién aprende?» y después el acceso de su hijo.",
   "elv.ordre_titre": "En cada fila, ¿qué palabra es el nombre?",
   "elv.ordre_nom_prenom": "Primero el apellido y después el nombre (DIOP Fatou)",
-  "elv.ordre_prenom_nom": "Primero el nombre y después el apellido (Fatou DIOP)"
+  "elv.ordre_prenom_nom": "Primero el nombre y después el apellido (Fatou DIOP)",
+  "tv.titre": "Verlo todo",
+  "tv.intro": "Su cuenta de administrador ve todo el contenido de la aplicación, sin nada oculto: todos los niveles y libros para niños, adolescentes y adultos, la religión, el Corán, los Madjaliss, la escritura y los cuadernos, incluido el contenido «adulto», «pudor», diferido y pendiente de revisión. Las demás cuentas no lo ven. Aquí no se muestra ningún dato personal de los usuarios y no se guarda nada en ningún progreso.",
+  "tv.reserve": "Este espacio está reservado a la cuenta de administrador conectada con su segundo factor.",
+  "tv.niveaux": "Niveles y libros",
+  "tv.livres": "{n, plural, =0 {ningún libro} one {# libro} other {# libros}}",
+  "tv.lecons": "{n, plural, one {# lección} other {# lecciones}}",
+  "tv.apercu": "avance",
+  "tv.autres": "Otros espacios",
+  "tv.autres_pistes": "Otros libros",
+  "tv.coran": "El Corán",
+  "tv.ecriture": "La escritura",
+  "tv.cahiers": "Cuadernos",
+  "nav.toutvoir": "Verlo todo",
+  "tv.madjaliss": "Madjaliss",
+  "tv.parler": "Hablo"
 }

@@ -17,6 +17,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - **Revue de sécurité** : texte attendu ≤ 1500 mots côté API (2000 mots, 64 car. par mot côté service), texte venant de la base Tanzil, jamais de l'appareil ; en mémoire, effacé avec la séance (purge à 60 s pour les non réclamés) ; aucun eval, regex fixes ; service non publié ; fenêtre = 3 séances dans `ECOUTE_DIRECT_MAX` ; le mode ne vient pas de la requête. Aucun défaut sérieux.
 - **À surveiller** : la prod borne l'écoute à 1,5 CPU et 1 fil ; la fenêtre coûte ~3,7× : latence possible pour le testeur.
 
+
+## 02/11/2026 — Mode « tout voir » du compte administrateur (branche `tout-voir-wip`) ; NON fusionné, NON déployé
+
+- **Critère** (aucune variable d'environnement) : le compte du CLIENT SEUL (identifiant `01a14091-…`, constante partagée `@awform/school/tout-voir`), de type `admin`, second facteur activé et validé dans la session, hors démonstration, tablette et session limitée (`apps/api/src/auth/tout-voir.ts`) ; `GET /auth/me` renvoie `toutVoir`. Jamais pour la tablette de classe ni une session limitée (enfant, élève d'école). Le serveur reste l'autorité : `estToutVoir` (`mutun-acces.ts`) relit la session à chaque fichier gardé ; le drapeau n'ouvre rien. `estPersonnel` exige désormais `mfaVerified === true` pour un administrateur.
+- **Interface** : `matnPour(…, tout)` (adulte, différé, pudeur levée), `voitDiffere`, entrée « Tout voir » dans la barre de l'administrateur (`/admin/explorer`, 5 langues) : tous les niveaux de toutes les pistes (`lib/explorer.ts`), sans verrou. Exploration SANS profil (`demoProfileFor` renvoie null) : aucune progression, tentative ni statistique écrite.
+- **Séances sensibles de la Risāla** (S133 à S135, jihād ; S256, commerce en pays ennemi) : retirées du sommaire public, des parties gardées ordinaires et des notes de l'enseignant ; dans le seul fichier gardé `risala-tout.json` (droit « tout » : administrateur avec second facteur). Le sommaire public passe à 261 séances. Les autres séances différées gardent leur titre public.
+- **Phrases sensibles isolées** (décision du référent) : RIS-1392 (obligation du jihād, S229), RIS-1393 (garde des frontières, S230), RIS-1224 et RIS-1225 (vol du butin, S206) sont retirées des séances ouvertes et des parties gardées ; le fichier « tout » redonne la liste complète et ordonnée (`ordre`). Laissés : jizya (S103b, S109), prière de la peur (S075).
+- La copie hors ligne ne donne jamais le mode ; la copie des séances sensibles est effacée dès que le réseau ne donne plus `toutVoir`.
+
+---
 ## 01/11/2026 (soir) — MISE EN LIGNE en production : écriture niveau 1 + lots V2-4/V2-5 (inscription en lot) — version `0fdac21`
 
 - **Déployé** sur awzid-beta : `main` = `0fdac21` (fusion `--no-ff` de `ecriture-fin-wip` 84a18b4 puis `inscription-v2-45-wip` e2a3c1c, sur 9823ec5 ; seul conflit : `reports/budget-web.md`, rapport régénéré). Édition `prod-141ebc0721` (778 unités, 5729 exercices, 1145 illustrations). Chaîne du déploiement : migrate, roles (droit DELETE sur `profile_login` pour le rôle de l'API), import de l'édition, redémarrage.

@@ -43,6 +43,17 @@ describe('lot 26 — public et navigation', () => {
     expect(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['ado'] }))).toBe('ado');
   });
 
+  it("l'administrateur a l'entrée « Tout voir » (2/11/2026), seulement lui ; elle s'allume sur sa page", () => {
+    const ids = (a: Parameters<typeof navFor>[0]) => navFor(a).map((x) => x.id);
+    expect(ids('admin')).toEqual(['admin', 'toutvoir', 'compte', 'aide']);
+    for (const a of ['enfant', 'ado', 'adulte', 'parent', 'enseignant', 'visiteur'] as const)
+      expect(ids(a), a).not.toContain('toutvoir');
+    const admin = navFor('admin');
+    expect(admin.find((x) => x.id === 'toutvoir')!.href).toBe('/admin/explorer');
+    expect(activeNav(admin, '/admin/explorer')).toBe('toutvoir');
+    expect(activeNav(admin, '/admin')).toBe('admin');
+  });
+
   it('3 à 5 entrées par public, toujours', () => {
     for (const a of [
       'enfant',

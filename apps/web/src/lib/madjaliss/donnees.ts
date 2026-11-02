@@ -180,6 +180,11 @@ export interface Matn {
    * `/mutun/<texte>-differe.json`, servi seulement au personnel et aux comptes de démonstration (session exigée)
    */
   differe?: { version: string };
+  /**
+   * 2/11/2026, grand texte (ar-Risāla) : les séances SENSIBLES (chapitre du jihād) ne sont PAS dans ce sommaire public ;
+   * elles sont dans `/mutun/<texte>-tout.json`, servi au seul administrateur avec second facteur (mode « tout voir »)
+   */
+  tout?: { version: string };
 }
 
 /** Complément gardé d'un texte : séances en publication différée et phrases qui ne sont que dans ces séances. */
@@ -190,6 +195,15 @@ export interface PartieDifferee {
   statut: string;
   seances: Seance[];
   phrases: Phrase[];
+  /** fichier « tout voir » seulement : liste COMPLÈTE et ordonnée des phrases des séances ouvertes qui en perdent (phrases sensibles) */
+  ordre?: Record<string, string[]>;
+  /** fichier « tout voir » seulement : notes de l'enseignant sur les séances sensibles (formes de `NotesEnseignant`) */
+  notes?: {
+    differe?: number[];
+    comite?: Array<{ n: number; id: string; motif: string }>;
+    phrases?: NotesEnseignant['phrases'];
+    mots?: NotesEnseignant['mots'];
+  };
 }
 
 /**
@@ -273,6 +287,8 @@ const enCours = new Map<string, Promise<Matn | null>>();
  * même appareil n'y trouve rien.
  */
 export const cleDiffere = (id: string, suite = '') => `madjaliss-differe:${id}${suite}`;
+/** Clé de la copie du fichier « tout voir » (même préfixe : effacée à la déconnexion, et quand le droit disparaît). */
+export const cleTout = (id: string) => cleDiffere(id, ':tout');
 
 /**
  * Texte d'un matn : copie de l'appareil si elle existe (affichage immédiat, hors ligne), mise à jour en arrière-plan
@@ -284,12 +300,14 @@ export function chargerMatn(
   id: string,
   f: Fetcher = (u) => fetch(u),
   differe = false,
+  tout = false,
 ): Promise<Matn | null> {
-  const cle = `${id}:${differe ? 'd' : 'p'}`;
+  const cle = `${id}:${differe ? 'd' : 'p'}${tout ? 't' : ''}`;
   let p = enCours.get(cle);
   if (!p) {
     p = charger(id, f)
       .then((m) => (m && differe ? chargerDifferee(m, f) : m))
+      .then((m) => (m && tout ? chargerTout(m, f) : m))
       .finally(() => enCours.delete(cle));
     enCours.set(cle, p);
   }
@@ -308,7 +326,9 @@ export function fusionnerDifferee(m: Matn, d: PartieDifferee): Matn {
       ...m.phrases.map((x) => (x.masque ? (completes.get(x.id) ?? x) : x)),
       ...d.phrases.filter((x) => !connues.has(x.id)),
     ],
-    seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))].sort((a, b) => a.n - b.n),
+    seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))]
+      .map((s) => (d.ordre?.[s.n] ? { ...s, phrases: d.ordre[s.n]! } : s))
+      .sort((a, b) => a.n - b.n),
   };
 }
 
@@ -331,6 +351,32 @@ export async function chargerDifferee(m: Matn, f: Fetcher = (u) => fetch(u)): Pr
       .catch(() => null);
     if (d) await kvSet(cle, d).catch(() => {});
     else if (!refuse) d = garde; // pas de réseau : la copie de l'appareil, même ancienne (droit retiré : rien)
+  }
+  return d ? fusionnerDifferee(m, d) : m;
+}
+
+/**
+ * Mode « tout voir » (2/11/2026) : fichier gardé `/mutun/<texte>-tout.json` (séances sensibles de la Risāla : chapitre du
+ * jihād), que le serveur ne sert qu'à l'administrateur avec second facteur (403 à tout autre compte, y compris le
+ * personnel et le groupe « bêta fermée »). Même principe que `chargerDifferee` : copie de l'appareil si elle est à jour,
+ * sinon le réseau ; droit refusé (401, 403) : rien, et la copie périmée n'est pas rendue. Sans marqueur `tout`, le texte
+ * est rendu tel quel.
+ */
+export async function chargerTout(m: Matn, f: Fetcher = (u) => fetch(u)): Promise<Matn> {
+  if (!m.tout) return m;
+  const cle = cleTout(m.id);
+  const garde = await kvGet<PartieDifferee>(cle).catch(() => undefined);
+  let d: PartieDifferee | null | undefined = garde?.version === m.tout.version ? garde : null;
+  if (!d) {
+    let refuse = false;
+    d = await f(`/mutun/${encodeURIComponent(m.id)}-tout.json`)
+      .then((r) => {
+        refuse = r.status === 401 || r.status === 403;
+        return r.ok ? (r.json() as Promise<PartieDifferee>) : null;
+      })
+      .catch(() => null);
+    if (d) await kvSet(cle, d).catch(() => {});
+    else if (!refuse) d = garde;
   }
   return d ? fusionnerDifferee(m, d) : m;
 }
@@ -397,10 +443,25 @@ export async function chargerPartie(
 export async function chargerNotes(
   id: string,
   f: Fetcher = (u) => fetch(u),
+  tout = false,
 ): Promise<NotesEnseignant | null> {
-  return f(`/mutun/${encodeURIComponent(id)}-enseignant.json`)
+  const n = await f(`/mutun/${encodeURIComponent(id)}-enseignant.json`)
     .then((r) => (r.ok ? (r.json() as Promise<NotesEnseignant>) : null))
     .catch(() => null);
+  if (!n || !tout) return n;
+  // mode « tout voir » : notes de l'enseignant sur les séances sensibles (fichier gardé réservé à l'administrateur)
+  const t = await f(`/mutun/${encodeURIComponent(id)}-tout.json`)
+    .then((r) => (r.ok ? (r.json() as Promise<PartieDifferee>) : null))
+    .catch(() => null);
+  const x = t?.notes;
+  if (!x) return n;
+  return {
+    ...n,
+    differe: [...(n.differe ?? []), ...(x.differe ?? [])].sort((a, b) => a - b),
+    comite: [...(n.comite ?? []), ...(x.comite ?? [])],
+    phrases: [...n.phrases, ...(x.phrases ?? [])],
+    mots: [...n.mots, ...(x.mots ?? [])],
+  };
 }
 
 export const phraseDe = (m: Matn) => new Map(m.phrases.map((p) => [p.id, p]));
@@ -416,7 +477,19 @@ export type Public = 'enfant' | 'ado' | 'adulte';
 export const COMPTE_DEMO = /@demo\.awform\.test$/i;
 /** Rôle du groupe « bêta fermée » (lot 6) : même nom que côté serveur (`ROLE_BETA` de mutun-acces.ts). */
 export const ROLE_BETA = 'beta_fermee';
-type CompteVu = { account: { email: string | null }; roles?: string[]; betaDiffere?: boolean };
+type CompteVu = {
+  account: { email: string | null };
+  roles?: string[];
+  betaDiffere?: boolean;
+  /** 2/11/2026 : mode « tout voir » de l'administrateur (second facteur validé), calculé par l'API */
+  toutVoir?: boolean;
+};
+/**
+ * Mode « tout voir » (compte administrateur avec second facteur validé, `toutVoir` de `/auth/me`). Le drapeau ne fait
+ * qu'AFFICHER : le serveur revérifie à chaque fichier gardé (`mutun-acces.ts`), un faux drapeau n'ouvre rien.
+ */
+export const toutVoir = (me: { toutVoir?: boolean } | null | undefined): boolean =>
+  me?.toutVoir === true;
 /**
  * Membre du groupe « bêta fermée » avec le droit : rôle du compte ET `betaDiffere` calculé par l'API (interrupteur
  * `beta_contenu_differe_visible`). Sert aussi au bandeau « Contenu en relecture : ne pas diffuser ».
@@ -424,7 +497,7 @@ type CompteVu = { account: { email: string | null }; roles?: string[]; betaDiffe
 export const membreBeta = (me: CompteVu | null | undefined): boolean =>
   !!me && me.betaDiffere === true && (me.roles ?? []).includes(ROLE_BETA);
 export const voitDiffere = (me: CompteVu | null | undefined, staff: boolean): boolean =>
-  staff || COMPTE_DEMO.test(me?.account.email ?? '') || membreBeta(me);
+  staff || toutVoir(me) || COMPTE_DEMO.test(me?.account.email ?? '') || membreBeta(me);
 
 /**
  * Le texte tel que le voit un profil (mécanisme des profils : `kind` enfant / ado / adulte) :
@@ -432,8 +505,14 @@ export const voitDiffere = (me: CompteVu | null | undefined, staff: boolean): bo
  *  - les séances et phrases `adulte` (niveau_min « adulte ») : adultes seulement, jamais aux enfants ni aux ados ;
  *  - les séances en publication différée (`differe`) : seulement si `differe` est vrai (personnel, démonstration).
  * Un profil inconnu (null) est traité comme un ado : jamais de contenu réservé aux adultes sans profil adulte.
+ * Mode « tout voir » (`tout`, administrateur avec second facteur) : profil traité comme `adulte`, séances différées
+ * montrées, règles et lochies levées (rien n'est caché). Sans ce mode, rien ne change.
  */
-export function matnPour(m: Matn, kind: Public | null, differe = false): Matn {
+export function matnPour(m: Matn, kind: Public | null, differe = false, tout = false): Matn {
+  if (tout) {
+    kind = 'adulte';
+    differe = true;
+  }
   const adulte = kind === 'adulte';
   const enfant = kind === 'enfant';
   const cache = new Set(adulte ? [] : m.phrases.filter((p) => p.adulte).map((p) => p.id));
@@ -445,8 +524,12 @@ export function matnPour(m: Matn, kind: Public | null, differe = false): Matn {
 }
 
 /** Séances proposées à un profil (voir `matnPour`). */
-export const seancesPour = (m: Matn, kind: Public | null, differe = false): Seance[] =>
-  matnPour(m, kind, differe).seances;
+export const seancesPour = (
+  m: Matn,
+  kind: Public | null,
+  differe = false,
+  tout = false,
+): Seance[] => matnPour(m, kind, differe, tout).seances;
 
 /**
  * Compte vu par la rubrique : le RÉSEAU d'abord (un retrait du groupe « bêta fermée » ou l'interrupteur éteint prennent
@@ -454,6 +537,14 @@ export const seancesPour = (m: Matn, kind: Public | null, differe = false): Sean
  */
 export async function compteActuel(): Promise<Me | null> {
   return (await fetchMe().catch(() => null)) ?? (await cachedMe().catch(() => null));
+}
+
+/** Sans le mode « tout voir » : la copie gardée du fichier des séances sensibles est effacée de l'appareil. */
+export async function oublierTout(): Promise<void> {
+  const cles = (await kvKeys().catch(() => [] as string[])).filter(
+    (k) => k.startsWith('madjaliss-differe:') && k.endsWith(':tout'),
+  );
+  if (cles.length) await delMany('kv', cles).catch(() => {});
 }
 
 /**
