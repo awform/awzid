@@ -208,8 +208,17 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
     await expect(suivre).toHaveText('Suivre ma récitation');
     await expect(page.getByTestId('suivi-aide')).toContainText('avec le mot attendu');
     await expect(page.getByTestId('ecoute-masque')).toBeChecked();
+    // le suivi se fait par fenêtre glissante (mode par défaut du chantier « Tarteel titan »)
+    const debut = page.waitForResponse(
+      (r) => /\/ecoute\/direct\?/.test(r.url()) && r.request().method() === 'POST',
+    );
     await suivre.click();
+    expect(((await (await debut).json()) as { mode?: string }).mode).toBe('fenetre');
     await expect(page.getByTestId('ecoute-en-cours')).toBeVisible();
+    // « Un indice » : le mot attendu est montré un instant malgré le texte caché ; ce n'est pas une erreur
+    await page.getByTestId('ecoute-indice').click();
+    await expect(page.locator('[data-testid="ecoute-texte"] .mot.indice')).toHaveCount(1);
+    await expect(page.getByTestId('ecoute-indices')).toContainText('1 indice');
     // texte caché : les mots reconnus apparaissent, l'erreur arrive PENDANT la récitation
     await expect(page.locator('[data-testid="ecoute-texte"].masque')).toBeVisible();
     await expect(page.getByTestId('suivi-ecart')).toContainText('Verset 1 : mot oublié', {
@@ -232,6 +241,29 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
       'href',
       /\/coran\/lecteur\?s=112&a=1&r=ayyoub-hafs&lire=1$/,
     );
+  });
+
+  test('récitation devant le maître : erreurs, hésitations et aide reçue comptées à part', async ({
+    page,
+  }) => {
+    await page.goto('/coran/lecteur?s=112&a=1&memo=1');
+    await page.getByTestId('reciter-verifier').click();
+    await page.getByTestId('ecoute-accepter').click();
+    await page.getByTestId('ecoute-maitre').check();
+    await expect(page.getByTestId('ecoute-maitre-aide')).toContainText('jamais comme des erreurs');
+    await page.getByTestId('ecoute-direct').click();
+    await expect(page.getByTestId('ecoute-en-cours')).toBeVisible();
+    // « Un indice » devient une aide reçue
+    await page.getByTestId('ecoute-indice').click();
+    await expect(page.getByTestId('ecoute-indices')).toContainText('1 aide reçue');
+    await expect(page.getByTestId('suivi-ecart')).toContainText('mot oublié', { timeout: 20_000 });
+    await page.getByTestId('ecoute-terminer').click();
+    const bloc = page.getByTestId('ecoute-maitre-resultat');
+    await expect(bloc).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('maitre-erreurs')).toContainText('1 erreur signalée');
+    await expect(page.getByTestId('maitre-hesitations')).toContainText('Aucune hésitation');
+    await expect(page.getByTestId('maitre-aide')).toContainText('1 aide reçue');
+    await expect(bloc).not.toContainText(/\/20|parfait|excellent|valid/i);
   });
 
   test('accessibilité AA : accord, écran prêt, résultat', async ({ page }) => {

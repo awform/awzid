@@ -221,6 +221,68 @@ def test_suivi_passage_relu_avec_contexte_puis_effacement(client):
     assert sid not in ecoute._seances
 
 
+def test_fenetre_relit_les_dernieres_secondes_et_efface(client):
+    """Mode `fenetre` : chaque envoi renvoie la lecture des FENETRE_S dernières secondes (instants de la séance) ;
+    l'audio plus ancien n'est jamais gardé ; la séance est effacée à la fin."""
+    sid = str(uuid.uuid4())
+    x = np.frombuffer(wav(3)[44:], dtype='<i2')
+    envoi = lambda b: client.post(f'/direct/{sid}?mode=fenetre', content=b.tobytes(),  # noqa: E731
+                                  headers={'x-essai-mots': HEX}).json()
+    r1 = envoi(x[:8000])  # 0,5 s : trop court pour une lecture
+    assert r1['fenetre'] and r1['t'] == 0.5 and r1['mots'] == []
+    r2 = envoi(x)
+    assert r2['t'] == 3.5 and r2['mots'] and r2['mots_ctc'] and r2['voix']
+    s = ecoute._seances[sid]
+    assert s.fenetre and not s.suivi
+    # les instants sont ceux de la séance : la fenêtre finit à t
+    assert all(-0.5 <= m['t0'] <= m['t1'] <= r2['t'] + 1.0 for m in r2['mots'])
+    for _ in range(14):  # 14 s de plus : la mémoire reste bornée à la fenêtre
+        r3 = envoi(np.concatenate([x, x])[:16000])
+    assert len(s.buf) <= int(ecoute.FENETRE_S * 16000)
+    assert r3['t'] > ecoute.FENETRE_S and min(m['t0'] for m in r3['mots']) >= r3['t'] - ecoute.FENETRE_S - 1.0
+    client.delete(f'/direct/{sid}')
+    assert sid not in ecoute._seances
+
+
+def test_texte_attendu_garde_en_memoire_et_efface(client):
+    """`/direct/{sid}/attendu` : texte attendu d'une séance « fenêtre » (validé), gardé en mémoire avec la séance, effacé à la fin ;
+    la réponse porte `ecarts_texte` (vide avec le modèle factice, qui n'a pas de tête CTC)."""
+    sid = str(uuid.uuid4())
+    assert client.post(f'/direct/{sid}/attendu', json={'mots': ['ذهب'], 'versets': []}).status_code == 400
+    assert client.post(f'/direct/{sid}/attendu', json={'mots': 'x', 'versets': 'x'}).status_code == 400
+    assert client.post('/direct/pas-un-uuid/attendu', json={'mots': ['ذهب'], 'versets': ['1:1']}).status_code == 400
+    corps = {'mots': MOTS, 'versets': ['1:1', '1:1', '1:2', '1:2'], 'fac': [0, 0, 0, 0]}
+    assert client.post(f'/direct/{sid}/attendu', json=corps).json() == {'ok': True}
+    assert sid in ecoute._attendus
+    x = np.frombuffer(wav(2)[44:], dtype='<i2')
+    r = client.post(f'/direct/{sid}?mode=fenetre', content=x.tobytes(), headers={'x-essai-mots': HEX}).json()
+    assert r['fenetre'] and r['ecarts_texte'] == []
+    s = ecoute._seances[sid]
+    assert s.attendu['mots'] == MOTS and sid not in ecoute._attendus
+    client.delete(f'/direct/{sid}')
+    assert sid not in ecoute._seances and s.attendu is None
+    # séance sans texte attendu : réponse inchangée
+    sid2 = str(uuid.uuid4())
+    r = client.post(f'/direct/{sid2}?mode=fenetre', content=x.tobytes(), headers={'x-essai-mots': HEX}).json()
+    assert 'ecarts_texte' not in r
+    client.delete(f'/direct/{sid2}')
+
+
+def test_une_seance_fenetre_pese_plus_lourd(client):
+    """Une séance « fenêtre » relit 10 s toutes les 0,5 s : elle compte FENETRE_POIDS séances ordinaires."""
+    ecoute._seances.clear()
+    x = np.zeros(8000, dtype='<i2').tobytes()
+    sids = [str(uuid.uuid4()) for _ in range(3)]
+    codes = [client.post(f'/direct/{sid}?mode=fenetre', content=x, headers={'x-essai-mots': HEX}).status_code
+             for sid in sids]
+    assert codes == [200, 200, 503]  # DIRECT_MAX = 6 : deux fenêtres (3 + 3), la troisième est refusée
+    # une séance ordinaire ne passe pas non plus (la charge est pleine)
+    assert client.post(f'/direct/{uuid.uuid4()}', content=x).status_code == 503
+    for sid in sids:
+        client.delete(f'/direct/{sid}')
+    assert not ecoute._seances
+
+
 def test_retrouver_et_suivi_rien_sur_disque(client):
     avant, fd0 = instantane(), fds()
     assert client.post('/ecouter?mode=retrouver', content=opus(6), headers={'x-essai-mots': HEX}).status_code == 200

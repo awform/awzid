@@ -16,6 +16,10 @@ export interface Bilan {
   /** mots à revoir : sourate, verset, rang du mot dans le verset, type d'écart */
   mots: Array<[number, number, number, string]>;
   pasCompris: boolean;
+  /** mode « devant le maître » : hésitations (reprises, longues pauses) et aide reçue (indices) — comptées à part, jamais des erreurs */
+  maitre?: boolean;
+  hesitations?: number;
+  aide?: number;
 }
 
 const CLE = (profileId: string) => `ecoute.bilans:${profileId}`;
@@ -39,6 +43,42 @@ export function aRevoirDe(l: readonly Bilan[]): Bilan[] {
     vus.add(k);
     return b.aRevoir > 0;
   });
+}
+
+export interface StatsErreurs {
+  /** séances comptées (hors « pas compris ») */
+  seances: number;
+  /** mots à revoir par type d'écart (oublie, remplace, ordre, ajoute, verset_saute) */
+  parType: Record<string, number>;
+  /** versets qui REVIENNENT : à revoir dans au moins 2 séances différentes, du plus fréquent au moins fréquent */
+  recurrents: Array<{ s: number; a: number; seances: number }>;
+}
+
+/**
+ * Historique des erreurs (comme le « suivi des erreurs » des applis de mémorisation) : types d'écart et versets qui
+ * reviennent d'une séance à l'autre. Des COMPTES de mots, pas une note : seul le maître juge. Calculé sur les bilans
+ * de l'appareil, jamais envoyé.
+ */
+export function statistiquesErreurs(l: readonly Bilan[]): StatsErreurs {
+  const ok = l.filter((b) => !b.pasCompris);
+  const parType: Record<string, number> = {};
+  const parVerset = new Map<string, { s: number; a: number; seances: number }>();
+  for (const b of ok) {
+    const vus = new Set<string>();
+    for (const [s, a, , type] of b.mots) {
+      parType[type] = (parType[type] ?? 0) + 1;
+      const k = `${s}:${a}`;
+      if (vus.has(k)) continue;
+      vus.add(k);
+      const v = parVerset.get(k) ?? { s, a, seances: 0 };
+      v.seances++;
+      parVerset.set(k, v);
+    }
+  }
+  const recurrents = [...parVerset.values()]
+    .filter((v) => v.seances >= 2)
+    .sort((x, y) => y.seances - x.seances || x.s - y.s || x.a - y.a);
+  return { seances: ok.length, parType, recurrents };
 }
 
 /** Versets distincts des mots à revoir d'un bilan (pour « verset 3, verset 5 »). */

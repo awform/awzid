@@ -213,6 +213,28 @@ class NemoRNNT(NemoCTC):
         del enc
         return self._mots_rnnt(r), ctc
 
+    def transcrire_double_topk(self, x: np.ndarray, k: int = 8):
+        """Comme `transcrire_double`, plus les `k` meilleurs jetons de la tête CTC à chaque trame (identifiants et log-probabilités) :
+        de quoi mesurer, après coup, la probabilité qu'un mot ATTENDU ait été dit (mal lu ou pas dit). Banc de mesure seulement."""
+        with self.torch.inference_mode():
+            enc, el = self._encoder(x)
+            logp = self.m.ctc_decoder(encoder_output=enc)[0][: int(el[0])]
+            v, i = logp.topk(k, dim=-1)
+            topk = (i.to(self.torch.int16).numpy(), v.to(self.torch.float16).numpy())
+            ctc = self._ctc(enc, el)
+            r = self.m.decoding.rnnt_decoder_predictions_tensor(
+                encoder_output=enc, encoded_lengths=el, return_hypotheses=True)
+            if isinstance(r, tuple):
+                r = r[0]
+            try:
+                from nemo.collections.asr.parts.utils.timestamp_utils import process_timestamp_outputs
+                r = process_timestamp_outputs(r, self.m.encoder.subsampling_factor,
+                                              self.m.cfg.preprocessor['window_stride'])
+            except Exception:  # noqa: BLE001
+                pass
+        del enc
+        return self._mots_rnnt(r), ctc, topk
+
     def _mots_rnnt(self, r) -> list[dict]:
         h = r[0] if isinstance(r, list) else r
         if isinstance(h, (list, tuple)):

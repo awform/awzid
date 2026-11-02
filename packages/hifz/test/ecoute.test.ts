@@ -4,6 +4,8 @@ import {
   comparer,
   motsARevoir,
   motsAttendus,
+  hesitations,
+  motsRepetes,
   ressemblance,
   type MotEntendu,
   type VersetTexte,
@@ -113,11 +115,146 @@ describe('A5 : écarts sur cas simulés', () => {
     expect(r.ecarts.every((e) => e.type === 'ordre' && e.i >= 7 && e.fin <= 8)).toBe(true);
   });
 
+  it('reprises normales : mot redit, reprise de quelques mots, retour au verset précédent → aucun écart', () => {
+    const base = nus();
+    const sans = (w: string[]) => comparer(ATT, entendu(w).ent, { voix: entendu(w).voix }).ecarts;
+    // un mot dit deux fois de suite
+    const redit = [...base];
+    redit.splice(4, 0, base[3]!);
+    expect(sans(redit)).toEqual([]);
+    // l'élève s'arrête et reprend cinq mots en arrière
+    const reprise = [...base];
+    reprise.splice(10, 0, ...base.slice(5, 10));
+    expect(sans(reprise)).toEqual([]);
+    // retour au verset précédent : le verset 1 est redit en entier après le verset 2
+    const retour = [...base.slice(0, 13), ...base.slice(0, 7), ...base.slice(7)];
+    expect(sans(retour)).toEqual([]);
+    // et un vrai mot ajouté, lui, est toujours signalé
+    const ajout = [...base];
+    ajout.splice(10, 0, 'السيارة');
+    expect(sans(ajout)).toEqual([expect.objectContaining({ type: 'ajoute', i: 9 })]);
+  });
+
+  it('retour au premier verset AVANT de continuer : la suite n’est pas prise pour des mots remplacés', () => {
+    const base = nus();
+    // verset 1, verset 2, retour au verset 1, puis verset 3
+    const retour = [...base.slice(0, 13), ...base.slice(0, 7), ...base.slice(13)];
+    const r = comparer(ATT, entendu(retour).ent, { voix: entendu(retour).voix });
+    expect(r.ecarts).toEqual([]);
+    // en suivi (fin ouverte), au moment où le retour vient d’être dit
+    const enCours = comparer(ATT, entendu(retour.slice(0, 20)).ent, {
+      voix: entendu(retour).voix,
+      enCours: true,
+    });
+    expect(enCours.ecarts).toEqual([]);
+    // un vrai mot remplacé HORS de la reprise reste signalé
+    const faute = [...retour];
+    faute[3] = 'السوق';
+    const f = comparer(ATT, entendu(faute).ent, { voix: entendu(faute).voix });
+    expect(f.ecarts.some((e) => e.type === 'remplace' && e.i === 3)).toBe(true);
+  });
+
+  it('un refrain du texte redit comme prévu n’est jamais retiré (il correspond à des mots attendus)', () => {
+    const refrain = motsAttendus([
+      { s: 201, a: 1, text: 'قَالَ الوَلَدُ سَافَرَ التَّاجِرُ بِالقِطَارِ' },
+      { s: 201, a: 2, text: 'قَالَ الوَلَدُ سَافَرَ التَّاجِرُ بِالقِطَارِ' },
+    ]);
+    const mots = refrain.map((m, n) => ({ w: m.cle, conf: 0.95, t0: n * 0.5, t1: n * 0.5 + 0.4 }));
+    const voix = mots.map((e) => [e.t0, e.t1] as [number, number]);
+    const r = comparer(refrain, mots, { voix });
+    expect(r.ecarts).toEqual([]);
+    expect(r.couverture).toBe(1);
+    // le second refrain oublié EST signalé
+    const sans = mots.slice(0, 6);
+    const o = comparer(refrain, sans, { voix });
+    expect(o.ecarts.every((e) => e.type !== 'ajoute')).toBe(true);
+  });
+
+  it('plusieurs mots entendus de suite sans correspondant (mal lu) : doute, rien n’est signalé', () => {
+    const w = nus();
+    // un mot attendu lu comme DEUX mots inconnus : ni « remplacé » ni « ajouté »
+    w.splice(3, 1, 'السوق', 'الحديقة');
+    const r = comparer(ATT, entendu(w).ent, { voix: entendu(w).voix });
+    expect(r.ecarts).toEqual([]);
+    // un seul mot inconnu à sa place reste un remplacement sûr
+    const un = nus();
+    un[3] = 'السوق';
+    expect(comparer(ATT, entendu(un).ent, { voix: entendu(un).voix }).ecarts).toEqual([
+      expect.objectContaining({ type: 'remplace', i: 3 }),
+    ]);
+  });
+
+  it('hésitations : reprises et longues pauses comptées à part, jamais des erreurs', () => {
+    const m = (w: string[], t0 = (n: number) => n * 0.6) =>
+      w.map((x, n) => ({ w: x, conf: 0.9, t0: t0(n), t1: t0(n) + 0.4 }));
+    // récitation sans hésitation
+    expect(hesitations(m(['ذهب', 'الولد', 'الى', 'المدرسة']))).toEqual({ reprises: 0, pauses: 0 });
+    // une reprise de deux mots + un mot redit = 2 reprises
+    const r = hesitations(m(['ذهب', 'الولد', 'الى', 'الولد', 'الى', 'المدرسة', 'صباحا', 'صباحا']));
+    expect(r.reprises).toBe(2);
+    // une pause de 6 s au milieu : une longue hésitation (seuil 4 s)
+    const p = hesitations(
+      m(['ذهب', 'الولد', 'الى', 'المدرسة'], (n) => (n >= 2 ? n * 0.6 + 6 : n * 0.6)),
+    );
+    expect(p).toEqual({ reprises: 0, pauses: 1 });
+    // et ni l'une ni l'autre ne produit d'écart dans la comparaison
+    const w = nus();
+    w.splice(10, 0, ...w.slice(5, 10));
+    const ent = entendu(w).ent.map((e, n) =>
+      n >= 10 ? { ...e, t0: e.t0! + 6, t1: e.t1! + 6 } : e,
+    );
+    expect(
+      comparer(ATT, ent, { voix: ent.map((e) => [e.t0!, e.t1!] as [number, number]) }).ecarts,
+    ).toEqual([]);
+    expect(hesitations(ent)).toEqual({ reprises: 1, pauses: 1 });
+  });
+
+  it('motsRepetes : un mot seul n’est une répétition que collé à son semblable', () => {
+    const m = (w: string[]) => w.map((x) => ({ w: x, conf: 0.9 }));
+    expect(motsRepetes(m(['ذهب', 'الولد', 'ذهب', 'المدرسة']))).toEqual([
+      false,
+      false,
+      false,
+      false,
+    ]);
+    expect(motsRepetes(m(['ذهب', 'ذهب', 'المدرسة']))).toEqual([true, true, false]);
+    expect(motsRepetes(m(['ذهب', 'الولد', 'الى', 'ذهب', 'الولد', 'الى']))).toEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
   it('verset sauté : un seul écart « verset sauté »', () => {
     const w = nus().filter((_, n) => ATT[n]!.a !== 2);
     const r = comparer(ATT, entendu(w).ent, { voix: entendu(w).voix });
     expect(r.ecarts).toEqual([expect.objectContaining({ type: 'verset_saute', s: 200, a: 2 })]);
     expect(motsARevoir(r)).toBe(6);
+  });
+
+  it('passage sauté repéré par ses ancres, même avec des mots mal lus à la coupure', () => {
+    const w = nus().filter((_, n) => ATT[n]!.a !== 2);
+    // restes de la coupure : deux mots entendus au hasard à la place du verset sauté
+    const brut = [...w.slice(0, 7), 'السوق', 'الحديقة', ...w.slice(7)];
+    const r = comparer(ATT, entendu(brut).ent, { voix: entendu(brut).voix });
+    expect(r.ecarts).toEqual([expect.objectContaining({ type: 'verset_saute', s: 200, a: 2 })]);
+    // sans les ancres sûres (confiance basse d’un voisin), rien n’est signalé
+    const bas = entendu(brut).ent.map((e, n) => (n === 6 ? { ...e, conf: 0.5 } : e));
+    expect(
+      comparer(ATT, bas, { voix: entendu(brut).voix }).ecarts.some(
+        (e) => e.type === 'verset_saute',
+      ),
+    ).toBe(false);
+    // un passage de trois mots seulement n'est pas assez pour l'ancrage
+    const court = nus().filter((_, n) => n < 8 || n > 10);
+    expect(
+      comparer(ATT, entendu(court).ent, { voix: entendu(court).voix }).ecarts.every(
+        (e) => e.fin - e.i < 3 || e.type === 'oublie',
+      ),
+    ).toBe(true);
   });
 
   it('arrêt avant la fin : la suite est « non récitée », jamais une erreur', () => {
