@@ -3795,6 +3795,7 @@
   "fn.parcours_priere": "“Prayer from A to Z” course",
   "fn.coran_mots": "Words of the Quran: “I recognise X% of the words”, search by word and root",
   "fn.shazam_coran": "“Find this verse” and recitation follow-along (AI)",
+  "fn.tarteel_fenetre": "“Tarteel titan”: sliding-window follow-along and “before the teacher” mode (reserved trial)",
   "priere.titre": "Prayer from A to Z",
   "priere.carte_titre": "Prayer from A to Z",
   "priere.carte_texte": "Learn every movement and every word, and understand what you say.",

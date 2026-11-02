@@ -98,12 +98,14 @@ export const texteOuvert = () => (process.env.AWFORM_ECOUTE_TEXTE ?? 'on') !== '
 /** Façon de suivre la récitation en direct : `suivi` = passages relus avec contexte ; `fenetre` = fenêtre glissante */
 export type ModeSuivi = 'suivi' | 'fenetre';
 /**
- * Mode du suivi (AWFORM_ECOUTE_SUIVI_MODE). Par défaut `fenetre` (fenêtre glissante, chantier « Tarteel titan » du
- * 01/11/2026 : mots dévoilés plus vite, erreurs dites ~2× plus tôt, moins de fausses alertes sur reprises) ; `suivi` = les
- * passages relus avec contexte (avant), à garder si le serveur d'écoute manque de calcul (la fenêtre coûte environ 3,7×).
+ * Mode du suivi : `fenetre` (fenêtre glissante, chantier « Tarteel titan » du 01/11/2026 : mots dévoilés plus vite, erreurs
+ * dites ~2× plus tôt, moins de fausses alertes sur reprises) SEULEMENT pour les comptes pour qui l'interrupteur
+ * « tarteel_fenetre » est ouvert (registre F5, COUPÉ par défaut, canal bêta) ; `suivi` = les passages relus avec contexte (le
+ * mode d'avant) pour tous les autres. AWFORM_ECOUTE_SUIVI_MODE=suivi ramène tout le monde à `suivi` sans toucher à la base
+ * (la fenêtre coûte environ 3,7× plus de calcul). Le mode ne vient JAMAIS de la requête de l'appareil.
  */
-export const modeSuivi = (): ModeSuivi =>
-  process.env.AWFORM_ECOUTE_SUIVI_MODE === 'suivi' ? 'suivi' : 'fenetre';
+export const modeSuivi = (tarteel: boolean): ModeSuivi =>
+  tarteel && process.env.AWFORM_ECOUTE_SUIVI_MODE !== 'suivi' ? 'fenetre' : 'suivi';
 /** « Retrouve ce verset » : deux lectures du même extrait (RNN-T et tête CTC), voix entendue */
 export interface RetrouverBrut {
   mots: MotEntendu[];
@@ -240,6 +242,12 @@ export const decisionShazamParDefaut =
   async (req, profileId) =>
     !coutsCoupes() && (await fonctionsDe(db, req, profileId)).fonctions.shazam_coran === true;
 
+/** INTERRUPTEUR « tarteel_fenetre » (registre F5, COUPÉ par défaut, canal bêta) : mode fenêtre, décodage contraint, « devant le maître ». */
+export const decisionTarteelParDefaut =
+  (db: Db): DecisionShazam =>
+  async (req, profileId) =>
+    !coutsCoupes() && (await fonctionsDe(db, req, profileId)).fonctions.tarteel_fenetre === true;
+
 /** Durée maximale d'un extrait de « Retrouve ce verset » (l'appareil s'arrête à 15 s) */
 export const RETROUVER_MAX_S = 20;
 /** 15 s d'Opus ≈ 60 Ko ; marge pour le mp4 de Safari */
@@ -284,6 +292,8 @@ export interface OptionsEcoute {
   consentement?: (db: Db, profileId: string) => Promise<boolean>;
   /** interrupteur shazam_coran (défaut : registre F5 et disjoncteur de coût) */
   shazam?: DecisionShazam;
+  /** interrupteur tarteel_fenetre (défaut : registre F5 et disjoncteur de coût) */
+  tarteel?: DecisionShazam;
 }
 
 // ------------------------------------------------------------------ routes
@@ -293,6 +303,7 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
   const decision = opts.decision ?? decisionEcouteIaParDefaut;
   const consenti = opts.consentement ?? consentementAnalyseVocale;
   const shazam = opts.shazam ?? decisionShazamParDefaut(db);
+  const tarteel = opts.tarteel ?? decisionTarteelParDefaut(db);
   const compteur = new Map<string, number[]>();
   /** séances du direct : sid -> propriétaire (en mémoire ; l'audio, lui, n'est jamais ici) */
   const seances = new Map<
@@ -517,7 +528,10 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
           await client.finDirect(sid);
         }
       const sid = randomUUID();
-      const suivi = req.query.suivi === 1 && (await shazam(req, p.id)) ? modeSuivi() : false;
+      const suivi =
+        req.query.suivi === 1 && (await shazam(req, p.id))
+          ? modeSuivi(await tarteel(req, p.id))
+          : false;
       seances.set(sid, {
         accountId: req.auth!.accountId,
         profileId: p.id,

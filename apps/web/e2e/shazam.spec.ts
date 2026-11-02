@@ -106,6 +106,12 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
       data: { etat: 'beta' },
     });
     expect(r.status(), await r.text()).toBe(200);
+    // « Tarteel titan » : fenêtre glissante, décodage contraint et « devant le maître » réservés au canal bêta
+    const t = await adm.request.put('/api/v1/admin/fonctions/tarteel_fenetre', {
+      headers: H,
+      data: { etat: 'beta' },
+    });
+    expect(t.status(), await t.text()).toBe(200);
   });
   test.afterAll(async () => {
     if (adm) await adm.context().close();
@@ -241,6 +247,36 @@ test.describe('« canal bêta » ouvert par l’administrateur', () => {
       'href',
       /\/coran\/lecteur\?s=112&a=1&r=ayyoub-hafs&lire=1$/,
     );
+  });
+
+  test('interrupteur « tarteel_fenetre » coupé (défaut) : le suivi d’avant, pas de « devant le maître »', async ({
+    page,
+  }) => {
+    const off = await adm.request.put('/api/v1/admin/fonctions/tarteel_fenetre', {
+      headers: H,
+      data: { etat: 'off' },
+    });
+    expect(off.status(), await off.text()).toBe(200);
+    try {
+      await page.goto('/coran/lecteur?s=112&a=1&memo=1');
+      await page.getByTestId('reciter-verifier').click();
+      await page.getByTestId('ecoute-accepter').click();
+      await expect(page.getByTestId('ecoute-direct')).toBeVisible();
+      await expect(page.getByTestId('ecoute-maitre')).toHaveCount(0);
+      const debut = page.waitForResponse(
+        (r) => /\/ecoute\/direct\?/.test(r.url()) && r.request().method() === 'POST',
+      );
+      await page.getByTestId('ecoute-direct').click();
+      const j = (await (await debut).json()) as { suivi?: boolean; mode?: string };
+      expect(j.suivi).toBe(true);
+      expect(j.mode).toBe('suivi');
+    } finally {
+      const on = await adm.request.put('/api/v1/admin/fonctions/tarteel_fenetre', {
+        headers: H,
+        data: { etat: 'beta' },
+      });
+      expect(on.status(), await on.text()).toBe(200);
+    }
   });
 
   test('récitation devant le maître : erreurs, hésitations et aide reçue comptées à part', async ({

@@ -434,7 +434,7 @@
               ><input type="checkbox" bind:checked={masque} data-testid="ecoute-masque" />
               {t('ec.masquer')}</label
             >
-            {#if etat.shazam}
+            {#if etat.shazam && fn('tarteel_fenetre')}
               <label class="small"
                 ><input type="checkbox" bind:checked={devantMaitre} data-testid="ecoute-maitre" />
                 {t('ec.devant_maitre')}</label
