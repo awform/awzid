@@ -7,6 +7,7 @@
  * pourcentage se fait SUR L'APPAREIL, à partir de ces données et de ce que l'élève a réellement appris :
  *  - `GET /api/v1/coran-mots/sourates/:n` : les mots d'une sourate (rang de leur lemme dans la liste des 1 000) ;
  *  - `GET /api/v1/coran-mots/rangs` : pour chaque rang, le lemme et la leçon qui l'enseigne ;
+ *  - `GET /api/v1/coran-mots/frequences` : le Coran entier regroupé par forme de mot (pourcentage du Coran entier) ;
  *  - `GET /api/v1/profiles/:id/coran-mots/connus` : leçons faites et niveau de l'élève (sa progression dans les livres) ;
  *  - `GET /api/v1/coran-mots/recherche` : recherche d'un mot ou d'une racine, versets TELS QUE DANS TANZIL ;
  *  - `GET /api/v1/coran-mots/racine?r=` : la fiche d'une racine (le sens seulement s'il est VALIDÉ).
@@ -45,6 +46,35 @@ interface SensRacine {
   statut: string;
   a_verifier: boolean;
   note?: string;
+}
+
+/** clé du corps calculé « fréquences » parmi les fichiers servis (jamais un nom de fichier de données) */
+const FREQUENCES = ':frequences';
+type Entree = number | number[];
+
+/**
+ * Le Coran entier regroupé par forme de mot : chaque entrée distincte des 114 sourates (rang × 2 + plein, ou liste de rangs)
+ * et son nombre d'occurrences ; les lettres isolées (-1) ne sont pas des mots. Même décompte que les sourates une à une.
+ */
+export function frequencesDuCoran(dossier: string): { e: Entree[]; n: number[] } {
+  const compte = new Map<string, number>();
+  for (let s = 1; s <= 114; s++) {
+    const nom = join(dossier, 'sourates', `${String(s).padStart(3, '0')}.json`);
+    const { v } = JSON.parse(readFileSync(nom, 'utf8')) as { v: Entree[][] };
+    for (const verset of v)
+      for (const e of verset) {
+        if (e === -1) continue;
+        const k = JSON.stringify(e);
+        compte.set(k, (compte.get(k) ?? 0) + 1);
+      }
+  }
+  const e: Entree[] = [];
+  const n: number[] = [];
+  for (const [k, c] of compte) {
+    e.push(JSON.parse(k) as Entree);
+    n.push(c);
+  }
+  return { e, n };
 }
 
 export function registerCoranMots(
@@ -120,6 +150,20 @@ export function registerCoranMots(
   app.get('/api/v1/coran-mots/rangs', async (req, reply) => {
     if (!(await acces(req, reply))) return reply;
     return servir(req, reply, 'rangs.json');
+  });
+
+  /**
+   * Le Coran entier regroupé par forme de mot (espace « Mots du Coran », 3/11/2026) : l'appareil calcule « Je reconnais X % des
+   * mots du Coran » sans télécharger les 114 sourates. Calculé une fois depuis les fichiers des sourates, puis gardé (ETag).
+   */
+  app.get('/api/v1/coran-mots/frequences', async (req, reply) => {
+    if (!(await acces(req, reply))) return reply;
+    if (!fichiers.has(FREQUENCES)) {
+      const corps = JSON.stringify(frequencesDuCoran(dossier));
+      const etag = `"${createHash('sha256').update(corps).digest('hex').slice(0, 32)}"`;
+      fichiers.set(FREQUENCES, { corps, etag });
+    }
+    return servir(req, reply, FREQUENCES);
   });
 
   /**

@@ -260,10 +260,15 @@ test('interrupteur COUPÉ (défaut) : ni carte ni page, aucun fichier du parcour
     fonctions: Record<string, boolean>;
   };
   expect(f.fonctions.parcours_priere).toBe(false);
-  await page.goto('/vivre');
-  await expect(page.getByTestId('vi-tuiles').or(page.getByTestId('vi-defi')).first()).toBeVisible();
-  await expect(page.getByTestId('vi-priere')).toHaveCount(0);
-  expect(await charges(page)).toEqual([]);
+  for (const [adresse, repere] of [
+    ['/quotidien', '[data-quotidien-tab="horaires"]'],
+    ['/vivre', '[data-vivre-tab="comportement"][aria-current="page"]'],
+  ] as const) {
+    await page.goto(adresse);
+    await expect(page.locator(repere)).toBeVisible();
+    await expect(page.getByTestId('vi-priere')).toHaveCount(0);
+    expect(await charges(page)).toEqual([]);
+  }
   // adresse tapée à la main : « fonction non disponible », ni code ni données du parcours
   await page.goto('/vivre/priere');
   await expect(page.getByTestId('priere-ferme')).toBeVisible();
@@ -316,9 +321,24 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     page,
   }) => {
     await voixSimulee(page);
+    // 3/11 : la carte est dans l'onglet « Prières » (/quotidien), plus dans « Bon comportement » (/vivre)
     await page.goto('/vivre');
+    await expect(
+      page.getByTestId('vi-tuiles').or(page.getByTestId('vi-defi')).first(),
+    ).toBeVisible();
+    await expect(page.getByTestId('vi-priere')).toHaveCount(0);
+    await page.goto('/quotidien');
     const carte = page.getByTestId('vi-priere');
     await expect(carte).toBeVisible();
+    await expect(page.locator('[data-vivre-tab="prieres"]')).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    if (process.env.TUILES_CAPTURES) {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.screenshot({ path: join(process.env.TUILES_CAPTURES, 'prieres-carte-375.png') });
+      await page.setViewportSize({ width: 390, height: 844 });
+    }
     // seule la carte (quelques octets) est chargée : le parcours attend l'ouverture
     expect((await charges(page)).length).toBeLessThanOrEqual(6);
     const avant = await page.evaluate(() =>

@@ -12,6 +12,8 @@ ajouterTextes(textes);
 
 export { default as Bande } from './Bande.svelte';
 export { default as Recherche } from './Recherche.svelte';
+/** espace « Mots du Coran » (`/coran/mots`, tuile de l'accueil du Coran) : pourcentage du Coran entier, familles, recherche */
+export { default as Espace } from './Espace.svelte';
 /** donnée au texte coranique du lecteur (`connus`) : les mots reconnus d'un verset, tant que le soulignement est actif */
 export { connusFn as connus, type ConnusFn } from './etat.svelte';
 /** réglage « Souligner les mots que je reconnais » (panneau « Outils » du lecteur simple) */

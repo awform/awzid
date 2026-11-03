@@ -15,7 +15,9 @@
    * La saisie n'est comparée qu'à un index de comparaison : les versets affichés sont ceux de Tanzil, tels quels, avec le mot
    * trouvé repéré par sa place. La fiche racine montre la famille de mots, leur fréquence et ce que l'élève en connaît ; le
    * SENS de la racine n'est affiché que si le serveur l'envoie (sens validé), jamais un sens « à vérifier ».
+   * `imbrique` (espace « Mots du Coran ») : titre de second niveau « Chercher un mot ou une racine », sans marge propre.
    */
+  let { imbrique = false }: { imbrique?: boolean } = $props();
   let saisie = $state('');
   let mode = $state<'mot' | 'racine'>('mot');
   let res = $state<Recherche | null>(null);
@@ -83,8 +85,14 @@
           : { sait: false, niveau: 0 };
 </script>
 
-<div class="cm-page" data-testid="cm-recherche" lang={localeInfo().code} dir={localeInfo().dir}>
-  <h1>{t('cm.titre')}</h1>
+<div
+  class="cm-page"
+  class:imbrique
+  data-testid="cm-recherche"
+  lang={localeInfo().code}
+  dir={localeInfo().dir}
+>
+  {#if imbrique}<h2 class="cm-h">{t('cm.chercher')}</h2>{:else}<h1>{t('cm.titre')}</h1>{/if}
   <p class="cm-petit">{t('cm.intro')}</p>
   <form onsubmit={soumettre} role="search" aria-label={t('cm.titre')}>
     <div class="cm-mode" role="group" aria-label={t('cm.mode')}>
@@ -291,6 +299,12 @@
     padding: var(--space-m, 12px);
     color: var(--ink);
   }
+  .imbrique {
+    padding-block-start: 16px;
+  }
+  .cm-h {
+    font-size: 1.15rem;
+  }
   h1,
   h2,
   h3,
@@ -326,7 +340,8 @@
   }
   .cm-champ {
     display: grid;
-    grid-template-columns: 1fr auto;
+    /* minmax(0, 1fr) : le champ rétrécit à 375 px (sinon sa largeur naturelle élargit la page) */
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px 8px;
   }
   .cm-champ label {
@@ -334,6 +349,7 @@
     font-weight: 700;
   }
   .cm-champ input {
+    min-inline-size: 0;
     min-block-size: var(--target);
     padding: 0 12px;
     font-family: var(--font-quran);

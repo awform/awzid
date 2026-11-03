@@ -248,6 +248,8 @@
   "cl.mode_lire": "Lire",
   "cl.mode_ecouter": "Écouter",
   "cl.mode_memoriser": "Mémoriser",
+  "cl.mode_comprendre": "Comprendre",
+  "cl.mode_mots": "Mots du Coran",
   "cl.avance": "Avancé",
   "cl.pastille": "Verset {n}",
   "cl.pastille_basmala": "Basmala",

@@ -100,6 +100,9 @@
     </li>
   {/each}
 </ul>
+<!-- 2e rangée (3/11) : Comprendre (tafsir_sens) · Mots du Coran (coran_mots) ; module à la demande, hors coquille -->
+{#if fn('tafsir_sens') || fn('coran_mots')}{#await import('$lib/quran/TuilesComprendre.svelte') then m}<m.default
+    />{/await}{/if}
 
 {#if fn('khatma_wird')}{#await import('$lib/khatma/carte') then m}<m.Carte />{/await}{/if}
 

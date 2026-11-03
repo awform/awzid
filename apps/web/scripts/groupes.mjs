@@ -75,6 +75,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/racines\/index\.ts$/,
   // 2/11/2026 : « Lecteur simple » du Coran (panneau « Outils », menu « ⋯ » de la barre audio ; interrupteur `lecteur_simple`), importé à la demande
   /src\/lib\/quran\/lecteur-simple\/index\.ts$/,
+  // 3/11/2026 : 2e rangée de tuiles de l'accueil du Coran (« Comprendre » si `tafsir_sens`, « Mots du Coran » si `coran_mots`), importée à la demande
+  /src\/lib\/quran\/TuilesComprendre\.svelte$/,
   // V2-4 : feuille de bascule Moi / enfants (chargée au premier toucher sur le prénom du profil actif)
   /src\/lib\/(BasculeProfils\.svelte|bascule-ouvrir\.ts)$/,
 ];

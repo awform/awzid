@@ -300,6 +300,33 @@ describe.skipIf(!URL)('routes « Mots du Coran » (awform_test)', () => {
     expect(r.json().error).toMatchObject({ code: 'fonction_coupee', fonction: 'coran_mots' });
     expect((await get('/api/v1/coran-mots/recherche?q=كتاب')).statusCode).toBe(403);
     expect((await get(`/api/v1/profiles/${profileId}/coran-mots/connus`)).statusCode).toBe(403);
+    expect((await get('/api/v1/coran-mots/frequences')).statusCode).toBe(403);
+  });
+
+  it('fréquences du Coran entier : mêmes mots que les 114 sourates une à une, ETag, 304', async () => {
+    await setFlagState(c.h.db, 'coran_mots', 'on', null);
+    const r = await get('/api/v1/coran-mots/frequences');
+    expect(r.statusCode).toBe(200);
+    expect(r.headers['cache-control']).toMatch(/private/);
+    const f = r.json() as { e: Array<number | number[]>; n: number[] };
+    expect(f.e).toHaveLength(f.n.length);
+    expect(f.e).not.toContain(-1);
+    // chaque forme une seule fois ; total = tous les mots des sourates (hors lettres isolées)
+    expect(new Set(f.e.map((e) => JSON.stringify(e))).size).toBe(f.e.length);
+    let total = 0;
+    for (let s = 1; s <= 114; s++)
+      for (const v of (
+        JSON.parse(lire(`sourates/${String(s).padStart(3, '0')}.json`)) as {
+          v: Array<Array<number | number[]>>;
+        }
+      ).v)
+        total += v.filter((e) => e !== -1).length;
+    expect(f.n.reduce((a, b) => a + b, 0)).toBe(total);
+    const etag = String(r.headers.etag);
+    expect(
+      (await get('/api/v1/coran-mots/frequences', { ...A, 'if-none-match': etag })).statusCode,
+    ).toBe(304);
+    expect((await get('/api/v1/coran-mots/frequences', {})).statusCode).toBe(401);
   });
 
   it('ouvert : une sourate à la demande (octets du fichier), ETag, 304 ; rangs ; paramètres refusés', async () => {

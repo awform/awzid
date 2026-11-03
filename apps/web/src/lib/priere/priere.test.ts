@@ -797,9 +797,12 @@ describe('chargement à la demande : rien dans la coquille de l’élève', () =
     expect(b).toContain('MARGE_ELEVE_MIN');
   });
   it('seuls l’interrupteur et deux imports dynamiques touchent le parcours hors de lib/priere', () => {
-    const vivre = web('src/routes/vivre/+page.svelte');
-    expect(vivre).toContain("import('$lib/priere/carte')");
-    expect(vivre).not.toMatch(/from '\$lib\/priere/);
+    // 3/11/2026 : la carte est dans l'onglet « Prières » (/quotidien), plus dans « Bon comportement » (/vivre)
+    const prieres = web('src/routes/quotidien/+page.svelte');
+    expect(prieres).toContain("import('$lib/priere/carte')");
+    expect(prieres).toContain("fn('parcours_priere')");
+    expect(prieres).not.toMatch(/from '\$lib\/priere/);
+    expect(web('src/routes/vivre/+page.svelte')).not.toMatch(/\$lib\/priere/);
     const page = web('src/routes/vivre/priere/+page.svelte');
     expect(page).toContain("import('$lib/priere')");
     expect(page).not.toMatch(/from '\$lib\/priere/);

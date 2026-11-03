@@ -7,7 +7,7 @@
  *  - interrupteur coupé (403) ou non connecté (401) : rien (la fonction est invisible), et la copie gardée est effacée.
  */
 import { kvGet, kvSet } from '$lib/idb';
-import type { Connaissance, Entree, Rangs } from './calcul';
+import type { Connaissance, Entree, Frequences, Rangs } from './calcul';
 
 const API = '/api/v1/coran-mots';
 
@@ -119,6 +119,15 @@ export async function chargerRangs(profil?: string): Promise<Rangs | null> {
   return rangs;
 }
 
+/** Le Coran entier regroupé par forme de mot (espace « Mots du Coran » : « Je reconnais X % des mots du Coran »). */
+let frequences: Frequences | null = null;
+export async function chargerFrequences(profil?: string): Promise<Frequences | null> {
+  frequences ??= await unique('freq', () =>
+    garde<Frequences>(`${API}/frequences`, 'cm:freq', profil),
+  );
+  return frequences;
+}
+
 /** Ce que l'élève a appris (sa progression dans les livres) : redemandé à chaque ouverture du lecteur (au plus 1 fois / minute). */
 let connus: { at: number; profil: string; v: Connus | null } | null = null;
 export async function chargerConnus(profil: string, force = false): Promise<Connus | null> {
@@ -157,6 +166,7 @@ export async function ficheRacine(
 export function _viderPourTests(): void {
   sourates.clear();
   rangs = null;
+  frequences = null;
   connus = null;
   enCours.clear();
 }

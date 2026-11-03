@@ -51,5 +51,7 @@
   "cm.lien_gpl": "Texte de la licence GNU GPL v3",
   "cm.pastille": "{pct} % des mots connus",
   "cm.pastille_aria": "Mots que je connais dans cette sourate : {pct} %. Ouvrir le détail",
-  "cm.detail_titre": "Mots que je connais"
+  "cm.detail_titre": "Mots que je connais",
+  "cm.espace_titre": "Mots du Coran",
+  "cm.reconnais_coran": "Je reconnais {pct} % des mots du Coran"
 }

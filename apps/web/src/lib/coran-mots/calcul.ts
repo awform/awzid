@@ -83,6 +83,29 @@ export function mesurer(
   return m;
 }
 
+/** Le Coran entier, regroupé (`/api/v1/coran-mots/frequences`) : chaque forme de mot distincte et son nombre d'occurrences. */
+export interface Frequences {
+  e: Entree[];
+  n: number[];
+}
+
+/** Mesure du Coran entier : la même que `mesurer` sur les 114 sourates, sans les charger (chaque forme pèse ses occurrences). */
+export function mesurerTout(f: Frequences, connus: ReadonlySet<number>): Mesure {
+  const m: Mesure = { mots: 0, compris: 0, pleins: 0, pleinsCompris: 0 };
+  f.e.forEach((e, i) => {
+    const k = f.n[i] ?? 0;
+    if (e === -1 || !k) return;
+    const ok = estReconnu(e, connus);
+    m.mots += k;
+    if (ok) m.compris += k;
+    if (estPlein(e)) {
+      m.pleins += k;
+      if (ok) m.pleinsCompris += k;
+    }
+  });
+  return m;
+}
+
 /** Pourcentage (0 à 100, non arrondi) ; 0 si la sourate n'a aucun mot compté. */
 export const pourcent = (compris: number, total: number): number =>
   total > 0 ? (100 * compris) / total : 0;

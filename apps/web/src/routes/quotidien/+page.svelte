@@ -1,6 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { fmtDate, fmtNumber, locale, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import QuotidienTabs from '$lib/quotidien/QuotidienTabs.svelte';
@@ -116,6 +117,8 @@
 
 <h1>{t('qt.titre')}</h1>
 <QuotidienTabs current="horaires" />
+<!-- « La prière de A à Z » (parcours_priere ; 3/11 : rangée ici, plus dans « Bon comportement ») : carte chargée à la demande -->
+{#if fn('parcours_priere')}{#await import('$lib/priere/carte') then m}<m.Carte />{/await}{/if}
 
 {#if !place}
   <Lieu onchange={(p) => save({ place: p, method: prefs.method })} />

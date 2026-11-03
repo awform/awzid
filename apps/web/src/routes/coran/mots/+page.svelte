@@ -7,9 +7,10 @@
   import { t } from '$lib/i18n';
 
   /**
-   * « Mots du Coran » : recherche par mot et par racine, fiche racine, sources. Derrière l'interrupteur `coran_mots` (coupé par
-   * défaut ; « canal bêta » depuis l'administration). Le module est importé À LA DEMANDE (comme par le lecteur du Coran) : jamais
-   * dans la coquille préchargée de l'élève ; l'échec du chargement (réseau faible) est dit, jamais un écran figé.
+   * Espace « Mots du Coran » (tuile de l'accueil du Coran, 3/11/2026) : « Je reconnais X % des mots du Coran », Familles de mots,
+   * recherche par mot et par racine, fiche racine, sources. Derrière l'interrupteur `coran_mots` (coupé par défaut ; « canal
+   * bêta » depuis l'administration). Le module est importé À LA DEMANDE (comme par le lecteur du Coran) : jamais dans la
+   * coquille préchargée de l'élève ; l'échec du chargement (réseau faible) est dit, jamais un écran figé.
    */
   const ouvert = $derived(fn('coran_mots'));
   let Vue = $state<Component | null>(null);
@@ -17,7 +18,7 @@
   function charger() {
     echec = false;
     chargerModule(() => import('$lib/coran-mots'))
-      .then((m) => (Vue = m.Recherche))
+      .then((m) => (Vue = m.Espace))
       .catch(() => (echec = true));
   }
   $effect(() => {

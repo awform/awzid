@@ -24,6 +24,7 @@ import {
   drapeaux,
   estReconnu,
   mesurer,
+  mesurerTout,
   niveauDe,
   numeroDe,
   pourcent,
@@ -124,6 +125,36 @@ describe('calcul de « Je reconnais X % des mots » : la couverture de l’étud
     expect([tout(1), tout(2), tout(10)]).toEqual([48.6, 61.0, 88.5]);
     const falaq = (n: number) => arrondi1(pourcent(mesurer(sourate(113), finiN(n)).compris, 23));
     expect([falaq(1), falaq(5), falaq(10)]).toEqual([69.6, 69.6, 69.6]);
+  });
+
+  it('Coran entier par formes regroupées (espace « Mots du Coran ») = somme des 114 sourates, et l’étude', () => {
+    // même regroupement que la route /api/v1/coran-mots/frequences
+    const compte = new Map<string, number>();
+    for (let s = 1; s <= 114; s++)
+      for (const v of sourate(s))
+        for (const e of v)
+          if (e !== -1) compte.set(JSON.stringify(e), (compte.get(JSON.stringify(e)) ?? 0) + 1);
+    const f = {
+      e: [...compte.keys()].map((k) => JSON.parse(k) as Entree),
+      n: [...compte.values()],
+    };
+    for (let n = 1; n <= 10; n++) {
+      const connus = finiN(n);
+      const somme = { mots: 0, compris: 0, pleins: 0, pleinsCompris: 0 };
+      for (let s = 1; s <= 114; s++) {
+        const m = mesurer(sourate(s), connus);
+        somme.mots += m.mots;
+        somme.compris += m.compris;
+        somme.pleins += m.pleins;
+        somme.pleinsCompris += m.pleinsCompris;
+      }
+      const tout = mesurerTout(f, connus);
+      expect(tout, `N${n}`).toEqual(somme);
+      expect(arrondi1(pourcent(tout.compris, tout.mots))).toBeCloseTo(
+        ref.global[n - 1]!.pct_mots,
+        1,
+      );
+    }
   });
 
   it('suit la progression RÉELLE : niveau courant, leçons faites, mots validés ; rien d’inventé', () => {
