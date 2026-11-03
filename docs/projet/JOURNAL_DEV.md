@@ -7,6 +7,15 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 03/11/2026 — MISE EN LIGNE en production : accueil du Coran, 2e rangée « Comprendre · Mots du Coran » ; carte de la prière dans l'onglet « Prières » (`e474e54`)
+
+- **Accueil du Coran** : sous « Lire · Écouter · Mémoriser », 2e rangée dans le même style : « Comprendre » → `/coran/tafsir` (si `tafsir_sens`), « Mots du Coran » → `/coran/mots` (si `coran_mots`). Une tuile seule prend toute la largeur ; aucune : pas de rangée. Module à la demande `lib/quran/TuilesComprendre.svelte` (dans `PREMIER_USAGE_MODULES`). Textes `cl.mode_comprendre`, `cl.mode_mots` dans les 5 langues (fr-coran + en/es/de/ar).
+- **Espace « Mots du Coran »** (`/coran/mots`, module `coran-mots`) : « Je reconnais X % des mots du Coran » (Coran entier, calcul sur l'appareil = somme des 114 sourates, vérifié contre l'étude N1…N10), lien « Familles de mots du Coran » (si `racines_coran`), puis la recherche existante (titre « Chercher un mot ou une racine »). Nouvelle route `GET /api/v1/coran-mots/frequences` (formes de mots regroupées, ETag, mêmes gardes que les autres routes : 401/403). Corrigé au passage : le champ de recherche débordait à 375 px.
+- Rien retiré : « Sens et explication » reste dans le menu du verset ; « Souligner les mots que je reconnais » et « Chercher un mot ou une racine » restent dans « Outils ».
+- **« La prière de A à Z »** : carte déplacée de « Bon comportement » (`/vivre`) vers « Prières » (`/quotidien`, sous les onglets Horaires · Qibla · Verset), même interrupteur `parcours_priere`, toujours chargée à la demande.
+- **Tests** : pnpm check vert (build, typecheck, lint, 1 398 tests web, budget) ; API `coran-mots` 20/20 sur awform_test ; e2e (verrou, ports 3300/4380) `coran-tuiles` (nouveau), `priere`, `coran-mots`, `tafsir` : 33/33 après rebase sur `e119428` ; avant rebase aussi `famille-de-mots`, `coran-epure`, `coran-lecture`, `d2-design` mobile + bureau : verts. Marge de l'appareil élève : **6 520 o** (après la nouvelle règle de mesure de `8bf0c8b`).
+- **Mise en ligne** : sauvegarde avant `awform-20261103-153513.dump.gpg` (808 634 438 o, `sha256sum -c` ok, copie dans le bucket) ; `/tmp/mise-en-ligne.sh e474e54` (version précédente `8bf0c8b`), `DEPLOY_EXIT=0`, santé ok, awzid.com 200, `/coran` 200, `frequences` sans session 401, **0 erreur 5xx** (API, web, worker, Caddy) sur ~25 minutes. `main` avancé en avance rapide.
+
 ## 03/11/2026 — Tafsīr : copie en mémoire vidée à la déconnexion ; relais `/api` : en-tête `x-profil` ; règle de mesure du budget
 
 - **Tafsīr** (`lib/tafsir/donnees.ts`, `lib/session.ts`) : `logout()` annonce `awzid:logout` (`globalThis.dispatchEvent?.(…)`, sans import dans la session) ; `donnees.ts` vide sa mémoire (`enMemoire`, `enCours`) : sur un appareil partagé, le profil suivant ne revoit rien du précédent. Test unitaire.
