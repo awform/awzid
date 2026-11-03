@@ -70,8 +70,14 @@ export function chargerSourate(n: number, profil?: string | null): Promise<Resul
   return p;
 }
 
-/** Pour les tests : vide les copies en mémoire. */
-export function _viderPourTests(): void {
+/** Vide les copies en mémoire (déconnexion : l'appareil partagé ne garde rien du profil précédent). */
+export function viderMemoire(): void {
   enMemoire.clear();
   enCours.clear();
 }
+
+// Déconnexion (`logout()` de session.ts annonce l'événement) : la mémoire est vidée sans que la session importe ce module.
+if (typeof window !== 'undefined') window.addEventListener('awzid:logout', viderMemoire);
+
+/** Pour les tests. */
+export const _viderPourTests = viderMemoire;

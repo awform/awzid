@@ -194,5 +194,6 @@ export async function logout(): Promise<{ pending: number }> {
   await clearStore('recordings').catch(() => {});
   const keys = (await kvKeys().catch(() => [] as string[])).filter((k) => PERSONAL_KV.test(k));
   if (keys.length) await delMany('kv', keys).catch(() => {});
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('awzid:logout'));
   return { pending: f?.remaining ?? (await unsentCount()) };
 }

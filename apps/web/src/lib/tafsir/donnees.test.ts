@@ -8,6 +8,10 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// environnement « node » : une fenêtre factice (EventTarget) reçoit l'événement de déconnexion
+vi.hoisted(() => {
+  (globalThis as unknown as { window: EventTarget }).window = new EventTarget();
+});
 const kv = new Map<string, unknown>();
 vi.mock('$lib/idb', () => ({
   kvGet: async (k: string) => kv.get(k),
@@ -47,6 +51,17 @@ beforeEach(() => {
   });
 });
 afterEach(() => vi.unstubAllGlobals());
+
+describe('déconnexion', () => {
+  it('viderMemoire : la copie en mémoire ne ressert plus rien (sans réseau ni copie gardée)', async () => {
+    await chargerSourate(112, 'p');
+    kv.clear();
+    expect((await chargerSourate(112, 'p')).etat).toBe('ok');
+    window.dispatchEvent(new Event('awzid:logout'));
+    reponses['/api/v1/tafsir/sourates/112'] = 'reseau';
+    expect(await chargerSourate(112, 'p')).toEqual({ etat: 'hors_ligne', data: null });
+  });
+});
 
 describe('chargement à la demande', () => {
   it('une sourate à la fois, profil dans l’en-tête, cookie de session, copie gardée sous une clé qui porte le profil', async () => {
