@@ -3224,38 +3224,32 @@
     }
   }
   /*
-   * téléphone, lecture épurée : la page prend toute la largeur (plus de colonnes de flèches) ; les flèches
-   * deviennent de petites commandes au bord de l'écran, effacées avec les autres (glisser et bords suffisent)
+   * téléphone, lecture épurée : la page prend toute la largeur. Les flèches ne flottent plus sur le texte (correction du
+   * 03/11/2026 : elles cachaient le début et la fin des lignes) : elles restent dans la ligne SOUS la page, à côté du
+   * numéro, toujours visibles, et ne recouvrent jamais le Coran
    */
   @media (max-width: 899px),
     (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
     .stage.epure {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: auto minmax(0, 1fr) auto;
       grid-template-areas:
-        'book'
-        'pos';
+        'book book book'
+        'next pos prev';
+      grid-template-rows: 1fr auto;
+      min-height: 100svh;
+      align-items: center;
     }
     .stage.epure .turn {
-      position: fixed;
-      top: 50%;
-      z-index: 16;
-      width: 40px;
-      height: 40px;
-      margin: 0;
-      opacity: 0.92;
-      box-shadow: var(--shadow-card);
+      position: static;
+      width: 44px;
+      height: 44px;
+      margin: 4px 0 0;
+      /* toujours visibles et touchables : !important, pour passer devant les règles de la lecture épurée */
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      box-shadow: none;
     }
-    .stage.epure .turn.next {
-      left: 4px;
-    }
-    .stage.epure .turn.prev {
-      right: 4px;
-    }
-    :global(html[data-epure]) .stage.epure .turn {
-      opacity: 0;
-    }
-    /* page zoomée : les flèches (posées sur le texte) disparaissent ; glisser déplace la page, double-toucher
-       ou pincement la rend entière */
+    /* page zoomée : glisser déplace la page, double-toucher ou pincement la rend entière */
     .stage.epure.zoomed .turn {
       display: none;
     }

@@ -225,6 +225,40 @@ test.describe('interrupteur ouvert : le Coran d’abord', () => {
     }
   });
 
+  test('375 px : les flèches de page ne recouvrent aucun mot du Coran', async ({ page }) => {
+    await adulte(page, 'ls-fleches', 0);
+    await ouvrir(page, 'page=2');
+    await expect(page.getByTestId('mp-suiv')).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator('[data-testid="mushaf-livre"] .quran-text').first()).toBeVisible({
+      timeout: 20_000,
+    });
+    for (const defile of [0, 250]) {
+      await page.evaluate((y) => window.scrollTo(0, y), defile);
+      const chevauche = await page.evaluate(() => {
+        const r = (e: Element) => e.getBoundingClientRect();
+        const boutons = ['mp-suiv', 'mp-prec']
+          .map((id) => document.querySelector(`[data-testid="${id}"]`))
+          .filter((e): e is Element => !!e)
+          .map(r);
+        const mots = [...document.querySelectorAll('[data-testid="mushaf-livre"] .quran-text')]
+          .flatMap((e) => [...e.getClientRects()])
+          .filter((m) => m.width > 0 && m.height > 0);
+        return {
+          nBoutons: boutons.length,
+          nMots: mots.length,
+          touches: boutons.flatMap((b) =>
+            mots.filter(
+              (m) => b.left < m.right && b.right > m.left && b.top < m.bottom && b.bottom > m.top,
+            ),
+          ).length,
+        };
+      });
+      expect(chevauche.nBoutons).toBe(2);
+      expect(chevauche.nMots).toBeGreaterThan(10);
+      expect(chevauche.touches).toBe(0);
+    }
+  });
+
   test('375 px : une ligne en haut, le premier verset visible sans défiler et non couvert', async ({
     page,
   }) => {
