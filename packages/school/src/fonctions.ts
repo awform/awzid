@@ -41,6 +41,7 @@ export const FONCTION_CLES = [
   'shazam_coran',
   'tarteel_fenetre',
   'tafsir_sens',
+  'racines_coran',
   'lecteur_simple',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
@@ -168,6 +169,9 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // pour l'élève, les segments « niveau adulte » aux seuls profils adultes avec leur note de contexte). COUPÉ par défaut partout
   // (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le lecteur entier, sans l'accès.
   tafsir_sens: { defaut: 'off' },
+  // « Famille de mots » (3/11/2026) : cartes du Coran par racine, niveaux 1 à 12, en 7 étapes (6 pour l'enfant) ; données servies à la demande par
+  // l'API (public enfant filtré côté serveur). COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta ». Coupé : rien ne s'affiche.
+  racines_coran: { defaut: 'off' },
   // « Lecteur simple » (2/11/2026, retour du client : lecteur du Coran trop chargé sur téléphone) : une seule ligne en haut (sourate et verset,
   // écoute, « Outils »), « Je reconnais X % » réduit à une pastille (rien à 0 %), une seule barre audio compacte ; rien ne disparaît, tout
   // reste à un ou deux touchers. COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta » (comptes d'essai). Coupé : l'ancien

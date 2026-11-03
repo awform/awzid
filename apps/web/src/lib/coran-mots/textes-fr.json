@@ -12,6 +12,7 @@
   "cm.lecon_faite": "Niveau {niveau}, leçon {n}",
   "cm.lecon_plus_tard": "Plus tard : niveau {niveau}, leçon {n}",
   "cm.souligner": "Souligner les mots que je reconnais",
+  "cm.familles": "Familles de mots du Coran",
   "cm.chercher": "Chercher un mot ou une racine",
   "cm.note": "Reconnaître un mot, ce n’est pas encore comprendre tout le verset : ce chiffre suit les leçons que tu as vraiment faites, mot à mot.",
   "cm.sources": "Sources et licences des données",

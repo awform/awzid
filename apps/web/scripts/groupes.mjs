@@ -52,6 +52,8 @@ export const PREMIER_USAGE_ROUTES = [
   '/coran/mots',
   // 2/11/2026 : « Tafsīr du niveau » (parcours des sourates de la portion du niveau ; interrupteur `tafsir_sens`)
   '/coran/tafsir',
+  // 3/11/2026 : « Famille de mots » (cartes par racine ; interrupteur `racines_coran`)
+  '/coran/familles',
 ];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
@@ -69,6 +71,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/coran-mots\/index\.ts$/,
   // 2/11/2026 : « Sens et explication » d'un verset (tafsīr abrégé et mot à mot ; interrupteur `tafsir_sens`), importé à la demande à l'ouverture du petit menu
   /src\/lib\/tafsir\/index\.ts$/,
+  // 3/11/2026 : « Famille de mots » (interrupteur `racines_coran`), importé à la demande par la page /coran/familles
+  /src\/lib\/racines\/index\.ts$/,
   // 2/11/2026 : « Lecteur simple » du Coran (panneau « Outils », menu « ⋯ » de la barre audio ; interrupteur `lecteur_simple`), importé à la demande
   /src\/lib\/quran\/lecteur-simple\/index\.ts$/,
   // V2-4 : feuille de bascule Moi / enfants (chargée au premier toucher sur le prénom du profil actif)

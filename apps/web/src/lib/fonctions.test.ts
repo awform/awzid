@@ -51,6 +51,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
       'lecteur_simple',
       'mutashabihat',
       'parcours_priere',
+      'racines_coran',
       'shazam_coran',
       'tafsir_sens',
       'tajwid_madd',

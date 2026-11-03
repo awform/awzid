@@ -155,6 +155,12 @@
           <div lang={localeInfo().code} dir={localeInfo().dir}>
             {@render suite()}
             <p class="cm-petit">{t('cm.note')}</p>
+            {#if fn('racines_coran')}
+              <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu -->
+              <a class="cm-lien" href={resolve('/coran/familles')} data-testid="cm-familles"
+                >{t('cm.familles')}</a
+              >
+            {/if}
           </div>
         </section>
       </Feuille>
@@ -178,6 +184,9 @@
         <p class="cm-liens">
           <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu -->
           <a href={resolve('/coran/mots')} data-testid="cm-chercher">{t('cm.chercher')}</a>
+          {#if fn('racines_coran')}<a href={resolve('/coran/familles')} data-testid="cm-familles"
+              >{t('cm.familles')}</a
+            >{/if}
           <a href={`${resolve('/coran/mots')}#sources`} data-testid="cm-sources"
             >{t('cm.sources')}</a
           >

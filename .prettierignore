@@ -36,6 +36,8 @@ packages/content/conversation/
 
 # Tafsīr abrégé et mot à mot (2/11/2026) : fichiers par sourate générés (pnpm --filter @awform/content tafsir), arabe de Tanzil recopié tel quel, contrôlés par test
 packages/content/tafsir/
+# Familles de mots (3/11/2026) : fichiers compacts générés (node packages/content/scripts/racines-compact.mjs), arabe recopié tel quel
+packages/content/racines/
 
 # Madjaliss : sources du référent recopiées VERBATIM, et textes générés (node apps/web/scripts/madjaliss.mjs), contrôlés par test
 packages/content/madjaliss-source/
