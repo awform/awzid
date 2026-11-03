@@ -45,6 +45,13 @@ REGLAGES = {
     'marge': 1.0,    # l'écart doit finir au moins `marge` s avant la fin de la fenêtre
     'oubli': 0,      # signaler aussi les oublis d'un mot (arc `dele`)
     'trou': 0,       # > 0 : voix (s) sans lettre lue entre deux mots consécutifs = mot ajouté non écrit par le modèle
+    # palier 2, levier 1 : treillis CTC sur les mots « non retrouvés » (passage `sub` du chemin)
+    'osub': 0,       # 1 : un mot attendu « non retrouvé » sans aucune trame de voix = mot OUBLIÉ
+    'o_nv': 0,       #   trames de voix au plus
+    'o_llr': -20.0,  #   et vraisemblance du mot attendu (forcé) - libre au plus (le mot ne tient pas dans le trou)
+    'rsub': 0,       # 1 : un mot attendu mieux expliqué par un AUTRE mot du Coran = mot REMPLACÉ (lexique requis)
+    'r_nv': 2,       #   trames de voix au moins
+    'r_d': -24.0,    #   score(mot attendu) - score(meilleur autre mot) au plus
 }
 
 
@@ -98,6 +105,8 @@ class Graphe:
 
     def __init__(self, jetons, versets, blanc, facultatifs=None):
         self.W = W = len(jetons)
+        self.jetons = jetons
+        self.mots_norm = [None] * W  # écriture normalisée des mots attendus (à remplir pour `rsub`)
         self.blanc = blanc
         lab, off, last, pw_word = [], [], [], []
         for j, vs in enumerate(jetons):
@@ -338,7 +347,67 @@ def trace(g, node, T, bp_in, a_src, a_from, sub_in, gap_in, end_sub, end_pw, en_
     return chemin, entrees
 
 
-def ecarts(g, chemin, entrees, voix, R, t_fin, lettres=None, vad=None, dec=0.0):
+MMAX = 14  # jetons au plus d'un mot du lexique
+
+
+class Lexique:
+    """Mots du Coran (écriture du modèle, calcul seulement) en jetons, pour le test « un autre mot explique mieux ces trames »."""
+
+    def __init__(self, sp, mots):
+        blanc = sp.get_piece_size()
+        vus = {}
+        for w in mots:
+            x = norm(w)
+            if LETTRE.search(x) and x not in vus:
+                vus[x] = sp.encode(x)
+        t = [(w, k) for w, k in vus.items() if 0 < len(k) <= MMAX]
+        self.mots = [w for w, _ in t]
+        self.ln = np.array([len(k) for _, k in t])
+        self.lab = np.full((len(t), 2 * MMAX + 1), -1, dtype=np.int64)
+        for i, (_, k) in enumerate(t):
+            row = [blanc]
+            for z in k:
+                row += [z, blanc]
+            self.lab[i, :len(row)] = row
+
+
+def vraisemblances(E, a, b, lab, ln):
+    """Meilleure log-vraisemblance CTC d'émettre chaque séquence de `lab` (blanc, jeton, blanc, …) dans les trames a..b."""
+    blanc = E.shape[1] - 1
+    N, S = lab.shape
+    valid = lab >= 0
+    labc = np.where(valid, lab, blanc)
+    ok2 = np.zeros((N, S), dtype=bool)
+    ok2[:, 2:] = (labc[:, 2:] != labc[:, :-2]) & (labc[:, 2:] != blanc)
+    bas = np.full((N, 2), NEG)
+    Em = E[a:b + 1]
+    V = np.full((N, S), NEG)
+    V[:, 0] = Em[0, labc[:, 0]]
+    V[:, 1] = np.where(valid[:, 1], Em[0, labc[:, 1]], NEG)
+    for t in range(1, Em.shape[0]):
+        p1 = np.concatenate((bas[:, :1], V[:, :-1]), 1)
+        p2 = np.where(ok2, np.concatenate((bas, V[:, :-2]), 1), NEG)
+        V = np.where(valid, np.maximum(V, np.maximum(p1, p2)) + Em[t][labc], NEG)
+    r = np.arange(N)
+    return np.maximum(V[r, 2 * ln], V[r, 2 * ln - 1])
+
+
+def vraisemblance_mot(E, variantes_, a, b):
+    """Meilleure log-vraisemblance du mot attendu (parmi ses découpages) dans les trames a..b."""
+    blanc = E.shape[1] - 1
+    best = NEG
+    for tk in variantes_:
+        tk = tk[:MMAX]
+        lab = np.full((1, 2 * MMAX + 1), -1, dtype=np.int64)
+        row = [blanc]
+        for z in tk:
+            row += [z, blanc]
+        lab[0, :len(row)] = row
+        best = max(best, float(vraisemblances(E, a, b, lab, np.array([len(tk)]))[0]))
+    return best
+
+
+def ecarts(g, chemin, entrees, voix, R, t_fin, lettres=None, vad=None, dec=0.0, E=None, lex=None):
     """Écarts sûrs lus sur le chemin. t_fin : dernière trame d'audio réel de la fenêtre. Renvoie [(type, i, fin, trame)]."""
     T = len(chemin)
     marge = int(round(R['marge'] / FRAME))
@@ -381,6 +450,33 @@ def ecarts(g, chemin, entrees, voix, R, t_fin, lettres=None, vad=None, dec=0.0):
             if (v >= R['trou'] and l2[0] <= t_fin - marge and reconnus(a2, T) >= R['apres']
                     and reconnus(0, a1 + 1) >= R['avant']):
                 out.append(('ajoute', c1[1], c1[1], l2[0]))
+    if E is not None and (R.get('osub') or (R.get('rsub') and lex is not None)):
+        libre = E.max(1)
+        t = 0
+        while t < T:
+            c = chemin[t]
+            if c[0] != 'sub':
+                t += 1
+                continue
+            j, t0 = c[1], t
+            while t < T and chemin[t] == c:
+                t += 1
+            b = t - 1
+            if b > t_fin - marge or reconnus(t, T) < R['apres'] or reconnus(0, t0) < R['avant'] or not g.jetons[j]:
+                continue
+            nv = int(voix[t0:t].sum())
+            lo, hi = max(0, t0 - 2), min(T - 1, b + 2)
+            if R.get('osub') and nv <= R['o_nv']:
+                if vraisemblance_mot(E, g.jetons[j], lo, hi) - float(libre[lo:hi + 1].sum()) <= R['o_llr']:
+                    out.append(('oublie', j, j, t0))
+            elif R.get('rsub') and lex is not None and nv >= R['r_nv']:
+                lo, hi = max(0, t0 - 1), min(T - 1, b + 1)
+                sc = vraisemblances(E, lo, hi, lex.lab, lex.ln)
+                mine = vraisemblance_mot(E, g.jetons[j], lo, hi)
+                o = np.argsort(-sc)[:3]
+                alt = next((float(sc[i]) for i in o if lex.mots[i] != g.mots_norm[j]), float(sc[o[0]]))
+                if mine - alt <= R['r_d']:
+                    out.append(('remplace', j, j, t0))
     for (t, j, src, frm) in entrees:
         if t > t_fin - marge or reconnus(t, T) < R['apres'] or reconnus(0, t) < R['avant']:
             continue

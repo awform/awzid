@@ -249,3 +249,54 @@ Branche `tarteel-titan-3-wip` (partie de 2a61e4b). Ce palier contient deux piste
 - API `shazam` et `a5` : 23 tests (texte attendu envoyé une fois en mode fenêtre, coupé par `AWFORM_ECOUTE_TEXTE=off`) ;
 - web `src/lib/ecoute` : 25 tests ; `svelte-check`, `eslint` et `prettier` sont propres ;
 - e2e sous `flock ~/.awzid-e2e.lock` : `shazam.spec.ts` et `a5.spec.ts`, 16 réussis (bureau et mobile).
+
+## 12. Phase 3, palier 2 (03/11/2026) : treillis CTC, durée anormale, latence, autre modèle
+
+Même branche, mêmes jeux que le palier 1 : réglage sur le banc 2 seulement (190 séances), puis banc 3 (vérification : Basfar, Muhsin al-Qasim ; neutre : al-Ajamy, ar-Rifai). Le disque de la VM ne contient plus l'audio des 4 voix everyayah de réserve : aucune voix neuve n'a pu être générée, la partie neutre a donc été vue une **seconde fois** (une seule configuration, celle gelée sur le banc 2). Scripts : `services/ecoute-ia/eval/palier2/`.
+
+Règle de décision : un levier n'est gardé que s'il améliore la détection sans augmenter les fausses alertes sur les séances justes.
+
+### Levier 1 : treillis CTC (oublis, remplacements) : NON GARDÉ (option `osub` laissée à 0)
+- **Oubli** : un mot oublié apparaît dans le chemin comme un passage « bouche-trou » d'une trame sans voix entre deux mots reconnus. Règle `osub` : bouche-trou sans voix et mot attendu qui ne tient pas dans le trou (vraisemblance forcée − libre ≤ −30). Option `osub=1`, `o_llr=-30`.
+- **Remplacement** : le mot attendu est-il moins bien expliqué que le meilleur AUTRE mot du Coran (lexique de 14 000 mots, treillis CTC groupé) ? Option `rsub=1`.
+
+| | oubli | remplacement | ajout | verset sauté | fausses alertes séances normales (justes) |
+|---|---|---|---|---|---|
+| banc 2 (190), avant | 15/20 | 16/22 | 12/20 | 16/19 | 4/109 (0/50) |
+| banc 2, `osub` | 17/20 | 16/22 | 12/20 | 16/19 | 4/109 (0/50) |
+| banc 2, `osub` + `rsub` (−36) | 17/20 | 17/22 | 12/20 | 16/19 | 5/109 |
+| banc 2, `osub` + `rsub` (−24) | 17/20 | 18/22 | 12/20 | 16/19 | 12/109 |
+| vérification, avant → `osub` | 17 → 18/22 | 10 → 11/22 | 10/22 | 22/22 | 2/59 → 2/59 (0/25 → 0/25) |
+| **neutre, avant → `osub`** | 14 → 16/22 | 11 → 12/22 | 8/22 | 21/22 | **6/59 → 12/59 (1/25 → 4/25)** |
+
+- `osub` : +2 oublis sur le banc 2, +1 en vérification, +2 sur la partie neutre, mais les fausses alertes sur les séances justes passent de 1/25 à 4/25 sur la partie neutre (voix rapides qui avalent des mots courts). **Refusé** par la règle. Seuils plus stricts (−45, −60) : gain nul sur le banc 2.
+- `rsub` : la vraisemblance d'un mot attendu contre un autre mot ne sépare pas un vrai remplacement d'un mot mal transcrit par le modèle (6 à 27 séances justes sur 50 déclenchées aux seuils qui trouvent 11 à 17 remplacements). Au seuil le plus sûr (−36) : +1 remplacement pour +1 fausse alerte. **Refusé.**
+- Le code reste (option désactivée, `contraint.py` : `Lexique`, `vraisemblances`, `osub`, `rsub`) pour le palier suivant.
+
+### Levier 2 : durée anormale (ajouts) : NON GARDÉ
+Mesuré sur le banc 2 (13 700 frontières de mots) : durée du mot rapportée à la vitesse de la voix, et voix (VAD) dans le trou entre deux mots consécutifs.
+- Durée ≥ 4 fois l'attendu : 4 ajouts sur 20, mais 23 séances justes sur 50 déclenchées.
+- Voix dans le trou ≥ 1,6 s : 8 ajouts sur 20, 16 justes sur 50 déclenchées.
+- Aucun seuil ne trouve des ajouts sans déclencher des justes (madd, pauses, respirations). Même cause que l'option `trou` du palier 1. Rien dans le code.
+
+### Levier 3 : latence : objectif < 3 s NON ATTEINT
+Erreur dite, médiane (pas de 1 s, fenêtre de 10 s) :
+
+| | VM (banc 3 vérification) | estimation prod (1,5 CPU, 1 thread) |
+|---|---|---|
+| calcul par lecture (RNN-T + CTC) | 0,53 s (médiane) | 0,87 s, mesuré : 0,89 s (neutre) |
+| mot dévoilé, médiane | 1,0 s | 1,75 s |
+| erreur dite, médiane / 90ᵉ | 4,4 / 6,8 s | 5,2 / 7,8 s |
+
+- Prod simulée : durées de calcul mesurées multipliées par 1,7 (rapport VM / prod mesuré sur des fenêtres de 10 s à 1,5 CPU, 1 thread), rejouées dans `banc.mjs`.
+- `apres` et `marge` du décodage contraint (de 2 à 1, de 1,0 à 0 s) : résultats identiques à l'unité près. Le délai est fixé par la validation des mots de l'appli (accord entre deux lectures, marge droite 0,5 s, `forcer` 2,5 s), non par le décodeur.
+- `forcer` 1,5 s : médiane 4,5 s (pas de gain) ; `forcer` 1,0 + marge 0,3 + tolérance 0,8 : 4,1 s, mais fausses alertes de 2/59 à 5/59. Non retenu.
+- Encodeur en int8 (quantification dynamique des couches linéaires), 1 thread, 1,5 CPU : lecture double 1,37 s → 0,97 s, mais transcription RNN-T identique sur 9 fenêtres sur 14 et trames CTC identiques à 91 % : gain de 0,4 s sans effet sur l'objectif, précision à remesurer. Non retenu.
+- Conclusion : < 3 s demande une autre architecture (modèle de flux à cache, lecture tous les 0,5 s, validation sans accord entre deux lectures), pas un réglage.
+
+### Levier 4 : autre modèle : NON GARDÉ
+- `tarteel-ai/whisper-base-ar-quran` (Apache, déjà sur la VM), 14 fenêtres de 10 s de séances justes du banc neutre, 1,5 CPU, 1 thread : erreurs de mots (squelette sans voyelles) **24,2 %** contre **18,3 %** pour le modèle actuel, et **19,6 s** par fenêtre contre 0,9 s. Pas de tête CTC ni d'instants de mots : inutilisable pour le direct.
+- `Abdou/quran-asr-small` (MIT) et les données QDAT : non essayés (téléchargement non fait sans accord).
+
+### Ce qui reste
+Pas de gain ajouté sur le banc neutre : 54/88 (61 %) comme au palier 1. Piste suivante : un détecteur d'ajout et de remplacement appris sur de vraies erreurs d'élèves (données), un modèle CTC de flux, ou accepter ce niveau et signaler les mots ajoutés avec douceur.

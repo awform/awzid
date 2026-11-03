@@ -38,9 +38,20 @@ PERS = int(os.environ.get('PERS', '1'))
 SP = None
 
 
+LEX = None
+TSV = os.environ.get('TANZIL', '/awform-content/coran/tanzil-uthmani.tsv')
+
+
 def init():
-    global SP
+    global SP, LEX
     SP = tokenizer()
+    if R.get('rsub') and os.path.exists(TSV):  # lexique du Coran, pour le test « remplacé » (palier 2)
+        mots = []
+        for l in open(TSV, encoding='utf-8'):
+            t = l.find('\t')
+            if t > 0:
+                mots += l[t + 1:].split()
+        LEX = C.Lexique(SP, mots)
 
 
 def une(args):
@@ -52,6 +63,7 @@ def une(args):
     cls = C.classes(SP) if R.get('squel') else None
     jetons = [C.variantes(SP, w, int(R['nvar']), cls) for w in e['mots']]
     g = C.Graphe(jetons, e['va'], blanc, e.get('fac'))
+    g.mots_norm = [C.norm(w) for w in e['mots']]
     z = np.load(f)
     ids, lp, dec, lec = z['ids'].astype(np.int64), z['lp'].astype(np.float32), z['decalage'], z['lecture']
     longs = (ids[:, :, 0] >= 0).sum(1)
@@ -65,7 +77,7 @@ def une(args):
         E, fb, f0, voix = C.emissions(ids[n, :L], lp[n, :L], blanc, blanc, R, C.classes(SP))
         chemin, entrees = C.viterbi(g, E, fb, f0, R)
         t_fin = int((t_lec - dec[n]) / C.FRAME)
-        for (typ, i, fin, tr) in C.ecarts(g, chemin, entrees, voix, R, min(t_fin, L - 1), voix, reads_t[int(lec[n])].get('voix'), float(dec[n])):
+        for (typ, i, fin, tr) in C.ecarts(g, chemin, entrees, voix, R, min(t_fin, L - 1), voix, reads_t[int(lec[n])].get('voix'), float(dec[n]), E=E, lex=LEX):
             k = (typ, i, fin)
             c, der = vus.get(k, [0, -9])
             c = c + 1 if der == n - 1 else 1
