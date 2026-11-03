@@ -12,7 +12,7 @@
 // riwāya ≤ 1 Mo (hors coquille).
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget bloquant est dépassé.
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, constants } from 'node:zlib';
 import { groupFiles, readRoutes } from './groupes.mjs';
@@ -100,12 +100,20 @@ const BUDGET_RIWAYA_FONT = 1024 * 1024;
 const ACCUEIL = '/';
 
 const files = walk(client);
-const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js'));
-const css = files.filter((p) => p.endsWith('.css'));
+const swSrc = readFileSync(join(root, 'src', 'service-worker.ts'), 'utf8');
+// 3/11/2026 (décision du chef de projet) : fichiers statiques que le service worker NE précharge PAS (liste `ASSETS` de
+// src/service-worker.ts : `!f.startsWith('/etat.')`, page d'état en ligne seulement ; `!f.startsWith('/accueil.')`, accueil
+// public des visiteurs sans compte) : jamais sur l'appareil de l'élève, donc hors de (a). Les préfixes sont LUS dans le
+// service worker (même règle, aucune liste recopiée) ; déduits SEULEMENT s'il les exclut.
+const SW_EXCLUS = ['/etat.', '/accueil.'].filter((x) =>
+  new RegExp(`!f\\.startsWith\\('${x.replace('.', '\\.')}'\\)`).test(swSrc),
+);
+const horsSw = (p) => SW_EXCLUS.some((x) => `/${relative(client, p)}`.startsWith(x));
+const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js') && !horsSw(p));
+const css = files.filter((p) => p.endsWith('.css') && !horsSw(p));
 const fonts = files.filter((p) => p.endsWith('.woff2'));
 const rwFonts = files.filter((p) => /[\\/]riwayat[\\/]/.test(p) && p.endsWith('.ttf'));
 const rwWorst = rwFonts.reduce((m, p) => Math.max(m, statSync(p).size), 0);
-const swSrc = readFileSync(join(root, 'src', 'service-worker.ts'), 'utf8');
 const rwExcluded = /startsWith\('\/riwayat\/'\)/.test(swSrc);
 const swBr = sum(
   files.filter((p) => p.endsWith('service-worker.js')),
