@@ -289,4 +289,51 @@ test.describe('interrupteur ouvert', () => {
       expect(gardees).not.toMatch(/ADULTE-SEUL|NOTE-DE-CONTEXTE|RESERVE-CLIENT/);
     });
   });
+
+  test.describe('relais /api : en-tête x-profil (compte parent)', () => {
+    test.use({ compte: null });
+    // 3/11/2026 : le relais /api du serveur web (développement et essais ; Caddy en production) ne transmettait pas `x-profil` :
+    // le serveur ne voyait pas le profil enfant. Preuve par une fonction qui DIFFÈRE pour un enfant : le Muṣḥaf exact, fermé aux
+    // profils d'enfants tant que « qf_profils_enfants » vaut « off » (défaut), ouvert au compte du parent
+    test('le profil enfant annoncé par x-profil est reconnu par le serveur', async ({ page }) => {
+      const r = await page.request.post('/api/v1/auth/signup', {
+        headers: H,
+        data: {
+          kind: 'parent',
+          intention: 'famille',
+          email: `tf-relais-${Date.now()}@e2e.test`,
+          password: MDP,
+          country: 'FR',
+          birthYear: 1985,
+          consents: ['cgu', 'donnee_religieuse_art9'],
+        },
+      });
+      expect(r.status(), await r.text()).toBe(201);
+      const p = await page.request.post('/api/v1/profiles', {
+        headers: H,
+        data: {
+          pseudonym: 'Maryam',
+          birthYear: new Date().getFullYear() - 9,
+          levelCode: 'en1',
+          password: MDP,
+          consents: ['compte_suivi', 'donnee_religieuse_art9'],
+        },
+      });
+      expect(p.status(), await p.text()).toBe(201);
+      const { id } = (await p.json()) as { id: string };
+      const page1 = '/api/v1/quran/mushaf-exact/pages/1';
+      expect((await page.request.get(page1, { headers: H })).status()).not.toBe(403);
+      const enfant = await page.request.get(page1, { headers: { ...H, 'x-profil': id } });
+      expect(enfant.status()).toBe(403);
+      expect(((await enfant.json()) as { error: { code: string } }).error.code).toBe(
+        'fonction_coupee',
+      );
+      // et le tafsīr de l'enfant, demandé avec son profil : sans segment adulte ni réservé
+      const tf = await page.request.get('/api/v1/tafsir/sourates/112', {
+        headers: { ...H, 'x-profil': id },
+      });
+      expect(tf.status()).toBe(200);
+      expect(await tf.text()).not.toMatch(/ADULTE-SEUL|NOTE-DE-CONTEXTE|RESERVE-CLIENT/);
+    });
+  });
 });

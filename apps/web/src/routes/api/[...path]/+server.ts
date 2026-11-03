@@ -18,6 +18,9 @@ const FORWARD = [
   'x-forwarded-for',
   // code parent (envoi d'une récitation, notifications des enfants : lot 16)
   'x-parent-pin',
+  // 3/11/2026 : profil actif (tafsīr, Famille de mots, Muṣḥaf exact, récitateurs) ; sans lui, le serveur ne voyait
+  // pas le profil enfant derrière ce relais (Caddy, en production, transmet déjà tous les en-têtes)
+  'x-profil',
 ];
 // 18/10/2026 : « location » (redirections de la connexion avec Google)
 const BACK = [
