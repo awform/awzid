@@ -300,3 +300,31 @@ Erreur dite, médiane (pas de 1 s, fenêtre de 10 s) :
 
 ### Ce qui reste
 Pas de gain ajouté sur le banc neutre : 54/88 (61 %) comme au palier 1. Piste suivante : un détecteur d'ajout et de remplacement appris sur de vraies erreurs d'élèves (données), un modèle CTC de flux, ou accepter ce niveau et signaler les mots ajoutés avec douceur.
+
+## 13. Phase 3, palier 3 (03/11/2026) : `Abdou/quran-asr-small` et QDAT
+
+Scripts : `services/ecoute-ia/eval/palier3/` (`qas.py` interprète le graphe ONNX avec torch ; `wq2.py`, `inst.py`, `qdat_mots.py`, `run.sh`).
+
+### Modèle téléchargé
+`~/modeles-ia/quran-asr-small/` : `model.onnx` (127 Mo), `model.int8.onnx` (34 Mo), `tokens.txt`, `spelling.json`, `README.md`, `transcribe.py`, `LICENSE` (MIT, © 2026 Abdou ; copie `LICENCE_MIT_Abdou_quran-asr-small.md`), plus 4 petits fichiers de `code/quran_asr/` (empreinte des 80 bandes mel : `features.py`, `audio.py`, `spelling.py`, `text.py`). Zipformer2 CTC de 33 M de paramètres, 31 jetons (28 lettres arabes SANS voyelles, `▁` entre mots), pas de 40 ms. Données d'entraînement déclarées : tlog (CC-BY-4.0), Iqra_train.
+- `onnxruntime` et `sherpa-onnx` ne sont pas installés sur la VM ni dans l'image : pour ne rien télécharger, le graphe (28 types d'opérateurs) est exécuté par un petit interprète torch (`qas.py`). Vérifié : écart maximal de 1,7e-5 sur les log-probabilités contre `onnx.reference.ReferenceEvaluator`. Les temps ci-dessous sont donc ceux de cet interprète (torch, 1,5 CPU, 1 thread), probablement pessimistes de moitié ou presque par rapport à onnxruntime.
+- Incident à signaler : en sondant la disponibilité de pip, une commande `pip download onnxruntime` a réellement téléchargé la roue (~15 Mo) dans `/tmp/x` ; elle a été supprimée aussitôt et jamais installée ni utilisée.
+
+### Levier 4 bis : même protocole que le levier 4 (14 séances justes du banc neutre, 2 fenêtres de 10 s, 1,5 CPU, 1 thread)
+| modèle | erreurs de mots (squelette) | tolérant (hamza, alef) | temps par fenêtre (médiane / max) |
+|---|---|---|---|
+| NeMo actuel (RNN-T) | **18,3 %** (22/120) | 17,5 % | 0,82 / 0,93 s |
+| quran-asr-small fp32 | 29,2 % (35/120) | 29,2 % | 0,51 / 0,59 s |
+| quran-asr-small int8 | 28,3 % (34/120) | 28,3 % | 0,61 / 0,73 s |
+(Whisper Quran du palier 2 : 24,2 % et 19,6 s.)
+- Pas « au moins aussi bon » : +10 points d'erreurs de mots sur ces voix, malgré 4,5 % annoncé sur son banc. Erreurs vues : lettres avalées (« أعوذ » lu « ا »), mots fusionnés ou doublés, bords de fenêtre. Plus rapide (−40 %).
+- Instants de mots (début de mot, mots reconnus à l'identique, 14 séances) : écart médian 0,04 s, 90ᵉ percentile 0,12 s (NeMo : 0,00 / 0,08 s, mais la référence est probablement issue d'un alignement de même nature : à ne pas sur-interpréter). Tête CTC lettre par lettre : directement utilisable pour le direct, avec un décodage contraint par lettres (le lexique et le treillis de `contraint.py` sont écrits pour les jetons SentencePiece de NeMo : à porter).
+- Conformément à la consigne (« s'il est au moins aussi bon »), **pas de passage sur les jeux du palier 1** (banc 2, vérification, neutre) : aucune mesure d'oublis/remplacements/ajouts/versets sautés/fausses alertes pour ce modèle. **NON GARDÉ**, rien dans le code de production.
+
+### QDAT (`~/tajwid-donnees/qdat` : 1 505 clips ; `qdat_bench` : 159 clips)
+- Contenu : **un seul verset** (5:109, « قالوا لا علم لنا إنك أنت علام الغيوب », 8 mots) lu par ~160 locuteurs (enfants, femmes, hommes, téléphone). Étiquettes : 4 règles de tajwīd binaires par clip (`separate_tide`, `the_tight_noon`, `concealment`, `target`, codage du genre : 1 = homme, 0 = femme, inverse de l'ancien `analyse_renfort.py`), et pour le banc, des transcriptions phonétiques et des sifāt par lettre.
+- **Aucun mot ajouté, remplacé ni sauté n'est étiqueté** : les fautes notées sont des fautes de madd, ghunna, ikhfā', qalqala (durée et nasalisation), pas des erreurs de mots, et le texte est toujours le même verset. QDAT ne permet donc NI d'évaluer NI d'entraîner la détection des ajouts/remplacements de mots (un seul verset : un détecteur appris dessus apprendrait ce verset). Il sert au tajwīd (déjà exploité dans `~/tajwid-renfort`).
+- Mesure indirecte (300 clips, quran-asr-small fp32, erreurs de mots contre le verset) : clips corrects 0,2 à 0,9 % ; clips fautifs 5,9 % (qalqala) à 13,7 % (ghunna). Les fautes de tajwīd modifient les lettres écrites, donc un modèle lettre par lettre en voit une partie, mais ce signal est du tajwīd, pas de la détection d'ajouts, et reste à tester sur davantage de versets.
+
+### Décision
+Rien de gardé : le modèle est moins bon (29 % contre 18 %) sur les voix du banc neutre, QDAT ne contient pas de fautes de mots. Pas d'augmentation des fausses alertes à craindre, donc aucun changement. Piste restante inchangée : des récitations avec vraies erreurs de mots (élèves), ou un modèle CTC de flux.
