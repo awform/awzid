@@ -7,6 +7,16 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 03/11/2026 — MISE EN LIGNE en production : flèches de page du Coran hors du texte (`0c668d7`), « lecteur simple » ouvert à tous (`lecteur_simple` = `on`)
+
+- **Défaut vu par le client** (téléphone 375 px, lecteur épuré) : les deux flèches rondes ← → de changement de page flottaient à mi-hauteur sur les bords de la page et cachaient le début et la fin des lignes (« يؤمنون بالغيب ويقيمون الصلوة »). Cela touchait l'ancien affichage comme le lecteur simple (même règle d'écran étroit).
+- **Correction** (`apps/web/src/routes/coran/lecteur/+page.svelte`, aucun code ajouté au lecteur : règles remplacées) : en lecture épurée sur téléphone, les flèches sont dans la ligne SOUS la page, de part et d'autre de « Page n / 604 », toujours visibles et touchables, jamais sur le texte ; la page occupe au moins la hauteur de l'écran, la ligne reste en bas. Zoom : elles restent cachées. Grand écran : inchangé (colonnes de chaque côté de la page, rien recouvert). Texte coranique inchangé.
+- **Piège noté** : sous Svelte 5, le hachage répété des classes est en `:where()` ; les règles `html[data-epure]… .turn` l'emportaient (flèche invisible puis intouchable) : `!important` sur `opacity` et `pointer-events` de cette règle seulement.
+- **Test** : `e2e/lecteur-simple.spec.ts`, « 375 px : les flèches de page ne recouvrent aucun mot du Coran » (page 2, haut et bas de page, rectangles des boutons contre ceux des mots).
+- **Tests** : `pnpm check` : tout vert sauf B1 de `enfant-login-revue` (instable connu, 53 ms pour 50 ms, sans lien avec le web) ; web 1 389 tests verts ; budget appareil élève : marge **3 160 o** (seuil 3 072). E2e sous `flock` (`lecteur*`, `coran-*`, `tafsir*`, `mushaf`, ports 3300/4380) : 173 réussis, 83 ignorés, 0 échec (premier passage : 3 rouges dont 2 dus à la flèche devenue intouchable et au test qui cherchait les mots avec un mauvais sélecteur, corrigés).
+- **Sauvegarde avant** : `awform-20261103-055025.dump.gpg` (752 284 470 o). Déployé par `/tmp/mise-en-ligne.sh 0c668d7` (version précédente `12e1c31`), santé ok, awzid.com 200, **0 erreur 5xx** (API, web, Caddy) sur 16 minutes.
+- **Interrupteur `lecteur_simple` : `beta` → `on`** (table `feature_flag`, une ligne modifiée) ; `tafsir_sens` et `tarteel_fenetre` restent en `beta`. Un visiteur sans session reçoit `lecteur_simple = true` (local et awzid.com).
+
 ## 02/11/2026 — MISE EN LIGNE en production : « lecteur simple » du Coran (interrupteur `lecteur_simple`, bêta) et deux défauts corrigés (`12e1c31`)
 
 - **Retour du client** : lecteur du Coran « trop chargé » sur téléphone. Mesuré à 375 × 667 px avant : la barre flottante du haut occupait **663 px sur 667** (sélecteur, 4 boutons, carte « Je reconnais X % » et ses 6 lignes, proposition « Écouter ici / Reprendre où j'étais / + », lecteur audio à 7 boutons). Après : une ligne (sourate et verset, écoute, « Outils ») + pastille, **102 px** ; premier verset visible sans défiler et non couvert.
