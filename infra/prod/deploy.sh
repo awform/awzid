@@ -156,7 +156,11 @@ for i in $(seq 1 30); do
   [ "$i" = 30 ] && { echo "ÉCHEC : la base ne répond pas"; exit 1; }
   sleep 2
 done
-"$PROD/backup.sh" >/dev/null || { echo "ÉCHEC : sauvegarde avant migration — déploiement arrêté"; exit 1; }
+# copie hors site (audit INF-8) : même réglage que la minuterie (backup.env, lu par systemd en EnvironmentFile) ;
+# sans lui, la sauvegarde d'avant migration restait locale seulement (constaté le 14/10, corrigé le 03/11)
+HS_CONF=""
+[ ! -f "$AWFORM_ENV_DIR/backup.env" ] || HS_CONF="$(sed -n 's/^AWFORM_BACKUP_HORS_SITE=//p' "$AWFORM_ENV_DIR/backup.env" | tail -1)"
+AWFORM_BACKUP_HORS_SITE="${AWFORM_BACKUP_HORS_SITE:-$HS_CONF}" "$PROD/backup.sh" >/dev/null || { echo "ÉCHEC : sauvegarde avant migration — déploiement arrêté"; exit 1; }
 "${DC[@]}" --profile outils run --rm migrate
 # audio du Coran (A1) : le volume « audio », créé vide par Docker (propriétaire root), doit appartenir au
 # compte « node » de l'outil coran-audio pour l'import ; idempotent (l'API le monte en lecture seule)

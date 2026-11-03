@@ -7,6 +7,14 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 03/11/2026 — Sauvegardes : celle d'avant migration (déploiement) copiée hors site elle aussi
+
+- **Cause** : `backup.sh` ne copie hors site que si `AWFORM_BACKUP_HORS_SITE` est réglé. La minuterie (`awform-backup.service`) le reçoit par `EnvironmentFile=-~/.config/awform/backup.env` (écrit par `deployer-beta.sh`) ; `deploy.sh` appelait `backup.sh` directement avant la migration, sans ce fichier : chaque mise en ligne laissait une sauvegarde **locale seulement** (déjà noté le 14/10). 8 sauvegardes locales sur 14 n'avaient pas de copie dans le bucket.
+- **Correctif** (`infra/prod/deploy.sh`) : avant l'appel, `AWFORM_BACKUP_HORS_SITE` est lu dans `$AWFORM_ENV_DIR/backup.env` (même fichier, même ligne que systemd ; une valeur déjà présente dans l'environnement garde la priorité ; fichier absent = rien, comme avant). `backup.sh` inchangé (son essai jetable `backup-selftest.sh` ne doit pas écrire dans le bucket). `/tmp/mise-en-ligne.sh` n'est pas dans le dépôt et n'a pas à changer : il passe par `deployer-beta.sh` → `deploy.sh` de la version déployée. Effectif en production à la prochaine mise en ligne (aucun redéploiement pour ce seul correctif).
+- **Rattrapage** (ajout seulement, rien supprimé, rétention inchangée) : 8 sauvegardes copiées dans `gs://awzid-sauvegardes-b7e41c/awform/` (02/11 13:52, 17:57 ; 03/11 04:20, 05:50, 06:18, 13:16, 14:56, 16:04), taille et SHA-256 relus depuis le bucket = locaux, 8/8 ; ligne « hors-site ok … (rattrapage manuel) » ajoutée au journal des sauvegardes.
+- **Essai de bout en bout** (sans déployer) : l'extrait exact de `deploy.sh` exécuté sur awzid-beta → `awform-20261103-190657.dump.gpg` (827 440 204 o), journal « ok » puis « hors-site ok », taille et SHA-256 identiques dans le bucket.
+- **Tests** : `audit-infra.test.ts` (INF-10 vérifie aussi `backup.env` avant l'appel) + `beta-infra.test.ts` 28/28 ; `pnpm check` : seul échec `packages/content` `recitation-ayyub.test.ts` (table `ayyub.json`), **déjà en échec sur `origin/main`** sans ce correctif.
+
 ## 03/11/2026 — MISE EN LIGNE en production : accueil du Coran, 2e rangée « Comprendre · Mots du Coran » ; carte de la prière dans l'onglet « Prières » (`e474e54`)
 
 - **Accueil du Coran** : sous « Lire · Écouter · Mémoriser », 2e rangée dans le même style : « Comprendre » → `/coran/tafsir` (si `tafsir_sens`), « Mots du Coran » → `/coran/mots` (si `coran_mots`). Une tuile seule prend toute la largeur ; aucune : pas de rangée. Module à la demande `lib/quran/TuilesComprendre.svelte` (dans `PREMIER_USAGE_MODULES`). Textes `cl.mode_comprendre`, `cl.mode_mots` dans les 5 langues (fr-coran + en/es/de/ar).

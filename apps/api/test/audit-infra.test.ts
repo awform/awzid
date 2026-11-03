@@ -183,6 +183,9 @@ describe('audit INF-10 — déploiement', () => {
     const migrate = d.indexOf('run --rm migrate');
     expect(backup).toBeGreaterThan(0);
     expect(backup).toBeLessThan(migrate);
+    // la sauvegarde d'avant migration est copiée hors site comme celle de la minuterie (backup.env)
+    expect(d.slice(backup - 400, backup)).toContain('$AWFORM_ENV_DIR/backup.env');
+    expect(d.slice(backup - 80, backup)).toContain('AWFORM_BACKUP_HORS_SITE=');
     expect(d).toContain('AWFORM_VERSION="$PREV" "${DC[@]}" up -d');
     expect(d).toContain('echo "$AWFORM_VERSION" > "$CONF/version-en-service"');
     expect(spawnSync('bash', ['-n', join(PROD, 'deploy.sh')]).status).toBe(0);
