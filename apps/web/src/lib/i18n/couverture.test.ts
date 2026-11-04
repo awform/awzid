@@ -42,6 +42,8 @@ const EMBARQUES = [
   join(SRC, 'lib', 'tafsir', 'textes-fr.json'),
   // « Famille de mots » (3/11/2026) : cartes du Coran par racine
   join(SRC, 'lib', 'racines', 'textes-fr.json'),
+  // Lectures (4/11/2026) : Mukhtaṣar Khalīl et Histoires
+  join(SRC, 'lib', 'lectures', 'textes-fr.json'),
   // « Lecteur simple » (2/11/2026) : panneau « Outils », menu de la barre audio, pastille
   join(SRC, 'lib', 'quran', 'lecteur-simple', 'textes-fr.json'),
   // indication des madd (25/10/2026)

@@ -54,6 +54,9 @@ export const PREMIER_USAGE_ROUTES = [
   '/coran/tafsir',
   // 3/11/2026 : « Famille de mots » (cartes par racine ; interrupteur `racines_coran`)
   '/coran/familles',
+  // 4/11/2026 : Lectures (Mukhtaṣar Khalīl, Histoires ; interrupteurs `khalil` et `histoires`)
+  '/khalil',
+  '/histoires',
 ];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
@@ -73,6 +76,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/tafsir\/index\.ts$/,
   // 3/11/2026 : « Famille de mots » (interrupteur `racines_coran`), importé à la demande par la page /coran/familles
   /src\/lib\/racines\/index\.ts$/,
+  // 4/11/2026 : Lectures (Khalīl, Histoires) et leur carte d'entrée, importées à la demande
+  /src\/lib\/lectures\/(index|carte)\.ts$/,
   // 2/11/2026 : « Lecteur simple » du Coran (panneau « Outils », menu « ⋯ » de la barre audio ; interrupteur `lecteur_simple`), importé à la demande
   /src\/lib\/quran\/lecteur-simple\/index\.ts$/,
   // 3/11/2026 : 2e rangée de tuiles de l'accueil du Coran (« Comprendre » si `tafsir_sens`, « Mots du Coran » si `coran_mots`), importée à la demande

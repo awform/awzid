@@ -119,6 +119,9 @@
 <QuotidienTabs current="horaires" />
 <!-- « La prière de A à Z » (parcours_priere ; 3/11 : rangée ici, plus dans « Bon comportement ») : carte chargée à la demande -->
 {#if fn('parcours_priere')}{#await import('$lib/priere/carte') then m}<m.Carte />{/await}{/if}
+<!-- Lectures (khalil, histoires ; 4/11/2026, canal bêta) : carte chargée à la demande -->
+{#if fn('histoires') || fn('khalil')}{#await import('$lib/lectures/carte') then m}<m.Carte
+    />{/await}{/if}
 
 {#if !place}
   <Lieu onchange={(p) => save({ place: p, method: prefs.method })} />
