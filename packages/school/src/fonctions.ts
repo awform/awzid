@@ -43,6 +43,8 @@ export const FONCTION_CLES = [
   'tafsir_sens',
   'racines_coran',
   'lecteur_simple',
+  'khalil',
+  'histoires',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -177,6 +179,14 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // reste à un ou deux touchers. COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta » (comptes d'essai). Coupé : l'ancien
   // affichage, inchangé.
   lecteur_simple: { defaut: 'off' },
+  // Mukhtaṣar Khalīl (4/11/2026) : texte arabe et traduction française complète, un chapitre à la fois servi par l'API, ADULTES seulement ;
+  // le chapitre du jihād n'est jamais publié (exclu à la fabrication). EN ESSAI : canal bêta seulement, jusqu'à la relecture des passages
+  // sensibles par le client. Coupé : rien ne s'affiche.
+  khalil: { defaut: 'beta' },
+  // « Histoire, de la création à nos jours » (4/11/2026) : 133 récits (prophètes, belles histoires, Sīra, califes, civilisation), version
+  // enfant et adulte, narration audio servie par le serveur (jamais précachée). EN ESSAI : canal bêta seulement, jusqu'à la relecture des
+  // passages sensibles par le client. Coupé : rien ne s'affiche.
+  histoires: { defaut: 'beta' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

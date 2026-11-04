@@ -77,6 +77,8 @@ const FIXED = new Set([
   'AWFORM_TAFSIR_DIR',
   // 3/11/2026 : dossier des familles de mots (racines), livré avec @awform/content (surcharge de test seulement)
   'AWFORM_RACINES_DIR',
+  'AWFORM_KHALIL_DIR',
+  'AWFORM_HISTOIRES_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

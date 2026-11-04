@@ -66,6 +66,7 @@ beforeAll(async () => {
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'coran-mots', 'textes-fr.json'), 'utf8')));
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'tafsir', 'textes-fr.json'), 'utf8')));
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'racines', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'lectures', 'textes-fr.json'), 'utf8')));
   ajouterTextes(
     JSON.parse(readFileSync(join(SRC, 'lib', 'quran', 'lecteur-simple', 'textes-fr.json'), 'utf8')),
   );

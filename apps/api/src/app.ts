@@ -54,6 +54,7 @@ import { registerParcoursA27 } from './parcours-a27.js';
 import { registerCoranMots } from './coran-mots.js';
 import { registerTafsir } from './tafsir.js';
 import { registerRacines } from './racines.js';
+import { registerLectures } from './lectures.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
@@ -390,6 +391,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerTafsir(app, db, opts.tafsirDir);
   // 3/11/2026 : cartes « Famille de mots » du Coran (racines, niveaux 1 à 12), public enfant filtré ici (interrupteur `racines_coran`)
   registerRacines(app, db, opts.racinesDir);
+  // 4/11/2026 : Mukhtaṣar Khalīl (`khalil`, sans le chapitre du jihād) et « Histoire, de la création à nos jours » (`histoires`)
+  registerLectures(app, db);
   // A39 : mode serein (mode d'évaluation, récapitulatif, niveau suivant sans épreuve, notions fragiles)
   registerSereinA39(app, db, edition);
   // A39 (D-A39 4) : certificat individuel de l'adulte autonome (même modèle, même vérification)
