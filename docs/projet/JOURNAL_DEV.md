@@ -7,6 +7,14 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 04/11/2026 — Production : « Comprendre » (tafsīr, `tafsir_sens`) et « Familles de mots du Coran » (`racines_coran`) ouverts à tous
+
+- **Accord du client** donné le 04/11 (« Vas-y, oui »). Aucun changement de code, aucun déploiement : même opération que pour `lecteur_simple` le 03/11.
+- **Sauvegarde avant** : `awform-20261104-162541.dump.gpg` (827 436 821 o, `sha256sum -c` ok, copie dans le bucket), lancée par `awform-backup.service` (succès).
+- **Interrupteurs `tafsir_sens` et `racines_coran` : `beta` → `on`** (table `feature_flag`, deux lignes modifiées, `UPDATE 2`) ; aucune règle d'exception pour ces deux clés ; les autres interrupteurs n'ont pas bougé (`tarteel_fenetre` reste en `beta`). Version en service inchangée (`e474e54`).
+- **Vérifications** : un visiteur sans session reçoit `tafsir_sens = true` et `racines_coran = true` (awzid.com) ; `/api/v1/tafsir/sourates/112` et `/api/v1/racines/index` sans session : 401 ; awzid.com `/coran` 200, santé 200, 0 erreur 5xx (API, web, Caddy) après le changement. E2e à 375 px sous `flock` (`coran-tuiles.spec.ts`, `famille-de-mots.spec.ts`, mobile-chromium, sur `e474e54` + journal, base de TEST) : 7/7, compte adulte ordinaire hors canal bêta, interrupteurs à `on` : tuiles « Comprendre » et « Mots du Coran » côte à côte, « Familles de mots du Coran » dans l'espace, parcours en 7 étapes (6 pour l'enfant), aucun débordement, aucune erreur de page, axe sans violation.
+- **Retour arrière** : remettre les deux lignes à `beta` (administration → fonctions).
+
 ## 03/11/2026 — Sauvegardes : celle d'avant migration (déploiement) copiée hors site elle aussi
 
 - **Cause** : `backup.sh` ne copie hors site que si `AWFORM_BACKUP_HORS_SITE` est réglé. La minuterie (`awform-backup.service`) le reçoit par `EnvironmentFile=-~/.config/awform/backup.env` (écrit par `deployer-beta.sh`) ; `deploy.sh` appelait `backup.sh` directement avant la migration, sans ce fichier : chaque mise en ligne laissait une sauvegarde **locale seulement** (déjà noté le 14/10). 8 sauvegardes locales sur 14 n'avaient pas de copie dans le bucket.
