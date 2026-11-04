@@ -4608,3 +4608,25 @@ Remarque : le registre coran.json porte parfois une **étape** (`TEXTE_ARABE_VER
 ### Prochain lot (lot 2 — lecteur de leçon, cahier L1/L2)
 
 Import complet de l'édition (illustrations `illus\*.js` assainies, `zz-sansvisage.js` en dernier, contrôles translittération / personnages / corrigés d'AUDIT_BILANS), projections enseignant / parent / épreuve, rapport d'import lisible ; rendu fidèle de tous les blocs (scènes sans visage, lecture, mots avec images, dialogue, Coran/tajwid, adab, bilans `lectureBilan`, textes non préparés) ; les 8 types interactifs (relier, chasse, contient, ordre en plus) ; enregistrement des tentatives ; tests visuels des signes coraniques rares.
+
+## 4/11/2026 — Mukhtaṣar Khalīl et « Histoire, de la création à nos jours » en essai (canal bêta) — mise en ligne ec3dab42
+
+- **Interrupteurs** `khalil` et `histoires`, défaut **beta** (canal bêta seulement) ; à ouvrir à tous (« Fonctions ») seulement
+  après la relecture des passages sensibles par le client. Entrée : carte dans « Vivre l'islam › Prières » (/quotidien),
+  pages `/khalil` et `/histoires` (modules chargés à la demande, jamais préchargés).
+- **Khalīl** : 8 956 unités, 66 chapitres + annexe du complant (1923), servies par l'API un chapitre à la fois
+  (`/api/v1/khalil/index`, `/chapitres/:k`), adultes seulement (enfant, ado : 403 `reserve_adultes`). Arabe recopié tel quel,
+  mentions ⟦interne⟧ retirées, renvois KHL-nnnn → « n° x », notes de contexte gardées (« relève du seul juge »).
+  **Chapitre du jihād exclu à la fabrication** (`packages/content/scripts/khalil-compact.mjs`) : fichiers `*_jihad_*`,
+  **KHL-1793 à KHL-1983 (191 unités)**, contrôlés contre la marque `restriction` de la source ; renumérotation sans trou.
+  Preuve : `apps/api/test/lectures.test.ts` (aucun fichier, titre, texte d'ouverture ni identifiant ; toutes les réponses
+  de l'API parcourues ; `/chapitres/jihad` → 404) et e2e `lectures.spec.ts`.
+- **Histoires** : 133 récits (5 livres), sections « Sources » jamais servies, rendu de la maquette nouh-v2 (bascule,
+  versets tels quels, questions, 5 illustrations de Nouh), lecteur audio (enchaîne, surligne, saute les places de versets).
+  Narration : 4 529 MP3 dans `~/madjaliss-audio/histoires/` du serveur, servis par `/histoires/audio/…` après contrôle de
+  l'API (`/api/v1/histoires/acces`), jamais précachés. Sīra sans audio. L'enfant ne reçoit que sa version.
+- **Régénérer** : `node packages/content/scripts/khalil-compact.mjs <madjaliss/khalil>` ;
+  `node packages/content/scripts/histoires-compact.mjs <application> <narration/out> <nouh-v2.html>`.
+- **Tests** : unitaires verts sauf `recitation-ayyub` (échoue aussi sur origin/main 3680d92, table dépendant du contenu local) ;
+  e2e `lectures`, `a3`, `a12` verts ; `a37` (3) échoue aussi sur origin/main. Budget élève : marge 6,2 Ko.
+- **Sauvegarde** avant mise en ligne : awform-20261104-193541.dump.gpg (copie hors site ok).
