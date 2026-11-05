@@ -16,6 +16,9 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - **Tables régénérées** : `static/cahier-data/*` (16 « Je parle », en1, ado1), récitation d'Ayyūb (`ayyub.json` : clé de ad8 l14 renouvelée, entrées ra1 de la copie VM ; inventaires `zero-muet`). Le test `recitation-ayyub` repasse au vert.
 - **PDF** refaits sur le PC : 16 cahiers « Je parle » (0 vide, 0 débordement, 0 mélange, textes arabes présents octet pour octet), en1, ado1, livres re5, ad8, ad9.
 - **Tests** : `pnpm check` (build, typecheck, lint, tests, budget) vert sauf `recitation-ayyub` (rouge déjà sur `origin/main`), puis vert après régénération de la table ; marge de l'appareil élève 6,1 Ko.
+- **E2e** (verrou, ports 3300/4380, 14 fichiers : cahier-parler, cahier, cahier-jeux, video-cahier, conversation, lecons, ra-adulte, bilans, exercices, versets, video-vivante, recitation-ayyub, a37, horsligne) : 195 réussis, 24 ignorés, 5 échecs, tous dans `a37.spec.ts` (déjà rouges sur `main`).
+- **Revue de sécurité** : aucune route, migration ni configuration ; données statiques et une fonction d'affichage ; `pnpm-lock.yaml` intact.
+- **MISE EN LIGNE** : sauvegarde avant `awform-20261105-035218.dump.gpg` (846 283 462 o, `sha256sum -c` ok, copie hors site ok) ; copie des livres du serveur : 5 fichiers remplacés (empreintes d'origine contrôlées), ancienne copie `~/awform-content.avant-d5107638`, manifeste refait (1 182 fichiers) ; VM : `~/awform-content.avant-tri05` gardée. `/tmp/mise-en-ligne.sh d5107638` (avant `ec3dab42`) : `DEPLOY_EXIT=0`, édition `prod-2adafb7456` (3 809 versets contrôlés, 0 erreur), santé ok, awzid.com 200, 0 erreur 5xx (API, web, worker, Caddy) sur 15 min.
 
 ## 04/11/2026 — Production : « Comprendre » (tafsīr, `tafsir_sens`) et « Familles de mots du Coran » (`racines_coran`) ouverts à tous
 
