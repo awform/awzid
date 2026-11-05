@@ -4,7 +4,7 @@
                  "serie":  "en",
                  "niveau":  5,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:38",
+                 "genere_le":  "2026-11-05 05:04",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en5, livrets lect\\en1 à en5) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -310,11 +310,6 @@
                                          ],
                        "antiseche":  [
                                          {
-                                             "ref":  "P010",
-                                             "ar":  "هُمَا يَلْعَبَانِ فِي السَّاحَةِ كُلَّ يَوْمٍ.",
-                                             "fr":  "Eux deux, ils jouent dans la cour chaque jour."
-                                         },
-                                         {
                                              "ref":  "P017",
                                              "ar":  "وَأَنْتُنَّ؟ مَنِ الْبِنْتُ الَّتِي تُسَاعِدُ الْجَمِيعَ؟",
                                              "fr":  "Et vous, les filles ? Qui est la fille qui aide tout le monde ? (à un groupe de filles)"
@@ -358,6 +353,11 @@
                                              "ref":  "C05.5",
                                              "ar":  "أَحْسَنْتَ! وَالْآنَ أَنْتَ!",
                                              "fr":  "Bravo ! Et maintenant, à toi !"
+                                         },
+                                         {
+                                             "ref":  "C06.1",
+                                             "ar":  "أُفَكِّرُ فِي وَلَدَيْنِ.",
+                                             "fr":  "Je pense à deux garçons."
                                          }
                                      ]
                    },
@@ -1519,7 +1519,7 @@
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "C\u0027est un garçon ou une fille ? / Maintenant, c\u0027est mon tour ! / Eux deux, ils jouent dans la cour chaque jour.",
+                      "titre_fr":  "C\u0027est un garçon ou une fille ? / Maintenant, c\u0027est mon tour ! / Eux deux, ils jouent dans la cour chaque jour. (à écouter seulement)",
                       "apres":  "l06",
                       "apres_n":  6,
                       "refs":  [
@@ -1605,7 +1605,6 @@
                       "apres":  "l06",
                       "apres_n":  6,
                       "refs":  [
-                                   "P010",
                                    "P017",
                                    "P018",
                                    "P019",
@@ -1614,7 +1613,8 @@
                                    "C05.1",
                                    "C05.3",
                                    "C05.4",
-                                   "C05.5"
+                                   "C05.5",
+                                   "C06.1"
                                ]
                   },
                   {
@@ -3083,7 +3083,7 @@
                         "theme":  "devinette",
                         "cible":  "d_eux_deux",
                         "ar":  "هُمَا يَلْعَبَانِ فِي السَّاحَةِ كُلَّ يَوْمٍ.",
-                        "fr":  "Eux deux, ils jouent dans la cour chaque jour.",
+                        "fr":  "Eux deux, ils jouent dans la cour chaque jour. (à écouter seulement)",
                         "variations":  null,
                         "unite":  6,
                         "source_mots":  [

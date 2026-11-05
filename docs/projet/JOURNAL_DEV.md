@@ -7,6 +7,15 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+## 05/11/2026 — Tri Codex passe 2 : arbitrages du référent et du chef de projet appliqués (branche `codex-passe2-wip`)
+
+- **Référent** : INC-02 (ad1 l11 : doute sur le nombre d'unités → le moins ; doute d'avoir perdu ses ablutions après une pureté certaine → on les refait, sauf le douteur obsessionnel, Khalīl) ; INC-05 (le repas = سَحُور, le fait de le prendre = سُحُور : en4 déjà juste, glossaire en deux entrées, en3 l23 et re4 l21 alignés) ; INC-06 (re5 l21 : deux sermons, comme la fête) ; INC-07 (ad10 l02 : intention renouvelée une fois à la reprise) ; R04 (al-Bukhārī 1741 vérifié au miroir hadith-api : Abū Bakra, sermon du jour du sacrifice ; registre `VERIFIE`, texte recopié par script) ; cl_ado1 A8 (P105 : coupes « […] », questions reprises du livret, dans la source et le PDF ; appli avec l'audio).
+- **Chef de projet** : N01 (équivalences ados ↔ adultes de `programme\ado1-4.json`, ado4 l25 : accès à Adultes N6 après reprise) ; N02 (en2 P034, en5 P010 « à écouter seulement », hors antisèche et révision) ; N03 (ra1 l01, l14, l19, l20, ra2 book et l25, ra3 l25 : plus de test de positionnement ni de module zéro ou passerelle absent). P02 non fait (audio).
+- **Livres** : copie `~/awform-content.tri06` (14 fichiers) ; serveur : mêmes fichiers, sauf ra1 l01, l19, l20 dont la version serveur diffère de la VM : les seuls remplacements N03 y sont appliqués. 0 écart Tanzil, 0 identifiant ajouté, 0 texte sonorisé changé.
+- **Cahier imprimé d'ad2** : antisèches complètes (16 lignes par page), 161 pages (plafond du contrôle 165).
+- **Tests** : `pnpm check` vert (table d'Ayyūb inchangée) ; e2e (cahier-parler, lecons, ra-adulte, versets, recitation-ayyub, exercices, bilans) : 55 réussis, 7 ignorés, 0 échec.
+- **Audio** (28 lignes des cahiers « Je parle », 2 de P105) : non lancé ; `gem-chirp.ps1` absent et garde commune sans arbre de construction (`~/wt/zero-muet` supprimé) : à reconstituer avant toute relance.
+
 ## 05/11/2026 — Tri de la passe 2 de Codex (re5, 19 cahiers, rapports transversaux) reporté dans l'application (branche `codex-passe2-wip`)
 
 - **Tri** : `Documents\Awzid\audit-externe\tri\TRI_PASSE2_CAHIERS_RE5.md` (104 constats distincts : 70 corrigés, 11 acceptés non encore corrigés, 13 rejetés, 10 à arbitrer). Outils et journaux : `awform\_tri_passe4_05-11\`.

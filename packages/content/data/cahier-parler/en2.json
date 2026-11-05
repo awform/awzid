@@ -4,7 +4,7 @@
                  "serie":  "en",
                  "niveau":  2,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:38",
+                 "genere_le":  "2026-11-05 05:03",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en2, livrets lect\\en1 à en2) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -474,11 +474,6 @@
                                              "fr":  "J\u0027obéis à mes parents et je les aide."
                                          },
                                          {
-                                             "ref":  "P034",
-                                             "ar":  "تَفَضَّلَا، هٰذَا بَيْتُ جَدِّكُمَا.",
-                                             "fr":  "Entrez, tous les deux : voici la maison de votre grand-père. (à deux)"
-                                         },
-                                         {
                                              "ref":  "C08.1",
                                              "ar":  "مَنْ هٰذَا فِي الصُّورَةِ؟",
                                              "fr":  "Qui est-ce, sur la photo ?"
@@ -497,6 +492,11 @@
                                              "ref":  "C08.4",
                                              "ar":  "نَعَمْ، هِيَ أُخْتِي.",
                                              "fr":  "Oui, c\u0027est ma sœur."
+                                         },
+                                         {
+                                             "ref":  "C08.5",
+                                             "ar":  "مَا شَاءَ اللَّهُ!",
+                                             "fr":  "Ce qu\u0027Allah a voulu !"
                                          }
                                      ]
                    },
@@ -1591,7 +1591,7 @@
                       "partie":  3,
                       "theme":  "famille",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Ils sont allés à la mosquée, mais moi, je suis resté avec ma grand-mère. / Entrez, tous les deux : voici la maison de votre grand-père. (à deux)",
+                      "titre_fr":  "Ils sont allés à la mosquée, mais moi, je suis resté avec ma grand-mère. / Entrez, tous les deux : voici la maison de votre grand-père. (à deux ; à écouter seulement)",
                       "apres":  "l15",
                       "apres_n":  15,
                       "refs":  [
@@ -1666,11 +1666,11 @@
                                    "P031",
                                    "P032",
                                    "P033",
-                                   "P034",
                                    "C08.1",
                                    "C08.2",
                                    "C08.3",
-                                   "C08.4"
+                                   "C08.4",
+                                   "C08.5"
                                ]
                   },
                   {
@@ -1689,7 +1689,6 @@
                                    "P011",
                                    "P016",
                                    "P013",
-                                   "P034",
                                    "P033",
                                    "P032",
                                    "P031",
@@ -2846,7 +2845,7 @@
                         "theme":  "famille",
                         "cible":  "a_deux",
                         "ar":  "تَفَضَّلَا، هٰذَا بَيْتُ جَدِّكُمَا.",
-                        "fr":  "Entrez, tous les deux : voici la maison de votre grand-père. (à deux)",
+                        "fr":  "Entrez, tous les deux : voici la maison de votre grand-père. (à deux ; à écouter seulement)",
                         "variations":  null,
                         "unite":  15,
                         "source_mots":  [
