@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  3,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:32",
+                 "genere_le":  "2026-11-05 05:05",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad3, livrets lect\\ad1 à ad3) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -14,7 +14,7 @@
     "totaux":  {
                    "pages":  140,
                    "themes":  15,
-                   "phrases":  115,
+                   "phrases":  116,
                    "phrases_avec_variations":  8,
                    "conversations":  25,
                    "repliques":  167
@@ -398,7 +398,8 @@
                                        "P036",
                                        "P038",
                                        "P039",
-                                       "P040"
+                                       "P040",
+                                       "P128"
                                    ],
                        "conversations":  [
                                              "C09",
@@ -436,6 +437,11 @@
                                              "fr":  "Lavez la vaisselle, et portez les cadeaux à la voiture. (à un groupe)"
                                          },
                                          {
+                                             "ref":  "P128",
+                                             "ar":  "اِغْسِلْنَ الصُّحُونَ.",
+                                             "fr":  "Lavez les assiettes. (à un groupe de femmes)"
+                                         },
+                                         {
                                              "ref":  "C09.1",
                                              "ar":  "السَّلَامُ عَلَيْكُمْ! رَائِحَةٌ طَيِّبَةٌ! هَلْ أُسَاعِدُكُنَّ؟",
                                              "fr":  "Que la paix soit sur vous ! Quelle bonne odeur ! Est-ce que je vous aide ?"
@@ -449,11 +455,6 @@
                                              "ref":  "C09.3",
                                              "ar":  "سَمْعًا وَطَاعَةً يَا أُمِّي! وَأُخْتِي؟",
                                              "fr":  "À vos ordres, maman ! Et ma sœur ?"
-                                         },
-                                         {
-                                             "ref":  "C09.4",
-                                             "ar":  "هِيَ تَطْبُخُ اللَّحْمَ الْآنَ.",
-                                             "fr":  "Elle fait cuire la viande maintenant."
                                          }
                                      ]
                    },
@@ -1742,14 +1743,14 @@
                       "partie":  2,
                       "theme":  "cuisine",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "Lave-toi d\u0027abord les mains, et assieds-toi ici. (à une femme) / Est-ce que je vous aide ? (à un groupe de femmes) / Ne mets pas trop de sel. (à une femme) / Asseyez-vous tous les deux, le repas est prêt.",
+                      "titre_fr":  "Lavez les assiettes. (à un groupe de femmes) / Lave-toi d\u0027abord les mains, et assieds-toi ici. (à une femme) / Est-ce que je vous aide ? (à un groupe de femmes) / Ne mets pas trop de sel. (à une femme)",
                       "apres":  "l07",
                       "apres_n":  7,
                       "refs":  [
+                                   "P128",
                                    "P034",
                                    "P035",
-                                   "P036",
-                                   "P038"
+                                   "P036"
                                ]
                   },
                   {
@@ -1758,10 +1759,11 @@
                       "partie":  2,
                       "theme":  "cuisine",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Asseyez-vous, et n\u0027oubliez pas de mentionner le nom d\u0027Allah avant de manger. (à un groupe) / Lavez la vaisselle, et portez les cadeaux à la voiture. (à un groupe)",
+                      "titre_fr":  "Asseyez-vous tous les deux, le repas est prêt. / Asseyez-vous, et n\u0027oubliez pas de mentionner le nom d\u0027Allah avant de manger. (à un groupe) / Lavez la vaisselle, et portez les cadeaux à la voiture. (à un groupe)",
                       "apres":  "l10",
                       "apres_n":  10,
                       "refs":  [
+                                   "P038",
                                    "P039",
                                    "P040"
                                ]
@@ -1834,10 +1836,10 @@
                                    "P038",
                                    "P039",
                                    "P040",
+                                   "P128",
                                    "C09.1",
                                    "C09.2",
-                                   "C09.3",
-                                   "C09.4"
+                                   "C09.3"
                                ]
                   },
                   {
@@ -2068,12 +2070,12 @@
                                    "P010",
                                    "P016",
                                    "P020",
+                                   "P128",
                                    "P122",
                                    "P056",
                                    "P055",
                                    "P054",
-                                   "P053",
-                                   "P052"
+                                   "P053"
                                ]
                   },
                   {
@@ -2462,8 +2464,8 @@
                                    "P005",
                                    "P016",
                                    "P024",
-                                   "P039",
-                                   "P047",
+                                   "P038",
+                                   "P045",
                                    "P070",
                                    "P069",
                                    "P068",
@@ -2879,9 +2881,9 @@
                                    "P001",
                                    "P009",
                                    "P022",
-                                   "P040",
-                                   "P050",
-                                   "P033",
+                                   "P039",
+                                   "P049",
+                                   "P032",
                                    "P125",
                                    "P124",
                                    "P123",
@@ -3251,10 +3253,10 @@
                       "refs":  [
                                    "P001",
                                    "P012",
-                                   "P036",
-                                   "P052",
-                                   "P063",
-                                   "P084",
+                                   "P035",
+                                   "P050",
+                                   "P062",
+                                   "P123",
                                    "P126",
                                    "P119",
                                    "P117",
@@ -5142,6 +5144,19 @@
                                             "ad3 L22"
                                         ],
                         "modele":  "ad3/l22"
+                    },
+                    {
+                        "id":  "P128",
+                        "theme":  "cuisine",
+                        "cible":  "a_groupe_f",
+                        "ar":  "اِغْسِلْنَ الصُّحُونَ.",
+                        "fr":  "Lavez les assiettes. (à un groupe de femmes)",
+                        "variations":  null,
+                        "unite":  2,
+                        "source_mots":  [
+                                            "ad3 L2"
+                                        ],
+                        "modele":  "ad3/l07"
                     }
                 ],
     "conversations":  [
@@ -5390,9 +5405,9 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "وَعَلَيْكُمُ السَّلَامُ. هُنَّ فِي الْمَطْبَخِ.",
-                                                    "fr":  "Et sur vous la paix. Elles sont dans la cuisine.",
-                                                    "unite":  0
+                                                    "ar":  "وَعَلَيْكُمُ السَّلَامُ. هُنَّ فِي السَّاحَةِ الْآنَ.",
+                                                    "fr":  "Et sur vous la paix. Elles sont dans la cour maintenant.",
+                                                    "unite":  2
                                                 },
                                                 {
                                                     "qui":  "A",
@@ -5428,12 +5443,12 @@
                               "consigne_tuteur":  "Le tuteur est une voisine qui arrive en retard. Dis-lui ce que les femmes ont fait (طَبَخْنَ، غَسَلْنَ) et qui est arrivé.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. هُنَّ فِي الْمَطْبَخِ.",
-                                                         "fr":  "Et sur vous la paix. Elles sont dans la cuisine."
-                                                     },
-                                                     {
                                                          "ar":  "غَسَلْنَ الصُّحُونَ، ثُمَّ خَرَجْنَ إِلَى السَّاحَةِ.",
                                                          "fr":  "Elles ont lavé les assiettes, puis elles sont sorties dans la cour."
+                                                     },
+                                                     {
+                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. هُنَّ فِي السَّاحَةِ الْآنَ.",
+                                                         "fr":  "Et sur vous la paix. Elles sont dans la cour maintenant."
                                                      },
                                                      {
                                                          "ar":  "نَعَمْ، وَصَلَتَا قَبْلَ قَلِيلٍ، وَحَمَلَتَا الْعَصِيرَ وَالْحَلِيبَ.",

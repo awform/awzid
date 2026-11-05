@@ -3,16 +3,22 @@
   import Bidi from '$lib/Bidi.svelte';
   import { fn } from '$lib/fonctions.svelte';
   import { t } from '$lib/i18n';
+
+  /**
+   * (05/11/2026) Chaque lecture a sa place : les Histoires dans l'espace de lecture (/lectures), Khalīl avec les textes
+   * mālikites étudiés (/madjaliss). `seul` choisit la carte ; sans lui, les deux (selon leurs interrupteurs).
+   */
+  let { seul }: { seul?: 'histoires' | 'khalil' } = $props();
 </script>
 
 <nav class="lx-cartes" data-testid="lx-cartes">
-  {#if fn('histoires')}
+  {#if fn('histoires') && seul !== 'khalil'}
     <a class="card lx" href={resolve('/histoires')} data-testid="lx-histoires">
       <strong><Bidi text={t('lx.carte_histoires')} /></strong>
       <span class="muted"><Bidi text={t('lx.carte_histoires_aide')} /></span>
     </a>
   {/if}
-  {#if fn('khalil')}
+  {#if fn('khalil') && seul !== 'histoires'}
     <a class="card lx" href={resolve('/khalil')} data-testid="lx-khalil">
       <strong><Bidi text={t('lx.carte_khalil')} /></strong>
       <span class="muted"><Bidi text={t('lx.carte_khalil_aide')} /></span>

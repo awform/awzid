@@ -4,7 +4,7 @@
  *    d'ouverture du chapitre absents de TOUS les fichiers et de TOUTES les réponses), numérotation continue sans trou ;
  *  - aucun identifiant de la source (KHL-…, MGH-…), aucune mention interne ⟦…⟧ ;
  *  - 401 sans connexion, 403 « fonction_coupee » hors canal bêta, adultes seulement pour Khalīl ;
- *  - histoires : 133 récits, profil enfant sans version adulte, versets recopiés tels quels.
+ *  - histoires : 135 récits (S00 et S01C ajoutés le 05/11), profil enfant sans version adulte, versets recopiés tels quels.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -42,30 +42,35 @@ describe('Khalīl : fichiers livrés', () => {
       for (const j of JIHAD) expect(s.includes(j), `${f} : ${j}`).toBe(false);
       expect(s, f).not.toMatch(/\b(KHL|MGH)-\d/);
       expect(s, f).not.toContain('⟦');
+      expect(s, f).not.toMatch(/R-KHL-/);
     }
   });
-  it('8 956 unités numérotées de 1 à N sans trou, dans l’ordre du sommaire ; arabe recopié tel quel', () => {
+  it('8 956 unités, numérotation d’origine dans l’ordre du sommaire (seul trou : 1793 à 1983) ; arabe recopié tel quel', () => {
     const idx = JSON.parse(lireK('index.json')) as {
       total: number;
       c: Array<{ k: string; d: number; f: number }>;
     };
     expect(idx.total).toBe(8956);
     let attendu = 1;
+    let nb = 0;
     for (const c of idx.c) {
       const ch = JSON.parse(lireK(`${c.k}.json`)) as { u: Unite[] };
       expect(ch.u[0]!.n).toBe(c.d);
       for (const u of ch.u) {
+        if (attendu === 1793) attendu = 1984; // le chapitre exclu (KHL-1793 à 1983) : numéros absents, sans aucune mention
         expect(u.n).toBe(attendu++);
+        nb++;
         expect(u.ar.length).toBeGreaterThan(0);
         expect(u.fr.length).toBeGreaterThan(0);
       }
       expect(ch.u[ch.u.length - 1]!.n).toBe(c.f);
     }
-    expect(attendu - 1).toBe(idx.total);
+    expect(nb).toBe(idx.total);
     // le chapitre des vœux est suivi directement de la course (le jihād, entre les deux dans la source, n'existe pas ici)
     const k = idx.c.map((c) => c.k);
     expect(k[k.indexOf('nudhur') + 1]).toBe('musabaqa');
-    expect(idx.c[k.indexOf('musabaqa')]!.d).toBe(idx.c[k.indexOf('nudhur')]!.f + 1);
+    expect(idx.c[k.indexOf('nudhur')]!.f).toBe(1792);
+    expect(idx.c[k.indexOf('musabaqa')]!.d).toBe(1984);
     // première unité du chapitre de la rébellion : « بَابٌ », octets intacts (pas de normalisation)
     const b = JSON.parse(lireK('bughat.json')) as { u: Unite[] };
     expect(Buffer.from(b.u[0]!.ar, 'utf8').toString('hex')).toBe(
@@ -84,9 +89,9 @@ describe('Histoires : fichiers livrés', () => {
   const idx = JSON.parse(readFileSync(join(histoiresDir(), 'index.json'), 'utf8')) as {
     livres: Array<{ id: string; r: Array<{ id: string; e: number; a: number }> }>;
   };
-  it('133 récits en 5 livres ; la Sīra sans audio ; jamais de section « Sources » servie', () => {
+  it('135 récits en 5 livres ; la Sīra sans audio ; jamais de section « Sources » servie', () => {
     expect(idx.livres.map((l) => l.id)).toEqual(['l1', 'l2', 'l3', 'l4', 'l5']);
-    expect(idx.livres.reduce((s, l) => s + l.r.length, 0)).toBe(133);
+    expect(idx.livres.reduce((s, l) => s + l.r.length, 0)).toBe(135);
     expect(idx.livres[2]!.r.every((r) => !r.e && !r.a)).toBe(true);
     for (const f of readdirSync(histoiresDir())) {
       const s = readFileSync(join(histoiresDir(), f), 'utf8');

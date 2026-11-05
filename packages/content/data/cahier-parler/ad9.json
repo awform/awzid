@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  9,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:37",
+                 "genere_le":  "2026-11-05 05:09",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad9, livrets lect\\ad1 à ad9) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -6334,8 +6334,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "مُمْتَازٌ! خَمْسُ كَلِمَاتٍ بَدَلَ خَمْسَ عَشْرَةَ!",
-                                                    "fr":  "Excellent ! Cinq mots au lieu de quinze !",
+                                                    "ar":  "مُمْتَازٌ! أَرْبَعُ كَلِمَاتٍ بَدَلَ اثْنَتَيْ عَشْرَةَ!",
+                                                    "fr":  "Excellent ! Quatre mots au lieu de douze !",
                                                     "unite":  0
                                                 },
                                                 {
@@ -7545,8 +7545,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "هٰذِهِ الصُّورَةُ قَدِيمَةٌ، لَيْسَتْ مِنْ هٰذَا الْعَامِ.",
-                                                    "fr":  "Cette photo est ancienne, elle n\u0027est pas de cette année.",
+                                                    "ar":  "رُبَّمَا هٰذِهِ الصُّورَةُ قَدِيمَةٌ، لَيْسَتْ مِنْ هٰذَا الْعَامِ.",
+                                                    "fr":  "Cette photo est peut-être ancienne, pas de cette année.",
                                                     "unite":  0
                                                 },
                                                 {

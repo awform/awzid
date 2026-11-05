@@ -77,8 +77,8 @@ describe('cahier « Je parle » : données de l’application tirées de la sour
     expect(JSON.parse(JSON.stringify(convertir(source, 'ad2', habillage)))).toEqual(app);
     expect(PARLER_NIVEAUX).toEqual(NIVEAUX_PARLER);
   });
-  it('140 phrases, 25 conversations, 5 parties ; arabe octet pour octet', () => {
-    expect(Object.keys(app.phrases)).toHaveLength(140);
+  it('142 phrases, 25 conversations, 5 parties ; arabe octet pour octet', () => {
+    expect(Object.keys(app.phrases)).toHaveLength(142);
     expect(Object.keys(app.conversations)).toHaveLength(25);
     expect(app.parties.map((p) => p.n)).toEqual([1, 2, 3, 4, 5]);
     for (const p of source.phrases) {

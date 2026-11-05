@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  7,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:35",
+                 "genere_le":  "2026-11-05 05:07",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad7, livrets lect\\ad1 à ad7) — formes exactes vérifiées",
                  "facultatif":  true,

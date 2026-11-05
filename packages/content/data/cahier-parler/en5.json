@@ -4,7 +4,7 @@
                  "serie":  "en",
                  "niveau":  5,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 05:04",
+                 "genere_le":  "2026-11-05 05:10",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en5, livrets lect\\en1 à en5) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -12,9 +12,9 @@
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
-                   "pages":  123,
+                   "pages":  124,
                    "themes":  14,
-                   "phrases":  84,
+                   "phrases":  86,
                    "phrases_avec_variations":  0,
                    "conversations":  20,
                    "repliques":  102
@@ -104,8 +104,8 @@
                                          },
                                          {
                                              "ref":  "P003",
-                                             "ar":  "كُلُّ كَلِمَةٍ لَهَا جَذْرٌ، مِثْلُ الشَّجَرَةِ.",
-                                             "fr":  "Chaque mot a une racine, comme un arbre."
+                                             "ar":  "كُلُّ كَلِمَةٍ مِنْ هٰذِهِ الْكَلِمَاتِ لَهَا جَذْرٌ، مِثْلُ الشَّجَرَةِ.",
+                                             "fr":  "Chacun de ces mots a une racine, comme un arbre."
                                          },
                                          {
                                              "ref":  "P004",
@@ -302,7 +302,9 @@
                                        "P018",
                                        "P019",
                                        "P020",
-                                       "P021"
+                                       "P021",
+                                       "P083",
+                                       "P084"
                                    ],
                        "conversations":  [
                                              "C05",
@@ -335,6 +337,16 @@
                                              "fr":  "C\u0027est la fille qui aide tout le monde en mathématiques."
                                          },
                                          {
+                                             "ref":  "P083",
+                                             "ar":  "هٰذَا هُوَ الْوَلَدُ الَّذِي يَلْعَبُ مَعَنَا.",
+                                             "fr":  "Voici le garçon qui joue avec nous."
+                                         },
+                                         {
+                                             "ref":  "P084",
+                                             "ar":  "هُمُ الْأَوْلَادُ الَّذِينَ يَلْعَبُونَ فِي السَّاحَةِ.",
+                                             "fr":  "Ce sont les enfants qui jouent dans la cour."
+                                         },
+                                         {
                                              "ref":  "C05.1",
                                              "ar":  "أُفَكِّرُ فِي شَخْصٍ مِنَ الْفَصْلِ.",
                                              "fr":  "Je pense à quelqu\u0027un de la classe."
@@ -348,16 +360,6 @@
                                              "ref":  "C05.4",
                                              "ar":  "هِيَ صَدِيقَتِي!",
                                              "fr":  "C\u0027est mon amie !"
-                                         },
-                                         {
-                                             "ref":  "C05.5",
-                                             "ar":  "أَحْسَنْتَ! وَالْآنَ أَنْتَ!",
-                                             "fr":  "Bravo ! Et maintenant, à toi !"
-                                         },
-                                         {
-                                             "ref":  "C06.1",
-                                             "ar":  "أُفَكِّرُ فِي وَلَدَيْنِ.",
-                                             "fr":  "Je pense à deux garçons."
                                          }
                                      ]
                    },
@@ -1151,7 +1153,7 @@
                       "partie":  1,
                       "theme":  "classe",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "Et vous, qu\u0027est-ce que vous écrivez ? (à un groupe) / Chaque mot a une racine, comme un arbre. / On ne cherche pas au م, mais au ك.",
+                      "titre_fr":  "Et vous, qu\u0027est-ce que vous écrivez ? (à un groupe) / Chacun de ces mots a une racine, comme un arbre. / On ne cherche pas au م, mais au ك.",
                       "apres":  "l01",
                       "apres_n":  1,
                       "refs":  [
@@ -1519,13 +1521,13 @@
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "C\u0027est un garçon ou une fille ? / Maintenant, c\u0027est mon tour ! / Eux deux, ils jouent dans la cour chaque jour. (à écouter seulement)",
-                      "apres":  "l06",
-                      "apres_n":  6,
+                      "titre_fr":  "C\u0027est un garçon ou une fille ? / Maintenant, c\u0027est mon tour ! / Voici le garçon qui joue avec nous.",
+                      "apres":  "l00",
+                      "apres_n":  0,
                       "refs":  [
                                    "P018",
                                    "P020",
-                                   "P010"
+                                   "P083"
                                ]
                   },
                   {
@@ -1534,18 +1536,32 @@
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Et vous, les filles ? Qui est la fille qui aide tout le monde ? (à un groupe de filles) / Tes paroles sont gentilles, qu\u0027Allah te récompense par le bien. (à une fille) / C\u0027est la fille qui aide tout le monde en mathématiques.",
+                      "titre_fr":  "Eux deux, ils jouent dans la cour chaque jour. (à écouter seulement) / Et vous, les filles ? Qui est la fille qui aide tout le monde ? (à un groupe de filles) / Tes paroles sont gentilles, qu\u0027Allah te récompense par le bien. (à une fille)",
                       "apres":  "l06",
                       "apres_n":  6,
                       "refs":  [
+                                   "P010",
                                    "P017",
-                                   "P019",
-                                   "P021"
+                                   "P019"
                                ]
                   },
                   {
                       "id":  "P032",
                       "num":  32,
+                      "partie":  2,
+                      "theme":  "devinette",
+                      "type":  "carte_phrases",
+                      "titre_fr":  "C\u0027est la fille qui aide tout le monde en mathématiques. / Ce sont les enfants qui jouent dans la cour.",
+                      "apres":  "l06",
+                      "apres_n":  6,
+                      "refs":  [
+                                   "P021",
+                                   "P084"
+                               ]
+                  },
+                  {
+                      "id":  "P033",
+                      "num":  33,
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "conversation",
@@ -1557,8 +1573,8 @@
                                ]
                   },
                   {
-                      "id":  "P033",
-                      "num":  33,
+                      "id":  "P034",
+                      "num":  34,
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "a_toi_de_parler",
@@ -1570,8 +1586,8 @@
                                ]
                   },
                   {
-                      "id":  "P034",
-                      "num":  34,
+                      "id":  "P035",
+                      "num":  35,
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "conversation",
@@ -1583,8 +1599,8 @@
                                ]
                   },
                   {
-                      "id":  "P035",
-                      "num":  35,
+                      "id":  "P036",
+                      "num":  36,
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "a_toi_de_parler",
@@ -1596,8 +1612,8 @@
                                ]
                   },
                   {
-                      "id":  "P036",
-                      "num":  36,
+                      "id":  "P037",
+                      "num":  37,
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "antiseche",
@@ -1610,16 +1626,16 @@
                                    "P019",
                                    "P020",
                                    "P021",
+                                   "P083",
+                                   "P084",
                                    "C05.1",
                                    "C05.3",
-                                   "C05.4",
-                                   "C05.5",
-                                   "C06.1"
+                                   "C05.4"
                                ]
                   },
                   {
-                      "id":  "P037",
-                      "num":  37,
+                      "id":  "P038",
+                      "num":  38,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "ouverture_theme",
@@ -1631,8 +1647,8 @@
                                ]
                   },
                   {
-                      "id":  "P038",
-                      "num":  38,
+                      "id":  "P039",
+                      "num":  39,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "phrase_du_jour",
@@ -1646,8 +1662,8 @@
                                ]
                   },
                   {
-                      "id":  "P039",
-                      "num":  39,
+                      "id":  "P040",
+                      "num":  40,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "carte_phrases",
@@ -1661,8 +1677,8 @@
                                ]
                   },
                   {
-                      "id":  "P040",
-                      "num":  40,
+                      "id":  "P041",
+                      "num":  41,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "conversation",
@@ -1674,8 +1690,8 @@
                                ]
                   },
                   {
-                      "id":  "P041",
-                      "num":  41,
+                      "id":  "P042",
+                      "num":  42,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "a_toi_de_parler",
@@ -1687,8 +1703,8 @@
                                ]
                   },
                   {
-                      "id":  "P042",
-                      "num":  42,
+                      "id":  "P043",
+                      "num":  43,
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "antiseche",
@@ -1709,8 +1725,8 @@
                                ]
                   },
                   {
-                      "id":  "P043",
-                      "num":  43,
+                      "id":  "P044",
+                      "num":  44,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "ouverture_theme",
@@ -1722,8 +1738,8 @@
                                ]
                   },
                   {
-                      "id":  "P044",
-                      "num":  44,
+                      "id":  "P045",
+                      "num":  45,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "phrase_du_jour",
@@ -1737,8 +1753,8 @@
                                ]
                   },
                   {
-                      "id":  "P045",
-                      "num":  45,
+                      "id":  "P046",
+                      "num":  46,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "carte_phrases",
@@ -1752,8 +1768,8 @@
                                ]
                   },
                   {
-                      "id":  "P046",
-                      "num":  46,
+                      "id":  "P047",
+                      "num":  47,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "conversation",
@@ -1765,8 +1781,8 @@
                                ]
                   },
                   {
-                      "id":  "P047",
-                      "num":  47,
+                      "id":  "P048",
+                      "num":  48,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "a_toi_de_parler",
@@ -1778,8 +1794,8 @@
                                ]
                   },
                   {
-                      "id":  "P048",
-                      "num":  48,
+                      "id":  "P049",
+                      "num":  49,
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "antiseche",
@@ -1799,8 +1815,8 @@
                                ]
                   },
                   {
-                      "id":  "P049",
-                      "num":  49,
+                      "id":  "P050",
+                      "num":  50,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "ouverture_theme",
@@ -1812,8 +1828,8 @@
                                ]
                   },
                   {
-                      "id":  "P050",
-                      "num":  50,
+                      "id":  "P051",
+                      "num":  51,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "phrase_du_jour",
@@ -1827,8 +1843,8 @@
                                ]
                   },
                   {
-                      "id":  "P051",
-                      "num":  51,
+                      "id":  "P052",
+                      "num":  52,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "carte_phrases",
@@ -1842,8 +1858,8 @@
                                ]
                   },
                   {
-                      "id":  "P052",
-                      "num":  52,
+                      "id":  "P053",
+                      "num":  53,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "conversation",
@@ -1855,8 +1871,8 @@
                                ]
                   },
                   {
-                      "id":  "P053",
-                      "num":  53,
+                      "id":  "P054",
+                      "num":  54,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "a_toi_de_parler",
@@ -1868,8 +1884,8 @@
                                ]
                   },
                   {
-                      "id":  "P054",
-                      "num":  54,
+                      "id":  "P055",
+                      "num":  55,
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "antiseche",
@@ -1889,8 +1905,8 @@
                                ]
                   },
                   {
-                      "id":  "P055",
-                      "num":  55,
+                      "id":  "P056",
+                      "num":  56,
                       "partie":  2,
                       "theme":  "",
                       "type":  "revision",
@@ -1904,17 +1920,17 @@
                                    "P011",
                                    "P013",
                                    "P016",
+                                   "P084",
+                                   "P083",
                                    "P078",
                                    "P077",
                                    "P036b",
-                                   "P036",
-                                   "P035",
-                                   "P034"
+                                   "P036"
                                ]
                   },
                   {
-                      "id":  "P056",
-                      "num":  56,
+                      "id":  "P057",
+                      "num":  57,
                       "partie":  2,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -1930,8 +1946,8 @@
                                ]
                   },
                   {
-                      "id":  "P057",
-                      "num":  57,
+                      "id":  "P058",
+                      "num":  58,
                       "partie":  2,
                       "theme":  "",
                       "type":  "bilan",
@@ -1946,8 +1962,8 @@
                                ]
                   },
                   {
-                      "id":  "P058",
-                      "num":  58,
+                      "id":  "P059",
+                      "num":  59,
                       "partie":  2,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -1962,8 +1978,8 @@
                                ]
                   },
                   {
-                      "id":  "P059",
-                      "num":  59,
+                      "id":  "P060",
+                      "num":  60,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "ouverture_theme",
@@ -1975,8 +1991,8 @@
                                ]
                   },
                   {
-                      "id":  "P060",
-                      "num":  60,
+                      "id":  "P061",
+                      "num":  61,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "phrase_du_jour",
@@ -1990,8 +2006,8 @@
                                ]
                   },
                   {
-                      "id":  "P061",
-                      "num":  61,
+                      "id":  "P062",
+                      "num":  62,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "carte_phrases",
@@ -2005,8 +2021,8 @@
                                ]
                   },
                   {
-                      "id":  "P062",
-                      "num":  62,
+                      "id":  "P063",
+                      "num":  63,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "conversation",
@@ -2018,8 +2034,8 @@
                                ]
                   },
                   {
-                      "id":  "P063",
-                      "num":  63,
+                      "id":  "P064",
+                      "num":  64,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "a_toi_de_parler",
@@ -2031,8 +2047,8 @@
                                ]
                   },
                   {
-                      "id":  "P064",
-                      "num":  64,
+                      "id":  "P065",
+                      "num":  65,
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "antiseche",
@@ -2053,8 +2069,8 @@
                                ]
                   },
                   {
-                      "id":  "P065",
-                      "num":  65,
+                      "id":  "P066",
+                      "num":  66,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "ouverture_theme",
@@ -2066,8 +2082,8 @@
                                ]
                   },
                   {
-                      "id":  "P066",
-                      "num":  66,
+                      "id":  "P067",
+                      "num":  67,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "phrase_du_jour",
@@ -2081,8 +2097,8 @@
                                ]
                   },
                   {
-                      "id":  "P067",
-                      "num":  67,
+                      "id":  "P068",
+                      "num":  68,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "carte_phrases",
@@ -2096,8 +2112,8 @@
                                ]
                   },
                   {
-                      "id":  "P068",
-                      "num":  68,
+                      "id":  "P069",
+                      "num":  69,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "conversation",
@@ -2109,8 +2125,8 @@
                                ]
                   },
                   {
-                      "id":  "P069",
-                      "num":  69,
+                      "id":  "P070",
+                      "num":  70,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "a_toi_de_parler",
@@ -2122,8 +2138,8 @@
                                ]
                   },
                   {
-                      "id":  "P070",
-                      "num":  70,
+                      "id":  "P071",
+                      "num":  71,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "conversation",
@@ -2135,8 +2151,8 @@
                                ]
                   },
                   {
-                      "id":  "P071",
-                      "num":  71,
+                      "id":  "P072",
+                      "num":  72,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "a_toi_de_parler",
@@ -2148,8 +2164,8 @@
                                ]
                   },
                   {
-                      "id":  "P072",
-                      "num":  72,
+                      "id":  "P073",
+                      "num":  73,
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "antiseche",
@@ -2170,8 +2186,8 @@
                                ]
                   },
                   {
-                      "id":  "P073",
-                      "num":  73,
+                      "id":  "P074",
+                      "num":  74,
                       "partie":  3,
                       "theme":  "",
                       "type":  "revision",
@@ -2182,9 +2198,8 @@
                                    "P006",
                                    "P008",
                                    "P015",
-                                   "P017",
-                                   "P022",
-                                   "P078",
+                                   "P026",
+                                   "P029",
                                    "P081",
                                    "P079",
                                    "P051",
@@ -2194,8 +2209,8 @@
                                ]
                   },
                   {
-                      "id":  "P074",
-                      "num":  74,
+                      "id":  "P075",
+                      "num":  75,
                       "partie":  3,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -2209,8 +2224,8 @@
                                ]
                   },
                   {
-                      "id":  "P075",
-                      "num":  75,
+                      "id":  "P076",
+                      "num":  76,
                       "partie":  3,
                       "theme":  "",
                       "type":  "bilan",
@@ -2223,8 +2238,8 @@
                                ]
                   },
                   {
-                      "id":  "P076",
-                      "num":  76,
+                      "id":  "P077",
+                      "num":  77,
                       "partie":  3,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -2237,8 +2252,8 @@
                                ]
                   },
                   {
-                      "id":  "P077",
-                      "num":  77,
+                      "id":  "P078",
+                      "num":  78,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "ouverture_theme",
@@ -2250,8 +2265,8 @@
                                ]
                   },
                   {
-                      "id":  "P078",
-                      "num":  78,
+                      "id":  "P079",
+                      "num":  79,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "phrase_du_jour",
@@ -2265,8 +2280,8 @@
                                ]
                   },
                   {
-                      "id":  "P079",
-                      "num":  79,
+                      "id":  "P080",
+                      "num":  80,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "carte_phrases",
@@ -2280,8 +2295,8 @@
                                ]
                   },
                   {
-                      "id":  "P080",
-                      "num":  80,
+                      "id":  "P081",
+                      "num":  81,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "conversation",
@@ -2293,8 +2308,8 @@
                                ]
                   },
                   {
-                      "id":  "P081",
-                      "num":  81,
+                      "id":  "P082",
+                      "num":  82,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "a_toi_de_parler",
@@ -2306,8 +2321,8 @@
                                ]
                   },
                   {
-                      "id":  "P082",
-                      "num":  82,
+                      "id":  "P083",
+                      "num":  83,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "conversation",
@@ -2319,8 +2334,8 @@
                                ]
                   },
                   {
-                      "id":  "P083",
-                      "num":  83,
+                      "id":  "P084",
+                      "num":  84,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "a_toi_de_parler",
@@ -2332,8 +2347,8 @@
                                ]
                   },
                   {
-                      "id":  "P084",
-                      "num":  84,
+                      "id":  "P085",
+                      "num":  85,
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "antiseche",
@@ -2354,8 +2369,8 @@
                                ]
                   },
                   {
-                      "id":  "P085",
-                      "num":  85,
+                      "id":  "P086",
+                      "num":  86,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "ouverture_theme",
@@ -2367,8 +2382,8 @@
                                ]
                   },
                   {
-                      "id":  "P086",
-                      "num":  86,
+                      "id":  "P087",
+                      "num":  87,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "phrase_du_jour",
@@ -2382,8 +2397,8 @@
                                ]
                   },
                   {
-                      "id":  "P087",
-                      "num":  87,
+                      "id":  "P088",
+                      "num":  88,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "carte_phrases",
@@ -2397,8 +2412,8 @@
                                ]
                   },
                   {
-                      "id":  "P088",
-                      "num":  88,
+                      "id":  "P089",
+                      "num":  89,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "conversation",
@@ -2410,8 +2425,8 @@
                                ]
                   },
                   {
-                      "id":  "P089",
-                      "num":  89,
+                      "id":  "P090",
+                      "num":  90,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "a_toi_de_parler",
@@ -2423,8 +2438,8 @@
                                ]
                   },
                   {
-                      "id":  "P090",
-                      "num":  90,
+                      "id":  "P091",
+                      "num":  91,
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "antiseche",
@@ -2445,8 +2460,8 @@
                                ]
                   },
                   {
-                      "id":  "P091",
-                      "num":  91,
+                      "id":  "P092",
+                      "num":  92,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "ouverture_theme",
@@ -2458,8 +2473,8 @@
                                ]
                   },
                   {
-                      "id":  "P092",
-                      "num":  92,
+                      "id":  "P093",
+                      "num":  93,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "phrase_du_jour",
@@ -2473,8 +2488,8 @@
                                ]
                   },
                   {
-                      "id":  "P093",
-                      "num":  93,
+                      "id":  "P094",
+                      "num":  94,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "carte_phrases",
@@ -2488,8 +2503,8 @@
                                ]
                   },
                   {
-                      "id":  "P094",
-                      "num":  94,
+                      "id":  "P095",
+                      "num":  95,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "conversation",
@@ -2501,8 +2516,8 @@
                                ]
                   },
                   {
-                      "id":  "P095",
-                      "num":  95,
+                      "id":  "P096",
+                      "num":  96,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "a_toi_de_parler",
@@ -2514,8 +2529,8 @@
                                ]
                   },
                   {
-                      "id":  "P096",
-                      "num":  96,
+                      "id":  "P097",
+                      "num":  97,
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "antiseche",
@@ -2536,8 +2551,8 @@
                                ]
                   },
                   {
-                      "id":  "P097",
-                      "num":  97,
+                      "id":  "P098",
+                      "num":  98,
                       "partie":  4,
                       "theme":  "",
                       "type":  "revision",
@@ -2548,9 +2563,9 @@
                                    "P006",
                                    "P011",
                                    "P018",
-                                   "P077",
-                                   "P036b",
-                                   "P040",
+                                   "P025",
+                                   "P031",
+                                   "P037",
                                    "P082",
                                    "P080",
                                    "P061",
@@ -2560,8 +2575,8 @@
                                ]
                   },
                   {
-                      "id":  "P098",
-                      "num":  98,
+                      "id":  "P099",
+                      "num":  99,
                       "partie":  4,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -2576,8 +2591,8 @@
                                ]
                   },
                   {
-                      "id":  "P099",
-                      "num":  99,
+                      "id":  "P100",
+                      "num":  100,
                       "partie":  4,
                       "theme":  "",
                       "type":  "bilan",
@@ -2591,8 +2606,8 @@
                                ]
                   },
                   {
-                      "id":  "P100",
-                      "num":  100,
+                      "id":  "P101",
+                      "num":  101,
                       "partie":  4,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -2606,8 +2621,8 @@
                                ]
                   },
                   {
-                      "id":  "P101",
-                      "num":  101,
+                      "id":  "P102",
+                      "num":  102,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "ouverture_theme",
@@ -2619,8 +2634,8 @@
                                ]
                   },
                   {
-                      "id":  "P102",
-                      "num":  102,
+                      "id":  "P103",
+                      "num":  103,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "phrase_du_jour",
@@ -2634,8 +2649,8 @@
                                ]
                   },
                   {
-                      "id":  "P103",
-                      "num":  103,
+                      "id":  "P104",
+                      "num":  104,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "carte_phrases",
@@ -2649,8 +2664,8 @@
                                ]
                   },
                   {
-                      "id":  "P104",
-                      "num":  104,
+                      "id":  "P105",
+                      "num":  105,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "conversation",
@@ -2662,8 +2677,8 @@
                                ]
                   },
                   {
-                      "id":  "P105",
-                      "num":  105,
+                      "id":  "P106",
+                      "num":  106,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "a_toi_de_parler",
@@ -2675,8 +2690,8 @@
                                ]
                   },
                   {
-                      "id":  "P106",
-                      "num":  106,
+                      "id":  "P107",
+                      "num":  107,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "conversation",
@@ -2688,8 +2703,8 @@
                                ]
                   },
                   {
-                      "id":  "P107",
-                      "num":  107,
+                      "id":  "P108",
+                      "num":  108,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "a_toi_de_parler",
@@ -2701,8 +2716,8 @@
                                ]
                   },
                   {
-                      "id":  "P108",
-                      "num":  108,
+                      "id":  "P109",
+                      "num":  109,
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "antiseche",
@@ -2723,8 +2738,8 @@
                                ]
                   },
                   {
-                      "id":  "P109",
-                      "num":  109,
+                      "id":  "P110",
+                      "num":  110,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "ouverture_theme",
@@ -2736,8 +2751,8 @@
                                ]
                   },
                   {
-                      "id":  "P110",
-                      "num":  110,
+                      "id":  "P111",
+                      "num":  111,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "phrase_du_jour",
@@ -2751,8 +2766,8 @@
                                ]
                   },
                   {
-                      "id":  "P111",
-                      "num":  111,
+                      "id":  "P112",
+                      "num":  112,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "carte_phrases",
@@ -2766,8 +2781,8 @@
                                ]
                   },
                   {
-                      "id":  "P112",
-                      "num":  112,
+                      "id":  "P113",
+                      "num":  113,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "conversation",
@@ -2779,8 +2794,8 @@
                                ]
                   },
                   {
-                      "id":  "P113",
-                      "num":  113,
+                      "id":  "P114",
+                      "num":  114,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "a_toi_de_parler",
@@ -2792,8 +2807,8 @@
                                ]
                   },
                   {
-                      "id":  "P114",
-                      "num":  114,
+                      "id":  "P115",
+                      "num":  115,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "conversation",
@@ -2805,8 +2820,8 @@
                                ]
                   },
                   {
-                      "id":  "P115",
-                      "num":  115,
+                      "id":  "P116",
+                      "num":  116,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "a_toi_de_parler",
@@ -2818,8 +2833,8 @@
                                ]
                   },
                   {
-                      "id":  "P116",
-                      "num":  116,
+                      "id":  "P117",
+                      "num":  117,
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "antiseche",
@@ -2840,8 +2855,8 @@
                                ]
                   },
                   {
-                      "id":  "P117",
-                      "num":  117,
+                      "id":  "P118",
+                      "num":  118,
                       "partie":  5,
                       "theme":  "",
                       "type":  "revision",
@@ -2851,10 +2866,10 @@
                       "refs":  [
                                    "P006",
                                    "P013",
-                                   "P023",
-                                   "P036b",
-                                   "P049",
-                                   "P054",
+                                   "P021",
+                                   "P031",
+                                   "P041",
+                                   "P045",
                                    "P073",
                                    "P072",
                                    "P071",
@@ -2864,8 +2879,8 @@
                                ]
                   },
                   {
-                      "id":  "P118",
-                      "num":  118,
+                      "id":  "P119",
+                      "num":  119,
                       "partie":  5,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -2880,8 +2895,8 @@
                                ]
                   },
                   {
-                      "id":  "P119",
-                      "num":  119,
+                      "id":  "P120",
+                      "num":  120,
                       "partie":  5,
                       "theme":  "",
                       "type":  "bilan",
@@ -2894,8 +2909,8 @@
                                ]
                   },
                   {
-                      "id":  "P120",
-                      "num":  120,
+                      "id":  "P121",
+                      "num":  121,
                       "partie":  5,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -2908,8 +2923,8 @@
                                ]
                   },
                   {
-                      "id":  "P121",
-                      "num":  121,
+                      "id":  "P122",
+                      "num":  122,
                       "partie":  6,
                       "theme":  "",
                       "type":  "index",
@@ -2921,8 +2936,8 @@
                                ]
                   },
                   {
-                      "id":  "P122",
-                      "num":  122,
+                      "id":  "P123",
+                      "num":  123,
                       "partie":  6,
                       "theme":  "",
                       "type":  "index",
@@ -2934,8 +2949,8 @@
                                ]
                   },
                   {
-                      "id":  "P123",
-                      "num":  123,
+                      "id":  "P124",
+                      "num":  124,
                       "partie":  6,
                       "theme":  "",
                       "type":  "bilan",
@@ -2979,8 +2994,8 @@
                         "id":  "P003",
                         "theme":  "classe",
                         "cible":  "neutre",
-                        "ar":  "كُلُّ كَلِمَةٍ لَهَا جَذْرٌ، مِثْلُ الشَّجَرَةِ.",
-                        "fr":  "Chaque mot a une racine, comme un arbre.",
+                        "ar":  "كُلُّ كَلِمَةٍ مِنْ هٰذِهِ الْكَلِمَاتِ لَهَا جَذْرٌ، مِثْلُ الشَّجَرَةِ.",
+                        "fr":  "Chacun de ces mots a une racine, comme un arbre.",
                         "variations":  null,
                         "unite":  1,
                         "source_mots":  [
@@ -4192,6 +4207,36 @@
                                             "en5 L10"
                                         ],
                         "modele":  "en5/l17"
+                    },
+                    {
+                        "id":  "P083",
+                        "theme":  "devinette",
+                        "cible":  "neutre",
+                        "ar":  "هٰذَا هُوَ الْوَلَدُ الَّذِي يَلْعَبُ مَعَنَا.",
+                        "fr":  "Voici le garçon qui joue avec nous.",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "en1",
+                                            "livret en3-02"
+                                        ],
+                        "modele":  "en5/l06"
+                    },
+                    {
+                        "id":  "P084",
+                        "theme":  "devinette",
+                        "cible":  "neutre",
+                        "ar":  "هُمُ الْأَوْلَادُ الَّذِينَ يَلْعَبُونَ فِي السَّاحَةِ.",
+                        "fr":  "Ce sont les enfants qui jouent dans la cour.",
+                        "variations":  null,
+                        "unite":  6,
+                        "source_mots":  [
+                                            "en1",
+                                            "en3",
+                                            "en4",
+                                            "en5 L6"
+                                        ],
+                        "modele":  "en5/l06"
                     }
                 ],
     "conversations":  [

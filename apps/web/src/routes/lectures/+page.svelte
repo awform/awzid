@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -108,6 +109,10 @@
 
 <h1>{t('lectures.titre')}</h1>
 <p class="muted">{t('lectures.texte')}</p>
+<!-- Histoires (interrupteur « histoires », canal bêta ; 05/11 : rangées ici, plus dans « Vivre l'islam ») : carte chargée à la demande -->
+{#if fn('histoires')}{#await import('$lib/lectures/carte') then m}<m.Carte
+      seul="histoires"
+    />{/await}{/if}
 {#if offline}<p class="card">{t('bib.hors_ligne')}</p>{/if}
 {#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
 

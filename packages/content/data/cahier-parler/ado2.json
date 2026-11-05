@@ -4,7 +4,7 @@
                  "serie":  "ado",
                  "niveau":  2,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:39",
+                 "genere_le":  "2026-11-05 05:11",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ado1 à ado2, livrets lect\\ado1 à ado2) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -12,9 +12,9 @@
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
-                   "pages":  126,
+                   "pages":  128,
                    "themes":  12,
-                   "phrases":  91,
+                   "phrases":  97,
                    "phrases_avec_variations":  0,
                    "conversations":  20,
                    "repliques":  115
@@ -671,7 +671,7 @@
                        "titre_fr":  "Quand j\u0027étais petit",
                        "titre_ar":  "عِنْدَمَا كُنْتُ صَغِيرًا",
                        "accroche_fr":  "À la fin de cette étape, je sais raconter mon enfance et interroger mes parents sur la leur.",
-                       "unite":  16,
+                       "unite":  20,
                        "phrases":  [
                                        "P062",
                                        "P063",
@@ -680,7 +680,13 @@
                                        "P066",
                                        "P067",
                                        "P068",
-                                       "P069"
+                                       "P069",
+                                       "P090",
+                                       "P091",
+                                       "P092",
+                                       "P093",
+                                       "P094",
+                                       "P095"
                                    ],
                        "conversations":  [
                                              "C15",
@@ -728,14 +734,34 @@
                                              "fr":  "Mon grand-père et ma grand-mère ont une maison au village."
                                          },
                                          {
-                                             "ref":  "C15.2",
-                                             "ar":  "كُنْتُ خَجُولًا، وَكُنْتُ أُحِبُّ الرِّيَاضِيَّاتِ.",
-                                             "fr":  "J\u0027étais timide, et j\u0027aimais les maths."
+                                             "ref":  "P090",
+                                             "ar":  "أَيْنَ كُنْتُمَا يَوْمَ السَّبْتِ؟",
+                                             "fr":  "Où étiez-vous, tous les deux, samedi ?"
                                          },
                                          {
-                                             "ref":  "C15.3",
-                                             "ar":  "وَهَلْ كَانَ عِنْدَكَ هَاتِفٌ؟",
-                                             "fr":  "Et est-ce que tu avais un téléphone ?"
+                                             "ref":  "P091",
+                                             "ar":  "كَانُوا فِي الْمَلْعَبِ أَمْسِ.",
+                                             "fr":  "Ils étaient au stade hier."
+                                         },
+                                         {
+                                             "ref":  "P092",
+                                             "ar":  "أُخْتَايَ كَانَتَا فِي الْمَكْتَبَةِ.",
+                                             "fr":  "Mes deux sœurs étaient à la bibliothèque."
+                                         },
+                                         {
+                                             "ref":  "P093",
+                                             "ar":  "أَبِي وَأَخِي كَانَا فِي الْمَسْجِدِ.",
+                                             "fr":  "Mon père et mon frère étaient à la mosquée."
+                                         },
+                                         {
+                                             "ref":  "P094",
+                                             "ar":  "أَيْنَ كُنْتُنَّ أَمْسِ؟",
+                                             "fr":  "Où étiez-vous hier ? (à un groupe de filles)"
+                                         },
+                                         {
+                                             "ref":  "P095",
+                                             "ar":  "كُنَّ فِي النَّادِي أَمْسِ.",
+                                             "fr":  "Elles étaient au club hier."
                                          }
                                      ]
                    },
@@ -2226,13 +2252,13 @@
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "Mon grand-père et ma grand-mère ont une maison au village. / Et que voulais-tu devenir ? (à un garçon, ou à Papa) / Nous habitions à Thiès.",
-                      "apres":  "l16",
-                      "apres_n":  16,
+                      "titre_fr":  "Mon grand-père et ma grand-mère ont une maison au village. / Mon père et mon frère étaient à la mosquée. / Où étiez-vous hier ? (à un groupe de filles)",
+                      "apres":  "l00",
+                      "apres_n":  0,
                       "refs":  [
                                    "P069",
-                                   "P062",
-                                   "P063"
+                                   "P093",
+                                   "P094"
                                ]
                   },
                   {
@@ -2241,13 +2267,13 @@
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Quand j\u0027étais petit, j\u0027avais peur du noir. / Tu étais calme, et tu aimais les livres. (à une fille) / Et où habitiez-vous ? (à un groupe)",
+                      "titre_fr":  "Elles étaient au club hier. / Mes deux sœurs étaient à la bibliothèque. / Et que voulais-tu devenir ? (à un garçon, ou à Papa)",
                       "apres":  "l16",
                       "apres_n":  16,
                       "refs":  [
-                                   "P064",
-                                   "P065",
-                                   "P066"
+                                   "P095",
+                                   "P092",
+                                   "P062"
                                ]
                   },
                   {
@@ -2256,17 +2282,47 @@
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Nous rendions visite à mon grand-père et à ma grand-mère chaque été. / L\u0027école était loin.",
+                      "titre_fr":  "Nous habitions à Thiès. / Quand j\u0027étais petit, j\u0027avais peur du noir. / Tu étais calme, et tu aimais les livres. (à une fille)",
                       "apres":  "l16",
                       "apres_n":  16,
                       "refs":  [
-                                   "P067",
-                                   "P068"
+                                   "P063",
+                                   "P064",
+                                   "P065"
                                ]
                   },
                   {
                       "id":  "P088",
                       "num":  88,
+                      "partie":  4,
+                      "theme":  "famille",
+                      "type":  "carte_phrases",
+                      "titre_fr":  "Et où habitiez-vous ? (à un groupe) / Nous rendions visite à mon grand-père et à ma grand-mère chaque été. / L\u0027école était loin.",
+                      "apres":  "l16",
+                      "apres_n":  16,
+                      "refs":  [
+                                   "P066",
+                                   "P067",
+                                   "P068"
+                               ]
+                  },
+                  {
+                      "id":  "P089",
+                      "num":  89,
+                      "partie":  4,
+                      "theme":  "famille",
+                      "type":  "carte_phrases",
+                      "titre_fr":  "Ils étaient au stade hier. / Où étiez-vous, tous les deux, samedi ?",
+                      "apres":  "l20",
+                      "apres_n":  20,
+                      "refs":  [
+                                   "P091",
+                                   "P090"
+                               ]
+                  },
+                  {
+                      "id":  "P090",
+                      "num":  90,
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "conversation",
@@ -2278,8 +2334,8 @@
                                ]
                   },
                   {
-                      "id":  "P089",
-                      "num":  89,
+                      "id":  "P091",
+                      "num":  91,
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "a_toi_de_parler",
@@ -2291,8 +2347,8 @@
                                ]
                   },
                   {
-                      "id":  "P090",
-                      "num":  90,
+                      "id":  "P092",
+                      "num":  92,
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "conversation",
@@ -2304,8 +2360,8 @@
                                ]
                   },
                   {
-                      "id":  "P091",
-                      "num":  91,
+                      "id":  "P093",
+                      "num":  93,
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "a_toi_de_parler",
@@ -2317,14 +2373,14 @@
                                ]
                   },
                   {
-                      "id":  "P092",
-                      "num":  92,
+                      "id":  "P094",
+                      "num":  94,
                       "partie":  4,
                       "theme":  "famille",
                       "type":  "antiseche",
                       "titre_fr":  "Antisèche : Quand j\u0027étais petit — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
-                      "apres":  "l16",
-                      "apres_n":  16,
+                      "apres":  "l20",
+                      "apres_n":  20,
                       "refs":  [
                                    "P062",
                                    "P063",
@@ -2334,13 +2390,17 @@
                                    "P067",
                                    "P068",
                                    "P069",
-                                   "C15.2",
-                                   "C15.3"
+                                   "P090",
+                                   "P091",
+                                   "P092",
+                                   "P093",
+                                   "P094",
+                                   "P095"
                                ]
                   },
                   {
-                      "id":  "P093",
-                      "num":  93,
+                      "id":  "P095",
+                      "num":  95,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "ouverture_theme",
@@ -2352,8 +2412,8 @@
                                ]
                   },
                   {
-                      "id":  "P094",
-                      "num":  94,
+                      "id":  "P096",
+                      "num":  96,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "phrase_du_jour",
@@ -2367,8 +2427,8 @@
                                ]
                   },
                   {
-                      "id":  "P095",
-                      "num":  95,
+                      "id":  "P097",
+                      "num":  97,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "carte_phrases",
@@ -2382,8 +2442,8 @@
                                ]
                   },
                   {
-                      "id":  "P096",
-                      "num":  96,
+                      "id":  "P098",
+                      "num":  98,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "carte_phrases",
@@ -2396,8 +2456,8 @@
                                ]
                   },
                   {
-                      "id":  "P097",
-                      "num":  97,
+                      "id":  "P099",
+                      "num":  99,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "conversation",
@@ -2409,8 +2469,8 @@
                                ]
                   },
                   {
-                      "id":  "P098",
-                      "num":  98,
+                      "id":  "P100",
+                      "num":  100,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "a_toi_de_parler",
@@ -2422,8 +2482,8 @@
                                ]
                   },
                   {
-                      "id":  "P099",
-                      "num":  99,
+                      "id":  "P101",
+                      "num":  101,
                       "partie":  4,
                       "theme":  "sante",
                       "type":  "antiseche",
@@ -2444,8 +2504,8 @@
                                ]
                   },
                   {
-                      "id":  "P100",
-                      "num":  100,
+                      "id":  "P102",
+                      "num":  102,
                       "partie":  4,
                       "theme":  "",
                       "type":  "revision",
@@ -2459,17 +2519,17 @@
                                    "P031",
                                    "P041",
                                    "P049",
-                                   "P076b",
-                                   "P076",
-                                   "P075",
-                                   "P074",
-                                   "P073",
-                                   "P072"
+                                   "P095",
+                                   "P094",
+                                   "P093",
+                                   "P092",
+                                   "P091",
+                                   "P090"
                                ]
                   },
                   {
-                      "id":  "P101",
-                      "num":  101,
+                      "id":  "P103",
+                      "num":  103,
                       "partie":  4,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -2483,8 +2543,8 @@
                                ]
                   },
                   {
-                      "id":  "P102",
-                      "num":  102,
+                      "id":  "P104",
+                      "num":  104,
                       "partie":  4,
                       "theme":  "",
                       "type":  "bilan",
@@ -2497,8 +2557,8 @@
                                ]
                   },
                   {
-                      "id":  "P103",
-                      "num":  103,
+                      "id":  "P105",
+                      "num":  105,
                       "partie":  4,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -2511,8 +2571,8 @@
                                ]
                   },
                   {
-                      "id":  "P104",
-                      "num":  104,
+                      "id":  "P106",
+                      "num":  106,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "ouverture_theme",
@@ -2524,8 +2584,8 @@
                                ]
                   },
                   {
-                      "id":  "P105",
-                      "num":  105,
+                      "id":  "P107",
+                      "num":  107,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "phrase_du_jour",
@@ -2539,8 +2599,8 @@
                                ]
                   },
                   {
-                      "id":  "P106",
-                      "num":  106,
+                      "id":  "P108",
+                      "num":  108,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "carte_phrases",
@@ -2554,8 +2614,8 @@
                                ]
                   },
                   {
-                      "id":  "P107",
-                      "num":  107,
+                      "id":  "P109",
+                      "num":  109,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "carte_phrases",
@@ -2567,8 +2627,8 @@
                                ]
                   },
                   {
-                      "id":  "P108",
-                      "num":  108,
+                      "id":  "P110",
+                      "num":  110,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "conversation",
@@ -2580,8 +2640,8 @@
                                ]
                   },
                   {
-                      "id":  "P109",
-                      "num":  109,
+                      "id":  "P111",
+                      "num":  111,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "a_toi_de_parler",
@@ -2593,8 +2653,8 @@
                                ]
                   },
                   {
-                      "id":  "P110",
-                      "num":  110,
+                      "id":  "P112",
+                      "num":  112,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "conversation",
@@ -2606,8 +2666,8 @@
                                ]
                   },
                   {
-                      "id":  "P111",
-                      "num":  111,
+                      "id":  "P113",
+                      "num":  113,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "a_toi_de_parler",
@@ -2619,8 +2679,8 @@
                                ]
                   },
                   {
-                      "id":  "P112",
-                      "num":  112,
+                      "id":  "P114",
+                      "num":  114,
                       "partie":  5,
                       "theme":  "amis",
                       "type":  "antiseche",
@@ -2641,8 +2701,8 @@
                                ]
                   },
                   {
-                      "id":  "P113",
-                      "num":  113,
+                      "id":  "P115",
+                      "num":  115,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "ouverture_theme",
@@ -2654,8 +2714,8 @@
                                ]
                   },
                   {
-                      "id":  "P114",
-                      "num":  114,
+                      "id":  "P116",
+                      "num":  116,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "phrase_du_jour",
@@ -2669,8 +2729,8 @@
                                ]
                   },
                   {
-                      "id":  "P115",
-                      "num":  115,
+                      "id":  "P117",
+                      "num":  117,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "carte_phrases",
@@ -2684,8 +2744,8 @@
                                ]
                   },
                   {
-                      "id":  "P116",
-                      "num":  116,
+                      "id":  "P118",
+                      "num":  118,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "carte_phrases",
@@ -2697,8 +2757,8 @@
                                ]
                   },
                   {
-                      "id":  "P117",
-                      "num":  117,
+                      "id":  "P119",
+                      "num":  119,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "conversation",
@@ -2710,8 +2770,8 @@
                                ]
                   },
                   {
-                      "id":  "P118",
-                      "num":  118,
+                      "id":  "P120",
+                      "num":  120,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "a_toi_de_parler",
@@ -2723,8 +2783,8 @@
                                ]
                   },
                   {
-                      "id":  "P119",
-                      "num":  119,
+                      "id":  "P121",
+                      "num":  121,
                       "partie":  5,
                       "theme":  "quartier",
                       "type":  "antiseche",
@@ -2745,8 +2805,8 @@
                                ]
                   },
                   {
-                      "id":  "P120",
-                      "num":  120,
+                      "id":  "P122",
+                      "num":  122,
                       "partie":  5,
                       "theme":  "",
                       "type":  "revision",
@@ -2755,11 +2815,11 @@
                       "apres_n":  25,
                       "refs":  [
                                    "P001",
-                                   "P012",
-                                   "P024",
-                                   "P035",
-                                   "P055",
-                                   "P061",
+                                   "P014",
+                                   "P027",
+                                   "P038",
+                                   "P051",
+                                   "P092",
                                    "P089",
                                    "P088b",
                                    "P088",
@@ -2769,8 +2829,8 @@
                                ]
                   },
                   {
-                      "id":  "P121",
-                      "num":  121,
+                      "id":  "P123",
+                      "num":  123,
                       "partie":  5,
                       "theme":  "",
                       "type":  "a_toi_de_parler",
@@ -2784,8 +2844,8 @@
                                ]
                   },
                   {
-                      "id":  "P122",
-                      "num":  122,
+                      "id":  "P124",
+                      "num":  124,
                       "partie":  5,
                       "theme":  "",
                       "type":  "bilan",
@@ -2798,8 +2858,8 @@
                                ]
                   },
                   {
-                      "id":  "P123",
-                      "num":  123,
+                      "id":  "P125",
+                      "num":  125,
                       "partie":  5,
                       "theme":  "",
                       "type":  "carte_voyage",
@@ -2812,8 +2872,8 @@
                                ]
                   },
                   {
-                      "id":  "P124",
-                      "num":  124,
+                      "id":  "P126",
+                      "num":  126,
                       "partie":  6,
                       "theme":  "",
                       "type":  "index",
@@ -2825,8 +2885,8 @@
                                ]
                   },
                   {
-                      "id":  "P125",
-                      "num":  125,
+                      "id":  "P127",
+                      "num":  127,
                       "partie":  6,
                       "theme":  "",
                       "type":  "index",
@@ -2838,8 +2898,8 @@
                                ]
                   },
                   {
-                      "id":  "P126",
-                      "num":  126,
+                      "id":  "P128",
+                      "num":  128,
                       "partie":  6,
                       "theme":  "",
                       "type":  "bilan",
@@ -4146,6 +4206,87 @@
                                             "ado2 L22"
                                         ],
                         "modele":  "ado2/l12"
+                    },
+                    {
+                        "id":  "P090",
+                        "theme":  "famille",
+                        "cible":  "a_deux",
+                        "ar":  "أَيْنَ كُنْتُمَا يَوْمَ السَّبْتِ؟",
+                        "fr":  "Où étiez-vous, tous les deux, samedi ?",
+                        "variations":  null,
+                        "unite":  20,
+                        "source_mots":  [
+                                            "ado1",
+                                            "ado2 L20"
+                                        ],
+                        "modele":  "ado2/l16"
+                    },
+                    {
+                        "id":  "P091",
+                        "theme":  "famille",
+                        "cible":  "d_eux",
+                        "ar":  "كَانُوا فِي الْمَلْعَبِ أَمْسِ.",
+                        "fr":  "Ils étaient au stade hier.",
+                        "variations":  null,
+                        "unite":  16,
+                        "source_mots":  [
+                                            "ado1",
+                                            "ado2 L16"
+                                        ],
+                        "modele":  "ado2/l16"
+                    },
+                    {
+                        "id":  "P092",
+                        "theme":  "famille",
+                        "cible":  "d_elles_deux",
+                        "ar":  "أُخْتَايَ كَانَتَا فِي الْمَكْتَبَةِ.",
+                        "fr":  "Mes deux sœurs étaient à la bibliothèque.",
+                        "variations":  null,
+                        "unite":  5,
+                        "source_mots":  [
+                                            "ado1",
+                                            "ado2 L5"
+                                        ],
+                        "modele":  "ado2/l16"
+                    },
+                    {
+                        "id":  "P093",
+                        "theme":  "famille",
+                        "cible":  "d_eux_deux",
+                        "ar":  "أَبِي وَأَخِي كَانَا فِي الْمَسْجِدِ.",
+                        "fr":  "Mon père et mon frère étaient à la mosquée.",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "ado1"
+                                        ],
+                        "modele":  "ado2/l16"
+                    },
+                    {
+                        "id":  "P094",
+                        "theme":  "famille",
+                        "cible":  "a_groupe_f",
+                        "ar":  "أَيْنَ كُنْتُنَّ أَمْسِ؟",
+                        "fr":  "Où étiez-vous hier ? (à un groupe de filles)",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "ado1"
+                                        ],
+                        "modele":  "ado2/l16"
+                    },
+                    {
+                        "id":  "P095",
+                        "theme":  "famille",
+                        "cible":  "d_elles",
+                        "ar":  "كُنَّ فِي النَّادِي أَمْسِ.",
+                        "fr":  "Elles étaient au club hier.",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "ado1"
+                                        ],
+                        "modele":  "ado2/l16"
                     }
                 ],
     "conversations":  [
@@ -4331,7 +4472,7 @@
                                                     "unite":  3
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est une élève du lycée, à l\u0027arrêt de tram. Elle te demande comment se passe ta journée : réponds au présent (أَرْكَبُ، أُرَاجِعُ، أَنَامُ).",
+                              "consigne_tuteur":  "Le tuteur est une élève du lycée, à l\u0027arrêt de tram. Demande-lui comment elle va au lycée, ce qu\u0027elle fait après les cours et à quelle heure elle se couche ; quand elle te pose la question, réponds au présent (أَرْكَبُ).",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "وَمَتَى تَنَامِينَ؟",

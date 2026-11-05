@@ -4,8 +4,11 @@
  * texte_ar_*.json, annexes/).
  *  - LE CHAPITRE DU JIHĀD N'EST JAMAIS ÉCRIT : fichiers `*_jihad_*`, unités KHL-1793 à KHL-1983 (marquées `restriction` dans la
  *    source : « jamais montrée aux élèves »). Le script échoue si ces trois repères ne coïncident pas exactement.
- *  - Aucun identifiant de la source n'est servi : les unités sont renumérotées de 1 à N sans trou ; les renvois « KHL-nnnn »
- *    des notes deviennent « n° x ».
+ *  - Aucun identifiant de la source n'est servi, mais la NUMÉROTATION D'ORIGINE est gardée (décision du client, 05/11/2026) :
+ *    KHL-nnnn devient le n° nnnn (seul trou : 1793 à 1983, le chapitre exclu) ; l'annexe (MGH-nn) continue après la dernière
+ *    unité KHL. Les renvois « KHL-nnnn » des notes deviennent « n° nnnn » (y compris vers le chapitre exclu) ; le texte des notes
+ *    de l'auteur et de la traduction est gardé tel quel. Le chapitre exclu n'est signalé nulle part (ni titre ni message).
+ *  - Références internes du référent (« R-KHL-… ») retirées du texte servi (le script échoue s'il en reste).
  *  - Arabe recopié tel quel (aucune normalisation) ; mentions internes ⟦interne : …⟧ retirées ; notes de contexte gardées telles
  *    quelles (« relève du seul juge »).
  * Usage : node packages/content/scripts/khalil-compact.mjs <dossier source khalil>
@@ -150,16 +153,37 @@ const chapitres = [...parChap.entries()]
   .map(([k, u]) => [k, u.sort((a, b) => a.o - b.o || a.p.id.localeCompare(b.p.id))])
   .sort((a, b) => (a[0] === 'mugharasa') - (b[0] === 'mugharasa') || a[1][0].o - b[1][0].o);
 
-// renumérotation sans trou
+// numérotation d'origine (05/11/2026) : KHL-nnnn -> nnnn ; annexe MGH-nn à la suite de la dernière unité KHL
 const numero = new Map();
-let n = 0;
-for (const [, u] of chapitres) for (const x of u) numero.set(x.p.id, ++n);
+let n = 0; // nombre d'unités publiées
+let suite = 0;
+for (const [, u] of chapitres)
+  for (const x of u) {
+    const m = /^KHL-(\d{4})$/.exec(x.p.id);
+    if (m) suite = Math.max(suite, +m[1]);
+  }
+let prec = 0;
+for (const [, u] of chapitres)
+  for (const x of u) {
+    n++;
+    const m = /^KHL-(\d{4})$/.exec(x.p.id);
+    let v;
+    if (m) v = +m[1];
+    else if (/^MGH-\d+$/.test(x.p.id)) v = ++suite;
+    else throw new Error(`identifiant inattendu : ${x.p.id}`);
+    if (v <= prec) throw new Error(`numérotation d'origine non croissante : ${x.p.id}`);
+    prec = v;
+    numero.set(x.p.id, v);
+  }
+// renvois des notes vers le chapitre exclu : son numéro d'origine (aucun texte du chapitre n'est servi)
+for (let i = J1; i <= J2; i++) numero.set(`KHL-${String(i).padStart(4, '0')}`, i);
 
 const INTERNE = /\s*⟦interne[^⟧]*⟧/g;
 const nettoie = (s) =>
   typeof s === 'string'
     ? s
         .replace(INTERNE, '')
+        .replace(/\s*\((?:voir\s+)?R-KHL-[A-Z]+-\d+\)/g, '')
         .replace(/\b(KHL|MGH)-(\d{2,4})\b/g, (m) => {
           const v = numero.get(m);
           if (!v) throw new Error(`renvoi vers une unité non publiée : ${m}`);
@@ -168,6 +192,12 @@ const nettoie = (s) =>
         .replace(/\s{2,}/g, ' ')
         .trim()
     : undefined;
+
+const refInterne = (s) => {
+  if (typeof s === 'string' && /R-KHL-/.test(s))
+    throw new Error(`référence interne restante : ${s.slice(0, 120)}`);
+  return s;
+};
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
@@ -178,12 +208,12 @@ for (const [k, u] of chapitres) {
   const unites = u.map((x) => {
     if (!sections.length || sections[sections.length - 1].t !== x.sous)
       sections.push({ t: x.sous, n: numero.get(x.p.id) });
-    const o = { n: numero.get(x.p.id), ar: x.ar, fr: nettoie(x.p.fr) };
+    const o = { n: numero.get(x.p.id), ar: x.ar, fr: refInterne(nettoie(x.p.fr)) };
     if (x.titre) o.ti = 1;
     const e = x.p.note_explication;
     if (e && e.texte) {
-      o.e = { tx: nettoie(e.texte) };
-      if (e.titre) o.e.ti = nettoie(e.titre);
+      o.e = { tx: refInterne(nettoie(e.texte)) };
+      if (e.titre) o.e.ti = refInterne(nettoie(e.titre));
     }
     if (x.p.note_contexte) {
       let i = ctx.indexOf(x.p.note_contexte);
@@ -192,7 +222,7 @@ for (const [k, u] of chapitres) {
     }
     return o;
   });
-  const contextes = ctx.map(nettoie);
+  const contextes = ctx.map((c) => refInterne(nettoie(c)));
   writeFileSync(
     join(OUT, `${k}.json`),
     JSON.stringify({ k, t: TITRES[k], s: sections, ctx: contextes, u: unites }),

@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  4,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:33",
+                 "genere_le":  "2026-11-05 05:06",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad4, livrets lect\\ad1 à ad4) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -5987,8 +5987,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "هٰذَا لِأَهْلِي. سَأَقُولُ لَكَ الْبَاقِيَ بَعْدَ الصَّلَاةِ.",
-                                                    "fr":  "C\u0027est pour ma famille. Je vous dirai la suite après la prière.",
+                                                    "ar":  "هٰذَا خَيْرٌ كَثِيرٌ. سَأَقُولُ لَكَ الْبَاقِيَ بَعْدَ الصَّلَاةِ.",
+                                                    "fr":  "C\u0027est un grand bien. Je vous dirai la suite après la prière.",
                                                     "unite":  0
                                                 },
                                                 {

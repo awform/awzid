@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  5,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:33",
+                 "genere_le":  "2026-11-05 05:06",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad5, livrets lect\\ad1 à ad5) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -899,11 +899,6 @@
                                              "fr":  "Mon collègue m\u0027a dit des paroles dures, alors je me suis mis en colère."
                                          },
                                          {
-                                             "ref":  "C20.2",
-                                             "ar":  "اجْلِسْ، فَإِنْ ذَهَبَ الْغَضَبُ فَذَاكَ.",
-                                             "fr":  "Assieds-toi ; si la colère s\u0027en va, tant mieux."
-                                         },
-                                         {
                                              "ref":  "C20.3",
                                              "ar":  "وَمَاذَا أَفْعَلُ الْآنَ؟",
                                              "fr":  "Et que dois-je faire maintenant ?"
@@ -912,6 +907,11 @@
                                              "ref":  "C20.4",
                                              "ar":  "حَاوِرْهُ بِلُطْفٍ.",
                                              "fr":  "Parle-lui avec douceur."
+                                         },
+                                         {
+                                             "ref":  "C20.5",
+                                             "ar":  "سَأَذْهَبُ إِلَيْهِ، وَأَقُولُ: أَخْطَأْتُ، وَأَنَا آسِفٌ.",
+                                             "fr":  "J\u0027irai le voir, et je dirai : j\u0027ai eu tort, et je suis désolé."
                                          }
                                      ]
                    },
@@ -2858,9 +2858,9 @@
                                    "P085",
                                    "P087",
                                    "C20.1",
-                                   "C20.2",
                                    "C20.3",
-                                   "C20.4"
+                                   "C20.4",
+                                   "C20.5"
                                ]
                   },
                   {
@@ -7067,9 +7067,9 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "اجْلِسْ، فَإِنْ ذَهَبَ الْغَضَبُ فَذَاكَ.",
-                                                    "fr":  "Assieds-toi ; si la colère s\u0027en va, tant mieux.",
-                                                    "unite":  19
+                                                    "ar":  "اجْلِسْ قَلِيلًا.",
+                                                    "fr":  "Assieds-toi un peu.",
+                                                    "unite":  0
                                                 },
                                                 {
                                                     "qui":  "A",

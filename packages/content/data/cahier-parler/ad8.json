@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  8,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:36",
+                 "genere_le":  "2026-11-05 05:08",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad8, livrets lect\\ad1 à ad8) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -6793,8 +6793,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "هُنَا يَأْتِي الْحِلْمُ: إِذَا غَضِبْتُ وَأَنَا قَائِمَةٌ، جَلَسْتُ.",
-                                                    "fr":  "C\u0027est là qu\u0027intervient la patience : si je me fâche debout, je m\u0027assieds.",
+                                                    "ar":  "هُنَا يَأْتِي الْحِلْمُ: أَهْدَأُ قَلِيلًا.",
+                                                    "fr":  "C\u0027est là qu\u0027intervient la patience : je me calme un peu.",
                                                     "unite":  13
                                                 },
                                                 {
@@ -6849,7 +6849,8 @@
                                                   "ad6",
                                                   "ad7",
                                                   "ad8 L13",
-                                                  "livret ad2-06"
+                                                  "livret ad2-06",
+                                                  "livret ad3-06"
                                               ]
                           },
                           {

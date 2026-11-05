@@ -2,15 +2,15 @@
     "meta":  {
                  "titre":  "Cahier « Je parle » — compagnon d\u0027Adultes 2",
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:40",
+                 "genere_le":  "2026-11-05 05:11",
                  "generateur":  "donnees\\etape1_vocabulaire.ps1 + donnees\\etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1, ad2, livrets lect\\ad2-01 à 06) — formes exactes vérifiées",
                  "facultatif":  true,
                  "convention_unite":  "unite = rang de l\u0027unité du livre ad2 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = ad1) ; ce n\u0027est pas le numéro de leçon imprimé"
              },
     "totaux":  {
-                   "pages":  131,
-                   "phrases":  140,
+                   "pages":  132,
+                   "phrases":  142,
                    "phrases_avec_variations":  21,
                    "conversations":  25,
                    "repliques":  157
@@ -142,13 +142,13 @@
                       "num":  10,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Phrase du jour et ses variations : Nous apprenons l\u0027arabe. / Je travaille là-bas. / La mosquée est proche.",
+                      "titre_fr":  "Phrase du jour et ses variations : Nous apprenons l\u0027arabe. / Est-ce votre livre ? (à un groupe de femmes) / Ce sont leurs livres (à elles).",
                       "apres":  "l00",
                       "apres_n":  0,
                       "refs":  [
                                    "P140",
-                                   "P18",
-                                   "P21"
+                                   "P142",
+                                   "P143"
                                ]
                   },
                   {
@@ -156,13 +156,13 @@
                       "num":  11,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Phrase du jour et ses variations : Depuis quand ? / Louange à Allah pour ton heureux retour ! / Je t\u0027en prie, que veux-tu ? (à un homme)",
+                      "titre_fr":  "Phrase du jour et ses variations : Je travaille là-bas. / La mosquée est proche. / Depuis quand ?",
                       "apres":  "l00",
                       "apres_n":  0,
                       "refs":  [
-                                   "P38",
-                                   "P41",
-                                   "P47"
+                                   "P18",
+                                   "P21",
+                                   "P38"
                                ]
                   },
                   {
@@ -170,13 +170,13 @@
                       "num":  12,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Phrase du jour et ses variations : Quelle heure est-il maintenant ? / Je n\u0027ai pas de travail demain. / C\u0027est ma mère.",
+                      "titre_fr":  "Phrase du jour et ses variations : Louange à Allah pour ton heureux retour ! / Je t\u0027en prie, que veux-tu ? (à un homme) / Quelle heure est-il maintenant ?",
                       "apres":  "l00",
                       "apres_n":  0,
                       "refs":  [
-                                   "P55",
-                                   "P61",
-                                   "P67"
+                                   "P41",
+                                   "P47",
+                                   "P55"
                                ]
                   },
                   {
@@ -184,18 +184,31 @@
                       "num":  13,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Phrase du jour et ses variations : Qu\u0027Allah te récompense par le bien. (à un homme) / Merci beaucoup. / Combien le kilo ?",
+                      "titre_fr":  "Phrase du jour et ses variations : Je n\u0027ai pas de travail demain. / C\u0027est ma mère. / Qu\u0027Allah te récompense par le bien. (à un homme)",
                       "apres":  "l00",
                       "apres_n":  0,
                       "refs":  [
-                                   "P79",
-                                   "P81",
-                                   "P88"
+                                   "P61",
+                                   "P67",
+                                   "P79"
                                ]
                   },
                   {
                       "id":  "P014",
                       "num":  14,
+                      "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
+                      "type":  "carte_phrases",
+                      "titre_fr":  "Phrase du jour et ses variations : Merci beaucoup. / Combien le kilo ?",
+                      "apres":  "l00",
+                      "apres_n":  0,
+                      "refs":  [
+                                   "P81",
+                                   "P88"
+                               ]
+                  },
+                  {
+                      "id":  "P015",
+                      "num":  15,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Qui êtes-vous ? Êtes-vous de nouveaux étudiants ? / Et vous, mes sœurs, êtes-vous du quartier ? / Ce sont de nouveaux camarades.",
@@ -208,8 +221,8 @@
                                ]
                   },
                   {
-                      "id":  "P015",
-                      "num":  15,
+                      "id":  "P016",
+                      "num":  16,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Ce sont mes amies. / Elles sont dans la même classe à l\u0027institut. / Je suis étudiant au niveau deux.",
@@ -222,8 +235,8 @@
                                ]
                   },
                   {
-                      "id":  "P016",
-                      "num":  16,
+                      "id":  "P017",
+                      "num":  17,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Qu\u0027Allah vous bénisse.",
@@ -234,8 +247,8 @@
                                ]
                   },
                   {
-                      "id":  "P017",
-                      "num":  17,
+                      "id":  "P018",
+                      "num":  18,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Ceux-là sont des fidèles venus prier. / Quel est ce grand bâtiment, là-bas ? / C\u0027est l\u0027hôpital du quartier.",
@@ -248,8 +261,8 @@
                                ]
                   },
                   {
-                      "id":  "P018",
-                      "num":  18,
+                      "id":  "P019",
+                      "num":  19,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Allons prier ! / C\u0027est mon frère aîné.",
@@ -261,8 +274,8 @@
                                ]
                   },
                   {
-                      "id":  "P019",
-                      "num":  19,
+                      "id":  "P020",
+                      "num":  20,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Dans le quartier — j\u0027écoute, je répète, je joue A puis B",
@@ -273,8 +286,8 @@
                                ]
                   },
                   {
-                      "id":  "P020",
-                      "num":  20,
+                      "id":  "P021",
+                      "num":  21,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Dans le quartier avec le tuteur",
@@ -285,8 +298,8 @@
                                ]
                   },
                   {
-                      "id":  "P021",
-                      "num":  21,
+                      "id":  "P022",
+                      "num":  22,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Quel est son métier (à elle) ? / Je suis ingénieur. / Voici mon amie ; elle est ingénieure.",
@@ -299,8 +312,8 @@
                                ]
                   },
                   {
-                      "id":  "P022",
-                      "num":  22,
+                      "id":  "P023",
+                      "num":  23,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : J\u0027étais chauffeur, et maintenant je suis commerçant. / Je suis nouveau dans ce bâtiment.",
@@ -312,8 +325,8 @@
                                ]
                   },
                   {
-                      "id":  "P023",
-                      "num":  23,
+                      "id":  "P024",
+                      "num":  24,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Quel est ton métier ? — j\u0027écoute, je répète, je joue A puis B",
@@ -324,8 +337,8 @@
                                ]
                   },
                   {
-                      "id":  "P024",
-                      "num":  24,
+                      "id":  "P025",
+                      "num":  25,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Quel est ton métier ? avec le tuteur",
@@ -336,8 +349,8 @@
                                ]
                   },
                   {
-                      "id":  "P025",
-                      "num":  25,
+                      "id":  "P026",
+                      "num":  26,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Je vous en prie, voici les photos de l\u0027appartement. / Nous cherchons un appartement spacieux. / La cuisine est-elle grande ?",
@@ -350,8 +363,8 @@
                                ]
                   },
                   {
-                      "id":  "P026",
-                      "num":  26,
+                      "id":  "P027",
+                      "num":  27,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : L\u0027appartement est-il proche de la mosquée ? / Et le loyer ? Est-il cher ? / C\u0027est cher !",
@@ -364,8 +377,8 @@
                                ]
                   },
                   {
-                      "id":  "P027",
-                      "num":  27,
+                      "id":  "P028",
+                      "num":  28,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À l\u0027agence de logement — j\u0027écoute, je répète, je joue A puis B",
@@ -376,8 +389,8 @@
                                ]
                   },
                   {
-                      "id":  "P028",
-                      "num":  28,
+                      "id":  "P029",
+                      "num":  29,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À l\u0027agence de logement avec le tuteur",
@@ -388,8 +401,8 @@
                                ]
                   },
                   {
-                      "id":  "P029",
-                      "num":  29,
+                      "id":  "P030",
+                      "num":  30,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Sois le bienvenu. / Bienvenue ! Êtes-vous nos nouveaux voisins ? / Il va à la boutique.",
@@ -402,8 +415,8 @@
                                ]
                   },
                   {
-                      "id":  "P030",
-                      "num":  30,
+                      "id":  "P031",
+                      "num":  31,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : C\u0027est une excellente enseignante. / Où est la salle de prière ? / Qu\u0027as-tu ? (à un homme)",
@@ -416,8 +429,8 @@
                                ]
                   },
                   {
-                      "id":  "P031",
-                      "num":  31,
+                      "id":  "P032",
+                      "num":  32,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Faire connaissance — j\u0027écoute, je répète, je joue A puis B",
@@ -428,8 +441,8 @@
                                ]
                   },
                   {
-                      "id":  "P032",
-                      "num":  32,
+                      "id":  "P033",
+                      "num":  33,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Faire connaissance avec le tuteur",
@@ -440,8 +453,8 @@
                                ]
                   },
                   {
-                      "id":  "P033",
-                      "num":  33,
+                      "id":  "P034",
+                      "num":  34,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "revision",
                       "titre_fr":  "Révision espacée : je redis sans regarder",
@@ -451,16 +464,16 @@
                                    "P01",
                                    "P10",
                                    "P139",
-                                   "P55",
-                                   "P109",
-                                   "P19",
-                                   "P17",
-                                   "P89"
+                                   "P41",
+                                   "P88",
+                                   "P80",
+                                   "P15",
+                                   "P25"
                                ]
                   },
                   {
-                      "id":  "P034",
-                      "num":  34,
+                      "id":  "P035",
+                      "num":  35,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "revision",
                       "titre_fr":  "Révision : les phrases de cette partie, en désordre",
@@ -478,8 +491,8 @@
                                ]
                   },
                   {
-                      "id":  "P035",
-                      "num":  35,
+                      "id":  "P036",
+                      "num":  36,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "Situation libre : je choisis une scène de la partie et je la joue avec le tuteur",
@@ -493,8 +506,8 @@
                                ]
                   },
                   {
-                      "id":  "P036",
-                      "num":  36,
+                      "id":  "P037",
+                      "num":  37,
                       "partie":  "Partie 1 — Saluer, se présenter, le quartier (leçons 1 à 4 et bilan 1)",
                       "type":  "bilan",
                       "titre_fr":  "Bilan de la partie 1 : je sais dire… (auto-évaluation)",
@@ -517,6 +530,8 @@
                                    "P138",
                                    "P139",
                                    "P140",
+                                   "P142",
+                                   "P143",
                                    "P18",
                                    "P21",
                                    "P38",
@@ -564,8 +579,8 @@
                                ]
                   },
                   {
-                      "id":  "P037",
-                      "num":  37,
+                      "id":  "P038",
+                      "num":  38,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : À qui est ce sac ? / C\u0027est mon sac. / Où sont mes lunettes ?",
@@ -578,8 +593,8 @@
                                ]
                   },
                   {
-                      "id":  "P038",
-                      "num":  38,
+                      "id":  "P039",
+                      "num":  39,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À qui est-ce ? — j\u0027écoute, je répète, je joue A puis B",
@@ -590,8 +605,8 @@
                                ]
                   },
                   {
-                      "id":  "P039",
-                      "num":  39,
+                      "id":  "P040",
+                      "num":  40,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À qui est-ce ? avec le tuteur",
@@ -602,8 +617,8 @@
                                ]
                   },
                   {
-                      "id":  "P040",
-                      "num":  40,
+                      "id":  "P041",
+                      "num":  41,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Leur appartement (à eux deux) est au deuxième étage. / Derrière la salle de cours, après la salle d\u0027ablutions.",
@@ -615,8 +630,8 @@
                                ]
                   },
                   {
-                      "id":  "P041",
-                      "num":  41,
+                      "id":  "P042",
+                      "num":  42,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À la mosquée : où sont les exemplaires du Coran ? — j\u0027écoute, je répète, je joue A puis B",
@@ -627,8 +642,8 @@
                                ]
                   },
                   {
-                      "id":  "P042",
-                      "num":  42,
+                      "id":  "P043",
+                      "num":  43,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À la mosquée : où sont les exemplaires du Coran ? avec le tuteur",
@@ -639,8 +654,8 @@
                                ]
                   },
                   {
-                      "id":  "P043",
-                      "num":  43,
+                      "id":  "P044",
+                      "num":  44,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Bonsoir. / Tiens, voici mon passeport. (à un homme) / J\u0027ai deux valises avec moi.",
@@ -653,8 +668,8 @@
                                ]
                   },
                   {
-                      "id":  "P044",
-                      "num":  44,
+                      "id":  "P045",
+                      "num":  45,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Comment s\u0027est passé votre voyage (à vous deux) ? / Ma famille va bien. / Entre, fais comme chez toi. (à un homme)",
@@ -667,8 +682,8 @@
                                ]
                   },
                   {
-                      "id":  "P045",
-                      "num":  45,
+                      "id":  "P046",
+                      "num":  46,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Combien de kilos veux-tu ? (à un homme) / Combien de valises avez-vous, tous les deux ?",
@@ -680,8 +695,8 @@
                                ]
                   },
                   {
-                      "id":  "P046",
-                      "num":  46,
+                      "id":  "P047",
+                      "num":  47,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À l\u0027aéroport — j\u0027écoute, je répète, je joue A puis B",
@@ -692,8 +707,8 @@
                                ]
                   },
                   {
-                      "id":  "P047",
-                      "num":  47,
+                      "id":  "P048",
+                      "num":  48,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À l\u0027aéroport avec le tuteur",
@@ -704,8 +719,8 @@
                                ]
                   },
                   {
-                      "id":  "P048",
-                      "num":  48,
+                      "id":  "P049",
+                      "num":  49,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Ils sont prêts tous les deux pour le cours. / J\u0027ai mal à la tête. / Depuis deux jours.",
@@ -718,8 +733,8 @@
                                ]
                   },
                   {
-                      "id":  "P049",
-                      "num":  49,
+                      "id":  "P050",
+                      "num":  50,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : J\u0027ai mal aux yeux. / Êtes-vous prêts, tous les deux, pour le cours ?",
@@ -731,8 +746,8 @@
                                ]
                   },
                   {
-                      "id":  "P050",
-                      "num":  50,
+                      "id":  "P051",
+                      "num":  51,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : J\u0027ai mal — j\u0027écoute, je répète, je joue A puis B",
@@ -743,8 +758,8 @@
                                ]
                   },
                   {
-                      "id":  "P051",
-                      "num":  51,
+                      "id":  "P052",
+                      "num":  52,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : J\u0027ai mal avec le tuteur",
@@ -755,8 +770,8 @@
                                ]
                   },
                   {
-                      "id":  "P052",
-                      "num":  52,
+                      "id":  "P053",
+                      "num":  53,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Qu\u0027Allah vous bénisse, tous les deux.",
@@ -767,8 +782,8 @@
                                ]
                   },
                   {
-                      "id":  "P053",
-                      "num":  53,
+                      "id":  "P054",
+                      "num":  54,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Au retour de voyage — j\u0027écoute, je répète, je joue A puis B",
@@ -779,8 +794,8 @@
                                ]
                   },
                   {
-                      "id":  "P054",
-                      "num":  54,
+                      "id":  "P055",
+                      "num":  55,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Au retour de voyage avec le tuteur",
@@ -791,8 +806,8 @@
                                ]
                   },
                   {
-                      "id":  "P055",
-                      "num":  55,
+                      "id":  "P056",
+                      "num":  56,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "revision",
                       "titre_fr":  "Révision espacée : je redis sans regarder",
@@ -802,16 +817,16 @@
                                    "P01",
                                    "P10",
                                    "P139",
-                                   "P55",
-                                   "P109",
-                                   "P19",
-                                   "P17",
-                                   "P89"
+                                   "P41",
+                                   "P88",
+                                   "P80",
+                                   "P15",
+                                   "P25"
                                ]
                   },
                   {
-                      "id":  "P056",
-                      "num":  56,
+                      "id":  "P057",
+                      "num":  57,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "revision",
                       "titre_fr":  "Révision : les phrases de cette partie, en désordre",
@@ -829,8 +844,8 @@
                                ]
                   },
                   {
-                      "id":  "P057",
-                      "num":  57,
+                      "id":  "P058",
+                      "num":  58,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "Situation libre : je choisis une scène de la partie et je la joue avec le tuteur",
@@ -845,8 +860,8 @@
                                ]
                   },
                   {
-                      "id":  "P058",
-                      "num":  58,
+                      "id":  "P059",
+                      "num":  59,
                       "partie":  "Partie 2 — Objets, lieux, voyage, santé (leçons 5 à 8 et bilan 2)",
                       "type":  "bilan",
                       "titre_fr":  "Bilan de la partie 2 : je sais dire… (auto-évaluation)",
@@ -880,8 +895,8 @@
                                ]
                   },
                   {
-                      "id":  "P059",
-                      "num":  59,
+                      "id":  "P060",
+                      "num":  60,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Mes yeux sont faibles. / Je cherche des livres de commentaire du Coran faciles. / Je voudrais des cahiers et des stylos.",
@@ -894,8 +909,8 @@
                                ]
                   },
                   {
-                      "id":  "P060",
-                      "num":  60,
+                      "id":  "P061",
+                      "num":  61,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Avez-vous des exemplaires du Coran en gros caractères ?",
@@ -906,8 +921,8 @@
                                ]
                   },
                   {
-                      "id":  "P061",
-                      "num":  61,
+                      "id":  "P062",
+                      "num":  62,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À la librairie — j\u0027écoute, je répète, je joue A puis B",
@@ -918,8 +933,8 @@
                                ]
                   },
                   {
-                      "id":  "P062",
-                      "num":  62,
+                      "id":  "P063",
+                      "num":  63,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À la librairie avec le tuteur",
@@ -930,8 +945,8 @@
                                ]
                   },
                   {
-                      "id":  "P063",
-                      "num":  63,
+                      "id":  "P064",
+                      "num":  64,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Que voulez-vous ? / Où habitez-vous ? / Ma mère est allée au marché.",
@@ -944,8 +959,8 @@
                                ]
                   },
                   {
-                      "id":  "P064",
-                      "num":  64,
+                      "id":  "P065",
+                      "num":  65,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Je voudrais inscrire ma fille à l\u0027école. / Comment s\u0027appelle-t-elle ? Et quel âge a-t-elle ? / Quand commencent les cours ?",
@@ -958,8 +973,8 @@
                                ]
                   },
                   {
-                      "id":  "P065",
-                      "num":  65,
+                      "id":  "P066",
+                      "num":  66,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Quelle école ? Celle qui est proche ou la grande ?",
@@ -970,8 +985,8 @@
                                ]
                   },
                   {
-                      "id":  "P066",
-                      "num":  66,
+                      "id":  "P067",
+                      "num":  67,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À la mairie : inscrire son enfant — j\u0027écoute, je répète, je joue A puis B",
@@ -982,8 +997,8 @@
                                ]
                   },
                   {
-                      "id":  "P067",
-                      "num":  67,
+                      "id":  "P068",
+                      "num":  68,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À la mairie : inscrire son enfant avec le tuteur",
@@ -994,8 +1009,8 @@
                                ]
                   },
                   {
-                      "id":  "P068",
-                      "num":  68,
+                      "id":  "P069",
+                      "num":  69,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Ils cherchent des livres. / Combien coûte le sac de riz ? / Combien je te dois ?",
@@ -1008,8 +1023,8 @@
                                ]
                   },
                   {
-                      "id":  "P069",
-                      "num":  69,
+                      "id":  "P070",
+                      "num":  70,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Je voudrais un sac et quatre pains. / Le compte est juste, louange à Allah.",
@@ -1021,8 +1036,8 @@
                                ]
                   },
                   {
-                      "id":  "P070",
-                      "num":  70,
+                      "id":  "P071",
+                      "num":  71,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À l\u0027épicerie — j\u0027écoute, je répète, je joue A puis B",
@@ -1033,8 +1048,8 @@
                                ]
                   },
                   {
-                      "id":  "P071",
-                      "num":  71,
+                      "id":  "P072",
+                      "num":  72,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À l\u0027épicerie avec le tuteur",
@@ -1045,8 +1060,8 @@
                                ]
                   },
                   {
-                      "id":  "P072",
-                      "num":  72,
+                      "id":  "P073",
+                      "num":  73,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Êtes-vous étudiantes à l\u0027institut ? / Nous sommes étudiantes là-bas. Viens avec nous ! (à une femme) / Les ingénieurs et les étudiants portent les cartons.",
@@ -1059,8 +1074,8 @@
                                ]
                   },
                   {
-                      "id":  "P073",
-                      "num":  73,
+                      "id":  "P074",
+                      "num":  74,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Et les bénévoles ? Qu\u0027ont-ils ? / Les bénévoles (femmes) sont près des légumes. / As-tu du temps demain ? (à un homme)",
@@ -1073,8 +1088,8 @@
                                ]
                   },
                   {
-                      "id":  "P074",
-                      "num":  74,
+                      "id":  "P075",
+                      "num":  75,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Des amies du quartier — j\u0027écoute, je répète, je joue A puis B",
@@ -1085,8 +1100,8 @@
                                ]
                   },
                   {
-                      "id":  "P075",
-                      "num":  75,
+                      "id":  "P076",
+                      "num":  76,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Des amies du quartier avec le tuteur",
@@ -1097,8 +1112,8 @@
                                ]
                   },
                   {
-                      "id":  "P076",
-                      "num":  76,
+                      "id":  "P077",
+                      "num":  77,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : La journée de solidarité — j\u0027écoute, je répète, je joue A puis B",
@@ -1109,8 +1124,8 @@
                                ]
                   },
                   {
-                      "id":  "P077",
-                      "num":  77,
+                      "id":  "P078",
+                      "num":  78,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : La journée de solidarité avec le tuteur",
@@ -1121,8 +1136,8 @@
                                ]
                   },
                   {
-                      "id":  "P078",
-                      "num":  78,
+                      "id":  "P079",
+                      "num":  79,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "revision",
                       "titre_fr":  "Révision espacée : je redis sans regarder",
@@ -1131,17 +1146,17 @@
                       "refs":  [
                                    "P01",
                                    "P12",
-                                   "P38",
-                                   "P102",
-                                   "P20",
-                                   "P23",
-                                   "P30",
-                                   "P35"
+                                   "P18",
+                                   "P81",
+                                   "P113",
+                                   "P32",
+                                   "P126",
+                                   "P07"
                                ]
                   },
                   {
-                      "id":  "P079",
-                      "num":  79,
+                      "id":  "P080",
+                      "num":  80,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "revision",
                       "titre_fr":  "Révision : les phrases de cette partie, en désordre",
@@ -1159,8 +1174,8 @@
                                ]
                   },
                   {
-                      "id":  "P080",
-                      "num":  80,
+                      "id":  "P081",
+                      "num":  81,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "Situation libre : je choisis une scène de la partie et je la joue avec le tuteur",
@@ -1175,8 +1190,8 @@
                                ]
                   },
                   {
-                      "id":  "P081",
-                      "num":  81,
+                      "id":  "P082",
+                      "num":  82,
                       "partie":  "Partie 3 — Librairie, mairie, achats et prix (leçons 9 à 12 et bilan 3)",
                       "type":  "bilan",
                       "titre_fr":  "Bilan de la partie 3 : je sais dire… (auto-évaluation)",
@@ -1213,8 +1228,8 @@
                                ]
                   },
                   {
-                      "id":  "P082",
-                      "num":  82,
+                      "id":  "P083",
+                      "num":  83,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Il est dix heures et quart. / À quelle heure ? / Je travaille le samedi matin.",
@@ -1227,8 +1242,8 @@
                                ]
                   },
                   {
-                      "id":  "P083",
-                      "num":  83,
+                      "id":  "P084",
+                      "num":  84,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Mon travail finit à une heure.",
@@ -1239,8 +1254,8 @@
                                ]
                   },
                   {
-                      "id":  "P084",
-                      "num":  84,
+                      "id":  "P085",
+                      "num":  85,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : À quelle heure est l\u0027examen ? — j\u0027écoute, je répète, je joue A puis B",
@@ -1251,8 +1266,8 @@
                                ]
                   },
                   {
-                      "id":  "P085",
-                      "num":  85,
+                      "id":  "P086",
+                      "num":  86,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : À quelle heure est l\u0027examen ? avec le tuteur",
@@ -1263,8 +1278,8 @@
                                ]
                   },
                   {
-                      "id":  "P086",
-                      "num":  86,
+                      "id":  "P087",
+                      "num":  87,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Avez-vous du temps demain, tous les deux ? / J\u0027ai deux garçons et une fille. / Combien de valises as-tu avec toi ? (à un homme)",
@@ -1277,8 +1292,8 @@
                                ]
                   },
                   {
-                      "id":  "P087",
-                      "num":  87,
+                      "id":  "P088",
+                      "num":  88,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : J\u0027ai une idée. / Belle idée, si Allah le veut. / J\u0027ai mon téléphone sur moi.",
@@ -1291,8 +1306,8 @@
                                ]
                   },
                   {
-                      "id":  "P088",
-                      "num":  88,
+                      "id":  "P089",
+                      "num":  89,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Il a trois enfants : deux garçons et une fille.",
@@ -1303,8 +1318,8 @@
                                ]
                   },
                   {
-                      "id":  "P089",
-                      "num":  89,
+                      "id":  "P090",
+                      "num":  90,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Une idée pour demain — j\u0027écoute, je répète, je joue A puis B",
@@ -1315,8 +1330,8 @@
                                ]
                   },
                   {
-                      "id":  "P090",
-                      "num":  90,
+                      "id":  "P091",
+                      "num":  91,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Une idée pour demain avec le tuteur",
@@ -1327,8 +1342,8 @@
                                ]
                   },
                   {
-                      "id":  "P091",
-                      "num":  91,
+                      "id":  "P092",
+                      "num":  92,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Des voisins, un couple — j\u0027écoute, je répète, je joue A puis B",
@@ -1339,8 +1354,8 @@
                                ]
                   },
                   {
-                      "id":  "P092",
-                      "num":  92,
+                      "id":  "P093",
+                      "num":  93,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Des voisins, un couple avec le tuteur",
@@ -1351,8 +1366,8 @@
                                ]
                   },
                   {
-                      "id":  "P093",
-                      "num":  93,
+                      "id":  "P094",
+                      "num":  94,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Ils habitent tous les deux à Dakar. / Qui est cet homme sur la photo ? / Nous l\u0027appelons chaque vendredi.",
@@ -1365,8 +1380,8 @@
                                ]
                   },
                   {
-                      "id":  "P094",
-                      "num":  94,
+                      "id":  "P095",
+                      "num":  95,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Sers-toi : du thé et des dattes. (à un homme)",
@@ -1377,8 +1392,8 @@
                                ]
                   },
                   {
-                      "id":  "P095",
-                      "num":  95,
+                      "id":  "P096",
+                      "num":  96,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Les photos de famille — j\u0027écoute, je répète, je joue A puis B",
@@ -1389,8 +1404,8 @@
                                ]
                   },
                   {
-                      "id":  "P096",
-                      "num":  96,
+                      "id":  "P097",
+                      "num":  97,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Les photos de famille avec le tuteur",
@@ -1401,8 +1416,8 @@
                                ]
                   },
                   {
-                      "id":  "P097",
-                      "num":  97,
+                      "id":  "P098",
+                      "num":  98,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Qu\u0027Allah vous bénisse dans votre maison, tous les deux. / Mes genoux sont faibles. / Que la paix soit sur vous, puis-je entrer ?",
@@ -1415,8 +1430,8 @@
                                ]
                   },
                   {
-                      "id":  "P098",
-                      "num":  98,
+                      "id":  "P099",
+                      "num":  99,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Il n\u0027y a pas de sucre dans le thé. / Y a-t-il un ascenseur dans l\u0027immeuble ?",
@@ -1428,8 +1443,8 @@
                                ]
                   },
                   {
-                      "id":  "P099",
-                      "num":  99,
+                      "id":  "P100",
+                      "num":  100,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Recevoir un invité — j\u0027écoute, je répète, je joue A puis B",
@@ -1440,8 +1455,8 @@
                                ]
                   },
                   {
-                      "id":  "P100",
-                      "num":  100,
+                      "id":  "P101",
+                      "num":  101,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Recevoir un invité avec le tuteur",
@@ -1452,8 +1467,8 @@
                                ]
                   },
                   {
-                      "id":  "P101",
-                      "num":  101,
+                      "id":  "P102",
+                      "num":  102,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Deux sœurs parlent de leurs parents — j\u0027écoute, je répète, je joue A puis B",
@@ -1464,8 +1479,8 @@
                                ]
                   },
                   {
-                      "id":  "P102",
-                      "num":  102,
+                      "id":  "P103",
+                      "num":  103,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Deux sœurs parlent de leurs parents avec le tuteur",
@@ -1476,8 +1491,8 @@
                                ]
                   },
                   {
-                      "id":  "P103",
-                      "num":  103,
+                      "id":  "P104",
+                      "num":  104,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : J\u0027apporterai des dattes pour tout le monde. / Est-ce que j\u0027apporte quelque chose ? / Non, nous avons tout.",
@@ -1490,8 +1505,8 @@
                                ]
                   },
                   {
-                      "id":  "P104",
-                      "num":  104,
+                      "id":  "P105",
+                      "num":  105,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Inviter à déjeuner — j\u0027écoute, je répète, je joue A puis B",
@@ -1502,8 +1517,8 @@
                                ]
                   },
                   {
-                      "id":  "P105",
-                      "num":  105,
+                      "id":  "P106",
+                      "num":  106,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Inviter à déjeuner avec le tuteur",
@@ -1514,8 +1529,8 @@
                                ]
                   },
                   {
-                      "id":  "P106",
-                      "num":  106,
+                      "id":  "P107",
+                      "num":  107,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "revision",
                       "titre_fr":  "Révision espacée : je redis sans regarder",
@@ -1524,17 +1539,17 @@
                       "refs":  [
                                    "P01",
                                    "P136",
-                                   "P79",
-                                   "P20",
-                                   "P26",
-                                   "P31",
-                                   "P40",
-                                   "P50"
+                                   "P61",
+                                   "P113",
+                                   "P24",
+                                   "P29",
+                                   "P37",
+                                   "P48"
                                ]
                   },
                   {
-                      "id":  "P107",
-                      "num":  107,
+                      "id":  "P108",
+                      "num":  108,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "revision",
                       "titre_fr":  "Révision : les phrases de cette partie, en désordre",
@@ -1552,8 +1567,8 @@
                                ]
                   },
                   {
-                      "id":  "P108",
-                      "num":  108,
+                      "id":  "P109",
+                      "num":  109,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "Situation libre : je choisis une scène de la partie et je la joue avec le tuteur",
@@ -1570,8 +1585,8 @@
                                ]
                   },
                   {
-                      "id":  "P109",
-                      "num":  109,
+                      "id":  "P110",
+                      "num":  110,
                       "partie":  "Partie 4 — L\u0027heure, la famille, recevoir et inviter (leçons 13 à 16 et bilan 4)",
                       "type":  "bilan",
                       "titre_fr":  "Bilan de la partie 4 : je sais dire… (auto-évaluation)",
@@ -1611,8 +1626,8 @@
                                ]
                   },
                   {
-                      "id":  "P110",
-                      "num":  110,
+                      "id":  "P111",
+                      "num":  111,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : L\u0027imam a parlé des voisins. / Quand es-tu rentré du travail ? / Es-tu rentré du marché ?",
@@ -1625,8 +1640,8 @@
                                ]
                   },
                   {
-                      "id":  "P111",
-                      "num":  111,
+                      "id":  "P112",
+                      "num":  112,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Le jour de l\u0027Aïd, elle a mangé trois dattes avant la prière. / Bonne fête ! / Qu\u0027Allah accepte de nous et de vous.",
@@ -1639,8 +1654,8 @@
                                ]
                   },
                   {
-                      "id":  "P112",
-                      "num":  112,
+                      "id":  "P113",
+                      "num":  113,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Je suis sorti(e) de la maison après la prière de l\u0027aube. / J\u0027ai mangé trois dattes. / Je parle un peu l\u0027arabe.",
@@ -1653,8 +1668,8 @@
                                ]
                   },
                   {
-                      "id":  "P113",
-                      "num":  113,
+                      "id":  "P114",
+                      "num":  114,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Le jour de la fête — j\u0027écoute, je répète, je joue A puis B",
@@ -1665,8 +1680,8 @@
                                ]
                   },
                   {
-                      "id":  "P114",
-                      "num":  114,
+                      "id":  "P115",
+                      "num":  115,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Le jour de la fête avec le tuteur",
@@ -1677,8 +1692,8 @@
                                ]
                   },
                   {
-                      "id":  "P115",
-                      "num":  115,
+                      "id":  "P116",
+                      "num":  116,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Hier, je suis allé(e) au travail, puis je suis rentré(e). / As-tu des tomates fraîches ? (au marchand)",
@@ -1690,8 +1705,8 @@
                                ]
                   },
                   {
-                      "id":  "P116",
-                      "num":  116,
+                      "id":  "P117",
+                      "num":  117,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Chez le marchand de légumes — j\u0027écoute, je répète, je joue A puis B",
@@ -1702,8 +1717,8 @@
                                ]
                   },
                   {
-                      "id":  "P117",
-                      "num":  117,
+                      "id":  "P118",
+                      "num":  118,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Chez le marchand de légumes avec le tuteur",
@@ -1714,8 +1729,8 @@
                                ]
                   },
                   {
-                      "id":  "P118",
-                      "num":  118,
+                      "id":  "P119",
+                      "num":  119,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Révisez bien ! / Vous comprenez ? / Nous sommes allés à la mosquée.",
@@ -1728,8 +1743,8 @@
                                ]
                   },
                   {
-                      "id":  "P119",
-                      "num":  119,
+                      "id":  "P120",
+                      "num":  120,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Nous avons beaucoup lu. / Je t\u0027en prie, assieds-toi. (à un homme) / Nous avons beaucoup appris.",
@@ -1742,8 +1757,8 @@
                                ]
                   },
                   {
-                      "id":  "P120",
-                      "num":  120,
+                      "id":  "P121",
+                      "num":  121,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "carte_phrases",
                       "titre_fr":  "Phrase du jour et ses variations : Maintenant, je comprends les courtes sourates dans ma prière. / Félicitations à vous tous ! / Bravo à vous tous !",
@@ -1756,8 +1771,8 @@
                                ]
                   },
                   {
-                      "id":  "P121",
-                      "num":  121,
+                      "id":  "P122",
+                      "num":  122,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Un groupe d\u0027élèves — j\u0027écoute, je répète, je joue A puis B",
@@ -1768,8 +1783,8 @@
                                ]
                   },
                   {
-                      "id":  "P122",
-                      "num":  122,
+                      "id":  "P123",
+                      "num":  123,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Un groupe d\u0027élèves avec le tuteur",
@@ -1780,8 +1795,8 @@
                                ]
                   },
                   {
-                      "id":  "P123",
-                      "num":  123,
+                      "id":  "P124",
+                      "num":  124,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "conversation",
                       "titre_fr":  "Conversation : Bilan : je me présente — j\u0027écoute, je répète, je joue A puis B",
@@ -1792,8 +1807,8 @@
                                ]
                   },
                   {
-                      "id":  "P124",
-                      "num":  124,
+                      "id":  "P125",
+                      "num":  125,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "À toi de parler : Bilan : je me présente avec le tuteur",
@@ -1804,8 +1819,8 @@
                                ]
                   },
                   {
-                      "id":  "P125",
-                      "num":  125,
+                      "id":  "P126",
+                      "num":  126,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "revision",
                       "titre_fr":  "Révision espacée : je redis sans regarder",
@@ -1814,17 +1829,17 @@
                       "refs":  [
                                    "P01",
                                    "P140",
-                                   "P116",
-                                   "P23",
-                                   "P31",
-                                   "P120",
-                                   "P91",
-                                   "P63"
+                                   "P109",
+                                   "P32",
+                                   "P29",
+                                   "P97",
+                                   "P53",
+                                   "P34"
                                ]
                   },
                   {
-                      "id":  "P126",
-                      "num":  126,
+                      "id":  "P127",
+                      "num":  127,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "revision",
                       "titre_fr":  "Révision : les phrases de cette partie, en désordre",
@@ -1842,8 +1857,8 @@
                                ]
                   },
                   {
-                      "id":  "P127",
-                      "num":  127,
+                      "id":  "P128",
+                      "num":  128,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "a_toi_de_parler",
                       "titre_fr":  "Situation libre : je choisis une scène de la partie et je la joue avec le tuteur",
@@ -1857,8 +1872,8 @@
                                ]
                   },
                   {
-                      "id":  "P128",
-                      "num":  128,
+                      "id":  "P129",
+                      "num":  129,
                       "partie":  "Partie 5 — Raconter au passé, le marché, le bilan (leçons 17 à 20 et examen)",
                       "type":  "bilan",
                       "titre_fr":  "Bilan de la partie 5 : je sais dire… (auto-évaluation)",
@@ -1892,8 +1907,8 @@
                                ]
                   },
                   {
-                      "id":  "P129",
-                      "num":  129,
+                      "id":  "P130",
+                      "num":  130,
                       "partie":  "Clôture",
                       "type":  "index",
                       "titre_fr":  "Index des phrases par thème",
@@ -1904,8 +1919,8 @@
                                ]
                   },
                   {
-                      "id":  "P130",
-                      "num":  130,
+                      "id":  "P131",
+                      "num":  131,
                       "partie":  "Clôture",
                       "type":  "index",
                       "titre_fr":  "Index des conversations et scénarios du tuteur",
@@ -1916,8 +1931,8 @@
                                ]
                   },
                   {
-                      "id":  "P131",
-                      "num":  131,
+                      "id":  "P132",
+                      "num":  132,
                       "partie":  "Clôture",
                       "type":  "bilan",
                       "titre_fr":  "Je sais parler au niveau 2 : grille finale",
@@ -4154,6 +4169,32 @@
                                             "ad2 L21"
                                         ],
                         "modele":  "ad2/l21"
+                    },
+                    {
+                        "id":  "P142",
+                        "theme":  "classe",
+                        "cible":  "groupe_f",
+                        "ar":  "هَلْ هٰذَا كِتَابُكُنَّ؟",
+                        "fr":  "Est-ce votre livre ? (à un groupe de femmes)",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "ad1"
+                                        ],
+                        "modele":  "ad2/l08"
+                    },
+                    {
+                        "id":  "P143",
+                        "theme":  "objets",
+                        "cible":  "neutre",
+                        "ar":  "هٰذِهِ كُتُبُهُنَّ.",
+                        "fr":  "Ce sont leurs livres (à elles).",
+                        "variations":  null,
+                        "unite":  0,
+                        "source_mots":  [
+                                            "ad1"
+                                        ],
+                        "modele":  "ad2/l08"
                     }
                 ],
     "conversations":  [

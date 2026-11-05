@@ -2,6 +2,7 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
   import { isStaff, type ProfileInfo } from '$lib/session';
@@ -46,6 +47,10 @@
 
 <EnTete titre={t('mj.titre')} ar="مَجَالِسُ الْعِلْمِ" icon="" />
 <p class="muted"><Bidi text={t('mj.intro')} /></p>
+<!-- Mukhtaṣar Khalīl (interrupteur « khalil », canal bêta ; 05/11 : rangé avec les textes mālikites, plus dans « Vivre l'islam ») -->
+{#if fn('khalil') && !enfant}{#await import('$lib/lectures/carte') then m}<m.Carte
+      seul="khalil"
+    />{/await}{/if}
 {#if groupe}<BandeauRelecture />{/if}
 {#if enfant}<p class="warnbox" data-testid="mj-enfant"><Bidi text={t('mj.enfant')} /></p>{/if}
 

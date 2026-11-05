@@ -97,7 +97,9 @@ test.describe('Lectures : Khalīl et Histoires', () => {
     await expect(page.getByTestId('kh-ferme')).toBeVisible({ timeout: 20_000 });
     await page.goto('/histoires');
     await expect(page.getByTestId('hx-ferme')).toBeVisible();
-    await page.goto('/quotidien');
+    await page.goto('/lectures');
+    await expect(page.getByTestId('lx-cartes')).toHaveCount(0);
+    await page.goto('/madjaliss');
     await expect(page.getByTestId('lx-cartes')).toHaveCount(0);
   });
 
@@ -106,8 +108,10 @@ test.describe('Lectures : Khalīl et Histoires', () => {
   }) => {
     await regler(adm, { khalil: 'on', histoires: 'off' });
     await newAdult(page, 'lx-khalil');
-    await page.goto('/quotidien');
+    await page.goto('/madjaliss');
     await expect(page.getByTestId('lx-khalil')).toBeVisible({ timeout: 20_000 });
+    await page.goto('/quotidien');
+    await expect(page.getByTestId('lx-cartes')).toHaveCount(0);
     await page.goto('/khalil');
     const som = page.getByTestId('kh-sommaire');
     await expect(som).toBeVisible({ timeout: 20_000 });

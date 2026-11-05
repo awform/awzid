@@ -148,6 +148,8 @@ for (const n of NIVEAUX) {
           const v = buildVideoCahier(p as unknown as PageIn, { hasAudio });
           for (const u of unitesDe(v)) {
             if (u.a === 'q' || u.etiquette) continue;
+            // (05/11) marque de coupe « […] » des extraits (cl_ado1 P105) : ponctuation, pas un texte à dire
+            if (!/[\u0621-\u064A]/.test(u.ar ?? '')) continue;
             if (u.voix === 'oui') {
               oui++;
               if (contientBasmala(u.ar) && !basmalaSeule(u.ar)) fautes.add(p.id);

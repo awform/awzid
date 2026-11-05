@@ -4,7 +4,7 @@
                  "serie":  "en",
                  "niveau":  3,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:38",
+                 "genere_le":  "2026-11-05 05:10",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en3, livrets lect\\en1 à en3) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -524,8 +524,8 @@
                                          },
                                          {
                                              "ref":  "P033",
-                                             "ar":  "هٰذَا صَحْنِي، وَهٰذَا صَحْنُهُ، وَهٰذَا صَحْنُهَا.",
-                                             "fr":  "Voici mon assiette, voici son assiette (à lui), et voici son assiette (à elle)."
+                                             "ar":  "هٰذَا صَحْنِي، وَذٰلِكَ صَحْنُهُ.",
+                                             "fr":  "Voici mon assiette, et celle-là, c\u0027est la sienne (à lui)."
                                          },
                                          {
                                              "ref":  "P034",
@@ -1866,7 +1866,7 @@
                       "partie":  3,
                       "theme":  "repas",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Voici mon assiette, voici son assiette (à lui), et voici son assiette (à elle). / On ne gaspille pas : on prend un peu, puis on se ressert.",
+                      "titre_fr":  "Voici mon assiette, et celle-là, c\u0027est la sienne (à lui). / On ne gaspille pas : on prend un peu, puis on se ressert.",
                       "apres":  "l13",
                       "apres_n":  13,
                       "refs":  [
@@ -3311,12 +3311,13 @@
                         "id":  "P033",
                         "theme":  "repas",
                         "cible":  "neutre",
-                        "ar":  "هٰذَا صَحْنِي، وَهٰذَا صَحْنُهُ، وَهٰذَا صَحْنُهَا.",
-                        "fr":  "Voici mon assiette, voici son assiette (à lui), et voici son assiette (à elle).",
+                        "ar":  "هٰذَا صَحْنِي، وَذٰلِكَ صَحْنُهُ.",
+                        "fr":  "Voici mon assiette, et celle-là, c\u0027est la sienne (à lui).",
                         "variations":  null,
                         "unite":  13,
                         "source_mots":  [
                                             "en1",
+                                            "en2",
                                             "en3 L13"
                                         ],
                         "modele":  "en3/l13"

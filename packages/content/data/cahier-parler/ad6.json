@@ -4,7 +4,7 @@
                  "serie":  "ad",
                  "niveau":  6,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:34",
+                 "genere_le":  "2026-11-05 05:06",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad6, livrets lect\\ad1 à ad6) — formes exactes vérifiées",
                  "facultatif":  true,
@@ -231,7 +231,7 @@
                        "titre_fr":  "Emprunter et l\u0027écrire",
                        "titre_ar":  "الدَّيْنُ",
                        "accroche_fr":  "À la fin de cette étape, je sais emprunter, fixer une date et écrire une reconnaissance de dette.",
-                       "unite":  6,
+                       "unite":  5,
                        "phrases":  [
                                        "P017",
                                        "P018",
@@ -282,19 +282,19 @@
                                              "fr":  "Et comment protéger mon droit si tu ne paies pas à temps ? (à un homme)"
                                          },
                                          {
+                                             "ref":  "C04.1",
+                                             "ar":  "نَكْتُبُ الْوَرَقَةَ الْآنَ. أَمْلِي عَلَيَّ.",
+                                             "fr":  "Nous écrivons la feuille maintenant. Dicte-moi."
+                                         },
+                                         {
                                              "ref":  "C04.3",
                                              "ar":  "نَكْتُبُ الْمَبْلَغَ بِالْأَرْقَامِ وَبِالْحُرُوفِ: سِتُّمِئَةِ يُورُو.",
                                              "fr":  "Nous écrivons la somme en chiffres et en lettres : six cents euros."
                                          },
                                          {
                                              "ref":  "C04.6",
-                                             "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَهَلْ يَكْفِي شَاهِدٌ وَاحِدٌ؟",
-                                             "fr":  "Qu\u0027Allah te récompense. Un seul témoin suffit-il ?"
-                                         },
-                                         {
-                                             "ref":  "C05.2",
-                                             "ar":  "وَكَمْ ثَمَنُ الْكِيسِ؟",
-                                             "fr":  "Et combien coûte le sac ?"
+                                             "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَمَنْ يَشْهَدُ؟",
+                                             "fr":  "Qu\u0027Allah te récompense. Et qui sera témoin ?"
                                          }
                                      ]
                    },
@@ -1049,9 +1049,9 @@
                                              "fr":  "Elles ont assisté au cours, et chacune d\u0027elles a écrit une lettre."
                                          },
                                          {
-                                             "ref":  "C19.2",
-                                             "ar":  "لِأَنَّ الْمِيمَ زَائِدَةٌ. احْذِفْهَا، وَابْحَثْ عَنِ الْجَذْرِ.",
-                                             "fr":  "C\u0027est que le م est ajouté. Enlève-le, et cherche la racine."
+                                             "ref":  "C19.3",
+                                             "ar":  "صَحِيحٌ! وَجَدْتُهَا الْآنَ.",
+                                             "fr":  "C\u0027est vrai ! Je l\u0027ai trouvé maintenant."
                                          }
                                      ]
                    },
@@ -1632,6 +1632,32 @@
                       "partie":  2,
                       "theme":  "emprunt",
                       "type":  "conversation",
+                      "titre_fr":  "Conversation : Écrire une reconnaissance de dette — j\u0027écoute, je répète, je joue A puis B",
+                      "apres":  "l04",
+                      "apres_n":  4,
+                      "refs":  [
+                                   "C04"
+                               ]
+                  },
+                  {
+                      "id":  "P029",
+                      "num":  29,
+                      "partie":  2,
+                      "theme":  "emprunt",
+                      "type":  "a_toi_de_parler",
+                      "titre_fr":  "À toi de parler : Écrire une reconnaissance de dette avec le tuteur",
+                      "apres":  "l04",
+                      "apres_n":  4,
+                      "refs":  [
+                                   "C04"
+                               ]
+                  },
+                  {
+                      "id":  "P030",
+                      "num":  30,
+                      "partie":  2,
+                      "theme":  "emprunt",
+                      "type":  "conversation",
                       "titre_fr":  "Conversation : Acheter à crédit, sans supplément — j\u0027écoute, je répète, je joue A puis B",
                       "apres":  "l05",
                       "apres_n":  5,
@@ -1640,8 +1666,8 @@
                                ]
                   },
                   {
-                      "id":  "P029",
-                      "num":  29,
+                      "id":  "P031",
+                      "num":  31,
                       "partie":  2,
                       "theme":  "emprunt",
                       "type":  "a_toi_de_parler",
@@ -1653,40 +1679,14 @@
                                ]
                   },
                   {
-                      "id":  "P030",
-                      "num":  30,
-                      "partie":  2,
-                      "theme":  "emprunt",
-                      "type":  "conversation",
-                      "titre_fr":  "Conversation : Écrire une reconnaissance de dette — j\u0027écoute, je répète, je joue A puis B",
-                      "apres":  "l06",
-                      "apres_n":  6,
-                      "refs":  [
-                                   "C04"
-                               ]
-                  },
-                  {
-                      "id":  "P031",
-                      "num":  31,
-                      "partie":  2,
-                      "theme":  "emprunt",
-                      "type":  "a_toi_de_parler",
-                      "titre_fr":  "À toi de parler : Écrire une reconnaissance de dette avec le tuteur",
-                      "apres":  "l06",
-                      "apres_n":  6,
-                      "refs":  [
-                                   "C04"
-                               ]
-                  },
-                  {
                       "id":  "P032",
                       "num":  32,
                       "partie":  2,
                       "theme":  "emprunt",
                       "type":  "antiseche",
                       "titre_fr":  "Antisèche : Emprunter et l\u0027écrire — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
-                      "apres":  "l06",
-                      "apres_n":  6,
+                      "apres":  "l05",
+                      "apres_n":  5,
                       "refs":  [
                                    "P017",
                                    "P018",
@@ -1695,9 +1695,9 @@
                                    "P022",
                                    "P023",
                                    "P024",
+                                   "C04.1",
                                    "C04.3",
-                                   "C04.6",
-                                   "C05.2"
+                                   "C04.6"
                                ]
                   },
                   {
@@ -2083,8 +2083,8 @@
                       "apres":  "l10",
                       "apres_n":  10,
                       "refs":  [
-                                   "C05",
                                    "C04",
+                                   "C05",
                                    "C06",
                                    "C08",
                                    "C07",
@@ -2999,7 +2999,7 @@
                                    "P101",
                                    "P130",
                                    "P136",
-                                   "C19.2"
+                                   "C19.3"
                                ]
                   },
                   {
@@ -5834,13 +5834,13 @@
                               "picto_A":  "stylo",
                               "role_B":  "l\u0027emprunteuse",
                               "picto_B":  "lettre",
-                              "unite":  6,
+                              "unite":  4,
                               "modele":  "ad6/l04",
                               "repliques":  [
                                                 {
                                                     "qui":  "A",
-                                                    "ar":  "نَكْتُبُ الْوَرَقَةَ الْآنَ. أَمْلِي عَلَيَّ؛ فَالْمَدِينُ هُوَ الَّذِي يُمْلِي.",
-                                                    "fr":  "Nous écrivons la feuille maintenant. Dicte-moi : c\u0027est le débiteur qui dicte.",
+                                                    "ar":  "نَكْتُبُ الْوَرَقَةَ الْآنَ. أَمْلِي عَلَيَّ.",
+                                                    "fr":  "Nous écrivons la feuille maintenant. Dicte-moi.",
                                                     "unite":  4
                                                 },
                                                 {
@@ -5863,20 +5863,20 @@
                                                 },
                                                 {
                                                     "qui":  "A",
-                                                    "ar":  "وَإِنْ تَأَخَّرَ الرَّدُّ لِعُذْرٍ، فَالْمُهْلَةُ حَقٌّ لَكِ، بِلَا أَيِّ زِيَادَةٍ.",
-                                                    "fr":  "Et si le remboursement tarde pour une raison valable, le délai est ton droit, sans aucun supplément.",
-                                                    "unite":  6
+                                                    "ar":  "وَإِنْ تَأَخَّرَ الرَّدُّ لِعُذْرٍ، فَلَا بَأْسَ، بِلَا أَيِّ زِيَادَةٍ.",
+                                                    "fr":  "Et si le remboursement tarde pour une raison valable, ce n\u0027est pas grave, sans aucun supplément.",
+                                                    "unite":  4
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَهَلْ يَكْفِي شَاهِدٌ وَاحِدٌ؟",
-                                                    "fr":  "Qu\u0027Allah te récompense. Un seul témoin suffit-il ?",
+                                                    "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَمَنْ يَشْهَدُ؟",
+                                                    "fr":  "Qu\u0027Allah te récompense. Et qui sera témoin ?",
                                                     "unite":  0
                                                 },
                                                 {
                                                     "qui":  "A",
-                                                    "ar":  "لَا، يَكْتُبُ الشَّاهِدَانِ اسْمَيْهِمَا وَتَارِيخَ الْيَوْمِ، ثُمَّ يُوَقِّعُ الْجَمِيعُ.",
-                                                    "fr":  "Non : les deux témoins écrivent leur nom et la date du jour, puis tout le monde signe.",
+                                                    "ar":  "يَكْتُبُ الشَّاهِدَانِ اسْمَيْهِمَا وَتَارِيخَ الْيَوْمِ، ثُمَّ يُوَقِّعُ الْجَمِيعُ.",
+                                                    "fr":  "Les deux témoins écrivent leur nom et la date du jour, puis tout le monde signe.",
                                                     "unite":  4
                                                 },
                                                 {
@@ -5889,12 +5889,12 @@
                               "consigne_tuteur":  "Le tuteur est une amie qui te prête de l\u0027argent. Écrivez ensemble le papier : la somme, la date du remboursement, les témoins.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "بِالْكِتَابَةِ تُحْفَظُ الْحُقُوقُ، وَتَبْقَى الْمَوَدَّةُ.",
-                                                         "fr":  "Par l\u0027écrit, les droits sont protégés, et l\u0027affection demeure."
+                                                         "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَمَنْ يَشْهَدُ؟",
+                                                         "fr":  "Qu\u0027Allah te récompense. Et qui sera témoin ?"
                                                      },
                                                      {
-                                                         "ar":  "جَزَاكِ اللَّهُ خَيْرًا. وَهَلْ يَكْفِي شَاهِدٌ وَاحِدٌ؟",
-                                                         "fr":  "Qu\u0027Allah te récompense. Un seul témoin suffit-il ?"
+                                                         "ar":  "بِالْكِتَابَةِ تُحْفَظُ الْحُقُوقُ، وَتَبْقَى الْمَوَدَّةُ.",
+                                                         "fr":  "Par l\u0027écrit, les droits sont protégés, et l\u0027affection demeure."
                                                      },
                                                      {
                                                          "ar":  "وَأَرُدُّهُ فِي أَوَّلِ يُونْيُو، إِنْ شَاءَ اللَّهُ.",
@@ -5912,8 +5912,7 @@
                                                   "ad4",
                                                   "ad5",
                                                   "ad6 L3",
-                                                  "ad6 L4",
-                                                  "ad6 L6"
+                                                  "ad6 L4"
                                               ]
                           },
                           {
@@ -5975,8 +5974,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "قَبِلْتُ. وَالْبَاقِي فِي أَوَّلِ الشَّهْرِ الْقَادِمِ، بِلَا زِيَادَةٍ.",
-                                                    "fr":  "J\u0027accepte. Et le reste au début du mois prochain, sans supplément.",
+                                                    "ar":  "قَبِلْتُ. وَأَدْفَعُ بَعْدَ ثَلَاثَةِ أَشْهُرٍ، بِلَا زِيَادَةٍ.",
+                                                    "fr":  "J\u0027accepte. Et je paie dans trois mois, sans supplément.",
                                                     "unite":  3
                                                 }
                                             ],
@@ -5991,12 +5990,12 @@
                                                          "fr":  "La dette sera écrite, l\u0027échéance fixée, et deux témoins attesteront."
                                                      },
                                                      {
-                                                         "ar":  "أَقْبَلُ الثَّمَنَ، لٰكِنْ بِلَا زِيَادَةٍ عِنْدَ التَّأَخُّرِ.",
-                                                         "fr":  "J\u0027accepte le prix, mais sans supplément en cas de retard."
+                                                         "ar":  "قَبِلْتُ. وَأَدْفَعُ بَعْدَ ثَلَاثَةِ أَشْهُرٍ، بِلَا زِيَادَةٍ.",
+                                                         "fr":  "J\u0027accepte. Et je paie dans trois mois, sans supplément."
                                                      },
                                                      {
-                                                         "ar":  "قَبِلْتُ. وَالْبَاقِي فِي أَوَّلِ الشَّهْرِ الْقَادِمِ، بِلَا زِيَادَةٍ.",
-                                                         "fr":  "J\u0027accepte. Et le reste au début du mois prochain, sans supplément."
+                                                         "ar":  "أَقْبَلُ الثَّمَنَ، لٰكِنْ بِلَا زِيَادَةٍ عِنْدَ التَّأَخُّرِ.",
+                                                         "fr":  "J\u0027accepte le prix, mais sans supplément en cas de retard."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6059,9 +6058,9 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "الْمُهْلَةُ حَقٌّ لَهَا. سَأَكْتُبُ ذٰلِكَ فِي الدَّفْتَرِ.",
-                                                    "fr":  "Le délai est un droit pour elle. Je vais l\u0027écrire dans le carnet.",
-                                                    "unite":  6
+                                                    "ar":  "نُعْطِيهَا مُهْلَةً. سَأَكْتُبُ ذٰلِكَ فِي الدَّفْتَرِ.",
+                                                    "fr":  "Nous lui donnons un délai. Je vais l\u0027écrire dans le carnet.",
+                                                    "unite":  4
                                                 },
                                                 {
                                                     "qui":  "A",
@@ -6099,12 +6098,12 @@
                                                          "fr":  "Qu\u0027Allah te bénisse ! Tu as un grand cœur."
                                                      },
                                                      {
-                                                         "ar":  "سَأَتَّصِلُ بِهَا الْآنَ، وَأَقُولُ لَهَا: نَحْنُ مَعَكِ.",
-                                                         "fr":  "Je l\u0027appelle tout de suite, et je lui dirai : « Nous sommes avec toi. »"
+                                                         "ar":  "نُعْطِيهَا مُهْلَةً. سَأَكْتُبُ ذٰلِكَ فِي الدَّفْتَرِ.",
+                                                         "fr":  "Nous lui donnons un délai. Je vais l\u0027écrire dans le carnet."
                                                      },
                                                      {
-                                                         "ar":  "الْمُهْلَةُ حَقٌّ لَهَا. سَأَكْتُبُ ذٰلِكَ فِي الدَّفْتَرِ.",
-                                                         "fr":  "Le délai est un droit pour elle. Je vais l\u0027écrire dans le carnet."
+                                                         "ar":  "سَأَتَّصِلُ بِهَا الْآنَ، وَأَقُولُ لَهَا: نَحْنُ مَعَكِ.",
+                                                         "fr":  "Je l\u0027appelle tout de suite, et je lui dirai : « Nous sommes avec toi. »"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7235,8 +7234,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "لِأَنَّ الْمِيمَ زَائِدَةٌ. احْذِفْهَا، وَابْحَثْ عَنِ الْجَذْرِ.",
-                                                    "fr":  "C\u0027est que le م est ajouté. Enlève-le, et cherche la racine.",
+                                                    "ar":  "لِأَنَّ الْمِيمَ زَائِدَةٌ فِي «الْمَسْجِدِ». احْذِفْهَا، وَابْحَثْ عَنِ الْجَذْرِ «سَجَدَ».",
+                                                    "fr":  "C\u0027est que le م est ajouté dans « الْمَسْجِدِ ». Enlève-le, et cherche la racine « سَجَدَ ».",
                                                     "unite":  18
                                                 },
                                                 {
@@ -7598,8 +7597,8 @@
                                                 },
                                                 {
                                                     "qui":  "A",
-                                                    "ar":  "أَعْطِنَا مِثَالًا.",
-                                                    "fr":  "Donnez-nous un exemple.",
+                                                    "ar":  "مِثَالًا مِنْ فَضْلِكِ.",
+                                                    "fr":  "Un exemple, s\u0027il vous plaît.",
                                                     "unite":  21
                                                 },
                                                 {

@@ -4,7 +4,7 @@
                  "serie":  "en",
                  "niveau":  4,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-11-05 02:38",
+                 "genere_le":  "2026-11-05 05:10",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en4, livrets lect\\en1 à en4) — formes exactes vérifiées",
                  "facultatif":  true,
