@@ -32,6 +32,7 @@
   import { t } from '$lib/i18n';
   import Html from './Html.svelte';
   import { construireItems, voisin, type Item } from './lecteur';
+  import type { Source } from '$lib/lecteur/moteur.svelte';
 
   /**
    * Un récit, rendu de la maquette validée (« nouh-v2 ») : bascule enfant / adulte (l'enfant n'a que sa version), typographie des
@@ -105,6 +106,43 @@
   let minuteur = 0;
   let echecs = 0;
   const audio = typeof Audio !== 'undefined' ? new Audio() : null;
+  /** 5/11 : place d'un verset = récitation d'Ayyūb (module à la demande, même source et même service que les leçons) */
+  let recitation = false;
+  let suiteVerset: (() => Promise<Source | null>) | null = null;
+  let libererVerset: (() => void) | undefined;
+  let jeton = 0;
+  /** recherche du verset en cours : la pause du passage précédent n'arrête pas la lecture */
+  let attente = false;
+  const vitesseCourante = () => (recitation ? 1 : vitesse);
+  function finVerset() {
+    libererVerset?.();
+    libererVerset = undefined;
+    suiteVerset = null;
+    recitation = false;
+  }
+  function lancerVerset(src: Source) {
+    if (!audio) return;
+    libererVerset?.();
+    libererVerset = src.liberer;
+    suiteVerset = src.suite ?? null;
+    recitation = true;
+    audio.src = src.url;
+    audio.playbackRate = 1;
+    void audio.play().catch(() => (enLecture = false));
+  }
+  /** récitation des versets de l'entrée (« 11:42-43 » : les deux à la suite) ; rien de disponible : courte pause, puis la suite */
+  async function jouerVerset(i: number, ref: string, j: number) {
+    const ok = () => enLecture && idx === i && jeton === j;
+    const src = await import('$lib/recitation/ayyub')
+      .then((m) => m.sourceRecitation(ref))
+      .catch(() => null);
+    if (!ok()) return src?.liberer?.();
+    if (src) return lancerVerset(src);
+    minuteur = window.setTimeout(() => {
+      minuteur = 0;
+      if (ok()) suivant();
+    }, 900);
+  }
   const nbFichiers = $derived(items.filter((x) => x.src).length);
   const entrees = $derived(version === 'adulte' ? recit.audio?.a : recit.audio?.e);
 
@@ -179,13 +217,13 @@
     const it = items[i]!;
     marquer(els[it.bloc] ?? null);
     progres = i / items.length;
+    const j = ++jeton;
+    finVerset();
     if (!it.src) {
-      // place du verset : pas de voix de synthèse sur l'arabe
+      // place du verset : jamais de voix de synthèse sur l'arabe ; la récitation d'Ayyūb prend la main
+      attente = true;
       audio.pause();
-      minuteur = window.setTimeout(() => {
-        minuteur = 0;
-        if (enLecture && idx === i) suivant();
-      }, 900);
+      void jouerVerset(i, it.verset ?? '', j).finally(() => (attente = false));
       return;
     }
     audio.src = it.src;
@@ -194,6 +232,8 @@
   }
   function arreter() {
     annuler();
+    jeton++;
+    finVerset();
     enLecture = false;
     if (audio) {
       audio.pause();
@@ -206,15 +246,26 @@
   if (audio) {
     audio.preload = 'auto';
     audio.addEventListener('play', () => {
-      audio.playbackRate = vitesse;
+      audio.playbackRate = vitesseCourante();
       enLecture = true;
     });
     audio.addEventListener('pause', () => {
-      if (!minuteur && !audio.ended) enLecture = false;
+      if (!minuteur && !attente && !audio.ended) enLecture = false;
     });
     audio.addEventListener('ended', () => {
       echecs = 0;
-      suivant();
+      const suite = recitation ? suiteVerset : null;
+      if (!suite) return suivant();
+      // verset suivant de la même référence, puis la synthèse reprend
+      const i = idx;
+      const j = jeton;
+      void suite()
+        .catch(() => null)
+        .then((n) => {
+          if (!enLecture || idx !== i || jeton !== j) return n?.liberer?.();
+          if (n) lancerVerset(n);
+          else suivant();
+        });
     });
     audio.addEventListener('error', () => {
       if (idx < 0 || !audio.getAttribute('src')) return;
@@ -242,7 +293,7 @@
       audio.pause();
       return;
     }
-    if (!items[idx]?.src || !audio.getAttribute('src')) return jouer(idx);
+    if ((!items[idx]?.src && !recitation) || !audio.getAttribute('src')) return jouer(idx);
     void audio.play().catch(() => undefined);
   }
   function changerVitesse() {
@@ -250,7 +301,7 @@
     ecrire(CLE_R, String(vitesse));
     if (audio) {
       audio.defaultPlaybackRate = vitesse;
-      audio.playbackRate = vitesse;
+      audio.playbackRate = vitesseCourante();
     }
   }
   function surClic(ev: MouseEvent) {
