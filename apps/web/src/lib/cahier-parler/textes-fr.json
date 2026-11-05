@@ -17,6 +17,8 @@
   "parler.etape": "Étape {n}",
   "parler.apres": "Après la leçon {n}",
   "parler.avant": "Avant la leçon 1",
+  "parler.apres_bilan": "Après le bilan {n}",
+  "parler.apres_examen": "Après l'examen",
   "parler.franchie": "Étape franchie",
   "parler.fin": "Révisions et bilan de la partie {n}",
   "parler.finale": "Grille finale",

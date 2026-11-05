@@ -4,11 +4,11 @@
                  "serie":  "en",
                  "niveau":  3,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 02:26",
+                 "genere_le":  "2026-11-05 02:38",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en3, livrets lect\\en1 à en3) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de en3 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre en3 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Moi et mes amis : je me présente, la cour, mon cartable (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Moi et mes amis : je me présente, la cour, mon cartable (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "presentation",
                                        "cour",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Ensemble : la mosquée le vendredi, chez grand-père, notre maison (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Ensemble : la mosquée le vendredi, chez grand-père, notre maison (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "mosquee",
                                        "famille",
@@ -42,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — À table et mes habits (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — À table et mes habits (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "repas",
                                        "habits"
@@ -51,8 +51,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — La semaine, le temps qu\u0027il fait, la bibliothèque (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — La semaine, le temps qu\u0027il fait, la bibliothèque (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "semaine",
                                        "bibliotheque"
@@ -60,8 +60,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — J\u0027aide, je guéris, je jeûne (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — J\u0027aide, je guéris, je jeûne (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "entraide",
                                        "sante",
@@ -990,7 +990,7 @@
                                          {
                                              "ref":  "C16.3",
                                              "ar":  "أَنَا صُمْتُ الْيَوْمَ حَتَّى الْعَصْرِ!",
-                                             "fr":  "Moi, aujourd\u0027hui, j\u0027ai jeûné jusqu\u0027à l\u0027après-midi !"
+                                             "fr":  "Moi, aujourd\u0027hui, j\u0027ai jeûné jusqu\u0027à la prière de l\u0027après-midi !"
                                          },
                                          {
                                              "ref":  "C16.4",
@@ -3911,7 +3911,7 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "السَّلَامُ عَلَيْكُمْ! مِنْ أَيْنَ أَنْتَ؟",
-                                                    "fr":  "Que la paix soit sur toi ! D\u0027où viens-tu ?",
+                                                    "fr":  "Que la paix soit sur vous ! D\u0027où viens-tu ?",
                                                     "unite":  0
                                                 },
                                                 {
@@ -3936,12 +3936,12 @@
                               "consigne_tuteur":  "Le tuteur est un nouveau camarade. Demande-lui d\u0027où il vient, puis dis d\u0027où tu viens.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "تَشَرَّفْنَا! كُلُّنَا إِخْوَةٌ.",
-                                                         "fr":  "Enchanté ! Nous sommes tous frères."
+                                                         "ar":  "أَنَا مِنْ فَرَنْسَا. تَشَرَّفْنَا!",
+                                                         "fr":  "Je viens de France. Enchanté !"
                                                      },
                                                      {
-                                                         "ar":  "أَنَا مِنَ السِّنِغَالِ. وَأَنْتَ؟",
-                                                         "fr":  "Je viens du Sénégal. Et toi ?"
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ! مِنْ أَيْنَ أَنْتَ؟",
+                                                         "fr":  "Que la paix soit sur vous ! D\u0027où viens-tu ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -3999,12 +3999,16 @@
                               "consigne_tuteur":  "Le tuteur est un camarade, dans la cour. Demande ce qui est loin (مَا تِلْكَ؟ مَا ذٰلِكَ؟), puis dis où est ton ballon.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "ذٰلِكَ مَرْمًى. أَيْنَ كُرَتُكَ؟",
-                                                         "fr":  "Là-bas, c\u0027est un but. Où est ton ballon ?"
+                                                         "ar":  "وَمَا ذٰلِكَ؟",
+                                                         "fr":  "Et ça, là-bas ?"
                                                      },
                                                      {
-                                                         "ar":  "تِلْكَ زَلَّاقَةٌ. هَيَّا نَلْعَبْ!",
-                                                         "fr":  "Là-bas, c\u0027est un toboggan. Allons jouer !"
+                                                         "ar":  "مَا تِلْكَ؟",
+                                                         "fr":  "Qu\u0027est-ce que c\u0027est, là-bas ?"
+                                                     },
+                                                     {
+                                                         "ar":  "هِيَ فِي حَقِيبَتِي.",
+                                                         "fr":  "Il est dans mon cartable."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4142,16 +4146,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa, le vendredi. Demande qui sont tous ces gens et où sont les femmes, puis entrez ensemble.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هَيَّا نَدْخُلِ الْمَسْجِدَ.",
-                                                         "fr":  "Allez, entrons dans la mosquée."
+                                                         "ar":  "أَسْمَعُ الْأَذَانَ!",
+                                                         "fr":  "J\u0027entends l\u0027appel à la prière !"
                                                      },
                                                      {
-                                                         "ar":  "هُمُ الْمُصَلُّونَ، جَاءُوا لِصَلَاةِ الْجُمُعَةِ.",
-                                                         "fr":  "Ce sont les fidèles, ils sont venus pour la prière du vendredi."
+                                                         "ar":  "وَأَيْنَ الْمُصَلِّيَاتُ؟",
+                                                         "fr":  "Et où sont les femmes qui prient ?"
                                                      },
                                                      {
-                                                         "ar":  "هُنَّ فِي مُصَلَّى النِّسَاءِ، هُنَاكَ.",
-                                                         "fr":  "Elles sont dans la salle des femmes, là-bas."
+                                                         "ar":  "يَا أَبِي، الْمَسْجِدُ مَلِيءٌ! مَنْ هٰؤُلَاءِ؟",
+                                                         "fr":  "Papa, la mosquée est pleine ! Qui sont tous ces gens ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4401,12 +4405,16 @@
                               "consigne_tuteur":  "Le tuteur est ta sœur, le matin. Demande où sont tes chaussettes, puis à qui est le manteau marron.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هُوَ لَكَ، هَدِيَّةٌ مِنْ جَدَّتِي.",
-                                                         "fr":  "Il est à toi, c\u0027est un cadeau de grand-mère."
+                                                         "ar":  "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هٰذَا!",
+                                                         "fr":  "Louange à Allah qui m\u0027a habillé de ceci !"
                                                      },
                                                      {
-                                                         "ar":  "هِيَ فِي الْخِزَانَةِ، تَحْتَ الْقَمِيصِ الْأَبْيَضِ.",
-                                                         "fr":  "Elles sont dans l\u0027armoire, sous la chemise blanche."
+                                                         "ar":  "وَهٰذَا الْمِعْطَفُ الْبُنِّيُّ؟ لِمَنْ هُوَ؟",
+                                                         "fr":  "Et ce manteau marron ? À qui est-il ?"
+                                                     },
+                                                     {
+                                                         "ar":  "يَا أُخْتِي، أَيْنَ جَوَارِبِي السَّوْدَاءُ؟",
+                                                         "fr":  "Ma sœur, où sont mes chaussettes noires ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4442,7 +4450,7 @@
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ! هِيَ بِثَلَاثَةِ يُورُو.",
-                                                    "fr":  "Et sur toi la paix ! Elle coûte trois euros.",
+                                                    "fr":  "Et sur vous la paix ! Elle coûte trois euros.",
                                                     "unite":  15
                                                 },
                                                 {
@@ -4467,12 +4475,16 @@
                               "consigne_tuteur":  "Le tuteur est le vendeur du marché. Demande le prix de la casquette bleue, puis demande une rouge.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ! هِيَ بِثَلَاثَةِ يُورُو.",
-                                                         "fr":  "Et sur toi la paix ! Elle coûte trois euros."
+                                                         "ar":  "شُكْرًا! أُرِيدُ الْقُبَّعَةَ الْحَمْرَاءَ.",
+                                                         "fr":  "Merci ! Je voudrais la casquette rouge."
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، تَفَضَّلْ. هٰذِهِ قُبَّعَةٌ حَمْرَاءُ جَمِيلَةٌ.",
-                                                         "fr":  "Oui, tiens. Voici une jolie casquette rouge."
+                                                         "ar":  "هَلْ عِنْدَكَ قُبَّعَةٌ حَمْرَاءُ؟",
+                                                         "fr":  "Avez-vous une casquette rouge ?"
+                                                     },
+                                                     {
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ! بِكَمْ هٰذِهِ الْقُبَّعَةُ الزَّرْقَاءُ؟",
+                                                         "fr":  "Que la paix soit sur vous ! Combien coûte cette casquette bleue ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4537,16 +4549,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Demande quel temps il fait, puis dis la petite invocation quand la pluie tombe.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَحْسَنْتَ!",
-                                                         "fr":  "Bravo !"
+                                                         "ar":  "اللَّهُمَّ صَيِّبًا نَافِعًا!",
+                                                         "fr":  "Ô Allah, une pluie bienfaisante !"
                                                      },
                                                      {
-                                                         "ar":  "الْجَوُّ بَارِدٌ، وَالسَّمَاءُ غَائِمَةٌ.",
-                                                         "fr":  "Il fait froid, et le ciel est nuageux."
+                                                         "ar":  "يَا أَبِي، كَيْفَ الْجَوُّ الْيَوْمَ؟",
+                                                         "fr":  "Papa, quel temps fait-il aujourd\u0027hui ?"
                                                      },
                                                      {
-                                                         "ar":  "نَقُولُ: اللَّهُمَّ صَيِّبًا نَافِعًا.",
-                                                         "fr":  "Nous disons : « Ô Allah, une pluie bienfaisante. »"
+                                                         "ar":  "انْظُرْ يَا أَبِي! الْمَطَرُ يَنْزِلُ!",
+                                                         "fr":  "Regarde, Papa ! La pluie tombe !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4678,12 +4690,16 @@
                               "consigne_tuteur":  "Le tuteur est la maîtresse, à la bibliothèque. Demande où sont les histoires et si tu peux en emporter une.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، وَأَرْجِعِيهَا بَعْدَ أُسْبُوعٍ.",
-                                                         "fr":  "Oui, et rapporte-la dans une semaine."
+                                                         "ar":  "شُكْرًا يَا أُسْتَاذَةُ!",
+                                                         "fr":  "Merci, Madame !"
                                                      },
                                                      {
-                                                         "ar":  "هِيَ عَلَى الرَّفِّ الْأَزْرَقِ، عِنْدَ النَّافِذَةِ.",
-                                                         "fr":  "Elles sont sur l\u0027étagère bleue, près de la fenêtre."
+                                                         "ar":  "يَا أُسْتَاذَةُ، أَيْنَ قِصَصُ الْأَنْبِيَاءِ؟",
+                                                         "fr":  "Madame, où sont les histoires des prophètes ?"
+                                                     },
+                                                     {
+                                                         "ar":  "هَلْ آخُذُ قِصَّةً إِلَى الْبَيْتِ؟",
+                                                         "fr":  "Est-ce que je peux emporter une histoire à la maison ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4863,7 +4879,7 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "أَنَا صُمْتُ الْيَوْمَ حَتَّى الْعَصْرِ!",
-                                                    "fr":  "Moi, aujourd\u0027hui, j\u0027ai jeûné jusqu\u0027à l\u0027après-midi !",
+                                                    "fr":  "Moi, aujourd\u0027hui, j\u0027ai jeûné jusqu\u0027à la prière de l\u0027après-midi !",
                                                     "unite":  23
                                                 },
                                                 {
@@ -4888,16 +4904,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa, en Ramadan. Demande quand on rompt le jeûne, et dis jusqu\u0027à quand tu as jeûné (صُمْتُ).",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هَيَّا، نُفْطِرُ عَلَى التَّمْرِ وَالْمَاءِ.",
-                                                         "fr":  "Allez, nous rompons le jeûne avec des dattes et de l\u0027eau."
+                                                         "ar":  "أَسْمَعُ الْأَذَانَ الْآنَ!",
+                                                         "fr":  "J\u0027entends l\u0027appel à la prière maintenant !"
                                                      },
                                                      {
-                                                         "ar":  "عِنْدَ أَذَانِ الْمَغْرِبِ، بَعْدَ عَشْرِ دَقَائِقَ.",
-                                                         "fr":  "À l\u0027appel de la prière du coucher du soleil, dans dix minutes."
+                                                         "ar":  "يَا أَبِي، مَتَى نُفْطِرُ؟",
+                                                         "fr":  "Papa, quand rompons-nous le jeûne ?"
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! تَقَبَّلَ اللَّهُ مِنْكَ.",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Qu\u0027Allah l\u0027accepte de toi."
+                                                         "ar":  "أَنَا صُمْتُ الْيَوْمَ حَتَّى الْعَصْرِ!",
+                                                         "fr":  "Moi, aujourd\u0027hui, j\u0027ai jeûné jusqu\u0027à la prière de l\u0027après-midi !"
                                                      }
                                                  ],
                               "source_mots":  [

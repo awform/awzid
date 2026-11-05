@@ -7,6 +7,7 @@
   import { levelAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
   import {
+    repereEtape,
     chargerParler,
     ecrireProgres,
     etapeFranchie,
@@ -84,7 +85,10 @@
   const finale = $derived(cahier?.etapes.filter((e) => e.partie === 0) ?? []);
   /** série du niveau : "ad" (adultes), "en" (enfants), "ado" (ados) */
   const serie = $derived(niveau.replace(/\d+$/, ''));
-  const quand = (e: Etape) => (e.n ? t('parler.apres', { n: e.n }) : t('parler.avant'));
+  const quand = (e: Etape) => {
+    const r = repereEtape(e.n);
+    return t(r.cle, { n: r.n ?? '' });
+  };
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu (resolve), suivi des paramètres d'étape et de page -->

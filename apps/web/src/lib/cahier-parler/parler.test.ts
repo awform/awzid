@@ -253,3 +253,17 @@ describe('cahier « Je parle » : appareil et chargement à la demande', () => {
     expect(budget).toMatch(/cahier « Je parle » \(à la demande\)/);
   });
 });
+
+describe("repère « après … » des étapes (rang de l'unité → leçon du livre, bilan, examen)", () => {
+  it('distingue leçons, bilans et examen', async () => {
+    const { repereEtape } = await import('./donnees');
+    expect(repereEtape(0)).toEqual({ cle: 'parler.avant' });
+    expect(repereEtape(4)).toEqual({ cle: 'parler.apres', n: 4 });
+    expect(repereEtape(5)).toEqual({ cle: 'parler.apres_bilan', n: 1 });
+    expect(repereEtape(6)).toEqual({ cle: 'parler.apres', n: 5 });
+    expect(repereEtape(21)).toEqual({ cle: 'parler.apres', n: 17 });
+    expect(repereEtape(24)).toEqual({ cle: 'parler.apres', n: 20 });
+    expect(repereEtape(20)).toEqual({ cle: 'parler.apres_bilan', n: 4 });
+    expect(repereEtape(25)).toEqual({ cle: 'parler.apres_examen' });
+  });
+});

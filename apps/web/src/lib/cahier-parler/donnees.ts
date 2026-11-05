@@ -121,6 +121,21 @@ export async function chargerParler(
 export const formes = (p: Phrase): Forme[] =>
   p.f ?? [{ ar: p.ar, fr: p.fr, ...(p.u ? { u: p.u } : {}) }];
 
+/**
+ * Repère « après … » d'une étape. `n` est le RANG de l'unité du livre (fichiers l01 à l25 : 20 leçons, bilans aux rangs
+ * 5, 10, 15, 20, examen au rang 25), pas le numéro de leçon imprimé : on affiche la leçon du livre, ou le bilan, ou
+ * l'examen (audit Codex, passe 2, 05/11/2026 ; REGLES_PERMANENTES §4 : « leçon N » = num_lecon).
+ */
+export function repereEtape(n: number | null | undefined): {
+  cle: 'parler.avant' | 'parler.apres' | 'parler.apres_bilan' | 'parler.apres_examen';
+  n?: number;
+} {
+  if (!n || n < 1) return { cle: 'parler.avant' };
+  if (n >= 25) return { cle: 'parler.apres_examen' };
+  if (n % 5 === 0) return { cle: 'parler.apres_bilan', n: n / 5 };
+  return { cle: 'parler.apres', n: n - Math.floor(n / 5) };
+}
+
 /** Phrases utiles d'un scénario du tuteur : les premières répliques de la conversation (4 au plus). */
 export const phrasesUtiles = (c: Conversation): Replique[] => c.r.slice(0, 4);
 

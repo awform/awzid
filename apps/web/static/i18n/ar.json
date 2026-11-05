@@ -4070,6 +4070,8 @@
   "parler.partie": "الجزء {n}",
   "parler.etape": "المرحلة {n}",
   "parler.apres": "بعد الدرس {n}",
+  "parler.apres_bilan": "بعد التقييم {n}",
+  "parler.apres_examen": "بعد الاختبار النهائي",
   "parler.avant": "قبل الدرس ١",
   "parler.franchie": "اجتزت المرحلة",
   "parler.fin": "مراجعة الجزء {n} وتقييمه",

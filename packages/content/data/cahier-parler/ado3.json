@@ -4,11 +4,11 @@
                  "serie":  "ado",
                  "niveau":  3,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 02:40",
+                 "genere_le":  "2026-11-05 02:39",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ado1 à ado3, livrets lect\\ado1 à ado3) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de ado3 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ado3 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — S\u0027engager et tenir parole : l\u0027association, frère et sœur, la promesse (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — S\u0027engager et tenir parole : l\u0027association, frère et sœur, la promesse (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "association",
                                        "fratrie",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Dire non, dire vrai : la pression des copains, le devoir oublié, la cantine (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Dire non, dire vrai : la pression des copains, le devoir oublié, la cantine (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "dire_non",
                                        "devoir",
@@ -42,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Débattre et respecter : le débat, la Tabaski, sans se moquer (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Débattre et respecter : le débat, la Tabaski, sans se moquer (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "debat",
                                        "tabaski",
@@ -52,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Vérifier et rencontrer : la rumeur, d\u0027où viens-tu, mon stage (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Vérifier et rencontrer : la rumeur, d\u0027où viens-tu, mon stage (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "rumeur",
                                        "origines",
@@ -62,8 +62,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Agir : le sommeil et les écrans, la planète, mon projet solidaire (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Agir : le sommeil et les écrans, la planète, mon projet solidaire (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "sommeil",
                                        "planete",
@@ -2967,7 +2967,7 @@
                       "partie":  5,
                       "theme":  "projet",
                       "type":  "conversation",
-                      "titre_fr":  "Conversation : Trois minutes — j\u0027écoute, je répète, je joue A puis B",
+                      "titre_fr":  "Conversation : Deux minutes — j\u0027écoute, je répète, je joue A puis B",
                       "apres":  "l24",
                       "apres_n":  24,
                       "refs":  [
@@ -2980,7 +2980,7 @@
                       "partie":  5,
                       "theme":  "projet",
                       "type":  "a_toi_de_parler",
-                      "titre_fr":  "À toi de parler : Trois minutes avec le tuteur",
+                      "titre_fr":  "À toi de parler : Deux minutes avec le tuteur",
                       "apres":  "l24",
                       "apres_n":  24,
                       "refs":  [
@@ -4846,16 +4846,16 @@
                               "consigne_tuteur":  "Le tuteur est un camarade qui a oublié votre rendez-vous. Dis ce que tu ressens sans crier, écoute ses excuses, et fixe un autre rendez-vous.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "اتَّفَقْنَا، إِنْ شَاءَ اللَّهُ.",
-                                                         "fr":  "Marché conclu, si Allah le veut."
+                                                         "ar":  "لٰكِنَّ الْعَرْضَ يَوْمَ الِاثْنَيْنِ!",
+                                                         "fr":  "Mais l\u0027exposé est lundi !"
                                                      },
                                                      {
-                                                         "ar":  "عِنْدَكَ حَقٌّ. أَنَا آسِفٌ.",
-                                                         "fr":  "Tu as raison. Je suis désolé."
+                                                         "ar":  "طَيِّبٌ. غَدًا فِي السَّاعَةِ الْخَامِسَةِ؟",
+                                                         "fr":  "D\u0027accord. Demain à cinq heures ?"
                                                      },
                                                      {
-                                                         "ar":  "آهِ… نَسِيتُ الْمَوْعِدَ. ذَهَبْتُ مَعَ أَخِي إِلَى الْمَلْعَبِ.",
-                                                         "fr":  "Ah… j\u0027ai oublié le rendez-vous. Je suis allé au stade avec mon frère."
+                                                         "ar":  "يَا صَدِيقِي، أَيْنَ كُنْتَ أَمْسِ؟",
+                                                         "fr":  "Mon ami, où étais-tu hier ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4994,16 +4994,16 @@
                               "consigne_tuteur":  "Le tuteur est la professeure d\u0027arabe. Avoue que tu as oublié le devoir, propose de le faire toi-même, et demande ce que tu as le droit d\u0027utiliser.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "شُكْرًا لِصِدْقِكَ.",
-                                                         "fr":  "Merci pour ta franchise."
+                                                         "ar":  "وَهَلْ أَسْتَعْمِلُ الْبَرْنَامَجَ لِأَفْهَمَ الْقَاعِدَةَ؟",
+                                                         "fr":  "Et est-ce que je peux utiliser le programme pour comprendre la règle ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، اُكْتُبْهُ بِنَفْسِكَ.",
-                                                         "fr":  "Oui, fais-le toi-même."
+                                                         "ar":  "يَا أُسْتَاذَةُ، أَعْتَذِرُ: نَسِيتُ الْوَاجِبَ.",
+                                                         "fr":  "Madame, je m\u0027excuse : j\u0027ai oublié le devoir."
                                                      },
                                                      {
-                                                         "ar":  "لِتَفْهَمَ، نَعَمْ؛ لِتَنْسَخَ، لَا.",
-                                                         "fr":  "Pour comprendre, oui ; pour copier, non."
+                                                         "ar":  "هَلْ أَكْتُبُهُ الْيَوْمَ وَأُرْسِلُهُ إِلَيْكِ مَسَاءً؟",
+                                                         "fr":  "Est-ce que je peux le faire aujourd\u0027hui et vous l\u0027envoyer ce soir ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5063,12 +5063,16 @@
                               "consigne_tuteur":  "Le tuteur est une amie, à la cantine. Dis ce que tu as pris, souhaite bon appétit, et rappelle ce qu\u0027on dit après le repas.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "بِالْهَنَاءِ وَالشِّفَاءِ!",
-                                                         "fr":  "Bon appétit !"
+                                                         "ar":  "أَنَا أَخَذْتُ السَّمَكَ.",
+                                                         "fr":  "Moi, j\u0027ai pris le poisson."
                                                      },
                                                      {
-                                                         "ar":  "أَخَذْتُ الطَّبَقَ النَّبَاتِيَّ. وَأَنْتِ؟",
-                                                         "fr":  "J\u0027ai pris le plat végétarien. Et toi ?"
+                                                         "ar":  "يَا صَدِيقَتِي، مَاذَا أَخَذْتِ؟",
+                                                         "fr":  "Mon amie, qu\u0027est-ce que tu as pris ?"
+                                                     },
+                                                     {
+                                                         "ar":  "وَبَعْدَ الْأَكْلِ نَقُولُ: الْحَمْدُ لِلَّهِ!",
+                                                         "fr":  "Et après le repas, on dit : « Louange à Allah ! »"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5278,16 +5282,16 @@
                               "consigne_tuteur":  "Le tuteur est grand-père, le jour de la Tabaski. Souhaite-lui la fête, puis demande pourquoi on partage la viande.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "عِيدٌ مُبَارَكٌ يَا بِنْتِي!",
-                                                         "fr":  "Bonne fête, ma fille !"
+                                                         "ar":  "وَأَخِي؟",
+                                                         "fr":  "Et mon frère ?"
                                                      },
                                                      {
-                                                         "ar":  "هُوَ يُسَاعِدُنَا فِي تَقْسِيمِ اللَّحْمِ.",
-                                                         "fr":  "Il nous aide à partager la viande."
+                                                         "ar":  "لِمَاذَا تُقَسِّمُونَ اللَّحْمَ؟",
+                                                         "fr":  "Pourquoi partagez-vous la viande ?"
                                                      },
                                                      {
-                                                         "ar":  "نَأْكُلُ مِنْهُ، وَنُهْدِي مِنْهُ لِلْجِيرَانِ، وَنُطْعِمُ الْفُقَرَاءَ.",
-                                                         "fr":  "Nous en mangeons, nous en offrons aux voisins, et nous nourrissons les pauvres."
+                                                         "ar":  "عِيدٌ مُبَارَكٌ يَا جَدِّي!",
+                                                         "fr":  "Bonne fête, grand-père !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5774,16 +5778,20 @@
                               "consigne_tuteur":  "Le tuteur est le hadj. Demande-lui la permission pour l\u0027interview, puis interroge-le sur ses métiers et sur ce qui compte pour un commerçant.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْأَمَانَةُ!",
-                                                         "fr":  "L\u0027honnêteté !"
+                                                         "ar":  "شُكْرًا يَا حَاجُّ!",
+                                                         "fr":  "Merci, Hadj !"
                                                      },
                                                      {
-                                                         "ar":  "بِكُلِّ سُرُورٍ، يَا بُنَيَّ. تَفَضَّلْ.",
-                                                         "fr":  "Avec grand plaisir, mon fils. Je t\u0027en prie."
+                                                         "ar":  "وَمَا أَهَمُّ شَيْءٍ عِنْدَ الْبَائِعِ؟",
+                                                         "fr":  "Et quelle est la chose la plus importante pour un commerçant ?"
                                                      },
                                                      {
-                                                         "ar":  "كُنْتُ سَائِقَ شَاحِنَةٍ فِي السِّنِغَالِ، ثُمَّ صِرْتُ بَائِعًا هُنَا.",
-                                                         "fr":  "J\u0027étais chauffeur de camion au Sénégal, puis je suis devenu commerçant ici."
+                                                         "ar":  "مَا الْمِهَنُ الَّتِي عَمِلْتَهَا فِي حَيَاتِكَ؟",
+                                                         "fr":  "Quels métiers avez-vous exercés dans votre vie ?"
+                                                     },
+                                                     {
+                                                         "ar":  "يَا حَاجُّ، هَلْ تَسْمَحُ لِي بِمُقَابَلَةٍ صَغِيرَةٍ لِصَحِيفَةِ الثَّانَوِيَّةِ؟",
+                                                         "fr":  "Hadj, me permettez-vous une petite interview pour le journal du lycée ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6012,7 +6020,7 @@
                           },
                           {
                               "id":  "C21",
-                              "titre_fr":  "Trois minutes",
+                              "titre_fr":  "Deux minutes",
                               "theme":  "projet",
                               "personnages":  {
                                                   "A":  "femme",

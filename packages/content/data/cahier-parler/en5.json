@@ -4,11 +4,11 @@
                  "serie":  "en",
                  "niveau":  5,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 03:18",
+                 "genere_le":  "2026-11-05 02:38",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en5, livrets lect\\en1 à en5) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de en5 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre en5 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — En classe et dans la cour : la lettre et la caisse, la course, le musée de la classe (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — En classe et dans la cour : la lettre et la caisse, la course, le musée de la classe (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "classe",
                                        "course",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Qui ? Qui était ? : la devinette, l\u0027ami triste, l\u0027enfance de grand-père, le métier de grand-mère (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Qui ? Qui était ? : la devinette, l\u0027ami triste, l\u0027enfance de grand-père, le métier de grand-mère (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "devinette",
                                        "ami_triste",
@@ -43,8 +43,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Parce que, quand, si : le voisin, la montagne (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Parce que, quand, si : le voisin, la montagne (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "voisin",
                                        "montagne"
@@ -52,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Regarder et raconter : l\u0027ami fidèle, les fourmis, le retour du pèlerin (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Regarder et raconter : l\u0027ami fidèle, les fourmis, le retour du pèlerin (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "ami_fidele",
                                        "fourmis",
@@ -62,8 +62,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — J\u0027écris et je parle : la lettre aux grands-parents, mon exposé (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — J\u0027écris et je parle : la lettre aux grands-parents, mon exposé (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "lettre",
                                        "expose"
@@ -4302,12 +4302,12 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Montre-lui la caisse de dons et dis que c\u0027est toi qui la portes à la mosquée.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَحْسَنْتَ!",
-                                                         "fr":  "Bravo !"
+                                                         "ar":  "وَأَنَا حَامِلُ الصُّنْدُوقِ إِلَى الْمَسْجِدِ!",
+                                                         "fr":  "Et c\u0027est moi qui porte la caisse à la mosquée !"
                                                      },
                                                      {
-                                                         "ar":  "الْحَمْدُ لِلَّهِ!",
-                                                         "fr":  "Louange à Allah !"
+                                                         "ar":  "انْظُرْ يَا أَبِي! الصُّنْدُوقُ مَمْلُوءٌ!",
+                                                         "fr":  "Regarde, Papa ! La caisse est pleine !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4358,12 +4358,12 @@
                               "consigne_tuteur":  "Le tuteur est un camarade. Défie-le à la course, puis félicite-le s\u0027il gagne, et dis en quoi lui ou toi êtes plus forts.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "لَا، أَنَا الْأَسْرَعُ فِي الْفَصْلِ كُلِّهِ!",
-                                                         "fr":  "Non, c\u0027est moi le plus rapide de toute la classe !"
+                                                         "ar":  "أَنَا أَسْرَعُ مِنْكَ! تَعَالَ نَتَسَابَقْ.",
+                                                         "fr":  "Je suis plus rapide que toi ! Viens, faisons la course."
                                                      },
                                                      {
-                                                         "ar":  "شُكْرًا! وَأَنْتَ أَقْوَى مِنِّي فِي كُرَةِ الْقَدَمِ.",
-                                                         "fr":  "Merci ! Et toi, tu es plus fort que moi au football."
+                                                         "ar":  "مَا شَاءَ اللَّهُ، أَنْتَ أَسْرَعُ مِنِّي. مَبْرُوكٌ!",
+                                                         "fr":  "Ce qu\u0027Allah a voulu, tu es plus rapide que moi. Félicitations !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4703,12 +4703,16 @@
                               "consigne_tuteur":  "Le tuteur est grand-père. Pose-lui des questions sur son enfance, avec كَانَ.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "كُنْتُ رَاعِيًا صَغِيرًا.",
-                                                         "fr":  "J\u0027étais un petit berger."
+                                                         "ar":  "سَاعَةً كَامِلَةً؟ كُنْتُمْ أَقْوِيَاءَ!",
+                                                         "fr":  "Une heure entière ? Vous étiez forts !"
                                                      },
                                                      {
-                                                         "ar":  "كَانَتِ الْمَدْرَسَةُ بَعِيدَةً، وَكُنَّا نَمْشِي سَاعَةً كُلَّ صَبَاحٍ.",
-                                                         "fr":  "L\u0027école était loin, et nous marchions une heure chaque matin."
+                                                         "ar":  "هَلْ كَانَتْ عِنْدَكُمْ مَدْرَسَةٌ فِي الْقَرْيَةِ؟",
+                                                         "fr":  "Est-ce qu\u0027il y avait une école au village ?"
+                                                     },
+                                                     {
+                                                         "ar":  "يَا جَدِّي، كَيْفَ كَانَتْ حَيَاتُكَ عِنْدَمَا كُنْتَ صَغِيرًا؟",
+                                                         "fr":  "Grand-père, comment était votre vie quand vous étiez petit ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4771,12 +4775,16 @@
                               "consigne_tuteur":  "Tu es journaliste, le tuteur est ta grand-mère. Interroge-la sur son métier d\u0027autrefois, puis remercie-la.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، وَكَانُوا يُحِبُّونَ الْعِلْمَ.",
-                                                         "fr":  "Oui, et ils aimaient le savoir."
+                                                         "ar":  "وَهَلْ كَانَ التَّلَامِيذُ كَثِيرِينَ؟",
+                                                         "fr":  "Et est-ce que les élèves étaient nombreux ?"
                                                      },
                                                      {
-                                                         "ar":  "كُنْتُ مُعَلِّمَةً فِي مَدْرَسَةِ الْقَرْيَةِ.",
-                                                         "fr":  "J\u0027étais enseignante à l\u0027école du village."
+                                                         "ar":  "شُكْرًا يَا جَدَّتِي! إِنَّكِ أَجْمَلُ ضَيْفَةٍ فِي بَرْنَامَجِي!",
+                                                         "fr":  "Merci, grand-mère ! Vous êtes la plus belle invitée de mon émission !"
+                                                     },
+                                                     {
+                                                         "ar":  "أَنَا صَحَفِيَّةٌ الْيَوْمَ! مَا الْمِهْنَةُ الَّتِي كُنْتِ تُحِبِّينَهَا؟",
+                                                         "fr":  "Je suis journaliste aujourd\u0027hui ! Quel métier aimiez-vous ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4844,16 +4852,16 @@
                               "consigne_tuteur":  "Le tuteur est le voisin âgé, arrêté dans l\u0027escalier. Demande-lui pourquoi, et propose de porter son sac.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، شُكْرًا. جَزَاكُمَا اللَّهُ خَيْرًا.",
-                                                         "fr":  "Oui, merci. Qu\u0027Allah vous récompense tous les deux."
+                                                         "ar":  "وَإِيَّاكَ يَا حَاجُّ.",
+                                                         "fr":  "Et vous aussi, Hadj."
                                                      },
                                                      {
-                                                         "ar":  "لِأَنَّ الْمِصْعَدَ مُعَطَّلٌ، وَالْكِيسَ ثَقِيلٌ.",
-                                                         "fr":  "Parce que l\u0027ascenseur est en panne, et que le sac est lourd."
+                                                         "ar":  "هَلْ أَحْمِلُ عَنْكَ الْكِيسَ؟",
+                                                         "fr":  "Est-ce que je porte le sac pour vous ?"
                                                      },
                                                      {
-                                                         "ar":  "بَارَكَ اللَّهُ فِيكُمَا. خُذَا هٰذِهِ التَّمَرَاتِ!",
-                                                         "fr":  "Qu\u0027Allah vous bénisse. Prenez ces quelques dattes, tous les deux !"
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا حَاجُّ! لِمَاذَا تَقِفُ هُنَا؟",
+                                                         "fr":  "Que la paix soit sur vous, Hadj ! Pourquoi vous arrêtez-vous ici ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4907,12 +4915,12 @@
                               "consigne_tuteur":  "Le tuteur est une amie. Promets-lui de lui prêter ton livre demain, et dis comment tu n\u0027oublieras pas.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "جَزَاكِ اللَّهُ خَيْرًا.",
-                                                         "fr":  "Qu\u0027Allah te récompense par le bien."
+                                                         "ar":  "أَعِدُكِ أَنْ أُعِيرَكِ كِتَابِي غَدًا.",
+                                                         "fr":  "Je te promets de te prêter mon livre demain."
                                                      },
                                                      {
-                                                         "ar":  "حَقًّا؟ لَا تَنْسَيْ!",
-                                                         "fr":  "Vraiment ? N\u0027oublie pas !"
+                                                         "ar":  "لَنْ أَنْسَى، إِنْ شَاءَ اللَّهُ. سَأَكْتُبُ وَعْدِي فِي دَفْتَرِي.",
+                                                         "fr":  "Je n\u0027oublierai pas, si Allah le veut. Je vais écrire ma promesse dans mon cahier."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5257,16 +5265,16 @@
                               "consigne_tuteur":  "Le tuteur revient du pèlerinage. Demande-lui ce qu\u0027est cette eau, ce qui était difficile, et ses photos.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "تَفَضَّلُوا! هٰذَا جَبَلُ عَرَفَةَ.",
-                                                         "fr":  "Voilà ! Ceci est le mont Arafat."
+                                                         "ar":  "أَرِنَا الصُّوَرَ، مِنْ فَضْلِكَ!",
+                                                         "fr":  "Montrez-nous les photos, s\u0027il vous plaît !"
                                                      },
                                                      {
-                                                         "ar":  "الزِّحَامُ وَالْحَرُّ، وَلٰكِنَّ الصَّبْرَ يُسَهِّلُ كُلَّ شَيْءٍ.",
-                                                         "fr":  "La foule et la chaleur, mais la patience rend tout facile."
+                                                         "ar":  "مَا هٰذَا الْمَاءُ يَا حَاجُّ؟",
+                                                         "fr":  "Quelle est cette eau, Hadj ?"
                                                      },
                                                      {
-                                                         "ar":  "هٰذَا مَاءُ زَمْزَمَ، مِنْ بِئْرٍ مُبَارَكَةٍ قُرْبَ الْكَعْبَةِ.",
-                                                         "fr":  "C\u0027est l\u0027eau de Zamzam, d\u0027un puits béni près de la Kaaba."
+                                                         "ar":  "وَمَا أَصْعَبُ شَيْءٍ فِي الْحَجِّ؟",
+                                                         "fr":  "Et quelle est la chose la plus difficile au pèlerinage ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5400,12 +5408,12 @@
                               "consigne_tuteur":  "Le tuteur est grand-père. Demande s\u0027ils ont vu ta carte, puis quel temps il fait au village.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْجَوُّ جَافٌّ، وَالرِّيحُ تَحْمِلُ الرَّمْلَ مِنَ الصَّحْرَاءِ.",
-                                                         "fr":  "L\u0027air est sec, et le vent apporte le sable du désert."
+                                                         "ar":  "وَكَيْفَ الْجَوُّ فِي الْقَرْيَةِ؟",
+                                                         "fr":  "Et quel temps fait-il au village ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، عَلَّقْنَاهَا عَلَى الْحَائِطِ. بَارَكَ اللَّهُ فِيكَ!",
-                                                         "fr":  "Oui, nous l\u0027avons accrochée au mur. Qu\u0027Allah te bénisse !"
+                                                         "ar":  "هَلْ رَأَيْتُمَا الْبِطَاقَةَ الَّتِي رَسَمْتُهَا؟",
+                                                         "fr":  "Avez-vous vu la carte que j\u0027ai dessinée, tous les deux ?"
                                                      }
                                                  ],
                               "source_mots":  [

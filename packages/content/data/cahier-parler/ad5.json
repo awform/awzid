@@ -1,13 +1,14 @@
 {
     "meta":  {
                  "titre":  "Cahier « Je parle » — compagnon d\u0027Adultes 5",
+                 "serie":  "ad",
                  "niveau":  5,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-24 14:01",
+                 "genere_le":  "2026-11-05 02:33",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad5, livrets lect\\ad1 à ad5) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon d\u0027ad5 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ad5 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -21,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Préparer un voyage : l\u0027agence, les bagages, les nouvelles au téléphone (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Préparer un voyage : l\u0027agence, les bagages, les nouvelles au téléphone (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "agence",
                                        "bagages",
@@ -31,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — En voyage et au retour : la chaleur, l\u0027accueil, le malade, le deuil (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — En voyage et au retour : la chaleur, l\u0027accueil, le malade, le deuil (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "chaleur",
                                        "retour",
@@ -41,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Les démarches : le notaire, l\u0027inscription comme bénévole (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Les démarches : le notaire, l\u0027inscription comme bénévole (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "condoleances",
                                        "notaire",
@@ -51,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Aider, se maîtriser, faire visiter (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Aider, se maîtriser, faire visiter (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "chantier",
                                        "colere",
@@ -61,8 +62,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Accueillir, vérifier une nouvelle, débattre (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Accueillir, vérifier une nouvelle, débattre (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "accueil",
                                        "rumeur",
@@ -302,9 +303,9 @@
                        "partie":  2,
                        "picto":  "bouteille",
                        "titre_fr":  "La chaleur et la fatigue",
-                       "titre_ar":  "الْحَرُّ",
+                       "titre_ar":  "فِي الْحَرِّ",
                        "accroche_fr":  "À la fin de cette étape, je sais dire que je suis fatigué, demander de l\u0027eau et rassurer quelqu\u0027un.",
-                       "unite":  21,
+                       "unite":  6,
                        "phrases":  [
                                        "P025",
                                        "P026",
@@ -956,7 +957,7 @@
                                          {
                                              "ref":  "P091",
                                              "ar":  "لَهُ مَدْخَلٌ مُسْتَقِلٌّ وَمِصْعَدٌ لِكِبَارِ السِّنِّ.",
-                                             "fr":  "Elle a une entrée indépendante et un ascenseur pour les personnes âgées."
+                                             "fr":  "La salle de prière des femmes a une entrée indépendante et un ascenseur pour les personnes âgées."
                                          },
                                          {
                                              "ref":  "P092",
@@ -1656,7 +1657,6 @@
                                    "P012",
                                    "P016",
                                    "P018",
-                                   "P126",
                                    "P024",
                                    "P023",
                                    "P022",
@@ -1829,8 +1829,8 @@
                       "theme":  "chaleur",
                       "type":  "antiseche",
                       "titre_fr":  "Antisèche : La chaleur et la fatigue — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
-                      "apres":  "l21",
-                      "apres_n":  21,
+                      "apres":  "l06",
+                      "apres_n":  6,
                       "refs":  [
                                    "P025-m",
                                    "P025-f",
@@ -2914,7 +2914,7 @@
                       "partie":  4,
                       "theme":  "visite",
                       "type":  "carte_phrases",
-                      "titre_fr":  "Elle a une entrée indépendante et un ascenseur pour les personnes âgées. / Et quel est ce panneau sur le mur ?",
+                      "titre_fr":  "La salle de prière des femmes a une entrée indépendante et un ascenseur pour les personnes âgées. / Et quel est ce panneau sur le mur ?",
                       "apres":  "l20",
                       "apres_n":  20,
                       "refs":  [
@@ -4778,7 +4778,7 @@
                         "theme":  "visite",
                         "cible":  "neutre",
                         "ar":  "لَهُ مَدْخَلٌ مُسْتَقِلٌّ وَمِصْعَدٌ لِكِبَارِ السِّنِّ.",
-                        "fr":  "Elle a une entrée indépendante et un ascenseur pour les personnes âgées.",
+                        "fr":  "La salle de prière des femmes a une entrée indépendante et un ascenseur pour les personnes âgées.",
                         "variations":  null,
                         "unite":  20,
                         "source_mots":  [
@@ -5669,16 +5669,16 @@
                               "consigne_tuteur":  "Le tuteur est ta mère qui part en voyage. Aide-la à faire sa valise : propose des objets, écoute ce qu\u0027il faut emporter et ce qu\u0027il vaut mieux laisser.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "مَنِ اسْتَعَدَّ مُبَكِّرًا اسْتَرَاحَ.",
-                                                         "fr":  "Qui se prépare tôt est tranquille."
+                                                         "ar":  "وَمَاذَا نَضَعُ أَيْضًا؟",
+                                                         "fr":  "Et que mettons-nous aussi ?"
                                                      },
                                                      {
-                                                         "ar":  "لَا يَا ابْنَتِي، ضَعِي صَابُونًا بِلَا رَائِحَةٍ.",
-                                                         "fr":  "Non, ma fille ; mets un savon sans odeur."
+                                                         "ar":  "وَأَنْتِ يَا أُمِّي، لِمَاذَا الْآنَ؟ السَّفَرُ بَعْدَ شَهْرٍ!",
+                                                         "fr":  "Et toi, maman, pourquoi maintenant ? Le voyage est dans un mois !"
                                                      },
                                                      {
-                                                         "ar":  "الْقَلِيلَ: ثِيَابًا، وَدَوَاءً، وَنُسْخَةً مِنْ جَوَازِ السَّفَرِ.",
-                                                         "fr":  "Peu de choses : des vêtements, des médicaments et une copie du passeport."
+                                                         "ar":  "يَا أُمِّي، هَلْ أَضَعُ هٰذَا الْعِطْرَ فِي حَقِيبَتِكِ؟",
+                                                         "fr":  "Maman, est-ce que je mets ce parfum dans ta valise ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5883,13 +5883,13 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "أَلُو، السَّلَامُ عَلَيْكُمْ. وَالْمُمَرِّضَتَانِ؟ هَلْ رَجَعَتَا مِنَ السَّفَرِ؟",
-                                                    "fr":  "Allô, que la paix soit sur toi. Et les deux infirmières ? Sont-elles rentrées de voyage ?",
+                                                    "fr":  "Allô, que la paix soit sur vous. Et les deux infirmières ? Sont-elles rentrées de voyage ?",
                                                     "unite":  0
                                                 },
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ. نَعَمْ، دَخَلَتَا الْمُسْتَشْفَى صَبَاحَ الْيَوْمِ.",
-                                                    "fr":  "Et sur toi la paix. Oui, elles sont arrivées à l\u0027hôpital ce matin.",
+                                                    "fr":  "Et sur vous la paix. Oui, elles sont arrivées à l\u0027hôpital ce matin.",
                                                     "unite":  0
                                                 },
                                                 {
@@ -5917,7 +5917,7 @@
                                                     "unite":  0
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est une voisine qui t\u0027appelle. Donne des nouvelles de ta mère et de ta tante en voyage : elles sont arrivées, elles se sont reposées.",
+                              "consigne_tuteur":  "Le tuteur est une voisine qui t\u0027appelle. Donne des nouvelles de tes deux sœurs infirmières, rentrées de voyage : elles sont arrivées à l\u0027hôpital ce matin, elles sont un peu fatiguées.",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "جَزَاكِ اللَّهُ خَيْرًا.",
@@ -5929,7 +5929,7 @@
                                                      },
                                                      {
                                                          "ar":  "وَعَلَيْكُمُ السَّلَامُ. نَعَمْ، دَخَلَتَا الْمُسْتَشْفَى صَبَاحَ الْيَوْمِ.",
-                                                         "fr":  "Et sur toi la paix. Oui, elles sont arrivées à l\u0027hôpital ce matin."
+                                                         "fr":  "Et sur vous la paix. Oui, elles sont arrivées à l\u0027hôpital ce matin."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5994,16 +5994,16 @@
                               "consigne_tuteur":  "Le tuteur est ton époux, pendant une journée très chaude en voyage. Dis que tu es fatiguée ; écoute ses propositions et rassure-le.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "وَأَنْتِ، إِذَا شَعَرْتِ بِدُوَارٍ، فَالْمُسْعِفُونَ قَرِيبُونَ.",
-                                                         "fr":  "Et toi, si tu as un vertige, les secouristes sont tout près."
+                                                         "ar":  "مَتَى نَنْطَلِقُ؟",
+                                                         "fr":  "Quand partons-nous ?"
                                                      },
                                                      {
-                                                         "ar":  "نَبْقَى هُنَا حَتَّى تَغْرُبَ الشَّمْسُ، ثُمَّ نَنْطَلِقُ.",
-                                                         "fr":  "Nous restons ici jusqu\u0027au coucher du soleil, puis nous partons."
+                                                         "ar":  "أَنَا مُتْعَبَةٌ قَلِيلًا مِنَ الْحَرِّ.",
+                                                         "fr":  "Je suis un peu fatiguée par la chaleur."
                                                      },
                                                      {
-                                                         "ar":  "اجْلِسِي تَحْتَ الْمِظَلَّةِ، وَسَأَطْلُبُ مَاءً مِنَ الْمُتَطَوِّعِينَ.",
-                                                         "fr":  "Assieds-toi sous l\u0027ombrelle, je vais demander de l\u0027eau aux bénévoles."
+                                                         "ar":  "شُكْرًا. أَنَا مُمَرِّضَةٌ، وَأَعْرِفُ أَنَّ الْمَاءَ أَوَّلُ دَوَاءٍ هُنَا.",
+                                                         "fr":  "Merci. Je suis infirmière, et je sais que l\u0027eau est le premier remède ici."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6326,16 +6326,20 @@
                               "consigne_tuteur":  "Le tuteur est l\u0027infirmière du service. Demande des nouvelles du malade, combien de temps tu peux rester, et ce qu\u0027il peut boire.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، قَلِيلًا: نِصْفَ كُوبٍ فَقَطْ، بِبُطْءٍ.",
-                                                         "fr":  "Oui, un peu : un demi-verre seulement, lentement."
+                                                         "ar":  "كَمْ دَقِيقَةً نَسْتَطِيعُ أَنْ نَبْقَى؟",
+                                                         "fr":  "Combien de minutes pouvons-nous rester ?"
                                                      },
                                                      {
-                                                         "ar":  "عَشْرَ دَقَائِقَ فَقَطْ. الزِّيَارَةُ الْقَصِيرَةُ أَنْفَعُ لِلْمَرِيضِ.",
-                                                         "fr":  "Dix minutes seulement. Une visite courte est plus utile au malade."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. كَيْفَ حَالُ عَمِّي الْيَوْمَ؟",
+                                                         "fr":  "Que la paix soit sur vous. Comment va mon oncle aujourd\u0027hui ?"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. ازْدَادَ ضَعْفًا، لٰكِنَّهُ هَادِئٌ وَيَعْرِفُ النَّاسَ.",
-                                                         "fr":  "Et sur vous la paix. Il s\u0027est encore affaibli, mais il est calme et reconnaît les gens."
+                                                         "ar":  "جَزَاكِ اللَّهُ خَيْرًا. سَنَرْجِعُ غَدًا إِنْ شَاءَ اللَّهُ.",
+                                                         "fr":  "Qu\u0027Allah vous récompense. Nous reviendrons demain, si Allah le veut."
+                                                     },
+                                                     {
+                                                         "ar":  "أَحْضَرْتُ لَهُ مَاءَ زَمْزَمَ. هَلْ يَسْتَطِيعُ أَنْ يَشْرَبَ؟",
+                                                         "fr":  "Je lui ai apporté de l\u0027eau de Zamzam. Peut-il boire ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6373,7 +6377,7 @@
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ يَا بُنَيَّ. الْحَمْدُ لِلَّهِ، أَنَا بِخَيْرٍ الْيَوْمَ.",
-                                                    "fr":  "Et sur toi la paix, mon fils. Louange à Allah, je vais bien aujourd\u0027hui.",
+                                                    "fr":  "Et sur vous la paix, mon fils. Louange à Allah, je vais bien aujourd\u0027hui.",
                                                     "unite":  0
                                                 },
                                                 {
@@ -6410,16 +6414,20 @@
                               "consigne_tuteur":  "Le tuteur est ton oncle, à l\u0027hôpital. Réconforte-le, dis-lui que tout le monde pense à lui et promets de revenir.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "سَلِّمْ عَلَيْهِمْ مِنِّي.",
-                                                         "fr":  "Salue-les de ma part."
+                                                         "ar":  "بِخَيْرٍ، وَيَسْأَلُونَ عَنْكَ كُلَّ يَوْمٍ.",
+                                                         "fr":  "Bien, et ils demandent de vos nouvelles chaque jour."
                                                      },
                                                      {
-                                                         "ar":  "وَكَيْفَ حَالُ الْأَوْلَادِ؟",
-                                                         "fr":  "Et comment vont les enfants ?"
+                                                         "ar":  "سَنَرْجِعُ غَدًا إِنْ شَاءَ اللَّهُ.",
+                                                         "fr":  "Nous reviendrons demain, si Allah le veut."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ يَا بُنَيَّ. الْحَمْدُ لِلَّهِ، أَنَا بِخَيْرٍ الْيَوْمَ.",
-                                                         "fr":  "Et sur toi la paix, mon fils. Louange à Allah, je vais bien aujourd\u0027hui."
+                                                         "ar":  "أَنْتَ أَكْثَرُنَا صَبْرًا يَا عَمِّي.",
+                                                         "fr":  "Vous êtes le plus patient d\u0027entre nous, mon oncle."
+                                                     },
+                                                     {
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا عَمِّي. لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ.",
+                                                         "fr":  "Que la paix soit sur vous, mon oncle. Ce n\u0027est rien : une purification, si Allah le veut."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6499,20 +6507,20 @@
                               "consigne_tuteur":  "Le tuteur est le responsable de la mosquée. Tu viens d\u0027apprendre un décès : dis ta tristesse, demande l\u0027heure de la prière funéraire et ce dont la famille a besoin.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ. أَوْلَادُهُ مَشْغُولُونَ بِالْأَوْرَاقِ.",
-                                                         "fr":  "Oui. Ses enfants sont occupés par les papiers."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. مَتَى الصَّلَاةُ عَلَيْهِ؟",
+                                                         "fr":  "Qu\u0027Allah vous récompense. Quand a lieu la prière funéraire ?"
                                                      },
                                                      {
-                                                         "ar":  "بَعْدَ الظُّهْرِ فِي مَسْجِدِ الْحَيِّ.",
-                                                         "fr":  "Après la prière de midi, à la mosquée du quartier."
+                                                         "ar":  "سَنَحْضُرُ الصَّلَاةَ إِنْ شَاءَ اللَّهُ، ثُمَّ نَزُورُ الْأُسْرَةَ.",
+                                                         "fr":  "Nous assisterons à la prière si Allah le veut, puis nous rendrons visite à la famille."
                                                      },
                                                      {
-                                                         "ar":  "وَأَعِدُّوا لِلْأُسْرَةِ طَعَامًا، فَهُمْ مَشْغُولُونَ.",
-                                                         "fr":  "Et préparez un repas pour la famille : ils sont occupés."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا حَاجُّ. بَلَغَنَا الْخَبَرُ، وَنَحْنُ مَحْزُونُونَ.",
+                                                         "fr":  "Que la paix soit sur vous, Hadj. La nouvelle nous est parvenue, et nous sommes attristés."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. نَعَمْ، تُوُفِّيَ فَجْرَ الْيَوْمِ هَادِئًا.",
-                                                         "fr":  "Et sur vous la paix. Oui, il s\u0027est éteint paisiblement ce matin à l\u0027aube."
+                                                         "ar":  "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ. أَنْتَ مَعَ الْأُسْرَةِ الْآنَ؟",
+                                                         "fr":  "Ô Allah, pardonne-lui et fais-lui miséricorde. Vous êtes avec la famille en ce moment ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6770,16 +6778,20 @@
                               "consigne_tuteur":  "Le tuteur est le responsable des bénévoles, à l\u0027association. Inscris-toi, explique tes horaires et demande ce qu\u0027on apprend pendant la formation.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "لَا بَأْسَ، أَعْرِفُ أَنَّ الْمُمَرِّضَاتِ مَشْغُولَاتٌ. سَنُنَظِّمُ حِصَّةً مَسَائِيَّةً.",
-                                                         "fr":  "Pas de problème, je sais que les infirmières sont occupées. Nous organiserons une séance le soir."
+                                                         "ar":  "وَمَاذَا نَتَعَلَّمُ فِي التَّدْرِيبِ؟",
+                                                         "fr":  "Et qu\u0027apprend-on pendant la formation ?"
                                                      },
                                                      {
-                                                         "ar":  "نَتَعَلَّمُ الْعَمَلَ تَعَلُّمًا عَمَلِيًّا، وَلَا يَعْمَلُ فِي الْفَرِيقِ إِلَّا مَنْ تَدَرَّبَ.",
-                                                         "fr":  "On apprend le travail de façon pratique, et seuls ceux qui ont été formés travaillent dans l\u0027équipe."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. أَتَطَوَّعُ ابْتِغَاءَ الْأَجْرِ.",
+                                                         "fr":  "Qu\u0027Allah vous récompense. Je me porte volontaire en recherchant la récompense."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ، مَرْحَبًا. إِنْ حَضَرْتِ التَّدْرِيبَ يَوْمَ السَّبْتِ فَسَتَبْدَئِينَ الشَّهْرَ الْقَادِمَ.",
-                                                         "fr":  "Et sur vous la paix, bienvenue. Si vous assistez à la formation samedi, vous commencerez le mois prochain."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا حَاجُّ. أُرِيدُ أَنْ أَتَسَجَّلَ فِي فَرِيقِ النِّسَاءِ.",
+                                                         "fr":  "Que la paix soit sur vous, Hadj. Je voudrais m\u0027inscrire dans l\u0027équipe des femmes."
+                                                     },
+                                                     {
+                                                         "ar":  "لَا أَسْتَطِيعُ الْحُضُورَ إِلَّا بَعْدَ الْعَصْرِ، بِسَبَبِ عَمَلِي فِي الْمُسْتَشْفَى.",
+                                                         "fr":  "Je ne peux venir qu\u0027après la prière de l\u0027après-midi, à cause de mon travail à l\u0027hôpital."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6932,16 +6944,16 @@
                               "consigne_tuteur":  "Le tuteur est le cheikh, sur le chantier de la nouvelle mosquée. Pose des questions sur le plan, propose tes compétences et fixe un rendez-vous de travail.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "بَيْنَهُمَا مَمَرٌّ وَرُفُوفٌ لِلْأَحْذِيَةِ.",
-                                                         "fr":  "Entre les deux, il y a un couloir et des étagères à chaussures."
+                                                         "ar":  "وَالْمِيضَأَةُ بَعِيدَةٌ عَنِ الْمُصَلَّى؟",
+                                                         "fr":  "Et la salle d\u0027ablutions est-elle loin de la salle de prière ?"
                                                      },
                                                      {
-                                                         "ar":  "هُنَا، فِي جِدَارِ الْقِبْلَةِ. حَدَّدْنَا الِاتِّجَاهَ بِالْبُوصْلَةِ وَبِالْخَرِيطَةِ.",
-                                                         "fr":  "Ici, dans le mur de la direction de la prière. Nous avons déterminé la direction avec la boussole et la carte."
+                                                         "ar":  "يَا شَيْخُ، أَيْنَ سَيَكُونُ الْمِحْرَابُ بِالضَّبْطِ؟",
+                                                         "fr":  "Cheikh, où sera exactement la niche de l\u0027imam ?"
                                                      },
                                                      {
-                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. مَوْعِدُنَا يَوْمَ السَّبْتِ فِي الْوَرْشَةِ بَعْدَ صَلَاةِ الْفَجْرِ.",
-                                                         "fr":  "Qu\u0027Allah te récompense. Rendez-vous samedi sur le chantier, après la prière de l\u0027aube."
+                                                         "ar":  "أَنَا فَنِّيُّ صِيَانَةٍ؛ أَسْتَطِيعُ أَنْ أُرَكِّبَ الْمَرَاوِحَ وَالْمَصَابِيحَ.",
+                                                         "fr":  "Je suis technicien de maintenance ; je peux installer les ventilateurs et les lampes."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7010,16 +7022,16 @@
                               "consigne_tuteur":  "Le tuteur est la responsable du projet. Demande s\u0027il y a un espace pour les enfants dans la salle des femmes, et propose ton aide.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الرِّجَالُ يَحْمِلُونَ الصَّنَادِيقَ غَدًا.",
-                                                         "fr":  "Les hommes portent les caisses demain."
+                                                         "ar":  "وَالصَّنَادِيقُ؟",
+                                                         "fr":  "Et les caisses ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، أَنَا أُحْضِرُ الْمَكَانِسَ، وَأَحْفَظُ الْمَفَاتِيحَ.",
-                                                         "fr":  "Oui ; moi, j\u0027apporte les balais et je garde les clés."
+                                                         "ar":  "مَا شَاءَ اللَّهُ! هَلْ أُسَاعِدُكُنَّ؟",
+                                                         "fr":  "Ce qu\u0027Allah a voulu ! Est-ce que je vous aide ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، غُرْفَةٌ صَغِيرَةٌ بِجَانِبِ الْمَكْتَبَةِ. الْمَسْجِدُ لِلْجَمِيعِ.",
-                                                         "fr":  "Oui, une petite salle à côté de la bibliothèque. La mosquée est pour tout le monde."
+                                                         "ar":  "هَلْ فِي مُصَلَّى النِّسَاءِ مَكَانٌ لِلْأَطْفَالِ؟",
+                                                         "fr":  "Y a-t-il un espace pour les enfants dans la salle des femmes ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7093,16 +7105,20 @@
                               "consigne_tuteur":  "Le tuteur est ton chef d\u0027équipe. Tu t\u0027es mis en colère contre un collègue : écoute ses conseils pour te calmer et présente tes excuses.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "حَاوِرْهُ بِلُطْفٍ.",
-                                                         "fr":  "Parle-lui avec douceur."
+                                                         "ar":  "وَمَاذَا أَفْعَلُ الْآنَ؟",
+                                                         "fr":  "Et que dois-je faire maintenant ?"
                                                      },
                                                      {
-                                                         "ar":  "أَحْسَنْتَ! بَارَكَ اللَّهُ فِيكَ.",
-                                                         "fr":  "Très bien ! Qu\u0027Allah te bénisse."
+                                                         "ar":  "سَأَكْتُبُ هٰذَا، وَأُعَلِّقُهُ فِي خِزَانَتِي.",
+                                                         "fr":  "Je vais écrire cela, et l\u0027accrocher dans mon casier."
                                                      },
                                                      {
-                                                         "ar":  "اجْلِسْ، فَإِنْ ذَهَبَ الْغَضَبُ فَذَاكَ.",
-                                                         "fr":  "Assieds-toi ; si la colère s\u0027en va, tant mieux."
+                                                         "ar":  "قَالَ لِي زَمِيلِي كَلَامًا شَدِيدًا، فَغَضِبْتُ.",
+                                                         "fr":  "Mon collègue m\u0027a dit des paroles dures, alors je me suis mis en colère."
+                                                     },
+                                                     {
+                                                         "ar":  "سَأَذْهَبُ إِلَيْهِ، وَأَقُولُ: أَخْطَأْتُ، وَأَنَا آسِفٌ.",
+                                                         "fr":  "J\u0027irai le voir, et je dirai : j\u0027ai eu tort, et je suis désolé."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7362,20 +7378,20 @@
                               "consigne_tuteur":  "Le tuteur est l\u0027imam. Parle-lui d\u0027une nouvelle famille dans le quartier, propose une aide concrète (logement, accompagnement) en respectant leur dignité.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْحَمْدُ لِلَّهِ، وَالْيَوْمَ جَاءَ دَوْرُكُمْ!",
-                                                         "fr":  "Louange à Allah ; et aujourd\u0027hui, c\u0027est votre tour !"
+                                                         "ar":  "وَلٰكِنْ كَيْفَ نُسَاعِدُهُمْ؟",
+                                                         "fr":  "Mais comment les aider ?"
                                                      },
                                                      {
-                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. وَزَوْجَتِي تُسَاعِدُ الْأُمَّ.",
-                                                         "fr":  "Qu\u0027Allah te récompense. Et mon épouse aide la mère."
+                                                         "ar":  "أَعْرِفُ صَاحِبَ شَقَّةٍ فَارِغَةٍ؛ سَأَتَّصِلُ بِهِ بَعْدَ أَنْ أُغْلِقَ الدُّكَّانَ.",
+                                                         "fr":  "Je connais le propriétaire d\u0027un appartement vide ; je l\u0027appellerai après avoir fermé la boutique."
                                                      },
                                                      {
-                                                         "ar":  "نُسَاعِدُهُمْ حَتَّى يَقِفُوا عَلَى أَقْدَامِهِمْ، وَنَحْفَظُ كَرَامَتَهُمْ.",
-                                                         "fr":  "Nous les aidons jusqu\u0027à ce qu\u0027ils soient autonomes, et nous préservons leur dignité."
+                                                         "ar":  "لَمَّا خَرَجْتُ مِنْ صَلَاةِ الْعِشَاءِ أَمْسِ، رَأَيْتُ أُسْرَةً جَدِيدَةً تَبْحَثُ عَنْ سَكَنٍ.",
+                                                         "fr":  "Quand je suis sorti de la prière de la nuit hier, j\u0027ai vu une nouvelle famille qui cherchait un logement."
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، وَصَلُوا مِنْ مَالِي قَبْلَ أُسْبُوعٍ، بَعْدَ أَنْ وَجَدَ الْأَبُ عَمَلًا هُنَا.",
-                                                         "fr":  "Oui, ils sont arrivés du Mali il y a une semaine, après que le père a trouvé du travail ici."
+                                                         "ar":  "وَلَمَّا وَصَلْنَا نَحْنُ إِلَى هٰذَا الْحَيِّ قَبْلَ عِشْرِينَ سَنَةً، وَجَدَ لَنَا الْجِيرَانُ سَكَنًا.",
+                                                         "fr":  "Et quand nous sommes arrivés dans ce quartier il y a vingt ans, les voisins nous ont trouvé un logement."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7452,7 +7468,7 @@
                                                     "unite":  23
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est un voisin âgé qui veut faire suivre un message étonnant. Demande la source, explique pourquoi il faut vérifier, et propose de le supprimer.",
+                              "consigne_tuteur":  "Le tuteur est un voisin âgé, rencontré à la sortie de la mosquée, qui veut faire suivre un message étonnant. Demande la source, explique pourquoi il faut vérifier, et propose de le supprimer.",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "التَّحَقُّقُ وَاجِبٌ قَبْلَ النَّشْرِ.",

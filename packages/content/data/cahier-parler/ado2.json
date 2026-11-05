@@ -4,11 +4,11 @@
                  "serie":  "ado",
                  "niveau":  2,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 02:18",
+                 "genere_le":  "2026-11-05 02:39",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ado1 à ado2, livrets lect\\ado1 à ado2) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de ado2 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ado2 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Ma semaine : le week-end, le collège, le sport (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Ma semaine : le week-end, le collège, le sport (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "weekend",
                                        "college",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Demain et le Ramadan : mes projets, la rupture du jeûne, le respect en ligne (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Demain et le Ramadan : mes projets, la rupture du jeûne, le respect en ligne (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "projets",
                                        "ramadan",
@@ -42,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Réviser et compter : l\u0027examen, l\u0027argent de poche (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Réviser et compter : l\u0027examen, l\u0027argent de poche (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "examen",
                                        "argent"
@@ -51,8 +51,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Avant et maintenant : la famille, la santé (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Avant et maintenant : la famille, la santé (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "famille",
                                        "sante"
@@ -60,8 +60,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Ensemble : les amis, le quartier (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Ensemble : les amis, le quartier (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "amis",
                                        "quartier"
@@ -73,8 +73,8 @@
                        "code":  "weekend",
                        "partie":  1,
                        "picto":  "casque",
-                       "titre_fr":  "Mon week-end",
-                       "titre_ar":  "أُسْبُوعِي",
+                       "titre_fr":  "Le week-end",
+                       "titre_ar":  "فِي نِهَايَةِ الْأُسْبُوعِ",
                        "accroche_fr":  "À la fin de cette étape, je sais raconter mon week-end et demander aux autres ce qu\u0027ils ont fait.",
                        "unite":  5,
                        "phrases":  [
@@ -1023,7 +1023,7 @@
                       "partie":  1,
                       "theme":  "weekend",
                       "type":  "ouverture_theme",
-                      "titre_fr":  "Étape : Mon week-end",
+                      "titre_fr":  "Étape : Le week-end",
                       "apres":  "l00",
                       "apres_n":  0,
                       "refs":  [
@@ -1146,7 +1146,7 @@
                       "partie":  1,
                       "theme":  "weekend",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Mon week-end — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le week-end — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
                       "apres":  "l05",
                       "apres_n":  5,
                       "refs":  [
@@ -4167,13 +4167,13 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "السَّلَامُ عَلَيْكُمْ! مَاذَا فَعَلْتَ يَوْمَ الْأَحَدِ؟",
-                                                    "fr":  "Que la paix soit sur toi ! Qu\u0027est-ce que tu as fait dimanche ?",
+                                                    "fr":  "Que la paix soit sur vous ! Qu\u0027est-ce que tu as fait dimanche ?",
                                                     "unite":  0
                                                 },
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ. لَعِبْتُ مُبَارَاةً، وَفَازَ فَرِيقِي!",
-                                                    "fr":  "Et sur toi la paix. J\u0027ai joué un match, et mon équipe a gagné !",
+                                                    "fr":  "Et sur vous la paix. J\u0027ai joué un match, et mon équipe a gagné !",
                                                     "unite":  3
                                                 },
                                                 {
@@ -4198,12 +4198,16 @@
                               "consigne_tuteur":  "Le tuteur est un camarade, le lundi matin. Raconte ton week-end en trois verbes au passé, puis demande-lui le sien (وَأَنْتَ؟).",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! مَاذَا رَأَيْتَ؟",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Qu\u0027est-ce que tu as vu ?"
+                                                         "ar":  "نَظَرْتُ إِلَى الْقَمَرِ بِالْمِنْظَارِ الْكَبِيرِ.",
+                                                         "fr":  "J\u0027ai regardé la Lune dans le grand télescope."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. لَعِبْتُ مُبَارَاةً، وَفَازَ فَرِيقِي!",
-                                                         "fr":  "Et sur toi la paix. J\u0027ai joué un match, et mon équipe a gagné !"
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ! مَاذَا فَعَلْتَ يَوْمَ الْأَحَدِ؟",
+                                                         "fr":  "Que la paix soit sur vous ! Qu\u0027est-ce que tu as fait dimanche ?"
+                                                     },
+                                                     {
+                                                         "ar":  "مَبْرُوكٌ! وَأَنَا ذَهَبْتُ إِلَى نَادِي الْفَلَكِ.",
+                                                         "fr":  "Félicitations ! Et moi, je suis allé au club d\u0027astronomie."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4330,16 +4334,16 @@
                               "consigne_tuteur":  "Le tuteur est une élève du lycée, à l\u0027arrêt de tram. Elle te demande comment se passe ta journée : réponds au présent (أَرْكَبُ، أُرَاجِعُ، أَنَامُ).",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَنَامُ فِي السَّاعَةِ الْعَاشِرَةِ. لَا أَسْهَرُ أَبَدًا!",
-                                                         "fr":  "Je me couche à dix heures. Je ne veille jamais !"
+                                                         "ar":  "وَمَتَى تَنَامِينَ؟",
+                                                         "fr":  "Et à quelle heure tu te couches ?"
                                                      },
                                                      {
-                                                         "ar":  "أُرَاجِعُ دُرُوسِي، وَأَحْيَانًا أَعْمَلُ فِي جَمْعِيَّةِ الثَّانَوِيَّةِ.",
-                                                         "fr":  "Je révise mes cours, et parfois je travaille à l\u0027association du lycée."
+                                                         "ar":  "كَيْفَ تَذْهَبِينَ إِلَى الثَّانَوِيَّةِ؟",
+                                                         "fr":  "Comment est-ce que tu vas au lycée ?"
                                                      },
                                                      {
-                                                         "ar":  "أَرْكَبُ الْحَافِلَةَ ثُمَّ التِّرَامَ. وَأَنْتَ، هَلْ تَذْهَبُ مَشْيًا؟",
-                                                         "fr":  "Je prends le bus puis le tram. Et toi, tu y vas à pied ?"
+                                                         "ar":  "لَا، أَرْكَبُ التِّرَامَ أَيْضًا. مَاذَا تَعْمَلِينَ بَعْدَ الدُّرُوسِ؟",
+                                                         "fr":  "Non, je prends le tram moi aussi. Qu\u0027est-ce que tu fais après les cours ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4742,12 +4746,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Demande-lui si vous irez à la mosquée pendant les dix dernières nuits, et promets de ne pas veiller devant les écrans (لَنْ أَسْهَرَ).",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، سَنَذْهَبُ مَعًا.",
-                                                         "fr":  "Oui, nous irons ensemble."
+                                                         "ar":  "وَأُمِّي؟ هَلْ هِيَ مَعَنَا؟",
+                                                         "fr":  "Et Maman ? Est-ce qu\u0027elle vient avec nous ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، إِنْ شَاءَ اللَّهُ. نَامُوا قَلِيلًا بَعْدَ الظُّهْرِ.",
-                                                         "fr":  "Oui, si Allah le veut. Dormez un peu l\u0027après-midi."
+                                                         "ar":  "وَلَنْ أَسْهَرَ عَلَى الشَّاشَاتِ، إِنْ شَاءَ اللَّهُ!",
+                                                         "fr":  "Et je ne veillerai pas devant les écrans, si Allah le veut !"
+                                                     },
+                                                     {
+                                                         "ar":  "يَا أَبِي، هَلْ نَذْهَبُ إِلَى الْمَسْجِدِ فِي اللَّيَالِي الْعَشْرِ؟",
+                                                         "fr":  "Papa, est-ce qu\u0027on va à la mosquée pendant les dix dernières nuits ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4881,12 +4889,12 @@
                               "consigne_tuteur":  "Le tuteur est le camarade dont tu as publié la photo. Excuse-toi en face de lui, dans la cour.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا.",
-                                                         "fr":  "Qu\u0027Allah te récompense par le bien."
+                                                         "ar":  "حَذَفْتُ الصُّورَةَ فَوْرًا.",
+                                                         "fr":  "J\u0027ai supprimé la photo aussitôt."
                                                      },
                                                      {
-                                                         "ar":  "قَبِلْتُ اعْتِذَارَكَ، لٰكِنْ لَا تَنْشُرْ صُورَتِي مَرَّةً أُخْرَى.",
-                                                         "fr":  "J\u0027accepte tes excuses, mais ne publie plus jamais ma photo."
+                                                         "ar":  "أَخْطَأْتُ أَمْسِ. أَنَا آسِفٌ يَا أَخِي.",
+                                                         "fr":  "Je me suis trompé hier. Je suis désolé, mon frère."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5111,16 +5119,20 @@
                               "consigne_tuteur":  "Le tuteur est le vendeur. Demande le prix de la caméra, dis combien tu as, et explique comment tu as économisé.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هَلْ جَمَعْتَ هٰذَا الْمَالَ وَحْدَكَ؟",
-                                                         "fr":  "As-tu économisé cet argent tout seul ?"
+                                                         "ar":  "شُكْرًا جَزِيلًا! جَزَاكَ اللَّهُ خَيْرًا.",
+                                                         "fr":  "Merci beaucoup ! Qu\u0027Allah vous récompense par le bien."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. بِخَمْسَةٍ وَتِسْعِينَ يُورُو.",
-                                                         "fr":  "Et sur vous la paix. Quatre-vingt-quinze euros."
+                                                         "ar":  "غَالِيَةٌ! مَعِي تِسْعُونَ يُورُو فَقَطْ.",
+                                                         "fr":  "C\u0027est cher ! J\u0027ai seulement quatre-vingt-dix euros."
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! خُذْهَا بِتِسْعِينَ يُورُو.",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Prends-la pour quatre-vingt-dix euros."
+                                                         "ar":  "نَعَمْ، جَمَعْتُهُ تِسْعَةَ أَشْهُرٍ مِنْ مَصْرُوفِي.",
+                                                         "fr":  "Oui, je l\u0027ai mis de côté pendant neuf mois, sur mon argent de poche."
+                                                     },
+                                                     {
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. بِكَمْ هٰذِهِ الْكَامِيرَا مِنْ فَضْلِكَ؟",
+                                                         "fr":  "Que la paix soit sur vous. Combien coûte cette caméra, s\u0027il vous plaît ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5183,16 +5195,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Demande-lui comment il était à ton âge, s\u0027il avait un téléphone, et ce qu\u0027il fait aujourd\u0027hui.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْيَوْمَ أَنَا مُهَنْدِسٌ، الْحَمْدُ لِلَّهِ!",
-                                                         "fr":  "Aujourd\u0027hui, je suis ingénieur, louange à Allah !"
+                                                         "ar":  "وَالْيَوْمَ؟",
+                                                         "fr":  "Et aujourd\u0027hui ?"
                                                      },
                                                      {
-                                                         "ar":  "كُنْتُ خَجُولًا، وَكُنْتُ أُحِبُّ الرِّيَاضِيَّاتِ.",
-                                                         "fr":  "J\u0027étais timide, et j\u0027aimais les maths."
+                                                         "ar":  "وَهَلْ كَانَ عِنْدَكَ هَاتِفٌ؟",
+                                                         "fr":  "Et est-ce que tu avais un téléphone ?"
                                                      },
                                                      {
-                                                         "ar":  "لَا! كُنَّا نَلْعَبُ فِي الشَّارِعِ، وَنَحْفَظُ الْقُرْآنَ عِنْدَ الشَّيْخِ.",
-                                                         "fr":  "Non ! Nous jouions dans la rue, et nous apprenions le Coran chez le maître."
+                                                         "ar":  "يَا أَبِي، كَيْفَ كُنْتَ عِنْدَمَا كُنْتَ فِي عُمْرِي؟",
+                                                         "fr":  "Papa, comment étais-tu quand tu avais mon âge ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5379,13 +5391,13 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "السَّلَامُ عَلَيْكُمْ! هَلْ تَسْتَطِيعِينَ أَنْ تَأْتِي إِلَى الْإِفْطَارِ يَوْمَ السَّبْتِ؟",
-                                                    "fr":  "Que la paix soit sur toi ! Est-ce que tu peux venir au repas de rupture du jeûne samedi ?",
+                                                    "fr":  "Que la paix soit sur vous ! Est-ce que tu peux venir au repas de rupture du jeûne samedi ?",
                                                     "unite":  22
                                                 },
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ! بِكُلِّ سُرُورٍ، سَآتِي مَعَ أُمِّي إِنْ شَاءَ اللَّهُ.",
-                                                    "fr":  "Et sur toi la paix ! Avec plaisir, je viendrai avec ma mère, si Allah le veut.",
+                                                    "fr":  "Et sur vous la paix ! Avec plaisir, je viendrai avec ma mère, si Allah le veut.",
                                                     "unite":  22
                                                 },
                                                 {
@@ -5425,7 +5437,7 @@
                                                      },
                                                      {
                                                          "ar":  "وَعَلَيْكُمُ السَّلَامُ! بِكُلِّ سُرُورٍ، سَآتِي مَعَ أُمِّي إِنْ شَاءَ اللَّهُ.",
-                                                         "fr":  "Et sur toi la paix ! Avec plaisir, je viendrai avec ma mère, si Allah le veut."
+                                                         "fr":  "Et sur vous la paix ! Avec plaisir, je viendrai avec ma mère, si Allah le veut."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5486,12 +5498,16 @@
                               "consigne_tuteur":  "Le tuteur est ton grand frère. Dis-lui qu\u0027un inconnu t\u0027a écrit : vous décidez ensemble de ne pas répondre et de prévenir Papa.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "مَنْ هُوَ؟ مَاذَا كَتَبَ؟",
-                                                         "fr":  "Qui est-ce ? Qu\u0027est-ce qu\u0027il a écrit ?"
+                                                         "ar":  "يُرِيدُ صُورَتِي.",
+                                                         "fr":  "Il veut ma photo."
                                                      },
                                                      {
-                                                         "ar":  "لَا! اُتْرُكْ هٰذِهِ الرِّسَالَةَ، وَنُخْبِرُ أَبِي الْآنَ.",
-                                                         "fr":  "Non ! Laisse ce message, et nous prévenons Papa maintenant."
+                                                         "ar":  "حَسَنًا. شُكْرًا يَا أَخِي.",
+                                                         "fr":  "D\u0027accord. Merci, mon frère."
+                                                     },
+                                                     {
+                                                         "ar":  "كَتَبَ لِي شَخْصٌ غَرِيبٌ فِي الْهَاتِفِ.",
+                                                         "fr":  "Un inconnu m\u0027a écrit sur le téléphone."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5551,12 +5567,16 @@
                               "consigne_tuteur":  "Le tuteur est le hadj qui invite les voisins. Pose-lui ta question, puis demande la permission d\u0027enregistrer sa voix avant de commencer.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ، بِكُلِّ سُرُورٍ.",
-                                                         "fr":  "Oui, avec plaisir."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا يَا حَاجُّ!",
+                                                         "fr":  "Qu\u0027Allah vous récompense par le bien, Hadj !"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. الْإِفْطَارُ مَعَ الْجِيرَانِ أَجْمَلُ مِنَ الْإِفْطَارِ وَحْدَنَا.",
-                                                         "fr":  "Et sur vous la paix. Le repas de rupture du jeûne avec les voisins est plus beau que seuls."
+                                                         "ar":  "هَلْ تَسْمَحُ لَنَا أَنْ نُسَجِّلَ صَوْتَكَ؟",
+                                                         "fr":  "Nous permettez-vous d\u0027enregistrer votre voix ?"
+                                                     },
+                                                     {
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا حَاجُّ. لِمَاذَا تَدْعُو النَّاسَ كُلَّ سَنَةٍ؟",
+                                                         "fr":  "Que la paix soit sur vous, Hadj. Pourquoi invitez-vous les gens chaque année ?"
                                                      }
                                                  ],
                               "source_mots":  [

@@ -1,13 +1,14 @@
 {
     "meta":  {
                  "titre":  "Cahier « Je parle » — compagnon d\u0027Adultes 8",
+                 "serie":  "ad",
                  "niveau":  8,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-24 10:11",
+                 "genere_le":  "2026-11-05 02:36",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad8, livrets lect\\ad1 à ad8) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon d\u0027ad8 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ad8 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -21,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Les images de la langue, un petit discours, accueillir, remercier (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Les images de la langue, un petit discours, accueillir, remercier (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "images",
                                        "discours",
@@ -32,8 +33,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Raconter un voyage, un concours de poésie (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Raconter un voyage, un concours de poésie (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "voyage",
                                        "concours"
@@ -41,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Corriger avec douceur, travailler en équipe, les bonnes manières (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Corriger avec douceur, travailler en équipe, les bonnes manières (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "corriger",
                                        "equipe",
@@ -51,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Tenir parole, expliquer à un enfant, traiter chacun avec égalité (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Tenir parole, expliquer à un enfant, traiter chacun avec égalité (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "parole",
                                        "enfant",
@@ -61,8 +62,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Les réseaux sociaux, traduire, évaluer une allocution (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Les réseaux sociaux, traduire, évaluer une allocution (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "reseaux",
                                        "traduire",
@@ -1781,7 +1782,6 @@
                                    "P129",
                                    "P135",
                                    "P133",
-                                   "P129",
                                    "P128",
                                    "P127",
                                    "P031"
@@ -5881,16 +5881,20 @@
                               "consigne_tuteur":  "Le tuteur est une amie. Rapporte une phrase entendue à l\u0027hôpital, dis si c\u0027est une image ou non, et donne un autre exemple tiré de ta vie.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَيَقْصِدُ الْأَيْدِيَ وَحْدَهَا؟",
-                                                         "fr":  "Veut-il dire seulement les mains ?"
+                                                         "ar":  "صَحِيحٌ. وَالْحَالُ أَحْيَانًا هِيَ الْقَرِينَةُ.",
+                                                         "fr":  "C\u0027est juste. Et parfois, c\u0027est la situation qui sert d\u0027indice."
                                                      },
                                                      {
-                                                         "ar":  "إِذَنْ نَحْتَاجُ إِلَى قَرِينَةٍ دَائِمًا.",
-                                                         "fr":  "Alors nous avons toujours besoin d\u0027un indice."
+                                                         "ar":  "لَا، هٰذِهِ حَقِيقَةٌ: الثِّيَابُ تُغْسَلُ فِعْلًا.",
+                                                         "fr":  "Non, c\u0027est le sens propre : le linge se lave vraiment."
                                                      },
                                                      {
-                                                         "ar":  "وَأَنَا سَمِعْتُ جَارَتِي تَقُولُ: «غَسَلْتُ الثِّيَابَ». أَهٰذَا مَجَازٌ أَيْضًا؟",
-                                                         "fr":  "Et moi, j\u0027ai entendu ma voisine dire : « J\u0027ai lavé le linge. » Est-ce aussi une image ?"
+                                                         "ar":  "لَا، يَقْصِدُ الْفَرِيقَ كُلَّهُ: الْأَطِبَّاءَ وَالْمُمَرِّضِينَ. فَهٰذَا مَجَازٌ.",
+                                                         "fr":  "Non, il veut dire toute l\u0027équipe : les médecins et les infirmiers. C\u0027est donc une image."
+                                                     },
+                                                     {
+                                                         "ar":  "فِي الْمُسْتَشْفَى قَالَ الطَّبِيبُ: «هٰذَا الْمَرِيضُ بَيْنَ أَيْدٍ أَمِينَةٍ».",
+                                                         "fr":  "À l\u0027hôpital, le médecin a dit : « Ce malade est entre de bonnes mains. »"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5975,20 +5979,20 @@
                               "consigne_tuteur":  "Le tuteur est l\u0027enseignante. Lis l\u0027introduction de ton petit discours, écoute sa remarque sur les images, et corrige-la.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "جَمِيلٌ. هٰذَانِ تَشْبِيهَانِ.",
-                                                         "fr":  "C\u0027est beau. Ce sont deux comparaisons."
+                                                         "ar":  "وَأُرِيدُ أَنْ أُضِيفَ صُورَةَ الْقِطَارِ، وَصُورَةَ الشَّمْسِ الْغَارِبَةِ…",
+                                                         "fr":  "Et je veux ajouter l\u0027image du train, et celle du soleil couchant…"
                                                      },
                                                      {
-                                                         "ar":  "تَفَضَّلْ، أَنَا أَسْمَعُكَ.",
-                                                         "fr":  "Je t\u0027en prie, je t\u0027écoute."
+                                                         "ar":  "كَتَبْتُ مُقَدِّمَةَ الْكَلِمَةِ يَا أُسْتَاذَةُ. أَتَسْمَحِينَ أَنْ أَقْرَأَهَا؟",
+                                                         "fr":  "J\u0027ai écrit l\u0027introduction du discours, Madame. Me permettez-vous de la lire ?"
                                                      },
                                                      {
-                                                         "ar":  "وَهٰذَا تَشْبِيهٌ أَيْضًا! خُذْهُ، فَهُوَ وَاضِحٌ يَفْهَمُهُ الْجَمِيعُ.",
-                                                         "fr":  "Et c\u0027est aussi une comparaison ! Prends-la : elle est claire, tout le monde la comprend."
+                                                         "ar":  "فَهِمْتُ: الِاسْتِعَارَةُ كَالْمِلْحِ فِي الطَّعَامِ، قَلِيلُهَا يُصْلِحُهُ، وَكَثِيرُهَا يُفْسِدُهُ.",
+                                                         "fr":  "J\u0027ai compris : l\u0027image est comme le sel dans le plat : un peu l\u0027améliore, trop le gâche."
                                                      },
                                                      {
-                                                         "ar":  "مَهْلًا! الْمُسْتَمِعُ لَيْسَ فِي مَعْرِضِ لَوْحَاتٍ. صُورَةٌ وَاحِدَةٌ وَاضِحَةٌ تَكْفِي فِي الْمُقَدِّمَةِ.",
-                                                         "fr":  "Doucement ! L\u0027auditeur n\u0027est pas dans une exposition de tableaux. Une seule image claire suffit dans l\u0027introduction."
+                                                         "ar":  "«إِخْوَتِي، الْعُمْرُ كَالنَّهْرِ، يَجْرِي وَلَا يَرْجِعُ، وَالْأَيَّامُ كَالْأَوْرَاقِ تَسْقُطُ مِنْ شَجَرَتِهَا».",
+                                                         "fr":  "« Mes frères, la vie est comme un fleuve : elle coule et ne revient pas, et les jours sont comme des feuilles qui tombent de leur arbre. »"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6070,20 +6074,20 @@
                               "consigne_tuteur":  "Le tuteur est le cheikh. Présente un ami qui vient pour la première fois ; il pose une question sur une habitude différente dans sa ville. Écoutez la réponse respectueuse du cheikh.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نَعَمْ. الْمُهِمُّ أَنْ تُصَلِّيَ بِخُشُوعٍ.",
-                                                         "fr":  "Oui. L\u0027important est de prier avec recueillement."
+                                                         "ar":  "إِذَنْ لَا يُنْكِرُ أَحَدٌ عَلَى أَحَدٍ؟",
+                                                         "fr":  "Donc personne ne fait de reproche à personne ?"
                                                      },
                                                      {
-                                                         "ar":  "أَهْلًا وَسَهْلًا. كَيْفَ وَجَدْتَ مَسْجِدَنَا؟",
-                                                         "fr":  "Bienvenue. Comment as-tu trouvé notre mosquée ?"
+                                                         "ar":  "وَأَكْثَرُ أَهْلِ الْحَيِّ جَاؤُوا مِنْ بِلَادٍ مُخْتَلِفَةٍ، أَلَيْسَ كَذٰلِكَ؟",
+                                                         "fr":  "Et la plupart des gens du quartier sont venus de pays différents, n\u0027est-ce pas ?"
                                                      },
                                                      {
-                                                         "ar":  "بَلَى. بَارَكَ اللَّهُ فِيكَ! صَارَ الدَّرْسُ يَسْكُنُ لِسَانَكَ.",
-                                                         "fr":  "Si. Qu\u0027Allah te bénisse ! La leçon habite désormais ta langue."
+                                                         "ar":  "جَمِيلٌ، وَلٰكِنْ لَاحَظْتُ شَيْئًا: هُنَا أَشْيَاءُ لَيْسَتْ فِي مَسْجِدِ حَيِّنَا. فَمَنِ الْمُصِيبُ؟",
+                                                         "fr":  "Belle, mais j\u0027ai remarqué une chose : il y a ici des choses qui n\u0027existent pas dans la mosquée de notre quartier. Alors qui a raison ?"
                                                      },
                                                      {
-                                                         "ar":  "سُؤَالٌ حَسَنٌ. كِلَا الْفِعْلَيْنِ لَهُ دَلِيلٌ عِنْدَ أَهْلِ الْعِلْمِ.",
-                                                         "fr":  "Bonne question. Les deux pratiques ont une preuve chez les savants."
+                                                         "ar":  "يَا شَيْخُ، هٰذَا أَخِي، زَمِيلِي فِي الْمَعْهَدِ، جَاءَ مِنْ لِيُونَ، وَيَحْضُرُ الْحَلْقَةَ أَوَّلَ مَرَّةٍ.",
+                                                         "fr":  "Cheikh, voici mon frère, mon camarade de l\u0027institut ; il vient de Lyon, et il assiste au cercle pour la première fois."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6330,16 +6334,20 @@
                               "consigne_tuteur":  "Le tuteur est le cheikh. Raconte ce que tu as vu de différent pendant ton voyage, et écoute son conseil de respect.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَحْسَنْتَ. احْفَظْ قَلْبَكَ مِنَ الْخِصَامِ.",
-                                                         "fr":  "Très bien. Garde ton cœur des disputes."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا يَا شَيْخُ.",
+                                                         "fr":  "Qu\u0027Allah vous récompense, cheikh."
                                                      },
                                                      {
-                                                         "ar":  "لَا. لِلْمَذَاهِبِ الْأُخْرَى رَأْيٌ آخَرُ بِدَلِيلٍ آخَرَ.",
-                                                         "fr":  "Non. Les autres écoles ont un autre avis, avec une autre preuve."
+                                                         "ar":  "هَلْ أَخْطَأَ أَهْلُ ذٰلِكَ الْمَسْجِدِ؟",
+                                                         "fr":  "Les gens de cette mosquée ont-ils eu tort ?"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ وَرَحْمَةُ اللَّهِ. حَمْدًا لِلَّهِ عَلَى سَلَامَتِكَ. سَلْ مَا بَدَا لَكَ.",
-                                                         "fr":  "Et sur vous la paix et la miséricorde d\u0027Allah. Louange à Allah pour ton retour. Demande ce que tu veux."
+                                                         "ar":  "فَهِمْتُ الْيَوْمَ أَنَّ الْخِلَافَ عِلْمٌ، وَلَيْسَ خِصَامًا.",
+                                                         "fr":  "J\u0027ai compris aujourd\u0027hui que la divergence est un savoir, pas une dispute."
+                                                     },
+                                                     {
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا شَيْخُ. رَجَعْتُ أَمْسِ مِنْ سَفَرٍ، فَرَأَيْتُ أَشْيَاءَ لَا نَفْعَلُهَا هُنَا.",
+                                                         "fr":  "Que la paix soit sur vous, cheikh. Je suis rentré hier de voyage, et j\u0027ai vu des choses que nous ne faisons pas ici."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6505,7 +6513,7 @@
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "فَعُولُنْ مَفَاعِيلُنْ.",
-                                                    "fr":  "Faʿūlun mafāʿīlun.",
+                                                    "fr":  "Ce sont les premiers pieds du mètre « long ».",
                                                     "unite":  8
                                                 },
                                                 {
@@ -6524,20 +6532,20 @@
                               "consigne_tuteur":  "Le tuteur est une camarade de classe. Parlez de l\u0027affiche du concours de poésie : sur quoi écrire, quel mètre choisir, et quelle phrase mettre sous l\u0027affiche.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "فَعُولُنْ مَفَاعِيلُنْ.",
-                                                         "fr":  "Faʿūlun mafāʿīlun."
+                                                         "ar":  "وَمَا وَزْنُهُ؟ نَسِيتُهُ.",
+                                                         "fr":  "Et quel est son rythme ? Je l\u0027ai oublié."
                                                      },
                                                      {
-                                                         "ar":  "وَأَنَا أُحِبُّ الطَّوِيلَ.",
-                                                         "fr":  "Et moi, j\u0027aime le « long »."
+                                                         "ar":  "وَسَأَكْتُبُ تَحْتَ الْمُلْصَقِ: الشِّعْرُ مِيزَانٌ.",
+                                                         "fr":  "Et j\u0027écrirai sous l\u0027affiche : la poésie est une balance."
                                                      },
                                                      {
-                                                         "ar":  "جَمِيلٌ! وَعَلَى أَيِّ بَحْرٍ سَتَكْتُبُ قَصِيدَتَكَ؟",
-                                                         "fr":  "C\u0027est beau ! Et sur quel mètre écriras-tu ton poème ?"
+                                                         "ar":  "انْظُرِي إِلَى الْمُلْصَقِ: «مُسَابَقَةُ الشِّعْرِ فِي الْمَعْهَدِ».",
+                                                         "fr":  "Regarde l\u0027affiche : « Concours de poésie à l\u0027institut. »"
                                                      },
                                                      {
-                                                         "ar":  "فِكْرَةٌ حَسَنَةٌ. الْكَلَامُ الْجَمِيلُ يَجْمَعُ بَيْنَ الصَّوْتِ وَالْمَعْنَى.",
-                                                         "fr":  "Bonne idée. La belle parole unit le son et le sens."
+                                                         "ar":  "أُحِبُّ بَحْرًا سَهْلًا، لِأَنِّي فِي أَوَّلِ الطَّرِيقِ.",
+                                                         "fr":  "J\u0027aime un mètre facile, parce que je suis au début du chemin."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6817,20 +6825,20 @@
                               "consigne_tuteur":  "Le tuteur est une collègue. Parlez de ce qu\u0027est une vraie cheffe d\u0027équipe et de ce que vous faites quand la fatigue rend tout le monde nerveux.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "وَالْمُمَرِّضَاتُ؟",
-                                                         "fr":  "Et les infirmières ?"
+                                                         "ar":  "وَأَنَا أَخْرُجُ قَلِيلًا، ثُمَّ أَرْجِعُ.",
+                                                         "fr":  "Et moi, je sors un peu, puis je reviens."
                                                      },
                                                      {
-                                                         "ar":  "هٰذِهِ رَئِيسَةُ الْفَرِيقِ الْحَقِيقِيَّةُ.",
-                                                         "fr":  "C\u0027est ça, une vraie cheffe d\u0027équipe."
+                                                         "ar":  "حَضَرْنَ مُبَكِّرًا الْيَوْمَ، وَجَلَسْنَ مَعَ الْمَرْضَى.",
+                                                         "fr":  "Elles sont venues tôt aujourd\u0027hui, et elles sont restées avec les malades."
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! لَا يَنْجَحُ أَحَدٌ وَحْدَهُ.",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Personne ne réussit seul."
+                                                         "ar":  "رَئِيسَةُ الْفَرِيقِ عِنْدَنَا تَخْرُجُ بَعْدَ الْجَمِيعِ.",
+                                                         "fr":  "Chez nous, la cheffe d\u0027équipe part après tout le monde."
                                                      },
                                                      {
-                                                         "ar":  "هُنَا يَأْتِي الْحِلْمُ: إِذَا غَضِبْتُ وَأَنَا قَائِمَةٌ، جَلَسْتُ.",
-                                                         "fr":  "C\u0027est là qu\u0027intervient la patience : si je me fâche debout, je m\u0027assieds."
+                                                         "ar":  "وَلٰكِنْ فِي آخِرِ اللَّيْلِ يَغْضَبُ بَعْضُنَا عَلَى بَعْضٍ.",
+                                                         "fr":  "Mais en fin de nuit, nous nous fâchons les unes contre les autres."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7095,20 +7103,20 @@
                               "consigne_tuteur":  "Le tuteur est le cheikh. Tu prépares un exposé sur la parole donnée. Pose ta question, écoute sa réponse, et écris la phrase de conclusion.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "وَأَنَا أُسَاعِدُكَ فِي الْخَرِيطَةِ إِنْ شِئْتَ.",
-                                                         "fr":  "Et je t\u0027aide pour la carte, si tu veux."
+                                                         "ar":  "وَلٰكِنَّ هٰذَا صَعْبٌ!",
+                                                         "fr":  "Mais c\u0027est difficile !"
                                                      },
                                                      {
-                                                         "ar":  "أَصَبْتَ: لِينٌ فِي الشَّكْلِ، وَثَبَاتٌ فِي الْأَصْلِ.",
-                                                         "fr":  "Tu as raison : de la souplesse dans la forme, de la fermeté sur l\u0027essentiel."
+                                                         "ar":  "سَأَكْتُبُ هٰذِهِ الْجُمْلَةَ فِي خُلَاصَةِ عَرْضِي.",
+                                                         "fr":  "J\u0027écrirai cette phrase dans la conclusion de mon exposé."
                                                      },
                                                      {
-                                                         "ar":  "سُؤَالٌ قَدِيمٌ! الْعَهْدُ يُحْتَرَمُ وَلَوْ كَانَ ثَقِيلًا.",
-                                                         "fr":  "Une vieille question ! L\u0027engagement se respecte même s\u0027il est lourd."
+                                                         "ar":  "فَالدَّرْسُ لَنَا: مَنْ وَقَّعَ عَقْدًا أَوْ أَعْطَى وَعْدًا فَلْيَفِ بِهِ، وَلَوْ ثَقُلَ عَلَيْهِ.",
+                                                         "fr":  "Alors la leçon pour nous : celui qui a signé un contrat ou donné une promesse doit la tenir, même si c\u0027est lourd pour lui."
                                                      },
                                                      {
-                                                         "ar":  "قَدْ نَتْرُكُ شَيْئًا مِنَ الشَّكْلِ الْيَوْمَ لِنَرْبَحَ السَّلَامَ غَدًا.",
-                                                         "fr":  "Nous pouvons céder un peu sur la forme aujourd\u0027hui pour gagner la paix demain."
+                                                         "ar":  "يَا شَيْخُ، أُحَضِّرُ عَرْضًا، وَعِنْدِي سُؤَالٌ: إِذَا كَانَتْ شُرُوطُ الْعَقْدِ شَدِيدَةً، هَلْ نَفِي بِهِ؟",
+                                                         "fr":  "Cheikh, je prépare un exposé, et j\u0027ai une question : si les conditions d\u0027un contrat sont dures, le respectons-nous ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7155,7 +7163,7 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "الْوَعْدُ دَيْنٌ. مَتَى تَصِلُ؟",
-                                                    "fr":  "La promesse est une dette. Quand arrive-t-elle ?",
+                                                    "fr":  "La promesse est une dette. Quand arrive-t-elle, la marchandise ?",
                                                     "unite":  0
                                                 },
                                                 {
@@ -7186,16 +7194,20 @@
                               "consigne_tuteur":  "Le tuteur est un fournisseur qui ne peut pas livrer à temps. Rappelle l\u0027engagement, écoute ses raisons, et trouvez un accord.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَعْتَذِرُ، تَأَخَّرْنَا فِي الطَّرِيقِ.",
-                                                         "fr":  "Je m\u0027excuse, nous avons été retardés en route."
+                                                         "ar":  "الْوَعْدُ دَيْنٌ. مَتَى تَصِلُ؟",
+                                                         "fr":  "La promesse est une dette. Quand arrive-t-elle, la marchandise ?"
                                                      },
                                                      {
-                                                         "ar":  "بَعْدَ ثَلَاثَةِ أَيَّامٍ، إِنْ شَاءَ اللَّهُ.",
-                                                         "fr":  "Dans trois jours, si Allah le veut."
+                                                         "ar":  "وَقَّعْنَا عَقْدًا، وَالْمَوْعِدُ الْيَوْمَ.",
+                                                         "fr":  "Nous avons signé un contrat, et la date est aujourd\u0027hui."
                                                      },
                                                      {
-                                                         "ar":  "اتَّفَقْنَا. وَأُنْقِصُ مِنَ الثَّمَنِ قَلِيلًا بِسَبَبِ التَّأَخُّرِ.",
-                                                         "fr":  "D\u0027accord. Et je baisse un peu le prix à cause du retard."
+                                                         "ar":  "أَقْبَلُ، بِشَرْطِ أَنْ نَكْتُبَ الْمَوْعِدَ الْجَدِيدَ.",
+                                                         "fr":  "J\u0027accepte, à condition que nous écrivions la nouvelle date."
+                                                     },
+                                                     {
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. هٰكَذَا يَبْقَى الْعَمَلُ بَيْنَنَا.",
+                                                         "fr":  "Qu\u0027Allah te récompense. C\u0027est ainsi que nous continuerons à travailler ensemble."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7274,20 +7286,20 @@
                               "consigne_tuteur":  "Le tuteur est un grand-père qui veut apprendre la religion à son petit-fils. Conseille-lui de commencer par l\u0027essentiel, avec patience.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "فَمَاذَا أَفْعَلُ؟",
-                                                         "fr":  "Alors que dois-je faire ?"
+                                                         "ar":  "الْقَلْبُ أَوَّلًا، ثُمَّ التَّفَاصِيلُ.",
+                                                         "fr":  "Le cœur d\u0027abord, puis les détails."
                                                      },
                                                      {
-                                                         "ar":  "سَأَخْتِمُ كُلَّ يَوْمٍ بِهٰذِهِ الْجُمْلَةِ.",
-                                                         "fr":  "Je terminerai chaque jour par cette phrase."
+                                                         "ar":  "وَمَا الْفَائِدَةُ لَنَا الْيَوْمَ؟",
+                                                         "fr":  "Et quel est l\u0027intérêt pour nous aujourd\u0027hui ?"
                                                      },
                                                      {
-                                                         "ar":  "نَفْهَمُ حِكْمَةَ التَّرْبِيَةِ: أَهَمُّ شَيْءٍ أَوَّلًا.",
-                                                         "fr":  "Nous comprenons la sagesse de l\u0027éducation : le plus important d\u0027abord."
+                                                         "ar":  "احْكِ لَهُ قِصَّةً قَصِيرَةً، وَاسْمَعْ مِنْهُ.",
+                                                         "fr":  "Raconte-lui une histoire courte, et écoute-le."
                                                      },
                                                      {
-                                                         "ar":  "حَفِيدِي يَسْأَلُ أَسْئِلَةً كَثِيرَةً، وَأَنَا أَشْرَحُ لَهُ كُلَّ شَيْءٍ.",
-                                                         "fr":  "Mon petit-fils pose beaucoup de questions, et je lui explique tout."
+                                                         "ar":  "صَدَقْتَ! وَهٰذَا دَرْسٌ لِمَنْ يُعَلِّمُ أَوْلَادَهُ أَوْ جِيرَانَهُ.",
+                                                         "fr":  "Vous avez raison ! Et c\u0027est une leçon pour celui qui enseigne à ses enfants ou à ses voisins."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7371,20 +7383,20 @@
                               "consigne_tuteur":  "Le tuteur est un patient âgé. Il remarque qu\u0027une personne connue passe avant les autres. Explique la règle de l\u0027hôpital et proposez ce qu\u0027il faut faire.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هٰذَا لِلطَّبِيبِ فَقَطْ؟",
-                                                         "fr":  "Cela vaut seulement pour le médecin ?"
+                                                         "ar":  "لَا، هٰذَا لِلطَّبِيبِ، وَلِلْمُعَلِّمِ، وَلِلْمُوَظَّفِ.",
+                                                         "fr":  "Non, cela vaut pour le médecin, pour l\u0027enseignant et pour l\u0027employé."
                                                      },
                                                      {
-                                                         "ar":  "هٰذَا لَيْسَ عَدْلًا.",
-                                                         "fr":  "Ce n\u0027est pas juste."
+                                                         "ar":  "سَأَتَكَلَّمُ مَعَ الطَّبِيبِ الْآنَ، وَأَطْلُبُ قَاعِدَةً وَاضِحَةً.",
+                                                         "fr":  "Je vais parler au médecin maintenant, et demander une règle claire."
                                                      },
                                                      {
-                                                         "ar":  "وَهُمْ يَنْتَظِرُونَ مُنْذُ الصَّبَاحِ.",
-                                                         "fr":  "Et eux attendent depuis le matin."
+                                                         "ar":  "صَحِيحٌ. الْعَدْلُ أَنْ يُسَاوِيَ الْمُوَظَّفُ بَيْنَ الْفَقِيرِ وَالْغَنِيِّ.",
+                                                         "fr":  "C\u0027est vrai. La justice, c\u0027est que l\u0027employé traite de la même façon le pauvre et le riche."
                                                      },
                                                      {
-                                                         "ar":  "تَعَلَّمْتُ الْيَوْمَ أَلَّا أَقُولَ: هٰذَا لِغَيْرِي. الدَّرْسُ لَنَا جَمِيعًا.",
-                                                         "fr":  "J\u0027ai appris aujourd\u0027hui à ne pas dire : cela concerne les autres. La leçon est pour nous tous."
+                                                         "ar":  "أَرَاهُ كُلَّ يَوْمٍ فِي الْمُسْتَشْفَى: الْمَرِيضُ الْفَقِيرُ يَنْتَظِرُ طَوِيلًا، وَالْمَعْرُوفُ يَدْخُلُ قَبْلَهُ.",
+                                                         "fr":  "Je le vois chaque jour à l\u0027hôpital : le malade pauvre attend longtemps, et celui qui est connu passe avant lui."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7647,16 +7659,20 @@
                               "consigne_tuteur":  "Le tuteur est une collègue qui traduit avec toi. Vous n\u0027êtes pas d\u0027accord sur un mot : expliquez chacune votre choix, regardez le contexte, puis décidez.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "لِمَاذَا؟",
-                                                         "fr":  "Pourquoi ?"
+                                                         "ar":  "كَيْفَ تُتَرْجِمِينَ هٰذِهِ الْكَلِمَةَ؟",
+                                                         "fr":  "Comment traduis-tu ce mot ?"
                                                      },
                                                      {
-                                                         "ar":  "أَرَى أَنَّهَا مُصْطَلَحٌ.",
-                                                         "fr":  "Je pense que c\u0027est un terme technique."
+                                                         "ar":  "لَا أُوَافِقُكِ. هُنَا لَيْسَتْ مُصْطَلَحًا.",
+                                                         "fr":  "Je ne suis pas d\u0027accord avec toi. Ici, ce n\u0027est pas un terme technique."
                                                      },
                                                      {
-                                                         "ar":  "صَدَقْتِ. نَكْتُبُ حَاشِيَةً قَصِيرَةً فِي أَوَّلِ مَرَّةٍ.",
-                                                         "fr":  "Tu as raison. Nous écrivons une courte note la première fois."
+                                                         "ar":  "فِكْرَةٌ حَسَنَةٌ. الْمُتَرْجِمُ الْأَمِينُ يُتَرْجِمُ، ثُمَّ يُحِيلُ فِي الْحَاشِيَةِ عَلَى أَهْلِ الْعِلْمِ.",
+                                                         "fr":  "Bonne idée. Le traducteur honnête traduit, puis renvoie en note aux savants."
+                                                     },
+                                                     {
+                                                         "ar":  "لِأَنَّ الْكَلِمَةَ قَدْ تَكُونُ مُصْطَلَحًا فِي بَابٍ، وَكَلِمَةً عَادِيَّةً فِي بَابٍ آخَرَ. وَالسِّيَاقُ هُوَ الْحَكَمُ.",
+                                                         "fr":  "Parce qu\u0027un mot peut être un terme technique dans un domaine, et un mot ordinaire dans un autre. Et c\u0027est le contexte qui décide."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7744,20 +7760,20 @@
                               "consigne_tuteur":  "Le tuteur est l\u0027enseignante qui a chronométré ton discours. Écoute ses compliments et ses remarques, pose une question, et dis ce que tu changeras.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "سِتُّ دَقَائِقَ وَعِشْرُونَ ثَانِيَةً. أَنْتَ فِي الْوَقْتِ تَمَامًا!",
-                                                         "fr":  "Six minutes et vingt secondes. Tu es pile dans le temps !"
+                                                         "ar":  "وَالْبِنَاءُ؟",
+                                                         "fr":  "Et le plan ?"
                                                      },
                                                      {
-                                                         "ar":  "لَا تَفْعَلْ! السَّجْعُ الْكَثِيرُ يَشْغَلُ السَّامِعَ بِالْأَلْفَاظِ عَنِ الْمَعَانِي.",
-                                                         "fr":  "Ne fais pas ça ! Trop de rimes occupent l\u0027auditeur avec les mots au lieu du sens."
+                                                         "ar":  "شُكْرًا، فَهِمْتُ.",
+                                                         "fr":  "Merci, j\u0027ai compris."
                                                      },
                                                      {
-                                                         "ar":  "الْبِنَاءُ وَاضِحٌ. وَأُحِبُّ الْمُقَابَلَةَ: «كَلِمَةٌ بَنَتْ بَيْتًا، وَكَلِمَةٌ هَدَمَتْ بَيْتًا».",
-                                                         "fr":  "Le plan est clair. Et j\u0027aime l\u0027opposition : « Une parole a construit un foyer, une parole a détruit un foyer. »"
+                                                         "ar":  "انْتَهَيْتُ. كَمْ دَامَتِ الْكَلِمَةُ؟",
+                                                         "fr":  "J\u0027ai fini. Combien de temps le discours a-t-il duré ?"
                                                      },
                                                      {
-                                                         "ar":  "اكْتُبْ كَلِمَاتٍ مِفْتَاحِيَّةً عَلَى بِطَاقَةٍ صَغِيرَةٍ؛ هٰكَذَا تَتَكَلَّمُ إِلَى النَّاسِ لَا إِلَى الْوَرَقَةِ.",
-                                                         "fr":  "Écris les mots-clés sur une petite carte : ainsi tu parles aux gens, et non à la feuille."
+                                                         "ar":  "كُنْتُ أُرِيدُ أَنْ أُضِيفَ سَجْعًا فِي كُلِّ جُمْلَةٍ…",
+                                                         "fr":  "Je voulais ajouter des rimes à chaque phrase…"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -8029,20 +8045,20 @@
                               "consigne_tuteur":  "Le tuteur vient de gagner le concours de poésie. Félicite-le, demande quel est son plus beau vers, et encourage-le à continuer.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "صَدَقْتَ، تَعَلَّمْتُ هٰذَا فِي الدَّرْسِ.",
-                                                         "fr":  "Tu as raison, j\u0027ai appris cela en cours."
+                                                         "ar":  "صُورَةٌ وَاحِدَةٌ وَاضِحَةٌ تَكْفِي!",
+                                                         "fr":  "Une seule image claire suffit !"
                                                      },
                                                      {
-                                                         "ar":  "لَيْسَ بَعْدُ، وَلٰكِنِّي أَكْتُبُ كُلَّ يَوْمٍ قَلِيلًا.",
-                                                         "fr":  "Pas encore, mais j\u0027écris un peu chaque jour."
+                                                         "ar":  "وَهَلْ عِنْدَكَ قَصِيدَةٌ أُخْرَى؟",
+                                                         "fr":  "Et as-tu un autre poème ?"
                                                      },
                                                      {
-                                                         "ar":  "بَارَكَ اللَّهُ فِيكَ. كُنْتُ أَخَافُ أَنْ أَنْسَى.",
-                                                         "fr":  "Qu\u0027Allah te bénisse. J\u0027avais peur d\u0027oublier."
+                                                         "ar":  "وَمَا أَجْمَلُ بَيْتٍ عِنْدَكَ؟",
+                                                         "fr":  "Et quel est ton plus beau vers ?"
                                                      },
                                                      {
-                                                         "ar":  "بَيْتٌ عَنِ الْأُمِّ؛ فِيهِ تَشْبِيهٌ وَاحِدٌ وَاضِحٌ.",
-                                                         "fr":  "Un vers sur la mère ; il contient une seule comparaison, claire."
+                                                         "ar":  "مَبْرُوكٌ يَا أَخِي! أَنْتَ الْأَوَّلُ!",
+                                                         "fr":  "Félicitations, mon frère ! Tu es le premier !"
                                                      }
                                                  ],
                               "source_mots":  [

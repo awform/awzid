@@ -1,13 +1,14 @@
 {
     "meta":  {
                  "titre":  "Cahier « Je parle » — compagnon d\u0027Adultes 6",
+                 "serie":  "ad",
                  "niveau":  6,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-24 10:12",
+                 "genere_le":  "2026-11-05 02:34",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ad1 à ad6, livrets lect\\ad1 à ad6) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon d\u0027ad6 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ad6 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -21,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Acheter et vendre honnêtement (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Acheter et vendre honnêtement (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "achat",
                                        "marche"
@@ -30,8 +31,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Emprunter, s\u0027entraider, louer, compter (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Emprunter, s\u0027entraider, louer, compter (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "emprunt",
                                        "entraide",
@@ -41,8 +42,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Un accident, une annonce honnête, un objet perdu (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Un accident, une annonce honnête, un objet perdu (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "accident",
                                        "annonce",
@@ -51,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Réparer, payer, refuser, apprendre (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Réparer, payer, refuser, apprendre (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "reparation",
                                        "recu",
@@ -62,8 +63,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Régler un conflit, débattre (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Régler un conflit, débattre (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "voisins",
                                        "debat"
@@ -1531,7 +1532,6 @@
                                    "P012",
                                    "P138",
                                    "P011",
-                                   "P138",
                                    "P124",
                                    "P123",
                                    "P016",
@@ -5716,20 +5716,20 @@
                               "consigne_tuteur":  "Le tuteur est un vendeur au marché. Tu veux acheter un sac fermé sans le peser ; il refuse et t\u0027explique pourquoi. Achète finalement deux sacs.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "بِعْتُكَ الْكِيسَيْنِ، بَارَكَ اللَّهُ لَكَ فِيهِمَا.",
-                                                         "fr":  "Je vous vends les deux sacs ; qu\u0027Allah vous les bénisse."
+                                                         "ar":  "هٰذِهِ سَبْعُونَ يُورُو، ثَمَنُ الْكِيسَيْنِ.",
+                                                         "fr":  "Voici soixante-dix euros, le prix des deux sacs."
                                                      },
                                                      {
-                                                         "ar":  "خَمْسَةٌ وَثَلَاثُونَ يُورُو، وَهُوَ ثَمَنُ السُّوقِ الْيَوْمَ.",
-                                                         "fr":  "Trente-cinq euros : c\u0027est le prix du marché aujourd\u0027hui."
+                                                         "ar":  "لِمَاذَا؟ بَعْضُ الْبَاعَةِ هُنَا يَبِيعُونَ الْأَكْيَاسَ مُغْلَقَةً.",
+                                                         "fr":  "Pourquoi ? Certains vendeurs ici vendent les sacs fermés."
                                                      },
                                                      {
-                                                         "ar":  "انْظُرْ: وَزْنُ هٰذَا الْكِيسِ خَمْسُونَ كِيلُوغْرَامًا، وَالْفُولُ جَافٌّ نَظِيفٌ.",
-                                                         "fr":  "Regardez : ce sac pèse cinquante kilos, et les arachides sont sèches et propres."
+                                                         "ar":  "مَا شَاءَ اللَّهُ! آخُذُ كِيسَيْنِ. كَمْ ثَمَنُ الْكِيسِ الْوَاحِدِ؟",
+                                                         "fr":  "Ce qu\u0027Allah a voulu ! Je prends deux sacs. Combien coûte un sac ?"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. لَا أَبِيعُ كِيسًا مُغْلَقًا: نَفْتَحُهُ، ثُمَّ نَزِنُهُ أَمَامَكَ.",
-                                                         "fr":  "Et sur vous la paix. Je ne vends pas de sac fermé : nous l\u0027ouvrons, puis nous le pesons devant vous."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. بِكَمْ هٰذَا الْكِيسُ الْمُغْلَقُ؟ أَشْتَرِيهِ كَمَا هُوَ، بِلَا وَزْنٍ.",
+                                                         "fr":  "Que la paix soit sur vous. Combien coûte ce sac fermé ? Je l\u0027achète tel quel, sans le peser."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6030,13 +6030,13 @@
                                                 {
                                                     "qui":  "A",
                                                     "ar":  "السَّلَامُ عَلَيْكُمْ. أُخْتُنَا اتَّصَلَتْ بِي أَمْسِ.",
-                                                    "fr":  "Que la paix soit sur toi. Notre sœur m\u0027a appelée hier.",
+                                                    "fr":  "Que la paix soit sur vous. Notre sœur m\u0027a appelée hier.",
                                                     "unite":  6
                                                 },
                                                 {
                                                     "qui":  "B",
                                                     "ar":  "وَعَلَيْكُمُ السَّلَامُ. خَيْرٌ إِنْ شَاءَ اللَّهُ؟ صِحَّتُهَا أَحْسَنُ؟",
-                                                    "fr":  "Et sur toi la paix. Rien de grave, j\u0027espère ? Sa santé va mieux ?",
+                                                    "fr":  "Et sur vous la paix. Rien de grave, j\u0027espère ? Sa santé va mieux ?",
                                                     "unite":  6
                                                 },
                                                 {
@@ -6198,20 +6198,20 @@
                               "consigne_tuteur":  "Le tuteur est le propriétaire. Demande le loyer, la durée du bail et qui paie les réparations ; dis que ton épouse viendra voir avant de décider.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "سَنَةٌ قَابِلَةٌ لِلتَّجْدِيدِ. وَالدَّفْعُ فِي أَوَّلِ كُلِّ شَهْرٍ.",
-                                                         "fr":  "Un an renouvelable. Et le paiement se fait au début de chaque mois."
+                                                         "ar":  "وَإِذَا تَعَطَّلَ سَخَّانُ الْمَاءِ، فَعَلَى مَنِ الْإِصْلَاحُ؟",
+                                                         "fr":  "Et si le chauffe-eau tombe en panne, qui paie la réparation ?"
                                                      },
                                                      {
-                                                         "ar":  "إِنَّ الْإِصْلَاحَاتِ الْكَبِيرَةَ عَلَيَّ، لٰكِنَّ الصِّيَانَةَ الْيَوْمِيَّةَ عَلَيْكَ.",
-                                                         "fr":  "Les grosses réparations sont à ma charge, mais l\u0027entretien courant est à la vôtre."
+                                                         "ar":  "مَا شَاءَ اللَّهُ، كَأَنَّهَا جَدِيدَةٌ! كَمِ الْإِيجَارُ؟",
+                                                         "fr":  "Ce qu\u0027Allah a voulu, on dirait qu\u0027il est neuf ! Combien est le loyer ?"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ، تَفَضَّلْ. إِنَّ الشَّقَّةَ فَارِغَةٌ مُنْذُ شَهْرٍ.",
-                                                         "fr":  "Et sur vous la paix, entrez. L\u0027appartement est libre depuis un mois."
+                                                         "ar":  "كُنْتُ أَظُنُّ الثَّمَنَ أَقَلَّ. وَمَا مُدَّةُ الْعَقْدِ؟",
+                                                         "fr":  "Je pensais que le prix était moins élevé. Et quelle est la durée du bail ?"
                                                      },
                                                      {
-                                                         "ar":  "لَا بَأْسَ. سَأَجْعَلُ الْعَقْدَ جَاهِزًا، وَنَكْتُبُ فِيهِ كُلَّ الشُّرُوطِ.",
-                                                         "fr":  "Pas de problème. Je préparerai le contrat, et nous y écrirons toutes les conditions."
+                                                         "ar":  "هٰذَا عَدْلٌ. لَعَلَّ زَوْجَتِي تَزُورُ الشَّقَّةَ غَدًا، ثُمَّ نُقَرِّرُ.",
+                                                         "fr":  "C\u0027est juste. Peut-être que mon épouse visitera l\u0027appartement demain, puis nous déciderons."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6233,10 +6233,10 @@
                                                   "A":  "femme",
                                                   "B":  "femme"
                                               },
-                              "role_A":  "l\u0027épouse",
-                              "picto_A":  "cle",
-                              "role_B":  "la propriétaire",
-                              "picto_B":  "maison",
+                              "role_A":  "la propriétaire",
+                              "picto_A":  "maison",
+                              "role_B":  "l\u0027épouse",
+                              "picto_B":  "cle",
                               "unite":  0,
                               "modele":  "ad6/l07",
                               "repliques":  [
@@ -6361,16 +6361,20 @@
                               "consigne_tuteur":  "Le tuteur est un conseiller qui lit le compte rendu de ton commerce. Présente le bénéfice, demande comment partager, et remercie ton associé.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَكْتُبُ الْحِسَابَ النِّهَائِيَّ، ثُمَّ نُوَقِّعُهُ.",
-                                                         "fr":  "J\u0027écris le compte final, puis nous le signons."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. لَعَلَّ الْأَشْهُرَ الْقَادِمَةَ أَفْضَلُ.",
+                                                         "fr":  "Qu\u0027Allah vous récompense. Peut-être que les mois à venir seront meilleurs."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. مَا شَاءَ اللَّهُ، تَقْرِيرٌ وَاضِحٌ. كَمْ كَانَ الرِّبْحُ؟",
-                                                         "fr":  "Et sur vous la paix. Ce qu\u0027Allah a voulu, un compte rendu clair. À combien s\u0027élevait le bénéfice ?"
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. هٰذَا تَقْرِيرُ شَرِيكِي عَنِ الْأَشْهُرِ السِّتَّةِ.",
+                                                         "fr":  "Que la paix soit sur vous. Voici le compte rendu de mon associé sur les six mois."
                                                      },
                                                      {
-                                                         "ar":  "فَلَكَ سِتُّونَ فِي الْمِئَةِ: تِسْعُ مِئَةِ يُورُو. وَلَهُ أَرْبَعُونَ: سِتُّ مِئَةٍ.",
-                                                         "fr":  "Vous avez donc soixante pour cent : neuf cents euros. Et lui quarante : six cents."
+                                                         "ar":  "الْحَمْدُ لِلَّهِ. هُوَ شَابٌّ صَادِقٌ كَلَامُهُ، وَالتِّجَارَةُ الْأَمِينَةُ بَرَكَةٌ.",
+                                                         "fr":  "Louange à Allah. C\u0027est un jeune homme à la parole sincère, et le commerce honnête est une bénédiction."
+                                                     },
+                                                     {
+                                                         "ar":  "إِنَّ الرِّبْحَ كُلَّهُ أَلْفٌ وَخَمْسُ مِئَةِ يُورُو، وَرَأْسُ الْمَالِ سَلِيمٌ.",
+                                                         "fr":  "Le bénéfice total est de mille cinq cents euros, et le capital est intact."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6808,20 +6812,20 @@
                               "consigne_tuteur":  "Le tuteur est le vendeur de la boutique. Tu as oublié ton sac : appelle, décris-le, et demande quand tu peux venir le chercher.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "صَدَقْتِ، هِيَ عِنْدِي فِي الْخِزَانَةِ مُغْلَقَةً، لَمْ يَلْمِسْهَا أَحَدٌ.",
-                                                         "fr":  "C\u0027est exact : il est chez moi dans le casier, fermé ; personne n\u0027y a touché."
+                                                         "ar":  "شُكْرًا جَزِيلًا. سَآتِي بَعْدَ الْعَصْرِ.",
+                                                         "fr":  "Merci beaucoup. Je viendrai après la prière de l\u0027après-midi."
                                                      },
                                                      {
-                                                         "ar":  "لَا بَأْسَ. وَجَدْنَا الْيَوْمَ حَقِيبَتَيْنِ. صِفِي حَقِيبَتَكِ مِنْ فَضْلِكِ.",
-                                                         "fr":  "Ce n\u0027est pas grave. Nous avons trouvé deux sacs aujourd\u0027hui. Décrivez votre sac, s\u0027il vous plaît."
+                                                         "ar":  "نَسِيتُ حَقِيبَتِي عِنْدَكُمْ صَبَاحًا، وَأَنَا مُسْتَعْجِلَةٌ.",
+                                                         "fr":  "J\u0027ai oublié mon sac chez vous ce matin, et je suis pressée."
                                                      },
                                                      {
-                                                         "ar":  "الدُّكَّانُ مَفْتُوحٌ كُلَّ يَوْمٍ إِلَّا يَوْمَ الْأَحَدِ، فَتَعَالَيْ مَتَى شِئْتِ.",
-                                                         "fr":  "La boutique est ouverte tous les jours sauf le dimanche : venez quand vous voulez."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا! مَتَى أَسْتَطِيعُ أَنْ آتِيَ؟",
+                                                         "fr":  "Qu\u0027Allah vous récompense ! Quand puis-je venir ?"
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ يَا أُخْتِي. نَعَمْ، أَنَا أَعْمَلُ هُنَا مُدَّةَ الْعُطْلَةِ.",
-                                                         "fr":  "Et sur vous la paix, ma sœur. Oui, je travaille ici pendant les vacances."
+                                                         "ar":  "هِيَ حَقِيبَةٌ زَرْقَاءُ صَغِيرَةٌ، لَيْسَ فِيهَا إِلَّا دَفْتَرٌ وَمِفْتَاحٌ.",
+                                                         "fr":  "C\u0027est un petit sac bleu ; il n\u0027y a dedans qu\u0027un cahier et une clé."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6905,20 +6909,20 @@
                               "consigne_tuteur":  "Le tuteur est le commerçant dont tu as cassé la porte avec un ballon. Reconnais ta faute, propose de payer, et demande à payer en plusieurs fois.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "نِعْمَ الِاتِّفَاقُ! وَالْعَبْ فِي مَلْعَبِ الْحَيِّ بَعْدَ الْيَوْمِ!",
-                                                         "fr":  "Quel bel accord ! Et désormais, joue au terrain de sport du quartier !"
+                                                         "ar":  "وَنَكْتُبُ الِاتِّفَاقَ عَلَى وَرَقَةٍ؟",
+                                                         "fr":  "Et nous écrivons l\u0027accord sur une feuille ?"
                                                      },
                                                      {
-                                                         "ar":  "اتَّصَلْتُ بِصَانِعِ الزُّجَاجِ، فَقَدَّرَ الثَّمَنَ بِمِئَةٍ وَعِشْرِينَ يُورُو.",
-                                                         "fr":  "J\u0027ai appelé le vitrier, qui a estimé le prix à cent vingt euros."
+                                                         "ar":  "كَمْ ثَمَنُ إِصْلَاحِ الْبَابِ؟ أُرِيدُ أَنْ أَدْفَعَهُ مِنْ مَالِي.",
+                                                         "fr":  "Combien coûte la réparation de la porte ? Je veux la payer avec mon argent."
                                                      },
                                                      {
-                                                         "ar":  "بَارَكَ اللَّهُ فِيكَ يَا بُنَيَّ. الِاعْتِرَافُ بِالْخَطَإِ فَضِيلَةٌ.",
-                                                         "fr":  "Qu\u0027Allah te bénisse, mon fils. Reconnaître son erreur est une qualité."
+                                                         "ar":  "لَيْسَ مَعِي الْآنَ إِلَّا أَرْبَعُونَ يُورُو. هَلْ أَدْفَعُ الْبَاقِيَ عَلَى أَقْسَاطٍ؟",
+                                                         "fr":  "Je n\u0027ai sur moi que quarante euros. Puis-je payer le reste en plusieurs versements ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، ادْفَعْ أَرْبَعِينَ الْيَوْمَ، وَأَرْبَعِينَ فِي أَوَّلِ كُلِّ شَهْرٍ حَتَّى تُكْمِلَ الْمَبْلَغَ.",
-                                                         "fr":  "Oui : paie quarante aujourd\u0027hui, puis quarante au début de chaque mois, jusqu\u0027à ce que tu aies réglé la somme."
+                                                         "ar":  "يَا حَاجُّ، أَنَا الَّذِي كَسَرَ بَابَ الدُّكَّانِ أَمْسِ بِالْكُرَةِ، ثُمَّ هَرَبْتُ خَوْفًا. أَنَا آسِفٌ جِدًّا.",
+                                                         "fr":  "Hadj, c\u0027est moi qui ai cassé hier la porte de l\u0027épicerie avec le ballon, puis je me suis enfui par peur. Je suis vraiment désolé."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -6999,23 +7003,23 @@
                                                     "unite":  17
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est le trésorier de l\u0027association. Paie ta contribution, demande un reçu et pose des questions sur les familles aidées et les dépenses.",
+                              "consigne_tuteur":  "Le tuteur est le trésorier de l\u0027association, à l\u0027accueil de l\u0027association. Paie ta contribution, demande un reçu et pose des questions sur les familles aidées et les dépenses.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "سِتُّونَ فِي الْمِئَةِ، وَالْبَاقِي لِلْإِيجَارِ وَالدِّرَاسَةِ.",
-                                                         "fr":  "Soixante pour cent ; le reste va au loyer et aux études."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. جِئْتُ أَدْفَعُ الْمَبْلَغَ.",
+                                                         "fr":  "Que la paix soit sur vous. Je viens payer la somme."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. تَفَضَّلِي. أَكْتُبُ لَكِ إِيصَالًا.",
-                                                         "fr":  "Et sur vous la paix. Je vous en prie. Je vous écris un reçu."
+                                                         "ar":  "وَكَمْ أُسْرَةً سَاعَدَتِ اللَّجْنَةُ هٰذِهِ السَّنَةَ؟",
+                                                         "fr":  "Et combien de familles la commission a-t-elle aidées cette année ?"
                                                      },
                                                      {
-                                                         "ar":  "اجْعَلِيهِ هٰذَا الْيَوْمَ نَفْسَهُ، وَسَجِّلِيهِ فِي دَفْتَرِكِ.",
-                                                         "fr":  "Prenez ce jour-même, et notez-le dans votre carnet."
+                                                         "ar":  "أُرِيدُ أَنْ أُحَدِّدَ يَوْمًا ثَابِتًا كُلَّ سَنَةٍ.",
+                                                         "fr":  "Je veux fixer un jour précis chaque année."
                                                      },
                                                      {
-                                                         "ar":  "مِئَةً وَعِشْرِينَ أُسْرَةً، مِنْهَا ثَلَاثَ عَشْرَةَ أُسْرَةً جَدِيدَةً.",
-                                                         "fr":  "Cent vingt familles, dont treize nouvelles."
+                                                         "ar":  "مَا شَاءَ اللَّهُ! وَمَا نِسْبَةُ الطَّعَامِ مِنَ الْمَصَارِيفِ؟",
+                                                         "fr":  "Quelle bénédiction ! Et quelle est la part de la nourriture dans les dépenses ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7094,7 +7098,7 @@
                                                     "unite":  19
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est un représentant qui t\u0027offre un voyage pour que ton hôpital choisisse ses appareils. Refuse poliment et explique la règle.",
+                              "consigne_tuteur":  "Le tuteur est un représentant, reçu à l\u0027accueil de ton hôpital, qui t\u0027offre un voyage pour que ton hôpital choisisse ses appareils. Refuse poliment et explique la règle.",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "أَشْكُرُكَ عَلَى لُطْفِكَ، لٰكِنِّي لَا أَسْتَطِيعُ قَبُولَهَا.",
@@ -7260,19 +7264,19 @@
                                                     "unite":  18
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est une amie de classe. Tu ne trouves pas un mot dans le dictionnaire ; elle t\u0027explique qu\u0027il faut chercher la racine. Note la référence.",
+                              "consigne_tuteur":  "Le tuteur est une amie de classe, à la bibliothèque de l\u0027institut. Tu ne trouves pas un mot dans le dictionnaire ; elle t\u0027explique qu\u0027il faut chercher la racine. Note la référence.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "مُمْتَازٌ. هٰذَا هُوَ الطَّرِيقُ.",
-                                                         "fr":  "Excellent. C\u0027est la bonne méthode."
+                                                         "ar":  "صَحِيحٌ! وَجَدْتُهَا الْآنَ.",
+                                                         "fr":  "C\u0027est vrai ! Je l\u0027ai trouvé maintenant."
                                                      },
                                                      {
-                                                         "ar":  "اكْتُبْ أَيْضًا اسْمَ الْمُعْجَمِ وَالْمَادَّةَ.",
-                                                         "fr":  "Écris aussi le nom du dictionnaire et l\u0027entrée."
+                                                         "ar":  "مَا أَجْمَلَ هٰذَا! سَأَكْتُبُهُ عَلَى بِطَاقَتِي.",
+                                                         "fr":  "Comme c\u0027est beau ! Je vais l\u0027écrire sur ma carte."
                                                      },
                                                      {
-                                                         "ar":  "لِأَنَّ الْمِيمَ زَائِدَةٌ. احْذِفْهَا، وَابْحَثْ عَنِ الْجَذْرِ.",
-                                                         "fr":  "C\u0027est que le م est ajouté. Enlève-le, et cherche la racine."
+                                                         "ar":  "بَحَثْتُ عَنْ كَلِمَةٍ فِي بَابِ الْمِيمِ فَلَمْ أَجِدْهَا!",
+                                                         "fr":  "J\u0027ai cherché un mot à la lettre م, et je ne l\u0027ai pas trouvé !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7351,20 +7355,20 @@
                               "consigne_tuteur":  "Le tuteur est un voisin qui accuse l\u0027autre d\u0027avoir déplacé la borne de leur champ. Joue le sage : calme-les, demande une preuve, regarde le papier, puis propose la réconciliation.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْحَمْدُ لِلَّهِ! تَعَالَوْا نَشْرَبِ الشَّايَ جَمِيعًا.",
-                                                         "fr":  "Louange à Allah ! Venez, buvons le thé tous ensemble."
+                                                         "ar":  "الْإِنْسَانُ يُخْطِئُ وَيَنْسَى، وَالصُّلْحُ خَيْرٌ.",
+                                                         "fr":  "L\u0027homme se trompe et oublie, et la réconciliation est un bien."
                                                      },
                                                      {
-                                                         "ar":  "لَعَلَّ ابْنَ جَارِي نَقَلَ الْحَجَرَ وَهُوَ يَحْرُثُ، وَلَمْ يَنْتَبِهْ.",
-                                                         "fr":  "Peut-être que le fils de mon voisin a déplacé la pierre en labourant, sans faire attention."
+                                                         "ar":  "دَعْنَا نَنْظُرْ فِي الْوَرَقَةِ أَوَّلًا.",
+                                                         "fr":  "Regardons d\u0027abord le papier."
                                                      },
                                                      {
-                                                         "ar":  "عِنْدِي وَرَقَةُ الْقِسْمَةِ الَّتِي كَتَبَهَا آبَاؤُنَا، وَيَشْهَدُ مَعِي جَارُنَا.",
-                                                         "fr":  "J\u0027ai le papier du partage que nos pères ont écrit, et notre voisin témoigne avec moi."
+                                                         "ar":  "مَهْلًا، مَهْلًا. أَنْتَ الْمُدَّعِي: هَلْ عِنْدَكَ بَيِّنَةٌ؟",
+                                                         "fr":  "Doucement, doucement. C\u0027est toi le demandeur : as-tu une preuve ?"
                                                      },
                                                      {
-                                                         "ar":  "قَرَأْتُ الْوَرَقَةَ: الْحَدُّ عِنْدَ الشَّجَرَةِ الْكَبِيرَةِ، وَالْحَجَرُ الْيَوْمَ بَعْدَهَا بِمِتْرَيْنِ.",
-                                                         "fr":  "J\u0027ai lu le papier : la limite est au grand arbre, et la pierre est aujourd\u0027hui deux mètres plus loin."
+                                                         "ar":  "وَالصُّلْحُ أَفْضَلُ مِنْ كُلِّ هٰذَا. أَنْتُمَا جَارَانِ مُنْذُ ثَلَاثِينَ سَنَةً، وَأَوْلَادُكُمَا إِخْوَةٌ.",
+                                                         "fr":  "Et la réconciliation vaut mieux que tout cela. Vous êtes voisins depuis trente ans, et vos enfants sont comme des frères."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7699,16 +7703,20 @@
                               "consigne_tuteur":  "Le tuteur est ton père qui révise un texte par cœur. Tiens le livret, corrige une erreur avec respect et encourage-le.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَبْدَأُ الْآنَ.",
-                                                         "fr":  "Je commence maintenant."
+                                                         "ar":  "أَحْسَنْتَ! انْتَقِلْ إِلَى الْبَابِ الثَّانِي.",
+                                                         "fr":  "Bravo ! Passe au deuxième chapitre."
                                                      },
                                                      {
-                                                         "ar":  "عَدَدْتُ سِتَّةً فَقَطْ؟ نَسِيتُ وَاحِدًا!",
-                                                         "fr":  "Je n\u0027en ai compté que six ? J\u0027en ai oublié un !"
+                                                         "ar":  "سَأُعِيدُ الْبَابَيْنِ مَعَكَ غَدًا بَعْدَ الْفَجْرِ.",
+                                                         "fr":  "Je répéterai les deux chapitres avec toi demain après l\u0027aube."
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! الْبِنْتُ تُعَلِّمُ أَبَاهَا!",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! La fille enseigne à son père !"
+                                                         "ar":  "يَا أَبِي، هَلْ أَنْتَ مُسْتَعِدٌّ؟ أَنَا أُمْسِكُ الْكُتَيِّبَ، وَأَنْتَ تُسَمِّعُ.",
+                                                         "fr":  "Papa, tu es prêt ? Je tiens le livret, et toi tu récites."
+                                                     },
+                                                     {
+                                                         "ar":  "لَا بَأْسَ يَا أَبِي، هٰذَا خَطَأٌ يَقَعُ فِيهِ كَثِيرٌ مِنَّا.",
+                                                         "fr":  "Ce n\u0027est rien, papa : c\u0027est une erreur que beaucoup d\u0027entre nous font."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -7782,16 +7790,20 @@
                               "consigne_tuteur":  "Le tuteur est le commerçant. Tu as oublié ton sac dans sa boutique : décris-le, récupère-le et remercie-le pour son honnêteté.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "تَفَضَّلْ. لَمْ يَلْمِسْهَا أَحَدٌ.",
-                                                         "fr":  "Tenez. Personne n\u0027y a touché."
+                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا. هٰكَذَا تَكُونُ الْأَمَانَةُ!",
+                                                         "fr":  "Qu\u0027Allah vous récompense. Voilà ce qu\u0027est l\u0027honnêteté !"
                                                      },
                                                      {
-                                                         "ar":  "صَدَقْتَ، هِيَ عِنْدِي فِي الْخِزَانَةِ.",
-                                                         "fr":  "C\u0027est exact, il est chez moi dans le casier."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ. نَسِيتُ حَقِيبَتِي عِنْدَكُمْ صَبَاحًا.",
+                                                         "fr":  "Que la paix soit sur vous. J\u0027ai oublié mon sac chez vous ce matin."
                                                      },
                                                      {
-                                                         "ar":  "وَعَلَيْكُمُ السَّلَامُ. صِفْهَا لِي، مِنْ فَضْلِكَ.",
-                                                         "fr":  "Et sur vous la paix. Décrivez-le-moi, s\u0027il vous plaît."
+                                                         "ar":  "هِيَ حَقِيبَةٌ زَرْقَاءُ صَغِيرَةٌ، فِيهَا دَفْتَرٌ وَمِفْتَاحٌ.",
+                                                         "fr":  "C\u0027est un petit sac bleu, avec un cahier et une clé dedans."
+                                                     },
+                                                     {
+                                                         "ar":  "الْحَمْدُ لِلَّهِ! بَحَثْتُ عَنْهَا فِي كُلِّ مَكَانٍ.",
+                                                         "fr":  "Louange à Allah ! Je l\u0027ai cherché partout."
                                                      }
                                                  ],
                               "source_mots":  [

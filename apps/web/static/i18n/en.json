@@ -4070,6 +4070,8 @@
   "parler.partie": "Part {n}",
   "parler.etape": "Stage {n}",
   "parler.apres": "After lesson {n}",
+  "parler.apres_bilan": "After check-up {n}",
+  "parler.apres_examen": "After the final exam",
   "parler.avant": "Before lesson 1",
   "parler.franchie": "Stage completed",
   "parler.fin": "Review and check-up of part {n}",

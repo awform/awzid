@@ -4,11 +4,11 @@
                  "serie":  "en",
                  "niveau":  2,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 02:18",
+                 "genere_le":  "2026-11-05 02:38",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en2, livrets lect\\en1 à en2) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de en2 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre en2 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Bonjour et merci : la politesse, le goûter (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Bonjour et merci : la politesse, le goûter (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "politesse",
                                        "gouter"
@@ -31,8 +31,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — À l\u0027école et à la mosquée (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — À l\u0027école et à la mosquée (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "ecole",
                                        "mosquee"
@@ -40,8 +40,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Chacun son tour, ma famille (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Chacun son tour, ma famille (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "tour",
                                        "famille"
@@ -49,8 +49,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Ma maison et mes jeux (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Ma maison et mes jeux (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "maison",
                                        "jeux"
@@ -58,8 +58,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Les animaux et le jour de l\u0027Aïd (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Les animaux et le jour de l\u0027Aïd (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "animaux",
                                        "fete"
@@ -3284,12 +3284,12 @@
                               "consigne_tuteur":  "Le tuteur est ta sœur. Demande-lui un crayon poliment, puis dis merci beaucoup.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "عَفْوًا.",
-                                                         "fr":  "De rien."
+                                                         "ar":  "شُكْرًا جَزِيلًا!",
+                                                         "fr":  "Merci beaucoup !"
                                                      },
                                                      {
-                                                         "ar":  "تَفَضَّلْ.",
-                                                         "fr":  "Tiens."
+                                                         "ar":  "أُرِيدُ قَلَمًا، مِنْ فَضْلِكِ.",
+                                                         "fr":  "Je voudrais un crayon, s\u0027il te plaît."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -3600,12 +3600,16 @@
                               "consigne_tuteur":  "Le tuteur est un camarade pressé, dans la file du bus de l\u0027école. Explique-lui qu\u0027on attend son tour (نَنْتَظِرُ دَوْرَنَا).",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "لَا، نَنْتَظِرُ دَوْرَنَا.",
-                                                         "fr":  "Non, nous attendons notre tour."
+                                                         "ar":  "حَسَنًا، أَنْتَظِرُ.",
+                                                         "fr":  "D\u0027accord, j\u0027attends."
                                                      },
                                                      {
-                                                         "ar":  "الصَّبْرُ جَمِيلٌ يَا صَدِيقِي.",
-                                                         "fr":  "La patience, c\u0027est beau, mon ami."
+                                                         "ar":  "هَيَّا، نَرْكَبُ أَوَّلًا!",
+                                                         "fr":  "Allez, on monte en premier !"
+                                                     },
+                                                     {
+                                                         "ar":  "لٰكِنْ أَنَا مُسْتَعْجِلٌ!",
+                                                         "fr":  "Mais je suis pressé !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -3858,12 +3862,16 @@
                               "consigne_tuteur":  "Le tuteur est ta sœur. Cherche ton ballon : dis sa couleur, puis remercie-la.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "مَا لَوْنُ كُرَتِكَ؟",
-                                                         "fr":  "De quelle couleur est ton ballon ?"
+                                                         "ar":  "كُرَتِي حَمْرَاءُ.",
+                                                         "fr":  "Mon ballon est rouge."
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، هِيَ هُنَاكَ، تَحْتَ السَّرِيرِ.",
-                                                         "fr":  "Oui, il est là-bas, sous le lit."
+                                                         "ar":  "شُكْرًا يَا أُخْتِي!",
+                                                         "fr":  "Merci, ma sœur !"
+                                                     },
+                                                     {
+                                                         "ar":  "هَلْ كُرَتِي فِي غُرْفَتِكِ؟",
+                                                         "fr":  "Est-ce que mon ballon est dans ta chambre ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -3979,7 +3987,7 @@
                                                     "unite":  23
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est Papa, à la ferme. Demande si tu peux monter sur le cheval, puis dis qu\u0027il est beau.",
+                              "consigne_tuteur":  "Le tuteur est Papa, à la ferme. Demande si tu peux monter sur le cheval, puis dis ce qu\u0027il mange.",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "سُبْحَانَ اللَّهِ! الْحِصَانُ يَأْكُلُ جَزَرًا.",

@@ -7,6 +7,7 @@
     etoiles,
     formes,
     phrasesUtiles,
+    repereEtape,
     type Avis,
     type CahierParler,
     type Conversation,
@@ -54,6 +55,7 @@
   const lien = (p: string | null) => `${base}?e=${etape.id}${p ? `&p=${p}` : ''}`;
   const partie = $derived(cahier.parties.find((x) => x.n === etape.partie));
   const acc = $derived(`--acc: var(--acc-${etape.partie || 1})`);
+  const repere = $derived(repereEtape(etape.n));
 
   /** nom d'une page dans le sommaire de l'étape */
   function nomPage(p: PageParler): string {
@@ -136,7 +138,7 @@
             <span class="rond"><Bidi text={etape.num ?? ''} /></span><Bidi
               text={t('parler.etape', { n: etape.num ?? '' })}
             />
-            · <Bidi text={etape.n ? t('parler.apres', { n: etape.n }) : t('parler.avant')} />
+            · <Bidi text={t(repere.cle, { n: repere.n ?? '' })} />
           </p>
           <h1><Bidi text={etape.titre} /></h1>
           {#if etape.accroche}<p class="accroche">

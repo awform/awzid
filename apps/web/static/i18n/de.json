@@ -4070,6 +4070,8 @@
   "parler.partie": "Teil {n}",
   "parler.etape": "Etappe {n}",
   "parler.apres": "Nach Lektion {n}",
+  "parler.apres_bilan": "Nach der Bilanz {n}",
+  "parler.apres_examen": "Nach der Abschlussprüfung",
   "parler.avant": "Vor Lektion 1",
   "parler.franchie": "Etappe geschafft",
   "parler.fin": "Wiederholung und Bilanz von Teil {n}",

@@ -4,11 +4,11 @@
                  "serie":  "en",
                  "niveau":  4,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 02:51",
+                 "genere_le":  "2026-11-05 02:38",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (en1 à en4, livrets lect\\en1 à en4) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de en4 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre en4 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Hier : l\u0027école, la ferme, pardon (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Hier : l\u0027école, la ferme, pardon (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "ecole",
                                        "ferme",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Aujourd\u0027hui et demain : le vendredi, les vacances, le sport, la kermesse (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — Aujourd\u0027hui et demain : le vendredi, les vacances, le sport, la kermesse (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "vendredi",
                                        "vacances",
@@ -43,8 +43,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — L\u0027heure et les mois : le livre prêté, le réveil, le croissant de lune (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — L\u0027heure et les mois : le livre prêté, le réveil, le croissant de lune (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "livre",
                                        "matin",
@@ -53,8 +53,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Les fêtes : Ramadan à la maison, l\u0027Aïd, le voisin (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Les fêtes : Ramadan à la maison, l\u0027Aïd, le voisin (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "ramadan",
                                        "aid",
@@ -63,8 +63,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — J\u0027aime, je serai : le sport, les métiers, la mer (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — J\u0027aime, je serai : le sport, les métiers, la mer (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "metiers",
                                        "mer"
@@ -4613,16 +4613,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Demande quand vous partirez, dis ce que tu feras, et accepte la règle sur le soleil de midi.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَحْسَنْتَ!",
-                                                         "fr":  "Bravo !"
+                                                         "ar":  "حَسَنًا، سَأَلْعَبُ فِي الْمَسَاءِ.",
+                                                         "fr":  "D\u0027accord, je jouerai le soir."
                                                      },
                                                      {
-                                                         "ar":  "بَعْدَ أُسْبُوعَيْنِ، إِنْ شَاءَ اللَّهُ.",
-                                                         "fr":  "Dans deux semaines, si Allah le veut."
+                                                         "ar":  "سَأَلْعَبُ فِي الْحُقُولِ كُلَّ النَّهَارِ!",
+                                                         "fr":  "Je jouerai dans les champs toute la journée !"
                                                      },
                                                      {
-                                                         "ar":  "لَنْ تَلْعَبَ فِي الشَّمْسِ وَقْتَ الظُّهْرِ.",
-                                                         "fr":  "Tu ne joueras pas au soleil à midi."
+                                                         "ar":  "يَا أَبِي، مَتَى سَنُسَافِرُ إِلَى جَدِّي؟",
+                                                         "fr":  "Papa, quand partirons-nous chez grand-père ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4799,12 +4799,12 @@
                               "consigne_tuteur":  "Le tuteur est un camarade qui t\u0027a prêté une histoire. Rends-la, dis que tu l\u0027as aimée, et excuse-toi du retard.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "شُكْرًا! هَلْ فَهِمْتَهَا؟",
-                                                         "fr":  "Merci ! Tu l\u0027as comprise ?"
+                                                         "ar":  "هٰذِهِ قِصَّتُكَ. قَرَأْتُهَا!",
+                                                         "fr":  "Voici ton histoire. Je l\u0027ai lue !"
                                                      },
                                                      {
-                                                         "ar":  "لَا بَأْسَ. خُذْ هٰذِهِ أَيْضًا، وَاقْرَأْهَا!",
-                                                         "fr":  "Ce n\u0027est pas grave. Prends celle-ci aussi, et lis-la !"
+                                                         "ar":  "نَعَمْ، وَلٰكِنِّي تَأَخَّرْتُ… أَنَا آسِفٌ.",
+                                                         "fr":  "Oui, mais j\u0027ai été en retard… je suis désolé."
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4999,16 +4999,16 @@
                               "consigne_tuteur":  "Le tuteur est Maman, juste avant la rupture du jeûne. Demande combien de minutes il reste, et dis qui a jeûné.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "هَيَّا، نُفْطِرُ عَلَى التَّمْرِ.",
-                                                         "fr":  "Allez, nous rompons le jeûne avec des dattes."
+                                                         "ar":  "أَسْمَعُ الْأَذَانَ!",
+                                                         "fr":  "J\u0027entends l\u0027appel à la prière !"
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! وَهِيَ صَغِيرَةٌ!",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Et elle est petite !"
+                                                         "ar":  "صَامَتْ أُخْتِي الْيَوْمَ كُلَّهُ!",
+                                                         "fr":  "Ma sœur a jeûné toute la journée !"
                                                      },
                                                      {
-                                                         "ar":  "بَقِيَتْ خَمْسُ دَقَائِقَ. اِصْبِرْ يَا بُنَيَّ.",
-                                                         "fr":  "Il reste cinq minutes. Patience, mon fils."
+                                                         "ar":  "يَا أُمِّي، كَمْ دَقِيقَةً بَقِيَ عَلَى الْمَغْرِبِ؟",
+                                                         "fr":  "Maman, combien de minutes reste-t-il avant le coucher du soleil ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5194,12 +5194,12 @@
                               "consigne_tuteur":  "Le tuteur est le voisin âgé, devant l\u0027immeuble. Propose ton aide pour ses sacs.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "جَزَاكَ اللَّهُ خَيْرًا!",
-                                                         "fr":  "Qu\u0027Allah te récompense par le bien !"
+                                                         "ar":  "أَعْطِنِي الْكِيسَ الْكَبِيرَ.",
+                                                         "fr":  "Donnez-moi le grand sac."
                                                      },
                                                      {
-                                                         "ar":  "الْأَكْيَاسُ ثَقِيلَةٌ، وَالْمِصْعَدُ مُعَطَّلٌ.",
-                                                         "fr":  "Les sacs sont lourds, et l\u0027ascenseur est en panne."
+                                                         "ar":  "السَّلَامُ عَلَيْكُمْ يَا حَاجُّ! هَلْ أُسَاعِدُكَ؟",
+                                                         "fr":  "Que la paix soit sur vous, Hadj ! Est-ce que je vous aide ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5326,16 +5326,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Demande-lui où il travaille, puis réfléchis à ton futur métier.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "رُبَّمَا سَتَكُونُ مُبَرْمِجًا.",
-                                                         "fr":  "Peut-être seras-tu programmeur."
+                                                         "ar":  "أَوْ إِطْفَائِيًّا يُنْقِذُ النَّاسَ!",
+                                                         "fr":  "Ou pompier, pour sauver les gens !"
                                                      },
                                                      {
-                                                         "ar":  "الْمُهِمُّ: اِعْمَلْ بِإِتْقَانٍ، وَكُنْ أَمِينًا.",
-                                                         "fr":  "L\u0027important : travaille avec soin, et sois honnête."
+                                                         "ar":  "وَأَنَا لَا أَعْرِفُ مَاذَا سَأَكُونُ…",
+                                                         "fr":  "Et moi, je ne sais pas ce que je serai…"
                                                      },
                                                      {
-                                                         "ar":  "أَعْمَلُ فِي شَرِكَةٍ تَبْنِي الْجُسُورَ؛ أَنَا مُهَنْدِسٌ.",
-                                                         "fr":  "Je travaille dans une entreprise qui construit des ponts ; je suis ingénieur."
+                                                         "ar":  "يَا أَبِي، أَيْنَ تَعْمَلُ؟",
+                                                         "fr":  "Papa, où travailles-tu ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5391,12 +5391,12 @@
                               "consigne_tuteur":  "Le tuteur est Papa, à la plage. Demande si tu peux nager, écoute la consigne, et montre ce que tu vois.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "سُبْحَانَ اللَّهِ! لِكُلِّ مَخْلُوقٍ طَرِيقَتُهُ.",
-                                                         "fr":  "Gloire à Allah ! Chaque créature a sa manière."
+                                                         "ar":  "انْظُرْ! سَرَطَانٌ صَغِيرٌ!",
+                                                         "fr":  "Regarde ! Un petit crabe !"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، وَلٰكِنْ لَا تَبْتَعِدْ عَنِ الشَّاطِئِ.",
-                                                         "fr":  "Oui, mais ne t\u0027éloigne pas du rivage."
+                                                         "ar":  "يَا أَبِي، هَلْ أَسْتَطِيعُ أَنْ أَسْبَحَ؟",
+                                                         "fr":  "Papa, est-ce que je peux nager ?"
                                                      }
                                                  ],
                               "source_mots":  [

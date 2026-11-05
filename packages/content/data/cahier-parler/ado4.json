@@ -4,11 +4,11 @@
                  "serie":  "ado",
                  "niveau":  4,
                  "version":  "prototype 0.1",
-                 "genere_le":  "2026-10-25 03:07",
+                 "genere_le":  "2026-11-05 02:39",
                  "generateur":  "commun\\etape1_vocabulaire.ps1 + etape0_formes.ps1 + etape2_cahier.ps1",
                  "sources":  "awform\\data (ado1 à ado4, livrets lect\\ado1 à ado4) — formes exactes vérifiées",
                  "facultatif":  true,
-                 "convention_unite":  "unite = 1re leçon de ado4 après laquelle tous les mots sont connus (0 = niveaux précédents)",
+                 "convention_unite":  "unite = rang de l\u0027unité du livre ado4 (fichiers l01 à l25 : 20 leçons, bilans aux rangs 5, 10, 15, 20, examen au rang 25) après laquelle tous les mots sont connus (0 = niveaux précédents) ; ce n\u0027est pas le numéro de leçon imprimé",
                  "design":  "DESIGN_CAHIERS_PARLER.md"
              },
     "totaux":  {
@@ -22,8 +22,8 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — Ensemble : le travail d\u0027équipe, le lycée, le pèlerinage de grand-père (leçons 1 à 5)",
-                        "lecons":  "0 à 5",
+                        "titre_fr":  "Partie 1 — Ensemble : le travail d\u0027équipe, le lycée, le pèlerinage de grand-père (leçons 1 à 4 et bilan 1)",
+                        "lecons":  "1 à 4",
                         "themes":  [
                                        "equipe",
                                        "lycee",
@@ -32,8 +32,8 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — En ligne et à la maison : créer, déjouer les arnaques, parler avec mon père, conseiller un plus jeune (leçons 6 à 10)",
-                        "lecons":  "6 à 10",
+                        "titre_fr":  "Partie 2 — En ligne et à la maison : créer, déjouer les arnaques, parler avec mon père, conseiller un plus jeune (leçons 5 à 8 et bilan 2)",
+                        "lecons":  "5 à 8",
                         "themes":  [
                                        "ecrans",
                                        "arnaque",
@@ -43,8 +43,8 @@
                     },
                     {
                         "n":  3,
-                        "titre_fr":  "Partie 3 — Choisir et soutenir : mon orientation, la grand-mère malade, l\u0027amie triste (leçons 11 à 15)",
-                        "lecons":  "11 à 15",
+                        "titre_fr":  "Partie 3 — Choisir et soutenir : mon orientation, la grand-mère malade, l\u0027amie triste (leçons 9 à 12 et bilan 3)",
+                        "lecons":  "9 à 12",
                         "themes":  [
                                        "orientation",
                                        "soutenir"
@@ -52,8 +52,8 @@
                     },
                     {
                         "n":  4,
-                        "titre_fr":  "Partie 4 — Vérifier et défendre : les chiffres et les rumeurs, le respect en ligne (leçons 16 à 20)",
-                        "lecons":  "16 à 20",
+                        "titre_fr":  "Partie 4 — Vérifier et défendre : les chiffres et les rumeurs, le respect en ligne (leçons 13 à 16 et bilan 4)",
+                        "lecons":  "13 à 16",
                         "themes":  [
                                        "chiffres",
                                        "en_ligne"
@@ -61,8 +61,8 @@
                     },
                     {
                         "n":  5,
-                        "titre_fr":  "Partie 5 — Grandir : mon premier salaire, le grand débat (leçons 21 à 25)",
-                        "lecons":  "21 à 25",
+                        "titre_fr":  "Partie 5 — Grandir : mon premier salaire, le grand débat (leçons 17 à 20 et examen)",
+                        "lecons":  "17 à 20",
                         "themes":  [
                                        "salaire",
                                        "debat"
@@ -4613,12 +4613,12 @@
                               "consigne_tuteur":  "Le tuteur est un camarade de l\u0027équipe. Organisez-vous : quand vous parlez, quand vous échangez les fichiers, qui s\u0027entraîne à l\u0027oral.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "أَنَا، إِنْ شَاءَ اللَّهُ.",
-                                                         "fr":  "Moi, si Allah le veut."
+                                                         "ar":  "نَتَوَاصَلُ هُنَا كُلَّ مَسَاءٍ؟",
+                                                         "fr":  "On reste en contact ici chaque soir ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، وَنَتَبَادَلُ الْمَلَفَّاتِ يَوْمَ السَّبْتِ.",
-                                                         "fr":  "Oui, et on échange les fichiers samedi."
+                                                         "ar":  "وَمَنْ يَتَدَرَّبُ عَلَى الْكَلَامِ أَمَامَ الْجُمْهُورِ؟",
+                                                         "fr":  "Et qui s\u0027entraîne à parler devant le public ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4746,12 +4746,12 @@
                               "consigne_tuteur":  "Le tuteur est un ami qui se plaint de son emploi du temps. Propose de réviser ensemble au CDI.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "اتَّفَقْنَا!",
-                                                         "fr":  "C\u0027est entendu !"
+                                                         "ar":  "عِنْدِي فِكْرَةٌ: نَجْتَمِعُ يَوْمَ الْأَرْبِعَاءِ فِي الْمَكْتَبَةِ.",
+                                                         "fr":  "J\u0027ai une idée : on se retrouve mercredi au CDI."
                                                      },
                                                      {
-                                                         "ar":  "وَأَنَا مِثْلُكَ. وَالْوَاجِبَاتُ لَا تَنْتَهِي!",
-                                                         "fr":  "Moi pareil. Et les devoirs ne finissent jamais !"
+                                                         "ar":  "انْظُرْ إِلَى جَدْوَلِي! سَبْعُ سَاعَاتٍ يَوْمَ الثُّلَاثَاءِ!",
+                                                         "fr":  "Regarde mon emploi du temps ! Sept heures le mardi !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -4816,16 +4816,16 @@
                               "consigne_tuteur":  "Le tuteur est grand-père, qui part au pèlerinage. Demande s\u0027il est prêt, ce qui est le plus difficile, puis dis-lui au revoir.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "آمِينَ.",
-                                                         "fr":  "Amine."
+                                                         "ar":  "نَسْتَوْدِعُكَ اللَّهَ يَا جَدِّي!",
+                                                         "fr":  "Nous vous confions à Allah, grand-père !"
                                                      },
                                                      {
-                                                         "ar":  "الزِّحَامُ كَبِيرٌ.",
-                                                         "fr":  "La foule est immense."
+                                                         "ar":  "هَلِ اسْتَعْدَدْتَ لِلسَّفَرِ يَا جَدِّي؟",
+                                                         "fr":  "Vous êtes-vous préparé pour le voyage, grand-père ?"
                                                      },
                                                      {
-                                                         "ar":  "نَعَمْ، الْحَقِيبَةُ جَاهِزَةٌ.",
-                                                         "fr":  "Oui, la valise est prête."
+                                                         "ar":  "وَمَا أَصْعَبُ شَيْءٍ فِي الْحَجِّ؟",
+                                                         "fr":  "Et quelle est la chose la plus difficile dans le pèlerinage ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5065,12 +5065,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa. Montre-lui le message reçu, réponds à ses questions, et décide quoi faire.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "إِذَنْ هُوَ احْتِيَالٌ.",
-                                                         "fr":  "Alors c\u0027est une arnaque."
+                                                         "ar":  "فَهِمْتُ! سَأَحْذِفُ الرِّسَالَةَ.",
+                                                         "fr":  "J\u0027ai compris ! Je vais supprimer le message."
                                                      },
                                                      {
-                                                         "ar":  "وَهَلْ شَارَكْتَ فِي مُسَابَقَةٍ؟",
-                                                         "fr":  "Et as-tu participé à un concours ?"
+                                                         "ar":  "لَا… وَطُلِبَ مِنِّي رَقْمُ الْبِطَاقَةِ.",
+                                                         "fr":  "Non… et on m\u0027a demandé le numéro de carte."
+                                                     },
+                                                     {
+                                                         "ar":  "يَا أَبِي، قِيلَ لِي إِنِّي رَبِحْتُ هَاتِفًا!",
+                                                         "fr":  "Papa, on m\u0027a dit que j\u0027avais gagné un téléphone !"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5124,12 +5128,12 @@
                               "consigne_tuteur":  "Le tuteur est le hadj qui tenait une boutique. Demande-lui comment il vendait, et retiens sa leçon.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "الْبَرَكَةُ فِي الصِّدْقِ يَا بُنَيَّ.",
-                                                         "fr":  "La bénédiction est dans la sincérité, mon fils."
+                                                         "ar":  "مَا شَاءَ اللَّهُ!",
+                                                         "fr":  "Ce qu\u0027Allah a voulu !"
                                                      },
                                                      {
-                                                         "ar":  "كُنْتُ أَقُولُ: «هٰذَا فِيهِ عَيْبٌ، وَثَمَنُهُ أَقَلُّ».",
-                                                         "fr":  "Je disais : « Celle-ci a un défaut, et son prix est plus bas. »"
+                                                         "ar":  "كَيْفَ كُنْتَ تَبِيعُ فِي دُكَّانِكَ يَا حَاجُّ؟",
+                                                         "fr":  "Comment vendiez-vous dans votre boutique, Hadj ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5781,12 +5785,12 @@
                               "consigne_tuteur":  "Le tuteur est l\u0027imam. Montre-lui le message qui demande de « partager dix fois » et écoute sa méthode : la source d\u0027abord.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "إِذَنْ لَا نَنْشُرُهُ.",
-                                                         "fr":  "Alors nous ne le partageons pas."
+                                                         "ar":  "لَا يُوجَدُ مَصْدَرٌ…",
+                                                         "fr":  "Il n\u0027y a pas de source…"
                                                      },
                                                      {
-                                                         "ar":  "سُؤَالٌ مُمْتَازٌ. مَنْ رَوَاهُ؟ وَفِي أَيِّ كِتَابٍ؟",
-                                                         "fr":  "Excellente question. Qui l\u0027a rapporté ? Et dans quel livre ?"
+                                                         "ar":  "وَصَلَتْنِي رِسَالَةٌ تَقُولُ: «انْشُرْ عَشْرَ مَرَّاتٍ». هَلْ هٰذَا صَحِيحٌ؟",
+                                                         "fr":  "J\u0027ai reçu un message qui dit : « Partage dix fois. » Est-ce vrai ?"
                                                      }
                                                  ],
                               "source_mots":  [
@@ -5919,12 +5923,16 @@
                               "consigne_tuteur":  "Le tuteur est Papa : tu viens de recevoir ton premier salaire. Dis ce que tu veux acheter, écoute son conseil, et décide.",
                               "phrases_utiles":  [
                                                      {
-                                                         "ar":  "إِذَا صَبَرْتَ قَلِيلًا وَادَّخَرْتَ، اشْتَرَيْتَ الْهَاتِفَ نَقْدًا، دُونَ دَيْنٍ.",
-                                                         "fr":  "Si tu patientes un peu en épargnant, tu achèteras le téléphone comptant, sans dette."
+                                                         "ar":  "صَحِيحٌ. الصَّبْرُ أَحْسَنُ.",
+                                                         "fr":  "C\u0027est vrai. La patience, c\u0027est mieux."
                                                      },
                                                      {
-                                                         "ar":  "مَا شَاءَ اللَّهُ! بَارَكَ اللَّهُ لَكَ فِيهِ. مَاذَا سَتَفْعَلُ بِهِ؟",
-                                                         "fr":  "Ce qu\u0027Allah a voulu ! Qu\u0027Allah le bénisse pour toi. Qu\u0027est-ce que tu vas en faire ?"
+                                                         "ar":  "أُرِيدُ هَاتِفًا جَدِيدًا.",
+                                                         "fr":  "Je veux un nouveau téléphone."
+                                                     },
+                                                     {
+                                                         "ar":  "يَا أَبِي، هٰذَا أَوَّلُ رَاتِبٍ فِي حَيَاتِي!",
+                                                         "fr":  "Papa, c\u0027est le premier salaire de ma vie !"
                                                      }
                                                  ],
                               "source_mots":  [
