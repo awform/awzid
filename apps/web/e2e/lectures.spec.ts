@@ -198,7 +198,8 @@ test.describe('Lectures : Khalīl et Histoires', () => {
         nouh(9),
       ],
     );
-    expect(paquets.every((u) => u.includes('/ayyoub-hafs/packs/7'))).toBe(true);
+    // le premier paquet demandé est celui de la sourate 7 (la lecture continue ensuite vers d'autres versets)
+    expect(paquets[0]).toContain('/ayyoub-hafs/packs/7');
     expect(demandes.some((d) => d.endsWith('/p008.mp3'))).toBe(false);
     await page.getByTestId('hx-jouer').click();
     await sansDebordement(page);
