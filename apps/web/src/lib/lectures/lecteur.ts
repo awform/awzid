@@ -2,8 +2,9 @@
  * Lecteur audio des récits (maquette validée « nouh-v2 ») — logique pure :
  *  - le manifeste décrit un texte réécrit pour l'oreille ; chaque entrée porte `l`, la ligne du récit écrit qu'elle accompagne :
  *    on surligne le bloc dont la ligne est la plus grande ≤ l ;
- *  - les entrées `verset` (sans fichier) marquent la place de la future récitation humaine : jamais de voix de synthèse sur
- *    l'arabe, on les saute (courte pause) ;
+ *  - les entrées `verset` (sans fichier) : la récitation d'Ayyūb prend la main (5/11, `Recit.svelte` ; `sourceRecitation` de
+ *    `$lib/recitation/ayyub`, versets enchaînés), puis la synthèse reprend ; jamais de voix de synthèse sur l'arabe ;
+ *    récitation indisponible : courte pause, puis la suite ;
  *  - les MP3 sont servis par le serveur (`/histoires/audio/…`), jamais préchargés.
  */
 export interface Entree {

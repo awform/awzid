@@ -122,12 +122,48 @@ test.describe('Lectures : Khalīl et Histoires', () => {
     await sansDebordement(page);
   });
 
-  test('Histoires : Nouh, bascule, verset tel quel, lecteur qui enchaîne et saute le verset', async ({
+  test('Histoires : Nouh, bascule, verset tel quel, lecteur qui enchaîne, récite 7:59 (Ayyūb) puis reprend', async ({
     page,
   }) => {
     await regler(adm, { khalil: 'off', histoires: 'on' });
     const demandes: string[] = [];
     await page.route('**/histoires/audio/**', (route) => {
+      demandes.push(new URL(route.request().url()).pathname);
+      return route.fulfill({ status: 200, contentType: 'audio/wav', body: wav() });
+    });
+    // récitation d'Ayyūb : même service que les leçons (paquet de la sourate, puis fichier du verset)
+    const paquets: string[] = [];
+    await page.route(/\/api\/v1\/quran\/audio\/reciters\/[^/]+\/packs\/\d+/, (r) => {
+      const u = r.request().url();
+      paquets.push(u);
+      const sura = Number(/packs\/(\d+)/.exec(u)![1]);
+      if (!u.includes('/ayyoub-hafs/'))
+        return r.fulfill({ status: 404, json: { error: 'recitateur_indisponible' } });
+      return r.fulfill({
+        json: {
+          format: 1,
+          reciter: 'ayyoub-hafs',
+          riwaya: 'hafs',
+          credit: '',
+          sura,
+          hash: `t${sura}`,
+          surlignage: 'verset',
+          wifiSeulement: false,
+          bytes: 1000,
+          durationMs: 300,
+          files: Array.from({ length: 206 }, (_, i) => ({
+            aya: i + 1,
+            url: `/api/v1/quran/audio/file/ayyoub-hafs/${sura}-${i + 1}.mp3`,
+            bytes: 1000,
+            sha256: '',
+            durationMs: 300,
+            format: 'mp3',
+            surlignage: 'verset',
+          })),
+        },
+      });
+    });
+    await page.route('**/api/v1/quran/audio/file/**', (route) => {
       demandes.push(new URL(route.request().url()).pathname);
       return route.fulfill({ status: 200, contentType: 'audio/wav', body: wav() });
     });
@@ -142,22 +178,29 @@ test.describe('Lectures : Khalīl et Histoires', () => {
     await expect(adulte).toBeVisible();
     await expect(adulte.locator('.coran .ar').first()).toContainText('لَقَدْ أَرْسَلْنَا نُوحًا');
     await expect(adulte).not.toContainText('Sources et choix');
-    // lecteur : passage 1, puis enchaînement ; le verset 7:59 (entrée 8) est sauté sans fichier
+    // lecteur : passage 1, puis enchaînement ; à la place du verset 7:59 (entrée 8), la récitation d'Ayyūb, puis la synthèse
     await expect(page.getByTestId('hx-lecteur')).toBeVisible();
     await page.getByTestId('hx-jouer').click();
     await expect(page.getByTestId('hx-pos')).toContainText(/Passage \d+ sur 69/);
     await expect(adulte.locator('.en-cours')).toHaveCount(1);
     // le navigateur peut redemander un fichier (plages) : on compte les fichiers distincts, dans l'ordre
     const distincts = () => [...new Set(demandes)];
-    await expect.poll(() => distincts().length, { timeout: 20_000 }).toBeGreaterThanOrEqual(8);
+    await expect.poll(() => distincts().length, { timeout: 20_000 }).toBeGreaterThanOrEqual(9);
     expect(demandes[0]).toBe('/histoires/audio/prophetes/03_nouh/adulte/p001.mp3');
-    expect(demandes.every((d) => /\/p\d{3}\.mp3$/.test(d))).toBe(true);
-    expect(distincts().slice(0, 8)).toEqual(
-      // l'entrée 8 du manifeste est la place du verset 7:59 : aucun fichier (p008) n'est demandé, on passe à p009
-      [1, 2, 3, 4, 5, 6, 7, 9].map(
-        (n) => `/histoires/audio/prophetes/03_nouh/adulte/p${String(n).padStart(3, '0')}.mp3`,
-      ),
+    const nouh = (n: number) =>
+      `/histoires/audio/prophetes/03_nouh/adulte/p${String(n).padStart(3, '0')}.mp3`;
+    expect(distincts().slice(0, 9)).toEqual(
+      // l'entrée 8 du manifeste est la place du verset 7:59 : aucun fichier de synthèse (p008), la récitation de 7:59
+      // (seul ce verset), puis la synthèse reprend à p009
+      [
+        ...[1, 2, 3, 4, 5, 6, 7].map(nouh),
+        '/api/v1/quran/audio/file/ayyoub-hafs/7-59.mp3',
+        nouh(9),
+      ],
     );
+    // le premier paquet demandé est celui de la sourate 7 (la lecture continue ensuite vers d'autres versets)
+    expect(paquets[0]).toContain('/ayyoub-hafs/packs/7');
+    expect(demandes.some((d) => d.endsWith('/p008.mp3'))).toBe(false);
     await page.getByTestId('hx-jouer').click();
     await sansDebordement(page);
   });
