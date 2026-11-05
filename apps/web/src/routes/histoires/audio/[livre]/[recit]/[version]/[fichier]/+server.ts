@@ -13,7 +13,7 @@ import type { RequestHandler } from './$types';
 
 const api = () => env.API_URL ?? 'http://127.0.0.1:3000';
 const dossier = () => join(env.MADJALISS_AUDIO_DIR || '/madjaliss-audio', 'histoires');
-const LIVRES = new Set(['prophetes', 'livre2', 'livre4', 'livre5']);
+const LIVRES = new Set(['prophetes', 'livre2', 'livre4', 'livre5', 'commun']);
 
 const json = (status: number, code: string) =>
   new Response(JSON.stringify({ error: { code } }), {

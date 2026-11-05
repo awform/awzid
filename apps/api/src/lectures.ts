@@ -155,11 +155,17 @@ export function registerLectures(
       const g = await garde(req, reply, 'histoires');
       if (!g) return reply;
       try {
-        recits ??= new Set(
-          (
-            JSON.parse(await lireH('index')) as { livres: Array<{ r: Array<{ id: string }> }> }
-          ).livres.flatMap((l) => l.r.map((r) => r.id)),
-        );
+        if (!recits) {
+          const ix = JSON.parse(await lireH('index')) as {
+            av?: { id: string };
+            livres: Array<{ r: Array<{ id: string }> }>;
+          };
+          // récits des livres + l'avertissement au lecteur (en tête de chaque livre)
+          recits = new Set([
+            ...ix.livres.flatMap((l) => l.r.map((r) => r.id)),
+            ...(ix.av ? [ix.av.id] : []),
+          ]);
+        }
         if (!recits.has(req.params.id)) return err(reply, 404, 'introuvable');
         const corps = await lireH(req.params.id);
         if (!g.enfant) return entete(reply, corps.replace(/^\{/, '{"p":"adulte",'));

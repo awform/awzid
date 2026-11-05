@@ -89,9 +89,9 @@ describe('Histoires : fichiers livrés', () => {
   const idx = JSON.parse(readFileSync(join(histoiresDir(), 'index.json'), 'utf8')) as {
     livres: Array<{ id: string; r: Array<{ id: string; e: number; a: number }> }>;
   };
-  it('135 récits en 5 livres ; la Sīra sans audio ; jamais de section « Sources » servie', () => {
+  it('141 récits en 5 livres (dont le cycle de Mūsā, H39 à H44, sans audio) ; la Sīra sans audio ; jamais de section « Sources » servie', () => {
     expect(idx.livres.map((l) => l.id)).toEqual(['l1', 'l2', 'l3', 'l4', 'l5']);
-    expect(idx.livres.reduce((s, l) => s + l.r.length, 0)).toBe(135);
+    expect(idx.livres.reduce((s, l) => s + l.r.length, 0)).toBe(141);
     expect(idx.livres[2]!.r.every((r) => !r.e && !r.a)).toBe(true);
     for (const f of readdirSync(histoiresDir())) {
       const s = readFileSync(join(histoiresDir(), f), 'utf8');

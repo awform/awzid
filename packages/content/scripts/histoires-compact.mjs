@@ -7,7 +7,14 @@
  *    en HTML ÉCHAPPÉ (gras, italique, arabe en ligne), chaque bloc garde sa ligne source (`l`) pour le lecteur audio.
  *  - Audio : manifestes `<narration>/<livre>/<récit>/<enfant|adulte>/manifest.json` (fichier + ligne ; entrées `verset` sans
  *    fichier = place d'une future récitation, gardées pour être sautées). Les MP3 ne sont JAMAIS ici : servis par le serveur.
- *  - Illustrations : seulement celles de Nouh (maquette validée), placées avant la ligne indiquée.
+ *  - Illustrations (5/11) : `<application>/histoire/illustrations/<prophetes|livre2>/<récit>/placement.json` (`apres_ligne` :
+ *    ligne du .md après laquelle l'image se place ; `enfant-n.svg` / `adulte-n.svg` ; format 1:1 = vignette), SVG recopiés tels
+ *    quels dans le récit (servis avec lui, jamais précachés) ; à défaut, Nouh garde les figures de la maquette validée.
+ *  - Avertissement au lecteur (5/11) : `00_avertissement` (texte de `histoire/AVERTISSEMENT_LECTEUR.md`, mis en page et
+ *    lignes du manifeste par `<narration>/../src/commun/00_avertissement.md`, contrôlé paragraphe par paragraphe), en tête de
+ *    chaque livre (`index.av`) ; audio `commun/00_avertissement/<enfant|adulte>`.
+ *  - Cycle de Mūsā (5/11) : `index.livres[l2].cycle`, ordre de lecture de `histoire/CYCLE_MOUSSA.md` (§ 2), avec le renvoi
+ *    vers `16_moussa` du livre 1 à sa place.
  * Usage : node packages/content/scripts/histoires-compact.mjs <dossier application> <dossier narration/out> [maquette nouh-v2.html]
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -196,21 +203,67 @@ function lignesDeBlocs(bs) {
   return s.sort((a, b) => a - b);
 }
 
-function manifeste(chemin, debut, fin, rapport, nom) {
+const mots = (s) =>
+  new Set(
+    s
+      .toLowerCase()
+      .split(/[^\p{L}]+/u)
+      .filter((w) => w.length >= 4),
+  );
+/** part des mots du passage audio présents dans le paragraphe du .md qui commence à la ligne l */
+function accord(src, l, texte) {
+  if (!src || l < 1 || l > src.length || !src[l - 1].trim()) return 0;
+  let para = '';
+  for (let k = l - 1; k < src.length && src[k].trim(); k++) para += ' ' + src[k];
+  const a = mots(texte);
+  if (!a.size) return 1;
+  const b = mots(para);
+  return [...a].filter((w) => b.has(w)).length / a.size;
+}
+
+/**
+ * `src` : lignes du .md. 5/11 : quand la version adulte a été réécrite (passages sensibles) sans que la version enfant change,
+ * le manifeste enfant garde les lignes d'avant ; on le réaligne d'un décalage constant, seulement si chaque passage retrouve
+ * son texte (accord des mots ≥ 0,6 en moyenne, ≥ 0,3 pour chacun) ; sinon l'audio est écarté.
+ */
+function manifeste(chemin, debut, fin, rapport, nom, src) {
   if (!existsSync(chemin)) return null;
   const m = JSON.parse(readFileSync(chemin, 'utf8'));
+  const ps = m.paragraphes.filter((p) => typeof p.ligne === 'number');
+  const hors = (dl) => ps.filter((p) => p.ligne + dl < debut || p.ligne + dl > fin).length;
+  let delta = 0;
+  if (hors(0) && src) {
+    let meilleur = null;
+    for (let dl = -60; dl <= 60; dl++) {
+      if (!dl || hors(dl)) continue;
+      const sc = ps.filter((p) => p.fichier).map((p) => accord(src, p.ligne + dl, p.texte ?? ''));
+      const moy = sc.reduce((x, y) => x + y, 0) / (sc.length || 1);
+      if (sc.length && Math.min(...sc) >= 0.3 && moy >= 0.6 && (!meilleur || moy > meilleur.moy))
+        meilleur = { dl, moy };
+    }
+    if (meilleur) {
+      delta = meilleur.dl;
+      rapport.push(
+        `${nom} : manifeste réaligné de ${delta > 0 ? '+' : ''}${delta} ligne(s) (accord ${meilleur.moy.toFixed(2)})`,
+      );
+    }
+  }
+  if (src && !hors(delta)) {
+    const sc = ps.filter((p) => p.fichier).map((p) => accord(src, p.ligne + delta, p.texte ?? ''));
+    const moy = sc.reduce((x, y) => x + y, 0) / (sc.length || 1);
+    if (moy < 0.6) rapport.push(`${nom} : ATTENTION accord texte/audio faible (${moy.toFixed(2)})`);
+  }
   const items = [];
-  let hors = 0;
-  for (const p of m.paragraphes) {
-    if (typeof p.ligne !== 'number') continue;
-    if (p.ligne < debut || p.ligne > fin) hors++;
+  for (const p of ps) {
     if (p.fichier) {
       if (!/^p\d{3}\.mp3$/.test(p.fichier))
         throw new Error(`${nom} : fichier audio inattendu ${p.fichier}`);
-      items.push({ f: p.fichier, l: p.ligne });
-    } else if (p.verset) items.push({ v: String(p.verset), l: p.ligne });
+      items.push({ f: p.fichier, l: p.ligne + delta });
+    } else if (p.verset) items.push({ v: String(p.verset), l: p.ligne + delta });
   }
-  if (hors) {
+  const hors0 = hors(delta);
+  if (hors0) {
+    const hors = hors0;
     rapport.push(
       `${nom} : ${hors} entrée(s) hors de la section (lignes ${debut}-${fin}) : audio écarté`,
     );
@@ -249,6 +302,58 @@ function illusNouh() {
       cap: cap ? cap[1].trim() : '',
     };
   });
+}
+
+/** illustrations du dossier `illustrations/<livre>/<récit>` (null si absent) */
+const SVG_INTERDIT =
+  /<\s*(?:text|image|script|foreignObject|a|iframe|style)\b|\bon\w+\s*=|https?:|url\(\s*['"]?(?!#)|href\s*=\s*["'](?!#)/i;
+function illusDossier(livreDir, id) {
+  const d = join(APP, 'histoire', 'illustrations', livreDir, id);
+  const pl = join(d, 'placement.json');
+  if (!existsSync(pl)) return null;
+  const p = JSON.parse(readFileSync(pl, 'utf8').replace(/^\uFEFF/, ''));
+  return Object.entries(p)
+    .map(([nom, x]) => {
+      const m = /^(enfant|adulte)-\d+$/.exec(nom);
+      if (!m) throw new Error(`${id} : illustration ${nom} inattendue`);
+      if (!Number.isInteger(x.apres_ligne)) throw new Error(`${id}/${nom} : apres_ligne`);
+      const svg = readFileSync(join(d, `${nom}.svg`), 'utf8')
+        .replace(/^\uFEFF/, '')
+        .replace(/^\s*<\?xml[^>]*>\s*/, '')
+        .trim();
+      if (!/^<svg[\s>]/.test(svg) || !svg.endsWith('</svg>'))
+        throw new Error(`${id}/${nom} : pas un SVG`);
+      if (SVG_INTERDIT.test(svg.replace(/\sxmlns(?::\w+)?="[^"]*"/g, '')))
+        throw new Error(`${id}/${nom} : SVG non sûr (texte, image, script ou ressource externe)`);
+      return {
+        v: m[1],
+        avant: x.apres_ligne + 1,
+        vignette: String(x.format).trim() === '1:1' ? 1 : 0,
+        svg,
+        cap: '',
+      };
+    })
+    .sort((a, b) => a.avant - b.avant);
+}
+
+/** Section « ## Version … » d'un fichier ; lignes numérotées à partir de 1 */
+function sectionsDe(src) {
+  const s = {};
+  let cur = null;
+  src.forEach((t, k) => {
+    const h = /^##\s+(.*)$/.exec(t);
+    if (h) {
+      cur = /^Version adulte/.test(h[1])
+        ? 'adulte'
+        : /^Version enfant/.test(h[1])
+          ? 'enfant'
+          : null;
+      if (cur) s[cur] = [];
+      return;
+    }
+    if (cur) s[cur].push({ l: k + 1, t });
+  });
+  return s;
 }
 
 rmSync(OUT, { recursive: true, force: true });
@@ -323,7 +428,7 @@ for (const L of LIVRES) {
       const a = {};
       for (const v of ['enfant', 'adulte']) {
         const [d, fin] = borne(v);
-        const it = manifeste(join(base, v, 'manifest.json'), d, fin, rapport, `${id}/${v}`);
+        const it = manifeste(join(base, v, 'manifest.json'), d, fin, rapport, `${id}/${v}`, src);
         if (it) {
           // chaque entrée doit tomber sur un bloc de la version
           const ls = lignesDeBlocs(r[v]);
@@ -335,13 +440,92 @@ for (const L of LIVRES) {
       }
       if (a.e || a.a) r.audio = a;
     }
-    if (id === '03_nouh') r.illus = illusNouh();
+    const ill = { l1: 'prophetes', l2: 'livre2' }[L.id];
+    const dessins = ill ? illusDossier(ill, id) : null;
+    if (dessins) {
+      for (const x of dessins) {
+        const [d, fin] = borne(x.v);
+        if (x.avant - 1 > fin)
+          throw new Error(`${id} : illustration ${x.v} après sa version (ligne ${x.avant - 1})`);
+        if (x.avant - 1 < d - 1)
+          rapport.push(
+            `${id} : illustration ${x.v} (ligne ${x.avant - 1}) placée en tête de la version`,
+          );
+      }
+      r.illus = dessins;
+    } else if (id === '03_nouh') r.illus = illusNouh();
     writeFileSync(join(OUT, `${id}.json`), JSON.stringify(r));
     liste.push({ id, t: titre, e: r.audio?.e ? 1 : 0, a: r.audio?.a ? 1 : 0 });
     total++;
   }
   index.livres.push({ id: L.id, n: L.n, t: L.t, r: liste });
 }
+// ---------------------------------------------------------------- avertissement au lecteur, en tête de chaque livre
+{
+  const lire = (p) =>
+    readFileSync(p, 'utf8')
+      .replace(/^\uFEFF/, '')
+      .split(/\r?\n/);
+  const officiel = lire(join(APP, 'histoire', 'AVERTISSEMENT_LECTEUR.md'));
+  const titre = officiel[0].replace(/^#\s+/, '').trim();
+  const paras = officiel.slice(1).filter((t) => t.trim());
+  const mise = lire(join(NARR, '..', 'src', 'commun', '00_avertissement.md'));
+  const s = sectionsDe(mise);
+  const r = { id: '00_avertissement', livre: 'commun', titre, ar: null, fiche: [], questions: [] };
+  const a = {};
+  for (const v of ['adulte', 'enfant']) {
+    // le titre est déjà l'en-tête : le « ### » qui le répète n'est pas recopié (son audio est sauté)
+    const lignes = s[v].filter(
+      (x) => !(/^#{3}\s/.test(x.t) && x.t.replace(/^#+\s+/, '').trim() === titre),
+    );
+    const texte = lignes.map((x) => x.t).filter((t) => t.trim());
+    if (texte.join('\n') !== paras.join('\n'))
+      throw new Error(
+        `avertissement (${v}) : la mise en page audio ne reprend pas AVERTISSEMENT_LECTEUR.md`,
+      );
+    r[v] = blocs(lignes);
+    const [d, fin] = [s[v][0].l, s[v][s[v].length - 1].l];
+    const it = manifeste(
+      join(NARR, 'commun', '00_avertissement', v, 'manifest.json'),
+      d,
+      fin,
+      rapport,
+      `00_avertissement/${v}`,
+    );
+    if (it) a[v === 'enfant' ? 'e' : 'a'] = it;
+  }
+  if (a.e || a.a) r.audio = a;
+  writeFileSync(join(OUT, '00_avertissement.json'), JSON.stringify(r));
+  index.av = { id: r.id, t: titre, e: r.audio?.e ? 1 : 0, a: r.audio?.a ? 1 : 0 };
+}
+
+// ---------------------------------------------------------------- cycle de Mūsā (livre 2), ordre de lecture
+{
+  const src = readFileSync(join(APP, 'histoire', 'CYCLE_MOUSSA.md'), 'utf8').split(/\r?\n/);
+  const debut = src.findIndex((t) => /^##\s+2\./.test(t));
+  const fin = src.findIndex((t, k) => k > debut && /^##\s/.test(t));
+  const l1 = index.livres.find((l) => l.id === 'l1');
+  const l2 = index.livres.find((l) => l.id === 'l2');
+  const cycle = [];
+  for (const t of src.slice(debut + 1, fin)) {
+    const m = /^(\d+)\.\s+(.*)$/.exec(t);
+    if (!m || m[1] === '0') continue; // 0 : survol facultatif
+    const code = /^\*\*(H\d\d[a-z]?)\*\*/.exec(m[2]);
+    if (code) {
+      const r = l2.r.find((x) => x.id.startsWith(code[1] + '_'));
+      if (!r) throw new Error(`cycle de Mūsā : ${code[1]} introuvable dans le livre 2`);
+      cycle.push({ ...r });
+    } else if (/Livre 1, 16/.test(m[2])) {
+      const r = l1.r.find((x) => x.id === '16_moussa');
+      if (!r) throw new Error('cycle de Mūsā : 16_moussa introuvable dans le livre 1');
+      cycle.push({ ...r, l: 'l1' });
+    }
+  }
+  if (cycle.length < 10) throw new Error(`cycle de Mūsā : ${cycle.length} récits seulement`);
+  l2.cycle = { t: 'Le cycle de Mūsā', r: cycle };
+  rapport.push(`cycle de Mūsā : ${cycle.map((x) => x.id.split('_')[0]).join(' → ')}`);
+}
+
 writeFileSync(join(OUT, 'index.json'), JSON.stringify(index));
 console.log(`histoires : ${total} récits`);
 for (const x of rapport) console.log(' - ' + x);

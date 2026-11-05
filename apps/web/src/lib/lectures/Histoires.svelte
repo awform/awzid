@@ -10,15 +10,31 @@
    * « Histoire, de la création à nos jours » (interrupteur `histoires`) : sommaire par livre, puis un récit à la fois (`?r=id`).
    * Le profil enfant ne reçoit du serveur que la version enfant.
    */
+  interface Entree {
+    id: string;
+    t: string;
+    e: number;
+    a: number;
+    /** renvoi vers un récit d'un autre livre (cycle de Mūsā → livre 1) */
+    l?: string;
+  }
   interface Livre {
     id: string;
     n: number;
     t: string;
-    r: Array<{ id: string; t: string; e: number; a: number }>;
+    r: Entree[];
+    /** 5/11 : bloc « Le cycle de Mūsā » (livre 2), dans l'ordre de lecture */
+    cycle?: { t: string; r: Entree[] };
+  }
+  interface Index {
+    p: string;
+    /** avertissement au lecteur, en tête de chaque livre */
+    av?: Entree;
+    livres: Livre[];
   }
   let profil = $state<string | null>(null);
   let enfant = $state(false);
-  let index = $state<{ p: string; livres: Livre[] } | null>(null);
+  let index = $state<Index | null>(null);
   let recit = $state<RecitData | null>(null);
   let etat = $state<Etat | 'attente'>('attente');
 
@@ -41,15 +57,43 @@
     const p = await demoProfileFor('').catch(() => null);
     profil = p?.id ?? null;
     enfant = p?.kind === 'enfant';
-    const r = await charger<{ p: string; livres: Livre[] }>('histoires/index', profil, enfant);
+    const r = await charger<Index>('histoires/index', profil, enfant);
     index = r.data;
     etat = r.etat;
     const demande = new URLSearchParams(location.search).get('r');
-    if (index && demande && index.livres.some((l) => l.r.some((x) => x.id === demande)))
+    if (
+      index &&
+      demande &&
+      (index.av?.id === demande || index.livres.some((l) => l.r.some((x) => x.id === demande)))
+    )
       await ouvrir(demande);
   });
   const numero = (l: Livre, i: number) => (l.id === 'l1' ? i : i + 1);
+  /** récits du livre hors du cycle (le cycle est présenté à part, en tête) */
+  const horsCycle = (l: Livre) =>
+    l.cycle ? l.r.filter((x) => !l.cycle!.r.some((c) => c.id === x.id)) : l.r;
 </script>
+
+<svelte:head>
+  <!-- Literata (adulte) et Andika (enfant), auto-hébergées : seulement sur cette page, jamais au démarrage ni en précache -->
+  <link rel="stylesheet" href="/polices-histoires/polices.css" />
+</svelte:head>
+
+{#snippet ligne(r: Entree, n: string)}
+  <li>
+    <button type="button" onclick={() => ouvrir(r.id)} data-r={r.id} class:renvoi={r.l}>
+      <span class="n"><Bidi text={n} /></span>
+      <span class="t"
+        >{#if r.l}<span class="ou"
+            ><Bidi
+              text={t('hx.renvoi', { n: index?.livres.find((x) => x.id === r.l)?.n ?? 1 })}
+            /></span
+          >{/if}<Bidi text={r.t} /></span
+      >
+      {#if enfant ? r.e : r.e || r.a}<span class="audio"><Bidi text={t('hx.audio')} /></span>{/if}
+    </button>
+  </li>
+{/snippet}
 
 {#if recit}
   <Recit {recit} onretour={() => ouvrir(null)} />
@@ -72,18 +116,18 @@
             <span class="num"><Bidi text={t('hx.livre', { n: l.n })} /></span>
             <Bidi text={l.t} />
           </h2>
+          {#if index.av}
+            <ul class="av" data-testid="hx-av-{l.id}">{@render ligne(index.av, '·')}</ul>
+          {/if}
+          {#if l.cycle}
+            <h3 class="bloc" data-testid="hx-cycle"><Bidi text={l.cycle.t} /></h3>
+            <ol>
+              {#each l.cycle.r as r, i (r.id)}{@render ligne(r, String(i + 1))}{/each}
+            </ol>
+            <h3 class="bloc"><Bidi text={t('hx.autres')} /></h3>
+          {/if}
           <ol>
-            {#each l.r as r, i (r.id)}
-              <li>
-                <button type="button" onclick={() => ouvrir(r.id)} data-r={r.id}>
-                  <span class="n"><Bidi text={String(numero(l, i))} /></span>
-                  <span class="t"><Bidi text={r.t} /></span>
-                  {#if enfant ? r.e : r.e || r.a}<span class="audio"
-                      ><Bidi text={t('hx.audio')} /></span
-                    >{/if}
-                </button>
-              </li>
-            {/each}
+            {#each horsCycle(l) as r, i (r.id)}{@render ligne(r, String(numero(l, i)))}{/each}
           </ol>
         </section>
       {/each}
@@ -114,7 +158,23 @@
     text-transform: uppercase;
     color: var(--muted, #5a5f66);
   }
-  ol {
+  .bloc {
+    font-size: 1rem;
+    margin: 14px 0 8px;
+  }
+  .av {
+    margin-bottom: 8px;
+  }
+  .ou {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted, #5a5f66);
+  }
+  .renvoi {
+    border-style: dashed;
+  }
+  ol,
+  ul {
     list-style: none;
     margin: 0;
     padding: 0;

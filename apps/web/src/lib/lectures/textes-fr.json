@@ -20,6 +20,8 @@
   "hx.titre": "Histoire, de la création à nos jours",
   "hx.livre": "Livre {n}",
   "hx.audio": "Audio",
+  "hx.renvoi": "Dans le livre {n}",
+  "hx.autres": "Les autres récits du livre",
   "hx.enfant": "Version enfant",
   "hx.adulte": "Version adulte",
   "hx.bascule": "Choisir la version du récit",

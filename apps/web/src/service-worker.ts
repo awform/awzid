@@ -82,7 +82,9 @@ const ASSETS = [
       // bêta : page d'état du service (/etat.html), qui ne sert qu'en ligne
       !f.startsWith('/etat.') &&
       // page d'accueil publique (visiteurs sans compte) : jamais sur l'appareil de l'élève
-      !f.startsWith('/accueil.'),
+      !f.startsWith('/accueil.') &&
+      // 5/11 : polices des Histoires (Literata, Andika), chargées par la seule page des histoires, jamais précachées
+      !f.startsWith('/polices-histoires/'),
   ),
   // textes préchargés de l'élève : ceux de CETTE version (copiés sous /i18n/<version>/ à la construction)
   ...STUDENT_TEXTS.map(vers),

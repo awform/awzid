@@ -105,13 +105,15 @@ const swSrc = readFileSync(join(root, 'src', 'service-worker.ts'), 'utf8');
 // src/service-worker.ts : `!f.startsWith('/etat.')`, page d'état en ligne seulement ; `!f.startsWith('/accueil.')`, accueil
 // public des visiteurs sans compte) : jamais sur l'appareil de l'élève, donc hors de (a). Les préfixes sont LUS dans le
 // service worker (même règle, aucune liste recopiée) ; déduits SEULEMENT s'il les exclut.
-const SW_EXCLUS = ['/etat.', '/accueil.'].filter((x) =>
+// 5/11/2026 : `/polices-histoires/` (Literata, Andika), chargées par la seule page des Histoires, à la demande.
+const SW_EXCLUS = ['/etat.', '/accueil.', '/polices-histoires/'].filter((x) =>
   new RegExp(`!f\\.startsWith\\('${x.replace('.', '\\.')}'\\)`).test(swSrc),
 );
 const horsSw = (p) => SW_EXCLUS.some((x) => `/${relative(client, p)}`.startsWith(x));
 const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js') && !horsSw(p));
 const css = files.filter((p) => p.endsWith('.css') && !horsSw(p));
-const fonts = files.filter((p) => p.endsWith('.woff2'));
+const hxFonts = files.filter((p) => p.endsWith('.woff2') && horsSw(p));
+const fonts = files.filter((p) => p.endsWith('.woff2') && !horsSw(p));
 const rwFonts = files.filter((p) => /[\\/]riwayat[\\/]/.test(p) && p.endsWith('.ttf'));
 const rwWorst = rwFonts.reduce((m, p) => Math.max(m, statSync(p).size), 0);
 const rwExcluded = /startsWith\('\/riwayat\/'\)/.test(swSrc);
@@ -122,6 +124,7 @@ const swBr = sum(
 const jsBr = sum(js, br);
 const cssBr = sum(css, br);
 const fontsSize = sum(fonts, (p) => statSync(p).size);
+const hxFontsSize = sum(hxFonts, (p) => statSync(p).size);
 
 // groupes non préchargés (scripts/groupes.mjs) et leçons vivantes (vite.config.ts)
 const groups = groupFiles(root);
@@ -386,6 +389,7 @@ const lines = [
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(fontsSize)} (≤ ${ko(BUDGET_FONTS)}) |`,
+  `| Polices des Histoires (${hxFonts.length} fichiers, à la demande, page des Histoires seulement, hors service worker) | ${ko(hxFontsSize)} |`,
   `| Police d'une riwāya, la plus lourde (${rwFonts.length} polices, à la demande, hors coquille${rwExcluded ? '' : ' — NON EXCLUE du service worker'}) | ${ko(rwWorst)} (≤ ${ko(BUDGET_RIWAYA_FONT)}) |`,
   '',
   '## Pages les plus lourdes au premier chargement',

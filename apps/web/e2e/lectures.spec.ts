@@ -174,6 +174,32 @@ test.describe('Lectures : Khalīl et Histoires', () => {
     await newAdult(page, 'lx-histoires');
     await page.goto('/histoires');
     await expect(page.getByTestId('hx-sommaire')).toBeVisible({ timeout: 20_000 });
+    // 5/11 : avertissement au lecteur en tête de chaque livre (avec sa narration), cycle de Mūsā dans l'ordre de lecture,
+    // nouveaux récits sans audio (pas de barre), polices chargées par cette page seulement
+    await expect(page.locator('link[href="/polices-histoires/polices.css"]')).toHaveCount(1);
+    await expect(page.locator('[data-r="00_avertissement"]')).toHaveCount(5);
+    const cycle = page.getByTestId('hx-cycle').locator('xpath=following-sibling::ol[1]');
+    await expect(cycle.locator('[data-r]').first()).toHaveAttribute(
+      'data-r',
+      'H39_des_fils_de_yaqoub_au_pharaon',
+    );
+    await expect(cycle.locator('[data-r]').nth(3)).toHaveAttribute('data-r', '16_moussa');
+    await expect(cycle.locator('[data-r]').last()).toHaveAttribute(
+      'data-r',
+      'H44_moussa_dans_les_hadiths',
+    );
+    await page.locator('[data-r="H40_signes_et_noyade_de_pharaon"]').click();
+    await expect(page.getByTestId('hx-enfant')).toBeVisible();
+    await expect(page.getByTestId('hx-lecteur')).toHaveCount(0);
+    await page.getByTestId('hx-retour').click();
+    await page.locator('[data-r="00_avertissement"]').first().click();
+    await expect(page.getByTestId('hx-enfant')).toContainText('pas une fatwa');
+    await expect(page.getByTestId('hx-lecteur')).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => document.fonts.check('16px Andika')), { timeout: 10_000 })
+      .toBe(true);
+    await page.getByTestId('hx-retour').click();
+    await expect(page.getByTestId('hx-sommaire')).toBeVisible();
     await page.locator('[data-r="03_nouh"]').click();
     await expect(page.getByTestId('hx-enfant')).toBeVisible();
     await expect(page.locator('.illu svg').first()).toBeVisible();

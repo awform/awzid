@@ -25,6 +25,8 @@ export const DOSSIER_LIVRE: Record<string, string> = {
   l2: 'livre2',
   l4: 'livre4',
   l5: 'livre5',
+  /** avertissement au lecteur (5/11), commun à tous les livres */
+  commun: 'commun',
 };
 const FICHIER = /^p\d{3}\.mp3$/;
 

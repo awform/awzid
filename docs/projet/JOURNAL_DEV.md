@@ -4689,3 +4689,29 @@ Import complet de l'édition (illustrations `illus\*.js` assainies, `zz-sansvisa
 - **Histoires** : S00 et S01C ajoutés, corrections du 4/11 de S01 et S07 (135 récits ; ordre S00, S01, S01B, S01C, S02…) ; audio des histoires non touché.
 - **Menus** : carte des Histoires dans « Lectures », carte de Khalīl dans « Madjaliss » (adultes) ; retirées de « Vivre l'islam › Prières ». Toujours en bêta.
 - **Tests rouges de main** : `accueil.test.ts` vert ici ; `hifz` ×2 verts ; `a37` ×5 : la copie des livres de la VM n'a pas `data/akhlaq` (index officiel absent → « auto ») : vert avec une copie complète ; `coran-affichage` / `coran-retouches` (téléphone) : l'en-tête de l'appli (92 px) reste au-dessus de la page du Muṣḥaf alors que le test attend la page en haut de l'écran : changement de mise en page à trancher (hors de ce lot). Vieux serveur e2e de `~/wt/cahier` (port 4180, 15 jours, orphelin) arrêté.
+
+## 05/11/2026 (soir) — Histoires : passages sensibles relus, avertissement au lecteur, cycle de Mūsā, illustrations, polices (bêta)
+
+- **Textes** régénérés depuis les .md du 5/11 (relecture des passages sensibles : sira S17, S20 à S31, livre4 C02 C03 C06 C07,
+  livre5 V01 V06 V12 V15B, livre2 H22, prophetes 16_moussa) : **141 récits** (+ H39 à H44). Quand seule la version adulte a
+  été réécrite, le manifeste enfant gardait les anciennes lignes : le script le **réaligne** d'un décalage constant seulement si
+  chaque passage retrouve son texte (accord des mots ; H22 +2, C02 +6, C06 +2, C07 +4, V06 +2, V15B +2), sinon l'audio est
+  écarté. Reste connu : H38g, dernier paragraphe adulte (« Et ensuite… », renvoi vers le cycle) réécrit, audio de l'ancienne
+  phrase ; Nouh : accord texte/audio faible (narration réécrite pour l'oreille, inchangée depuis le 4/11).
+- **Audio** : `~/audio-qa/maj-histoires-sensibles-0511.tgz` (416 fichiers, dossiers complets) installé dans
+  `~/madjaliss-audio/histoires` du serveur, ajouts et remplacements seulement (copie de sûreté des fichiers remplacés :
+  `~/histoires-audio.avant-sensibles-<date>.tgz`).
+- **Avertissement au lecteur** (`histoire/AVERTISSEMENT_LECTEUR.md`) : récit `00_avertissement` (livre `commun`), en tête de
+  chaque livre dans le sommaire (`index.av`), narration `commun/00_avertissement/<enfant|adulte>` (l'enfant n'a que la
+  sienne). Le texte est contrôlé paragraphe par paragraphe contre la mise en page audio (`narration/src/commun`).
+- **Cycle de Mūsā** : H39 à H44 (texte seul, audio en décembre : pas de barre de lecture) ; sommaire du livre 2 : bloc « Le
+  cycle de Mūsā » dans l'ordre de `histoire/CYCLE_MOUSSA.md` § 2 (17 entrées, renvoi vers `16_moussa` du livre 1 à sa place),
+  puis « Les autres récits du livre ».
+- **Illustrations** : `histoire/illustrations/<prophetes|livre2>/<récit>/placement.json` (`apres_ligne`, `enfant-n` /
+  `adulte-n`, 1:1 = vignette), SVG recopiés tels quels dans le JSON du récit (chargés avec lui, jamais précachés) ; Nouh prend
+  les nouveaux dessins. Le script refuse tout SVG avec texte, image, script, lien, gestionnaire `on*=` ou URL externe ; test
+  `apps/api/test/histoires-svg.test.ts` (même contrôle sur tous les récits livrés + identifiants uniques par récit).
+- **Polices** : Literata (adulte) et Andika (enfant), SIL OFL 1.1, fichiers de `@fontsource/literata` et `@fontsource/andika`
+  5.3.0 (latin + latin-ext, 400/700, droit et italique, `unicode-range`, `font-display: swap`), dans
+  `static/polices-histoires/` avec `OFL-*.txt` ; feuille `polices.css` liée par la seule page `/histoires`, exclue du service
+  worker et du budget de l'appareil élève (ligne à part dans `budget.mjs` : 564 Ko à la demande).
