@@ -14,6 +14,7 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - **Livres** : copie `~/awform-content.tri06` (14 fichiers) ; serveur : mêmes fichiers, sauf ra1 l01, l19, l20 dont la version serveur diffère de la VM : les seuls remplacements N03 y sont appliqués. 0 écart Tanzil, 0 identifiant ajouté, 0 texte sonorisé changé.
 - **Cahier imprimé d'ad2** : antisèches complètes (16 lignes par page), 161 pages (plafond du contrôle 165).
 - **Tests** : `pnpm check` vert (table d'Ayyūb inchangée) ; e2e (cahier-parler, lecons, ra-adulte, versets, recitation-ayyub, exercices, bilans) : 55 réussis, 7 ignorés, 0 échec.
+- **MISE EN LIGNE** : sauvegarde avant `awform-20261105-055952.dump.gpg` (copie hors site ok) ; copie des livres du serveur : 14 fichiers (empreintes d'origine contrôlées), ancienne copie `~/awform-content.avant-cd56c46d` ; `/tmp/mise-en-ligne.sh cd56c46d` (avant `a13fd8b7`, fusionné) : édition `prod-ee1b86ffa8`, santé ok, awzid.com 200.
 - **Audio** (28 lignes des cahiers « Je parle », 2 de P105) : non lancé ; `gem-chirp.ps1` absent et garde commune sans arbre de construction (`~/wt/zero-muet` supprimé) : à reconstituer avant toute relance.
 
 ## 05/11/2026 — Tri de la passe 2 de Codex (re5, 19 cahiers, rapports transversaux) reporté dans l'application (branche `codex-passe2-wip`)
