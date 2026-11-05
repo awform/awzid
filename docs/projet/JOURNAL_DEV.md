@@ -4643,3 +4643,27 @@ Import complet de l'édition (illustrations `illus\*.js` assainies, `zz-sansvisa
 - **Tests** : unitaires verts sauf `recitation-ayyub` (échoue aussi sur origin/main 3680d92, table dépendant du contenu local) ;
   e2e `lectures`, `a3`, `a12` verts ; `a37` (3) échoue aussi sur origin/main. Budget élève : marge 6,2 Ko.
 - **Sauvegarde** avant mise en ligne : awform-20261104-193541.dump.gpg (copie hors site ok).
+
+## 05/11/2026 — Histoires : vérification automatique de la narration, corrections, récitation d'Ayyūb aux versets
+
+- **Vérification de TOUT l'audio** (4 529 MP3) : transcription locale faster-whisper `small` int8 (CPU, venv
+  `~/audio-qa/venv`, modèle 464 Mo + venv 473 Mo), comparée au `texte` des manifestes (minuscules, ponctuation,
+  apostrophes, nombres en lettres) ; contrôle des durées (débit médian 15,9 car./s adulte, 16,4 enfant) ; recherche par le
+  texte (apostrophes internes, références « S:V », crochets, places de versets). Scripts : `~/audio-qa/` de la VM.
+- **Défauts** : (1) **charabia pseudo-arabe ajouté par la synthèse** (Chirp 3 HD) dans 31 passages, souvent après « ou
+  « Allah » en tête de phrase (H07 p024, H25 p006, 06_ibrahim enfant p005…) ; reproductible pour un même texte ; (2) 6
+  références « 2:258-260 » lues comme des heures ; (3) crochets « [les moines] », « […] » ; (4) « Chou’ayb » (3 versets) ;
+  (5) 3 passages à accent arabe ou phrase sautée (H12 p001, H24 p015, 15_younous enfant p007). Le reste des écarts
+  (homophones, noms translittérés) vient du modèle de reconnaissance, pas de la voix.
+- **Corrections** (`~/narration/narration.py`, fonction `oral`, jamais les livres) : « S:V » → « la sourate S, verset V »
+  (« de », « en », « Le verset » accordés), crochets retirés, apostrophes internes des noms retirées (« Chouaïb ») ; le
+  plafond ne compte plus que les passages réellement à synthétiser. 45 passages refaits (10 011 caractères, compteur
+  860 645 / 900 000) ; 4 charabias reproductibles corrigés par une ponctuation différente (mêmes mots, champ `envoye` du
+  manifeste). Anciens fichiers gardés (`.ancien`, `.charabia`). Prod : 45 MP3 remplacés dans `~/madjaliss-audio/histoires`
+  (copie de sûreté `~/histoires-audio.avant-qa-20261105-045803.tgz`).
+- **Récitation** : le lecteur des récits joue Ayyūb aux entrées `verset` (`sourceRecitation`, même source et même service
+  que les leçons, module à la demande, aucun précache), plages enchaînées, vitesse 1, puis la synthèse reprend ; e2e
+  `lectures.spec.ts` (Nouh adulte : p007 → 7:59 d'Ayyūb → p009). Bascule enfant / adulte inchangée.
+- **Tests** : svelte-check 0 ; vitest lectures vert ; `accueil.test.ts` rouge aussi sur origin/main ; e2e complet : les 9
+  rouges (a37 ×5, coran-affichage, coran-retouches, hifz ×2) échouent identiquement sur origin/main 3413aba9 ; lectures et
+  perf (budget élève) verts. Sauvegarde : awform-20261105-045803.dump.gpg.
